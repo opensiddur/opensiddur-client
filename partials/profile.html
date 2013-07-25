@@ -1,0 +1,16 @@
+<div class="container-fluid">
+  <div class="row-fluid">
+    <div class="span2">
+      <h1 class="page-header">Profile</h1>
+    </div>
+    <div class="span10 offset9">
+      <button class="btn btn-large btn-primary" type="submit" data-ng-click="profile.save()"  data-ng-disabled="profileForm.$invalid">Save</button>
+    </div>
+  </div>
+  <div class="row-fluid">
+    <div class="span12">
+      <div id="profile-editor" data-os-xml-import="/api/user/{{profile.userName}}" contenteditable="true"></div>
+      <div data-ng-hide="!profile.errorMessage" class="alert alert-error">{{profile.errorMessage}}</div> 
+    </div>
+  </div>
+</div>

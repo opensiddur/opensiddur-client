@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html 
+  lang="en" 
+  xml:lang="en" 
+  xmlns="http://www.w3.org/1999/xhtml"
+  data-ng-app="OpenSiddurClientApp"
+  >
+  <head>
+    <base href="/apps/opensiddur-client/"/>
+    <meta charset="utf-8"/>
+    <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="description" content="Open Siddur web application"/>
+    <meta name="author" content="Efraim Feinstein"/>
+    <title>Open Siddur Web Application</title>
+    <!-- bootstrap boilerplate -->
+    <link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet"/>
+    <style type="text/css">
+      body {
+        padding-top: 60px;
+        padding-bottom: 40px;
+      }
+      .sidebar-nav {
+        padding: 9px 0;
+      }
+
+      .form {
+        max-width: 400px;
+        padding: 19px 29px 29px;
+        margin: 0 auto 20px;
+        background-color: #fff;
+        /*border: 1px solid #e5e5e5;*/
+        -webkit-border-radius: 5px;
+           -moz-border-radius: 5px;
+                border-radius: 5px;
+        -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+           -moz-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+                box-shadow: 0 1px 2px rgba(0,0,0,.05);
+      }
+      .form .form-signin-heading,
+      .form .checkbox {
+        margin-bottom: 10px;
+      }
+      .form input[type="text"],
+      .form input[type="password"] {
+        font-size: 16px;
+        height: auto;
+        margin-bottom: 15px;
+        padding: 7px 9px;
+      }
+
+
+      @media (max-width: 980px) {
+        /* Enable use of floated navbar text */
+        .navbar-text.pull-right {
+          float: none;
+          padding-left: 5px;
+          padding-right: 5px;
+        }
+      }
+    </style>
+    
+    <!-- icons -->
+    <!-- EDF: not sure what all these icon types are:
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="../assets/ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="../assets/ico/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="../assets/ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="../assets/ico/apple-touch-icon-57-precomposed.png">
+    -->
+    <link rel="shortcut icon" href="ico/favicon.png"/>
+  </head>
+  <body>
+    <!-- top nav bar -->
+    <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container-fluid">
+          <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="brand" href="#">Open Siddur Project</a>
+          
+          <div class="nav-collapse collapse">
+            <div id="authentication-widget" class="navbar-text pull-right" data-ng-controller="AuthenticationWidgetCtrl" data-ng-switch="loggedIn">
+              <span data-ng-switch-when="false"><a data-ng-href="signin" class="navbar-link">Sign in/Register</a>.</span>
+              <div class="dropdown" data-ng-switch-when="true">
+                <a class="dropdown-toggle" id="dLabel" role="button" data-toggle="dropdown" data-target="#" href="#">
+                  {{userName}}
+                  <b class="caret"></b>
+                </a>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                  <li><a data-ng-href="profile/{{userName}}">My profile</a></li>
+                  <li><a data-ng-click="signout()">Sign out</a></li>
+                </ul>
+              </div>
+            </div>
+            <!-- 
+            <ul class="nav">
+              <li class="active"><a href="#">Home</a></li>
+              <li><a href="#about">About</a></li>
+              <li><a href="#contact">Contact</a></li>
+            </ul>
+            -->
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+    </div>
+    <div data-ng-view="1"></div>
+    <div id="footer" class="container-fluid">
+      <hr/>
+  
+      <footer>
+        <p>&#169; 2013 <a href="http://opensiddur.org">Contributors to the Open Siddur Project</a>. See <a data-ng-href="/about">About</a> for information about source code and open source licensing.</p>
+      </footer>  
+    </div><!--/.fluid-container-->
+    
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
+    <script src="http://code.angularjs.org/1.1.5/angular.min.js"></script>
+    <script src="http://code.angularjs.org/1.1.5/angular-resource.min.js"></script>
+    <script src="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+    <script src="js/base64.js"></script>
+    <!-- script src="js/jsonml-xml.js"></script-->
+    <script src="js/sarissa/gr/abiss/js/sarissa/sarissa.js"></script>
+    <script src="js/ckeditor/ckeditor.js"></script>
+    <script src="js/ckeditor/adapters/jquery.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/controllers.js"></script>
+    <!-- 
+    <script src="js/bootstrap-transition.js"></script>
+    <script src="js/bootstrap-alert.js"></script>
+    <script src="js/bootstrap-modal.js"></script>
+    <script src="js/bootstrap-dropdown.js"></script>
+    <script src="js/bootstrap-scrollspy.js"></script>
+    <script src="js/bootstrap-tab.js"></script>
+    <script src="js/bootstrap-tooltip.js"></script>
+    <script src="js/bootstrap-popover.js"></script>
+    <script src="js/bootstrap-button.js"></script>
+    <script src="js/bootstrap-collapse.js"></script>
+    <script src="js/bootstrap-carousel.js"></script>
+    <script src="js/bootstrap-typeahead.js"></script>
+    -->
+  
+  </body>
+</html>
