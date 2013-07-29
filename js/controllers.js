@@ -158,15 +158,14 @@ OpenSiddurClientApp.controller(
           );
         
     };
-    $scope.save = function () {
-        console.log($(".instance").html());
-        console.log(XsltService.transformString('htmlToTei', $(".instance").html()));
-        /*
+    $scope.save = function () {       
         $http.put(host + "/api/user/" + this.userName,
             $(".instance").html(),
             {
                 transformRequest: function (data, headerGetters) {
-                    return XsltService.transformString('htmlToTei', data);
+                    var formTei = XsltService.transformString('htmlToTei', data);
+                    var formCleaned = XsltService.transform('cleanupForm', formTei); 
+                    return formCleaned;
                 },
                 headers: {
                     "Content-Type" : "application/xml"
@@ -183,7 +182,7 @@ OpenSiddurClientApp.controller(
               $scope.errorMessage = getApiError(data);
             }  
         );
-        */
+        
     };
     
     $scope.get();
