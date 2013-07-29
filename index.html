@@ -84,29 +84,22 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="brand" href="#">Open Siddur Project</a>
+          <a class="brand" href="#"><img src="img/open-siddur-logo.png"/>Open Siddur Project</a>
           
           <div class="nav-collapse collapse">
-            <div id="authentication-widget" class="navbar-text pull-right" data-ng-controller="AuthenticationWidgetCtrl" data-ng-switch="loggedIn">
-              <span data-ng-switch-when="false"><a data-ng-href="signin" class="navbar-link">Sign in/Register</a>.</span>
-              <div class="dropdown" data-ng-switch-when="true">
-                <a class="dropdown-toggle" id="dLabel" role="button" data-toggle="dropdown" data-target="#" href="#">
+            <ul id="authentication-widget" class="nav pull-right" data-ng-controller="AuthenticationWidgetCtrl" data-ng-switch="loggedIn">
+              <li data-ng-switch-when="false"><a data-ng-href="signin" class="navbar-link">Sign in/Register</a>.</li>
+              <li class="dropdown" data-ng-switch-when="true">
+                <a class="dropdown-toggle" id="userDropdownLabel" role="button" data-toggle="dropdown" data-target="#" href="javascript:void()">
                   {{userName}}
                   <b class="caret"></b>
                 </a>
-                <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                  <li><a data-ng-href="profile/{{userName}}">My profile</a></li>
-                  <li><a data-ng-click="signout()">Sign out</a></li>
+                <ul class="dropdown-menu pull-right" role="menu" aria-labelledby="userDropdownLabel">
+                  <li role="presentation"><a data-ng-href="profile/{{userName}}">My profile</a></li>
+                  <li role="presentation"><a data-ng-click="signout()">Sign out</a></li>
                 </ul>
-              </div>
-            </div>
-            <!-- 
-            <ul class="nav">
-              <li class="active"><a href="#">Home</a></li>
-              <li><a href="#about">About</a></li>
-              <li><a href="#contact">Contact</a></li>
+              </li>
             </ul>
-            -->
           </div><!--/.nav-collapse -->
         </div>
       </div>
@@ -116,7 +109,7 @@
       <hr/>
   
       <footer>
-        <p>&#169; 2013 <a href="http://opensiddur.org">Contributors to the Open Siddur Project</a>. See <a data-ng-href="/about">About</a> for information about source code and open source licensing.</p>
+        <p>&#169; 2013 <a href="http://opensiddur.org">Contributors to the Open Siddur Project</a>. See <a href="#">About</a> for links to the source code and information about open source licensing.</p>
       </footer>  
     </div><!--/.fluid-container-->
     
