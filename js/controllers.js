@@ -124,52 +124,69 @@ OpenSiddurClientApp.controller(
 /* controller for profile page */
 OpenSiddurClientApp.controller(
   'ProfileCtrl',
-  ['$scope', '$routeParams', '$http',
-  function ($scope, $routeParams, $http) {
+  ['$scope', '$routeParams', '$http', 'XsltService',
+  function ($scope, $routeParams, $http, XsltService) {
     console.log("Profile controller.")
     
-    $scope.profile = {
-      'errorMessage' : "",
-      'userName' : $routeParams.userName,
-      'get' : function () {
-        $http.get(host + "/api/user/" + this.userName)
+    $scope.errorMessage = "";
+    $scope.userName = $routeParams.userName;
+    $scope.get = function () {
+        $http.get(
+          host + "/api/user/" + this.userName,
+          {
+            transformResponse: function(data, headers) {
+                console.log(data);
+                xsltTransformed = XsltService.transformString('profileFormTemplate', data);
+                console.log(xsltTransformed);
+                jsTransformed = x2js.xml2json(xsltTransformed);
+                console.log(jsTransformed);
+                return jsTransformed;
+            }
+          })
           .success(
               function(data, status, headers, config) {
-                this.errorMessage = "";
-                
+                  $scope.errorMessage = "";
+                  console.log(data);
+                  $scope.profile = data;
+                  $scope.profileType = ($scope.profile.contributor.orgName.length > 0) ? 'organization' : 'individual';
               }
           )
           .error(
               function(data, status, headers, config) {
-                this.errorMessage = getApiError(data)
+                $scope.errorMessage = getApiError(data)
               }
-          )
+          );
         
-      },
-      'save' : function () {
+    };
+    $scope.save = function () {
+        console.log($(".instance").html());
+        console.log(XsltService.transformString('htmlToTei', $(".instance").html()));
+        /*
         $http.put(host + "/api/user/" + this.userName,
-            JsonML.toXMLText(this.object),
+            $(".instance").html(),
             {
-              headers: {
-                "Content-Type" : "application/xml"
-              }
+                transformRequest: function (data, headerGetters) {
+                    return XsltService.transformString('htmlToTei', data);
+                },
+                headers: {
+                    "Content-Type" : "application/xml"
+                }
             }
         )
         .success(
             function(data, status, headers, config) {
-              this.errorMessage = "";
+              $scope.errorMessage = "";
             }
         )
         .error(
             function(data, status, headers, config) {
-              this.errorMessage = getApiError(data);
+              $scope.errorMessage = getApiError(data);
             }  
         );
-        
-      }
-    }
+        */
+    };
     
-    $scope.profile.get()
+    $scope.get();
   }
   ]
 );

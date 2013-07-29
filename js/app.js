@@ -40,54 +40,6 @@ OpenSiddurClientApp.config(
   }
 ]);
 
-/* Authentication service provides authentication info to 
- * controllers via the AuthenticationService.update message.
- */
-OpenSiddurClientApp.service( 
-  'AuthenticationService', 
-  ['$rootScope', '$http', 
-  function( $rootScope, $http ) {
-    return {
-       loggedIn: false,
-       userName: "",
-       password: "",
-       login: function( userName, password ) {
-         this.loggedIn = true;
-         this.userName = userName;
-         this.password = password;
-         $http.defaults.headers.common.Authorization = 'Basic ' + Base64.encode(this.userName + ':' + this.password);
-         $http.defaults.withCredentials = true;
-         $rootScope.$broadcast( 
-             'AuthenticationService.update', 
-             this.loggedIn,
-             this.userName,
-             this.password
-         );
-       },
-       logout: function () {
-         this.loggedIn = false;
-         this.userName = "";
-         this.password = "";
-         $http.defaults.withCredentials = false;
-         delete $http.defaults.headers.common.Authorization;
-         $rootScope.$broadcast( 
-             'AuthenticationService.update', 
-             this.loggedIn,
-             this.userName,
-             this.password
-         );
-       },
-       whoami: function() {
-         return { 
-           'userName' : this.userName,
-           'password' : this.password
-         }
-       }
-    };
-  }
-  ]
-);
-
 /* import XML as part of the DOM */
 OpenSiddurClientApp.directive(
   'osXmlImport', 
@@ -166,8 +118,20 @@ OpenSiddurClientApp.directive(
               elem.append(htmlDocument.documentElement);
               
               if (scope.contenteditable) {
-                CKEDITOR.inline(elem[0])
+                scope.editor = 
+                  CKEDITOR.inline(elem[0], {
+                    extraPlugins : 'tei-idno',
+                    allowedContent : {
+                      div : {
+                        classes : 'j-contributor, tei-idno',
+                        attributes : 'xml:lang, lang, data-xml-id, data-type'
+                      }
+                    }
+                    
+                  });
               }
+              else
+                scope.editor = null;
             })
             .error( function ( data, status, headers, config ) {
               scope.errorMessage = getApiError(data);
