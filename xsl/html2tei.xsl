@@ -12,7 +12,7 @@
         <xsl:copy-of select="."/>
     </xsl:template>
 
-    <xsl:template match="@lang|@class"/>
+    <xsl:template match="@lang|@class|@contenteditable"/>
 
     <xsl:template name="underscored-to-namespaced-name">
         <xsl:param name="string" as="xs:string"/>
@@ -57,7 +57,16 @@
     <xsl:template match="*">
         <xsl:variable name="element-name">
             <xsl:call-template name="underscored-to-namespaced-name">
-                <xsl:with-param name="string" select="@class"/>
+                <xsl:with-param name="string"> 
+                    <xsl:choose>
+                        <xsl:when test="contains(@class, ' ')">
+                            <xsl:value-of select="substring-before(@class, ' ')"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:value-of select="@class"/>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:with-param>
             </xsl:call-template>
         </xsl:variable>
             
