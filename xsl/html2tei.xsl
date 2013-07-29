@@ -44,14 +44,16 @@
     </xsl:template>
 
     <xsl:template match="@*[starts-with(name(.), 'data-')]">
-        <xsl:variable name="name">
-            <xsl:call-template name="underscored-to-namespaced-name">
-                <xsl:with-param name="string" select="name(.)"/>
-            </xsl:call-template>
-        </xsl:variable>
-        <xsl:attribute name="{$name}">
-            <xsl:value-of select="."/>
-        </xsl:attribute>
+        <xsl:if test="not(starts-with(name(.), 'data-ng-'))">
+            <xsl:variable name="name">
+                <xsl:call-template name="underscored-to-namespaced-name">
+                    <xsl:with-param name="string" select="name(.)"/>
+                </xsl:call-template>
+            </xsl:variable>
+            <xsl:attribute name="{$name}">
+                <xsl:value-of select="."/>
+            </xsl:attribute>
+        </xsl:if>
     </xsl:template>
 
     <xsl:template match="*">
