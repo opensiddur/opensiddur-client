@@ -8,7 +8,7 @@ declare variable $exist:path external;
 declare variable $exist:resource external;
 
 (: forward every request that comes here to index.html :)
-if (matches($exist:path, "^/(js|partials|css|img|ico)/"))
+if (matches($exist:path, "^/(js|partials|css|img|ico|xsl)/"))
 then
   <ignore xmlns="http://exist.sourceforge.net/NS/exist"/>
 else
