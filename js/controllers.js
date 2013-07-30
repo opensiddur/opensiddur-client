@@ -46,12 +46,7 @@ OpenSiddurClientApp.controller(
         host + "/api/login",  
         "<login><user>"+ $scope.userName + 
         "</user><password>"+$scope.password+
-        "</password></login>",
-        {
-          headers: {
-            "Content-Type" : "application/xml"
-          }
-        })
+        "</password></login>")
         .success(
             function(data, status, headers, config) {
               AuthenticationService.login($scope.userName, $scope.password);
@@ -74,12 +69,7 @@ OpenSiddurClientApp.controller(
         host + "/api/user",  
         "<register><user>"+ $scope.userName + 
         "</user><password>"+$scope.password+
-        "</password></register>",
-        {
-          headers: {
-            "Content-Type" : "application/xml"
-          }
-        })
+        "</password></register>")
         .success(
             function(data, status, headers, config) {
               AuthenticationService.login($scope.userName, $scope.password);
@@ -169,9 +159,6 @@ OpenSiddurClientApp.controller(
                     var formTei = XsltService.transformString('htmlToTei', data);
                     var formCleaned = XsltService.transform('cleanupForm', formTei); 
                     return formCleaned;
-                },
-                headers: {
-                    "Content-Type" : "application/xml"
                 }
             }
         )
