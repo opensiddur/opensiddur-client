@@ -96,7 +96,10 @@ OpenSiddurClientApp.controller(
     
     };
     $scope.signout = function() {
-      console.log("sign out")
+      console.log("sign out");
+      $http.post(host + "/api/logout", 
+              "<logout/>"
+      );
       $scope.loggedIn = false;
       AuthenticationService.logout();
     };

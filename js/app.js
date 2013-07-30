@@ -23,22 +23,48 @@ OpenSiddurClientApp.config(
     $httpProvider.defaults.headers.common['Accept'] = "application/xml, application/tei+xml, application/xhtml+xml, text/xml, text/html, text/plain, */*";
     // for CORS, see http://better-inter.net/enabling-cors-in-angular-js
     $httpProvider.defaults.headers.common['X-Requested-With'] = undefined;
+    
+    // all our requests are XML, not JSON
+    $httpProvider.defaults.headers.post = { "Content-Type" : "application/xml" };
+    $httpProvider.defaults.headers.put = { "Content-Type" : "application/xml" };
   }
 ]);
 
 OpenSiddurClientApp.config(
   ['$routeProvider', '$locationProvider',
   function($routeProvider, $locationProvider) {
-    // TODO: implement HTML5 mode
-    // html5 mode requires the server to redirect all URLs to the root of the app
     $locationProvider.html5Mode(true).hashPrefix("!");
     $routeProvider
       .when('/signin', {templateUrl: 'partials/signin.html', controller: "AuthenticationCtrl"})
       .when('/profile/:userName', {templateUrl: 'partials/profile.html', controller: "ProfileCtrl"})
+      .when('/changepassword', {templateUrl: 'partials/changepassword.html', controller: "ChangePasswordCtrl"})
       .when('/about', {templateUrl: 'partials/about.html', controller: "AboutCtrl"})
       .otherwise({redirectTo: '/about'});
   }
 ]);
+
+/* password check 
+ * code from http://blog.brunoscopelliti.com/angularjs-directive-to-check-that-passwords-match 
+ */
+OpenSiddurClientApp.directive(
+  'osPwCheck', 
+  [
+   function () {
+    return {
+      require: 'ngModel',
+      link: function (scope, elem, attrs, ctrl) {
+        var firstPassword = '#' + attrs.osPwCheck;
+        elem.add(firstPassword).on('keyup', function () {
+          scope.$apply(function () {
+            var v = elem.val()===$(firstPassword).val();
+            ctrl.$setValidity('pwmatch', v);
+          });
+        });
+      }
+    }
+   }
+  ]
+);
 
 /* import XML as part of the DOM */
 OpenSiddurClientApp.directive(
