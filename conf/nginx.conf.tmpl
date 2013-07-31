@@ -3,23 +3,27 @@ worker_processes 1;
 
 http {
     include mime.types;
-    access_log /tmp/logs/access.log;
-    error_log /tmp/logs/error.log debug;
+
+    ## CHANGE this to your log locations
+    access_log /tmp/access.log;
+    error_log /tmp/error.log;
     server {
         ## CHANGE: only listen on local, port 5000
         listen 127.0.0.1:5000 default_server;
 
-        
         ## CHANGE this to the root directory of your client sources 
+        ## or run nginx from the root directory
         root .;
 
         index /index.html;
         
         ## proxy pass to the dev server ##
         location /api {
-            ## to use the dev server:
+            ##CHANGE: choose a server
+            ## to use the dev server, uncomment this line and comment the one below:
             ##proxy_pass   http://dev.jewishliturgy.org;
-            ## to use a local server: 
+
+            ## to use a local server, uncomment this line and comment the one above:
             proxy_pass   http://localhost:8080; 
         }
 

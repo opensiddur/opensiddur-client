@@ -29,3 +29,6 @@ private-scripts/
 
 # patch rejects
 *.rej
+
+# nginx conf file
+conf/nginx.conf
