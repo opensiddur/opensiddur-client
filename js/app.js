@@ -4,7 +4,7 @@
  * Copyright 2013 Efraim Feinstein <efraim@opensiddur.org>
  * Licensed under the GNU Lesser General Public License, version 3 or later
  */
-var host = "http://localhost:8080";
+var host = "";
 
 /* retrieve an API error return value and return the string */
 var getApiError = function(data) {
@@ -35,10 +35,10 @@ OpenSiddurClientApp.config(
   function($routeProvider, $locationProvider) {
     $locationProvider.html5Mode(true).hashPrefix("!");
     $routeProvider
-      .when('/signin', {templateUrl: 'partials/signin.html', controller: "AuthenticationCtrl"})
-      .when('/profile/:userName', {templateUrl: 'partials/profile.html', controller: "ProfileCtrl"})
-      .when('/changepassword', {templateUrl: 'partials/changepassword.html', controller: "ChangePasswordCtrl"})
-      .when('/about', {templateUrl: 'partials/about.html', controller: "AboutCtrl"})
+      .when('/signin', {templateUrl: '/partials/signin.html', controller: "AuthenticationCtrl"})
+      .when('/profile/:userName', {templateUrl: '/partials/profile.html', controller: "ProfileCtrl"})
+      .when('/changepassword', {templateUrl: '/partials/changepassword.html', controller: "ChangePasswordCtrl"})
+      .when('/about', {templateUrl: '/partials/about.html', controller: "AboutCtrl"})
       .otherwise({redirectTo: '/about'});
   }
 ]);

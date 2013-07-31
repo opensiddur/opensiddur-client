@@ -5,8 +5,8 @@
  */
 OpenSiddurClientApp.service(
     'XsltService',
-    ['$rootScope', '$http',
-    function ( $rootScope, $http ) {
+    ['$rootScope', '$http', '$location',
+    function ( $rootScope, $http, $location ) {
         // initialize all of the stylesheets
         svc = {
             xsltProcessors : {},
@@ -39,10 +39,10 @@ OpenSiddurClientApp.service(
                 return this.transform(processorName, dataDomDoc);
             }
         }
-        svc.addProcessor('teiToHtml', 'xsl/tei2html.xsl');
-        svc.addProcessor('htmlToTei', 'xsl/html2tei.xsl');
-        svc.addProcessor('profileFormTemplate', 'xsl/profileformtemplate.xsl');
-        svc.addProcessor('cleanupForm', 'xsl/cleanupform.xsl');
+        svc.addProcessor('teiToHtml', '/xsl/tei2html.xsl');
+        svc.addProcessor('htmlToTei', '/xsl/html2tei.xsl');
+        svc.addProcessor('profileFormTemplate', '/xsl/profileformtemplate.xsl');
+        svc.addProcessor('cleanupForm', '/xsl/cleanupform.xsl');
         return svc;
     }]
 );
