@@ -7,13 +7,19 @@ declare variable $exist:controller external;
 declare variable $exist:path external;
 declare variable $exist:resource external;
 
-(: forward every request that comes here to index.html :)
-if (matches($exist:path, "^/(js|partials|css|img|ico|xsl)/"))
+if (doc-available($exist:path) 
+  or util:binary-doc-available($exist:path)
+  or xmldb:collection-available($exist:path)
+  )
 then
-  <ignore xmlns="http://exist.sourceforge.net/NS/exist"/>
+    (: if the document literally exists, just serve it :)
+    <exist:ignore/>
 else
-  <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
-    <forward url="{$exist:controller}/index.html">
-    </forward>
-  </dispatch>
-
+    (: forward every request that comes here and is not to one of the special dirs to index.html :)
+    <exist:dispatch>{
+        if (matches($exist:path, "^/(js|partials|css|img|ico|xsl)/"))
+        then
+            <exist:ignore/>
+        else
+            <exist:forward url="/index.html"/>
+    }</exist:dispatch>
