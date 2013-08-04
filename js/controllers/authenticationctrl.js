@@ -25,7 +25,12 @@ OpenSiddurClientApp.controller(
         host + "/api/login",  
         "<login><user>"+ $scope.userName + 
         "</user><password>"+$scope.password+
-        "</password></login>")
+        "</password></login>",
+        {
+            params : {
+                "auth-only" : "true"
+            }
+        })
         .success(
             function(data, status, headers, config) {
               AuthenticationService.login($scope.userName, $scope.password, $scope.rememberMe);
