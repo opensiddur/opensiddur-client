@@ -30,8 +30,7 @@ OpenSiddurClientApp.controller(
             function(data, status, headers, config) {
               AuthenticationService.login($scope.userName, $scope.password, $scope.rememberMe);
               $scope.errorMessage = "";
-              $scope.loggedIn = true;
-              $location.path("/about")
+              $location.path("/about");
             }
         )
         .error(
@@ -66,10 +65,6 @@ OpenSiddurClientApp.controller(
     };
     $scope.signout = function() {
       console.log("sign out");
-      $http.post(host + "/api/logout", 
-              "<logout/>"
-      );
-      $scope.loggedIn = false;
       AuthenticationService.logout();
     };
     $scope.$on('AuthenticationService.update', 

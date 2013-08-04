@@ -39,21 +39,32 @@ OpenSiddurClientApp.service(
              }
            },
            logout: function () {
-             this.loggedIn = false;
-             this.userName = "";
-             this.password = "";
-             if (this.rememberMe) {
-                 localStorageSevice.remove('userName');
-                 localStorageSevice.remove('password');
-             }
-             $http.defaults.withCredentials = false;
-             delete $http.defaults.headers.common.Authorization;
-             $rootScope.$broadcast( 
-                 'AuthenticationService.update', 
-                 this.loggedIn,
-                 this.userName,
-                 this.password
-             );
+               this.loggedIn = false;
+               this.userName = "";
+               this.password = "";
+             
+               if (this.rememberMe) {
+                   localStorageSevice.remove('userName');
+                   localStorageSevice.remove('password');
+               }
+             
+               //send HTTP request to log out. Ignore errors.
+               $http.post(
+                       host + "/api/logout", 
+                       "<logout/>"
+               );
+               
+               // set future HTTP requests to remove credentials
+               $http.defaults.withCredentials = false;
+               delete $http.defaults.headers.common.Authorization;
+               
+               // broadcast the log out
+               $rootScope.$broadcast( 
+                       'AuthenticationService.update', 
+                       this.loggedIn,
+                       this.userName,
+                       this.password
+               );
            },
            whoami: function() {
              return {
