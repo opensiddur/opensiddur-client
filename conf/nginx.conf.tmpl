@@ -19,12 +19,17 @@ http {
         
         ## proxy pass to the dev server ##
         location /api {
+            proxy_intercept_errors on;
+            error_page 401 =418 @empty;
             ##CHANGE: choose a server
             ## to use the dev server, uncomment this line and comment the one below:
             ##proxy_pass   http://dev.jewishliturgy.org;
 
             ## to use a local server, uncomment this line and comment the one above:
             proxy_pass   http://localhost:8080; 
+        }
+        location @empty {
+            return 200 '';
         }
 
         ## everything else, config from http://java.dzone.com/articles/html5angularjsnginx-crawlable
