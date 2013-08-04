@@ -8,7 +8,7 @@ var host = "";
 
 /* retrieve an API error return value and return the string */
 var getApiError = function(data) {
-  $($.parseXML(data)).find("message").text()
+  return $($.parseXML(data)).find("message").text();
 }
 
 var OpenSiddurClientApp = 
