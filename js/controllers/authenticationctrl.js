@@ -11,9 +11,11 @@ OpenSiddurClientApp.controller(
   function ($scope, $http, $location, AuthenticationService){
     $http.defaults.useXDomain = true;
     
-    $scope.loggedIn = false;
-    $scope.userName = "";
-    $scope.password = "";
+    who = AuthenticationService.whoami();
+    $scope.loggedIn = Boolean(who.userName);
+    $scope.userName = who.userName;
+    $scope.password = who.password;
+    $scope.rememberMe = $scope.loggedIn;
     $scope.errorMessage = "";
     
     $scope.signin = function() {
@@ -26,7 +28,7 @@ OpenSiddurClientApp.controller(
         "</password></login>")
         .success(
             function(data, status, headers, config) {
-              AuthenticationService.login($scope.userName, $scope.password);
+              AuthenticationService.login($scope.userName, $scope.password, $scope.rememberMe);
               $scope.errorMessage = "";
               $scope.loggedIn = true;
               $location.path("/about")
@@ -49,7 +51,7 @@ OpenSiddurClientApp.controller(
         "</password></register>")
         .success(
             function(data, status, headers, config) {
-              AuthenticationService.login($scope.userName, $scope.password);
+              AuthenticationService.login($scope.userName, $scope.password, $scope.rememberMe);
               $scope.errorMessage = "";
               $scope.loggedIn = true;
               $location.path("/profile/" + $scope.userName)

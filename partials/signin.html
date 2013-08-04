@@ -14,11 +14,9 @@
           <form name="signinForm" class="form">
             <input id="signin-username" type="text" required="true" class="input-block-level" placeholder="Username" data-ng-model="userName"/>
             <input id="signin-password" type="password" required="true" class="input-block-level" placeholder="Password" data-ng-model="password"/>
-            <!--  
             <label class="checkbox">
-              <input id="signin-remember" type="checkbox" value="remember-me">Remember me</input>
+              <input id="signin-remember" type="checkbox" value="false" data-ng-model="rememberMe"/>Remember me
             </label>
-            -->
             <div data-ng-hide="!errorMessage">
               <div class="alert alert-error">{{errorMessage}}</div>
             </div>
