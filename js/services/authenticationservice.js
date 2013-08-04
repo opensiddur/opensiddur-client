@@ -8,15 +8,15 @@
  */
 OpenSiddurClientApp.service( 
   'AuthenticationService', 
-  ['$rootScope', '$http', '$cookieStore',
-  function( $rootScope, $http, $cookieStore ) {
-      cookieUser = $cookieStore.get('userName');
-      cookiePass = $cookieStore.get('password');
+  ['$rootScope', '$http', 'localStorageService',
+  function( $rootScope, $http, localStorageSevice ) {
+      savedUser = localStorageSevice.get('userName');
+      savedPass = localStorageSevice.get('password');
       svc = {
-           loggedIn: Boolean(cookieUser),
-           userName: cookieUser,
-           password: cookiePass,
-           rememberMe: Boolean(cookieUser),
+           loggedIn: Boolean(savedUser),
+           userName: savedUser,
+           password: savedPass,
+           rememberMe: Boolean(savedUser),
            login: function( userName, password, rememberMe ) {
              this.loggedIn = true;
              this.rememberMe = rememberMe;
@@ -31,11 +31,11 @@ OpenSiddurClientApp.service(
                  this.password
              );
              if (rememberMe && (
-                     cookieUser != userName ||
-                     cookiePass != password)
+                     savedUser != userName ||
+                     savedPass != password)
                 ) {
-                 $cookieStore.put('userName', userName);
-                 $cookieStore.put('password', password);
+                 localStorageSevice.set('userName', userName);
+                 localStorageSevice.set('password', password);
              }
            },
            logout: function () {
@@ -43,8 +43,8 @@ OpenSiddurClientApp.service(
              this.userName = "";
              this.password = "";
              if (this.rememberMe) {
-                 $cookieStore.remove('userName');
-                 $cookieStore.remove('password');
+                 localStorageSevice.remove('userName');
+                 localStorageSevice.remove('password');
              }
              $http.defaults.withCredentials = false;
              delete $http.defaults.headers.common.Authorization;
@@ -65,8 +65,8 @@ OpenSiddurClientApp.service(
       
       // if there's already a user set by cookie, do the login
       // stuff immediately
-      if (cookieUser)
-          svc.login(cookieUser, cookiePass, true);
+      if (savedUser)
+          svc.login(savedUser, savedPass, true);
       
       return svc;
   }
