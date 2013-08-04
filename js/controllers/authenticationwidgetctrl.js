@@ -7,19 +7,20 @@ OpenSiddurClientApp.controller(
   'AuthenticationWidgetCtrl',
   ['$scope', '$location', 'AuthenticationService',
   function ($scope, $location, AuthenticationService) {
-    $scope.loggedIn = false;
-    $scope.userName = '';
+      who = AuthenticationService.whoami();
+      $scope.loggedIn = Boolean(who.userName);
+      $scope.userName = who.userName;
     
-    $scope.signout = function() {
-      AuthenticationService.logout();
-      $location.path('/signin');
-    }
-    
-    $scope.$on('AuthenticationService.update', 
-      function( event, loggedIn, userName, password ) {
-        $scope.loggedIn = loggedIn;
-        $scope.userName = userName;
+      $scope.signout = function() {
+          AuthenticationService.logout();
+          $location.path('/signin');
       }
-    );
+
+      $scope.$on('AuthenticationService.update', 
+          function( event, loggedIn, userName, password ) {
+              $scope.loggedIn = loggedIn;
+              $scope.userName = userName;
+          }
+      );
   }]
 );

@@ -14,7 +14,7 @@ var getApiError = function(data) {
 var OpenSiddurClientApp = 
   angular.module(
       'OpenSiddurClientApp',
-      []);
+      ['ngCookies']);
 
 OpenSiddurClientApp.config(
   ['$httpProvider', 
