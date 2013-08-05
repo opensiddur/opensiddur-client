@@ -19,31 +19,19 @@ OpenSiddurClientApp.controller(
     $scope.errorMessage = "";
     
     $scope.signin = function() {
-      console.log("login")
-      
-      $http.post(
-        host + "/api/login",  
-        "<login><user>"+ $scope.userName + 
-        "</user><password>"+$scope.password+
-        "</password></login>",
-        {
-            params : {
-                "auth-only" : "true"
-            }
-        })
-        .success(
-            function(data, status, headers, config) {
-              AuthenticationService.login($scope.userName, $scope.password, $scope.rememberMe);
-              $scope.errorMessage = "";
-              $location.path("/about");
-            }
-        )
-        .error(
-            function(data, status, headers, config) {
-              $scope.errorMessage = getApiError(data);
-            }
+        console.log("login")
+
+        AuthenticationService.authenticate(
+                $scope.userName, $scope.password,
+                function(data, status, headers, config) {
+                    AuthenticationService.login($scope.userName, $scope.password, $scope.rememberMe);
+                    $scope.errorMessage = "";
+                    $location.path("/about");
+                },
+                function(data, status, headers, config) {
+                    $scope.errorMessage = getApiError(data);
+                }
         );
-      
       
     };
     $scope.register = function() {
@@ -54,30 +42,30 @@ OpenSiddurClientApp.controller(
         "</user><password>"+$scope.password+
         "</password></register>")
         .success(
-            function(data, status, headers, config) {
-              AuthenticationService.login($scope.userName, $scope.password, $scope.rememberMe);
-              $scope.errorMessage = "";
-              $scope.loggedIn = true;
-              $location.path("/profile/" + $scope.userName)
-            }
+                function(data, status, headers, config) {
+                    AuthenticationService.login($scope.userName, $scope.password, $scope.rememberMe);
+                    $scope.errorMessage = "";
+                    $scope.loggedIn = true;
+                    $location.path("/profile/" + $scope.userName)
+                }
         )
         .error(
-            function(data, status, headers, config) {
-              $scope.errorMessage = getApiError(data);
-            }
+                function(data, status, headers, config) {
+                    $scope.errorMessage = getApiError(data);
+                }
         );
     
     };
     $scope.signout = function() {
-      console.log("sign out");
-      AuthenticationService.logout();
+        console.log("sign out");
+        AuthenticationService.logout();
     };
     $scope.$on('AuthenticationService.update', 
-      function( event, loggedIn, userName, password ) {
-        $scope.loggedIn = loggedIn;
-        $scope.userName = userName;
-        $scope.password = password;
-      }
+        function( event, loggedIn, userName, password ) {
+            $scope.loggedIn = loggedIn;
+            $scope.userName = userName;
+            $scope.password = password;
+        }
     );
     
   }

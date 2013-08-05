@@ -19,34 +19,31 @@ OpenSiddurClientApp.controller(
       $scope.successMessage = "";
     
       $scope.changePassword = function() {
-        $scope.successMessage = "";
-        AuthenticationService.login($scope.userName, $scope.currentPassword);
-        $http.post(
-            host + "/api/user",  
-            "<change-password><user>"+ $scope.userName + 
-            "</user><password>"+$scope.newPassword+
-            "</password></change-password>",
-            {
-                  headers: {
-                    "Content-Type" : "application/xml"
-                  }
-            })
-            .success(
+          $scope.successMessage = "";
+          $scope.errorMessage = "";
+          AuthenticationService.authenticate(
+                $scope.userName, $scope.currentPassword,
                 function(data, status, headers, config) {
-                  AuthenticationService.login($scope.userName, $scope.newPassword);
-                  $scope.successMessage = "Password changed";
-                  $scope.errorMessage = "";
-                }
-            )
-            .error(
+                    $http.post(
+                            host + "/api/user",  
+                            "<change-password><user>"+ $scope.userName + 
+                            "</user><password>"+$scope.newPassword+
+                            "</password></change-password>")
+                            .success(
+                                    function(data, status, headers, config) {
+                                        $scope.successMessage = "Password changed";
+                                    }
+                            )
+                            .error(
+                                    function(data, status, headers, config) {
+                                        $scope.errorMessage = getApiError(data);
+                                    }
+                            );    
+                },
                 function(data, status, headers, config) {
-                    AuthenticationService.login($scope.userName, $scope.realCurrentPassword);
-                    $scope.successMessage = "";
                     $scope.errorMessage = getApiError(data);
                 }
-            );
-          
-      
+          );
       };
   }]
 );

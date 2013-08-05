@@ -17,26 +17,41 @@ OpenSiddurClientApp.service(
            userName: savedUser,
            password: savedPass,
            rememberMe: Boolean(savedUser),
+           // authenticate, but do not log in 
+           authenticate : function ( userName, password, successFunction, errorFunction ) {
+               $http.post(
+                   host + "/api/login",
+                   "<login><user>"+ userName + 
+                   "</user><password>"+ password+
+                   "</password></login>",
+                   {
+                       params : {
+                           "auth-only" : "true"
+                       }
+                   })
+                   .success(successFunction)
+                   .error(errorFunction);
+           },
            login: function( userName, password, rememberMe ) {
-             this.loggedIn = true;
-             this.rememberMe = rememberMe;
-             this.userName = userName;
-             this.password = password;
-             $http.defaults.headers.common.Authorization = 'Basic ' + Base64.encode(this.userName + ':' + this.password);
-             $http.defaults.withCredentials = true;
-             $rootScope.$broadcast( 
-                 'AuthenticationService.update', 
-                 this.loggedIn,
-                 this.userName,
-                 this.password
-             );
-             if (rememberMe && (
-                     savedUser != userName ||
-                     savedPass != password)
-                ) {
-                 localStorageSevice.set('userName', userName);
-                 localStorageSevice.set('password', password);
-             }
+               this.loggedIn = true;
+               this.rememberMe = rememberMe;
+               this.userName = userName;
+               this.password = password;
+               $http.defaults.headers.common.Authorization = 'Basic ' + Base64.encode(this.userName + ':' + this.password);
+               $http.defaults.withCredentials = true;
+               $rootScope.$broadcast( 
+                       'AuthenticationService.update', 
+                       this.loggedIn,
+                       this.userName,
+                       this.password
+               );
+               if (rememberMe && (
+                       savedUser != userName ||
+                       savedPass != password)
+               ) {
+                   localStorageSevice.set('userName', userName);
+                   localStorageSevice.set('password', password);
+               }
            },
            logout: function () {
                this.loggedIn = false;
@@ -67,10 +82,13 @@ OpenSiddurClientApp.service(
                );
            },
            whoami: function() {
-             return {
-               'userName' : this.userName,
-               'password' : this.password
-             }
+               return {
+                   'userName' : this.userName,
+                   'password' : this.password
+               }
+           },
+           loggedIn : function() {
+               return this.loggedIn;
            }
       };
       
