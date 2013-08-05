@@ -13,47 +13,55 @@ OpenSiddurClientApp.controller(
     
     who = AuthenticationService.whoami();
     $scope.loggedIn = Boolean(who.userName);
-    $scope.userName = who.userName;
-    $scope.password = who.password;
-    $scope.rememberMe = $scope.loggedIn;
-    $scope.errorMessage = "";
+    
+    $scope.signin = {
+            userName : who.userName,
+            password : who.password,
+            rememberMe : $scope.loggedIn,
+            errorMessage : ""
+    };
+    $scope.register = $scope.signin;
+    $scope.register.repeatPassword = "";
     
     $scope.signin = function() {
         console.log("login")
+        $scope.signin.errorMessage = "";
+        $scope.register.errorMessage = "";
 
         AuthenticationService.authenticate(
-                $scope.userName, $scope.password,
+                $scope.signin.userName, $scope.signin.password,
                 function(data, status, headers, config) {
-                    AuthenticationService.login($scope.userName, $scope.password, $scope.rememberMe);
-                    $scope.errorMessage = "";
+                    AuthenticationService.login($scope.signin.userName, $scope.signin.password, $scope.signin.rememberMe);
                     $location.path("/about");
                 },
                 function(data, status, headers, config) {
-                    $scope.errorMessage = getApiError(data);
+                    $scope.signin.errorMessage = getApiError(data);
                 }
         );
       
     };
     $scope.register = function() {
-      console.log("register")
-      $http.post(
-        host + "/api/user",  
-        "<register><user>"+ $scope.userName + 
-        "</user><password>"+$scope.password+
-        "</password></register>")
-        .success(
-                function(data, status, headers, config) {
-                    AuthenticationService.login($scope.userName, $scope.password, $scope.rememberMe);
-                    $scope.errorMessage = "";
-                    $scope.loggedIn = true;
-                    $location.path("/profile/" + $scope.userName)
-                }
-        )
-        .error(
-                function(data, status, headers, config) {
-                    $scope.errorMessage = getApiError(data);
-                }
-        );
+        $scope.signin.errorMessage = "";
+        $scope.register.errorMessage = "";
+
+        console.log("register")
+        $http.post(
+            host + "/api/user",  
+            "<register><user>"+ $scope.register.userName + 
+            "</user><password>"+$scope.register.password+
+            "</password></register>")
+            .success(
+                    function(data, status, headers, config) {
+                        AuthenticationService.login($scope.register.userName, $scope.register.password, $scope.register.rememberMe);
+                        $scope.loggedIn = true;
+                        $location.path("/profile/" + $scope.register.userName)
+                    }
+            )
+            .error(
+                    function(data, status, headers, config) {
+                        $scope.register.errorMessage = getApiError(data);
+                    }
+            );
     
     };
     $scope.signout = function() {
@@ -63,8 +71,8 @@ OpenSiddurClientApp.controller(
     $scope.$on('AuthenticationService.update', 
         function( event, loggedIn, userName, password ) {
             $scope.loggedIn = loggedIn;
-            $scope.userName = userName;
-            $scope.password = password;
+            $scope.signin.userName = userName;
+            $scope.signin.password = password;
         }
     );
     
