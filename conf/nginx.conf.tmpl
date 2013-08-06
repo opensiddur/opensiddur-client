@@ -1,0 +1,49 @@
+# Template for nginx reverse proxy configuration, uses port 5000
+worker_processes 1;
+
+http {
+    include mime.types;
+
+    ## CHANGE this to your log locations
+    access_log /tmp/access.log;
+    error_log /tmp/error.log;
+    server {
+        ## CHANGE: only listen on local, port 5000
+        listen 127.0.0.1:5000 default_server;
+
+        ## CHANGE this to the root directory of your client sources 
+        ## or run nginx from the root directory
+        root .;
+
+        index /index.html;
+        
+        ## proxy pass to the dev server ##
+        location /api {
+            ##CHANGE: choose a server
+            ## to use the dev server, uncomment this line and comment the one below:
+            ##proxy_pass   http://dev.jewishliturgy.org;
+
+            ## to use a local server, uncomment this line and comment the one above:
+            proxy_pass   http://localhost:8080; 
+            
+            proxy_intercept_errors on;
+            ## remap 401 to 418 so the browser doesn't get upset and pop up a user/pass dialog
+            if ($status = 401) {
+                return 418 'Unauthorized';
+            }
+        }
+
+        ## everything else, config from http://java.dzone.com/articles/html5angularjsnginx-crawlable
+        location / {
+            expires -1;
+            add_header Pragma "no-cache";
+            add_header Cache-Control "no-store, no-cache, must-revalidate, post-check=0, pre-check=0";
+            root .;
+            try_files $uri $uri/ /index.html =404;
+        }
+    }
+}
+
+events {
+    worker_connections  1024;
+}
