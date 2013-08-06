@@ -55,7 +55,8 @@ OpenSiddurClientApp.controller(
         )
         .success(
             function(data, status, headers, config) {
-              $scope.errorMessage = "";
+                $scope.errorMessage = "";
+                $scope.profileForm.$setPristine();
             }
         )
         .error(
@@ -64,6 +65,9 @@ OpenSiddurClientApp.controller(
             }  
         );
         
+    };
+    $scope.saveButtonText = function() {
+        return this.profileForm.$pristine ? "Saved" : "Save";
     };
     
     $scope.get();
