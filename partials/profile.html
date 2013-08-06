@@ -4,7 +4,8 @@
       <h1 class="page-header">Profile</h1>
     </div>
     <div class="span1 offset9">
-      <button class="btn btn-large btn-primary" type="submit" data-ng-click="save()"  data-ng-disabled="profileForm.$invalid">Save</button>
+      <button class="btn btn-large btn-primary" type="submit" data-ng-click="save()"  data-ng-show="profileForm.$dirty" data-ng-disabled="profileForm.$invalid">Save</button>
+      <button class="btn btn-large btn-primary btn-success" type="submit" data-ng-click="javascript:void()" data-ng-show="profileForm.$pristine" data-ng-disabled="true">Saved</button>
     </div>
   </div>
   <div class="row-fluid">
