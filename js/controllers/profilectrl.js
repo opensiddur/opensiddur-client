@@ -66,6 +66,9 @@ OpenSiddurClientApp.controller(
         );
         
     };
+    $scope.saveButtonText = function() {
+        return this.profileForm.$pristine ? "Saved" : "Save";
+    };
     
     $scope.get();
   }
