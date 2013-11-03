@@ -1,0 +1,23 @@
+<div class="row-fluid">
+    <div class="navbar">
+        <div class="navbar-inner">
+            <span class="brand">{{title}}</span>
+            <ul class="nav pull-right">
+                <li class="navbar-search" 
+                    data-os-search-box="{{api}}" 
+                    query="search.query" 
+                    results="search.results"
+                    source-key="{{sourceKey}}"></li>
+            </ul>
+        </div>
+    </div>
+    <div class="row-fluid search-results">
+        <select 
+            data-ng-model="selection"
+            data-ng-options="result.a._href as result.a.__text for result in search.results"
+            size="10"
+            class="span12"
+            data-infinite-scroll="nextSearch()">
+        </select>  
+    </div>
+</div>

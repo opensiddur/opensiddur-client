@@ -14,7 +14,9 @@ var getApiError = function(data) {
 var OpenSiddurClientApp = 
   angular.module(
       'OpenSiddurClientApp',
-      ['LocalStorageModule']);
+      ['LocalStorageModule',
+       'infinite-scroll'
+      ]);
 
 OpenSiddurClientApp.config(
   ['$httpProvider', 
@@ -36,6 +38,7 @@ OpenSiddurClientApp.config(
     $locationProvider.html5Mode(true).hashPrefix("!");
     $routeProvider
       .when('/signin', {templateUrl: '/partials/signin.html', controller: "AuthenticationCtrl"})
+      .when('/sources', {templateUrl: '/partials/sources.html', controller: "SourcesCtrl"})
       .when('/profile/:userName', {templateUrl: '/partials/profile.html', controller: "ProfileCtrl"})
       .when('/changepassword', {templateUrl: '/partials/changepassword.html', controller: "ChangePasswordCtrl"})
       .when('/about', {templateUrl: '/partials/about.html', controller: "AboutCtrl"})

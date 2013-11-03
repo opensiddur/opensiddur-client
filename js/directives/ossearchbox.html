@@ -1,0 +1,5 @@
+<form class="form-search">
+    <input type="text" class="input-medium search-query" data-ng-model="query.q"/>
+    <button type="submit" class="btn" data-ng-click="search()">Search</button>
+    <div class="alert alert-error" data-ng-hide="!errorMessage">{{errorMessage}}</div>
+</form>
