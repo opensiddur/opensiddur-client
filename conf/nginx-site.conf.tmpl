@@ -11,7 +11,7 @@ server {
             ##proxy_pass   http://dev.jewishliturgy.org;
 
             ## to use a local server, uncomment this line and comment the one above:
-            proxy_pass   http://localhost:8080/exist/restxq/api$2; 
+            proxy_pass   http://localhost:8080/exist/restxq/api$2$is_args$args; 
             
             proxy_intercept_errors on;
             ## remap 401 to 418 so the browser doesn't get upset and pop up a user/pass dialog
