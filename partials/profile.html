@@ -65,16 +65,11 @@
             <span class="help-inline error" data-ng-hide="!profileForm.formEmail.$dirty || !profileForm.formEmail.$error.email">Must be an email address of the form xyz@example.com</span>
           </div>
         </div>
-        <div class="control-group">
-          <label class="control-label" for="formAddress">Postal address</label>
-          <div class="controls">
-            <input name="formAddress" class="input-block-level" placeholder="Address line 1" data-ng-model="profile.contributor.address.addrLine[0].__text"/>
-            <input name="formAddress1" class="input-block-level" placeholder="Address line 2" data-ng-model="profile.contributor.address.addrLine[1].__text" data-ng-show="profile.contributor.address.addrLine[0].__text || profile.contributor.address.addrLine[1].__text"/>
-            <input name="formAddress2" class="input-block-level" placeholder="Address line 3" data-ng-model="profile.contributor.address.addrLine[2].__text" data-ng-show="profile.contributor.address.addrLine[1].__text || profile.contributor.address.addrLine[2].__text"/>
-            <input name="formAddress3" class="input-block-level" placeholder="Address line 4" data-ng-model="profile.contributor.address.addrLine[3].__text" data-ng-show="profile.contributor.address.addrLine[2].__text || profile.contributor.address.addrLine[3].__text"/>
-            <input name="formAddress4" class="input-block-level" placeholder="Address line 5" data-ng-model="profile.contributor.address.addrLine[4].__text" data-ng-show="profile.contributor.address.addrLine[3].__text || profile.contributor.address.addrLine[4].__text"/>
-          </div>
-        </div>
+        <div data-os-array-input="profile.contributor.address.addrLine_asArray"
+            data-label="Postal address"
+            data-name="formAddress"
+            data-placeholder="Address line"
+            />
         <div class="control-group" data-ng-show="profileType == 'individual'" data-ng-class="{ error : profileForm.formUrl.$error.url }">
           <label class="control-label" for="formUrl">Website:</label>
           <div class="controls">
