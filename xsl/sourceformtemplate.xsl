@@ -144,8 +144,9 @@
         </xsl:copy>
     </xsl:template>
 
-    <xsl:template match="tei:biblStruct">
-        <xsl:copy>
+    <!-- lowercase or uppercase -->
+    <xsl:template match="tei:biblStruct|tei:biblstruct">
+        <tei:biblStruct>
             <xsl:copy-of select="@*"/>
             <xsl:if test="not(@xml:lang)">
                 <xsl:attribute name="xml:lang"><xsl:value-of select="$default-lang"/></xsl:attribute>
@@ -222,6 +223,6 @@
                     <tei:relatedItem type="scan" target="" targetPattern=""/>
                 </xsl:with-param>
             </xsl:call-template>
-        </xsl:copy>
+        </tei:biblStruct>
     </xsl:template>    
 </xsl:stylesheet>
