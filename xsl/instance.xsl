@@ -19,13 +19,15 @@
     <xsl:template match="@*" mode="json-path">
         <xsl:variable name="parent-path"><xsl:apply-templates select=".." mode="json-path"/></xsl:variable>
         <xsl:variable name="norm" select="normalize-space($parent-path)"/>
-        <xsl:value-of select="concat($norm, '._', local-name(.))"/>
+        <!--<xsl:value-of select="concat($norm, '[_', name(.), ']')"/>-->
+        <xsl:value-of select="$norm"/><xsl:text>['_</xsl:text><xsl:value-of select="name(.)"/><xsl:text>']</xsl:text>
     </xsl:template>
 
     <xsl:template match="*" mode="json-path">
         <xsl:variable name="parent-path"><xsl:apply-templates select="parent::*" mode="json-path"/></xsl:variable>
         <xsl:variable name="norm" select="normalize-space($parent-path)"/>
-        <xsl:value-of select="concat(substring($model, 1, number(not(parent::*)) * string-length($model)), $norm, substring('.', 1, 1 * string-length($norm)), local-name(.), '_asArray[', count(preceding-sibling::*[local-name(.)=local-name(current())]), ']')"/>
+        <xsl:variable name="asarray"><xsl:if test="$norm"><xsl:value-of select="concat('_asArray[', count(preceding-sibling::*[local-name(.)=local-name(current())]), ']')"/></xsl:if></xsl:variable>
+        <xsl:value-of select="concat(substring($model, 1, number(not(parent::*)) * string-length($model)), $norm, substring('.', 1, 1 * string-length($norm)), local-name(.), $asarray)"/>
     </xsl:template>
 
     <xsl:template match="text()[not(following-sibling::*|preceding-sibling::*)]">
@@ -36,7 +38,7 @@
         <xsl:variable name="path"><xsl:apply-templates select="." mode="json-path"/></xsl:variable>
         <xsl:copy>
             <xsl:apply-templates select="@*"/>
-            <xsl:value-of select="concat('{{', $path, '}}')"/>
+            <xsl:value-of select="concat('{{', $path, '.__text}}')"/>
         </xsl:copy>
     </xsl:template>
 
