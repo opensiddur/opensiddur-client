@@ -5,6 +5,7 @@
  * Licensed under the GNU Lesser General Public License, version 3 or later
  */
 var host = "";
+var x2js = new X2JS({ "arrayAccessForm" : "property", "emptyNodeForm" : "object" });   
 
 /* retrieve an API error return value and return the string */
 var getApiError = function(data) {
