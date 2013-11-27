@@ -18,13 +18,17 @@ OpenSiddurClientApp.directive(
             restrict : 'AE',
             scope : {
                 array : "=osArrayInput",
+                child : "@",
                 name : "@",
                 placeholder : "@",
                 label : "@"
             },
-            controller : ['$scope', function($scope) {
-                
-            }],
+            compile : function (elem, attrs) {
+                if (attrs["child"]) {
+                    $("input", elem).attr("data-ng-model", "element[child].__text");
+                    $("input", elem).attr("data-ng-show", "$index == 0 || array[$index - 1][child].__text || element[child].__text");
+                }
+            },
             link : function(scope, elem, attrs, ctrl) {
 
             },
