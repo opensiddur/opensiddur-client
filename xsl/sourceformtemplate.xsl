@@ -184,10 +184,20 @@
                         <xsl:with-param name="present" select="tei:monogr/tei:imprint/tei:date"/>
                         <xsl:with-param name="default"><tei:date/></xsl:with-param>
                     </xsl:call-template>
-                    <xsl:call-template name="present-or-default">
-                        <xsl:with-param name="present" select="tei:monogr/tei:imprint/tei:distributor"/>
-                        <xsl:with-param name="default"><tei:distributor/></xsl:with-param>
-                    </xsl:call-template>
+                    <tei:distributor>
+                        <xsl:call-template name="present-or-default">
+                            <xsl:with-param name="present" select="tei:monogr/tei:imprint/tei:distributor/tei:name"/>
+                            <xsl:with-param name="default"><tei:name/></xsl:with-param>
+                        </xsl:call-template>
+                        <xsl:call-template name="present-or-default">
+                            <xsl:with-param name="present" select="tei:monogr/tei:imprint/tei:distributor/tei:ref"/>
+                            <xsl:with-param name="default"><tei:ref type="url" target=""/></xsl:with-param>
+                        </xsl:call-template>
+                        <xsl:call-template name="present-or-default">
+                            <xsl:with-param name="present" select="tei:monogr/tei:imprint/tei:distributor/tei:date"/>
+                            <xsl:with-param name="default"><tei:date type="access"/></xsl:with-param>
+                        </xsl:call-template>
+                    </tei:distributor>
                 </tei:imprint>
                 <xsl:call-template name="present-or-default">
                     <xsl:with-param name="present" select="tei:monogr/tei:extent"/>
