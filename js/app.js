@@ -7,6 +7,13 @@
 var host = "";
 var x2js = new X2JS({ "arrayAccessForm" : "property", "emptyNodeForm" : "object" });   
 
+// list of all languages supported by the app
+var supportedLanguages = {
+    "en" : "English",
+    "he" : "עברית (Hebrew)",
+    "arc" : "ארמית (Aramaic)"
+};
+
 /* retrieve an API error return value and return the string */
 var getApiError = function(data) {
   return $($.parseXML(data)).find("message").text();
