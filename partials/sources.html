@@ -5,8 +5,18 @@
         data-api="/api/data/sources"
         data-selection="editor.currentDocument">
     </div>
-    <div class="row-fluid sources-editor">
-        <div class="span12">Editor here for {{editor.currentDocument}}</div>
+    <div class="navbar row-fluid sources-editor">
+        <div class="span8 offset1 text-center lead">{{editor.content.biblStruct.monogr.title_asArray[0].__text}}</div>
+        <button class="btn btn-large btn-primary" type="submit" 
+            data-ng-click="editor.newDocument()"  
+            >New</button>
+        <button data-ng-class="{'btn' : true,  'btn-large' : true, 'btn-primary' : true, 'btn-success' : sourcesForm.$pristine}" type="submit" 
+            data-ng-click="editor.saveDocument()"  
+            data-ng-disabled="sourcesForm.$invalid || sourcesForm.$pristine">{{saveButtonText()}}</button>
+        <hr/>
+    </div>
+    <div class="row-fluid" data-ng-hide="!errorMessage">
+        <div class="span8 offset2 alert alert-error">{{errorMessage}}</div>
     </div>
     <div class="row-fluid sources-editor">
         <div class="span11 offset1">
@@ -91,7 +101,7 @@
                             name="biblStruct.analytic.title_alt_xmlLang"
                             data-ng-model="editor.content.biblStruct.analytic.title_asArray[2]['_xml:lang']" 
                             data-ng-required="editor.content.biblStruct.analytics.title_asArray[2].__text"
-                            ng-options="code as language for (code, language) in editor.supportedLanguages">
+                            data-ng-options="code as language for (code, language) in editor.supportedLanguages">
                         <input class="span8" name="biblStruct.analytic.title_alt" data-ng-model="editor.content.biblStruct.analytic.title_asArray[2].__text"
                             placeholder="Alternate title (eg, translation)"/>
                     </div>
@@ -102,7 +112,7 @@
                             name="biblStruct.analytic.title_alt_sub_xmlLang"
                             data-ng-model="editor.content.biblStruct.analytic.title_asArray[3]['_xml:lang']" 
                             data-ng-required="editor.content.biblStruct.analytics.title_asArray[3].__text"
-                            ng-options="code as language for (code, language) in editor.supportedLanguages">
+                            data-ng-options="code as language for (code, language) in editor.supportedLanguages">
                         <input class="span8" name="biblStruct.analytic.title_alt_sub" data-ng-model="editor.content.biblStruct.analytic.title_asArray[3].__text"
                             placeholder="Alternate subtitle (eg, translation)"/>
                     </div>
