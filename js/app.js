@@ -22,7 +22,8 @@ var getApiError = function(data) {
 var OpenSiddurClientApp = 
   angular.module(
       'OpenSiddurClientApp',
-      ['LocalStorageModule',
+      ['ngRoute',
+       'LocalStorageModule',
        'infinite-scroll'
       ]);
 
