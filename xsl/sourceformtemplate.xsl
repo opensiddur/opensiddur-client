@@ -228,6 +228,13 @@
                 </xsl:with-param>
             </xsl:call-template>
             <xsl:call-template name="present-or-default">
+                <xsl:with-param name="present" select="tei:note[not(@type='copyright')]"/>
+                <!-- general note -->
+                <xsl:with-param name="default">
+                    <tei:note/>
+                </xsl:with-param>
+            </xsl:call-template>
+            <xsl:call-template name="present-or-default">
                 <xsl:with-param name="present"><xsl:apply-templates select="tei:relatedItem"/></xsl:with-param>
                 <xsl:with-param name="default">
                     <tei:relatedItem type="scan" target="" targetPattern=""/>

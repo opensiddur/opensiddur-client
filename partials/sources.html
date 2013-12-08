@@ -347,14 +347,23 @@
                         data-child="name"/>
                 </fieldset>
                 <fieldset>
-                    <legend>Copyright status</legend>
+                    <legend>Notes</legend>
                     <div class="control-group">
-                        <label for="biblStruct.note.note">Copyright note.</label>
+                        <label for="biblStruct.note">Optional descriptive comments about the source that not covered in other fields:</label>
+                        <textarea
+                            class="input-block-level" 
+                            placeholder="Note."
+                            data-ng-model="editor.content.biblStruct.note_asArray[1].__text"
+                            name="biblStruct.note"
+                            />
+                    </div>
+                    <div class="control-group">
+                        <label for="biblStruct.note_copyright.note">Copyright note.</label>
                         <textarea
                             class="input-block-level" 
                             placeholder="Note about licensing or copyright status, if necessary"
-                            data-ng-model="editor.content.biblStruct.note.note.__text"
-                            name="biblStruct.note.note"
+                            data-ng-model="editor.content.biblStruct.note_asArray[0].note.__text"
+                            name="biblStruct.note_copyright.note"
                             />
                         <div class="controls control-row">
                             <label for="biblStruct.note.ref" class="span2">License name/URL:</label>
