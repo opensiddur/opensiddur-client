@@ -15,6 +15,10 @@
             data-ng-disabled="sourcesForm.$invalid || sourcesForm.$pristine">{{saveButtonText()}}</button>
         <hr/>
     </div>
+    <div class="row-fluid">
+        <div class="span5 offset1 alert alert-warn text-center" data-ng-hide="!sourcesForm.$invalid">All fields must have validdata.</div>
+        <div class="span5 alert alert-warn text-center" data-ng-hide="!sourcesForm.$error.required">All required fields must be filled in.</div>
+    </div>
     <div class="row-fluid" data-ng-hide="!errorMessage">
         <div class="span8 offset2 alert alert-error">{{errorMessage}}</div>
     </div>
@@ -80,7 +84,10 @@
                                 data-ng-model="editor.content.biblStruct.analytic.title_asArray[0]['_xml:lang']" 
                                 data-ng-required="editor.content.biblStruct.analytic.title_asArray[0].__text"
                                 data-ng-options="code as language for (code, language) in editor.supportedLanguages">
-                        <input class="span8" name="biblStruct.analytic.title_main" data-ng-model="editor.content.biblStruct.analytic.title_asArray[0].__text"
+                        <input class="span8" 
+                                name="biblStruct.analytic.title_main" 
+                                data-ng-model="editor.content.biblStruct.analytic.title_asArray[0].__text"
+                                data-ng-required="editor.isAnalytic"
                                 placeholder="Main section title"/>
                     </div>
                     <div class="controls controls-row">
@@ -140,7 +147,7 @@
                             data-ng-options="code as language for (code, language) in editor.supportedLanguages">
                         <input class="span8" 
                             name="biblStruct.monogr.title_main"
-                            required="true" 
+                            required="true"
                             data-ng-model="editor.content.biblStruct.monogr.title_asArray[0].__text"
                             placeholder="Main title"/>
                     </div>
@@ -222,7 +229,8 @@
                         <input
                             class="span10"
                             data-ng-model="editor.content.biblStruct.monogr.imprint.publisher_asArray[0].__text"
-                            name="biblStruct.monogr.imprint.publisher" 
+                            name="biblStruct.monogr.imprint.publisher"
+                            data-ng-required="!editor.content.biblStruct.monogr.imprint.distributor.name_asArray[0].__text &amp;&amp; !editor.content.biblStruct.monogr.imprint.distributor.ref_asArray[0]._target &amp;&amp; !editor.content.biblStruct.monogr.imprint.distributor.ref_asArray[0].__text" 
                             placeholder="Publisher"
                             />
                     </div>
@@ -240,8 +248,10 @@
                         <input
                             class="span2"
                             data-ng-model="editor.content.biblStruct.monogr.imprint.date_asArray[0].__text"
-                            name="biblStruct.monogr.imprint.date" 
-                            placeholder="Publication date (eg, 1899-02-01)"
+                            name="biblStruct.monogr.imprint.date"
+                            data-ng-required="editor.content.biblStruct.monogr.imprint.publisher_asArray[0].__text"
+                            data-ng-pattern="/^(\d{4}(-[01]\d(-[0-3]\d)?)?)$/"
+                            placeholder="YYYY-MM-DD"
                             />
                     </div>
                     <div class="controls controls-row">
@@ -249,6 +259,7 @@
                         <input
                             class="span8"
                             data-ng-model="editor.content.biblStruct.monogr.imprint.distributor.name_asArray[0].__text"
+                            data-ng-required="!editor.content.biblStruct.monogr.imprint.publisher.__text &amp;&amp; !editor.content.biblStruct.monogr.imprint.distributor.ref_asArray[0].__text"
                             name="biblStruct.monogr.imprint.distributor.name" 
                             placeholder="Distributor"
                             />
@@ -259,19 +270,22 @@
                             class="span4"
                             data-ng-model="editor.content.biblStruct.monogr.imprint.distributor.ref_asArray[0].__text"
                             name="biblStruct.monogr.imprint.distributor.ref" 
+                            data-ng-required="editor.content.biblStruct.monogr.imprint.distributor.ref_asArray[0]._target"
                             placeholder="Title"
                             />
                         <input
                             class="span4"
                             data-ng-model="editor.content.biblStruct.monogr.imprint.distributor.ref_asArray[0]._target"
                             name="biblStruct.monogr.imprint.distributor.ref._target" 
+                            data-ng-required="editor.content.biblStruct.monogr.imprint.distributor.ref_asArray[0].__text"
                             placeholder="Distributor URL (eg, http://www.example.com/x/y/z)"
                             />
                         <input
                             class="span2"
                             data-ng-model="editor.content.biblStruct.monogr.imprint.distributor.date_asArray[0].__text"
                             name="biblStruct.monogr.imprint.distributor.date" 
-                            placeholder="Access date (eg, 2013-01-01)"
+                            data-ng-pattern="/^\d{4}-[01]\d-[0-3]\d$/"
+                            placeholder="Access date (YYYY-MM-DD)"
                             />
                     </div>
                 </fieldset>
@@ -335,7 +349,7 @@
                 <fieldset>
                     <legend>Copyright status</legend>
                     <div class="control-group">
-                        <label for="biblStruct.note.note">Copyright note</label>
+                        <label for="biblStruct.note.note">Copyright note.</label>
                         <textarea
                             class="input-block-level" 
                             placeholder="Note about licensing or copyright status, if necessary"
@@ -343,14 +357,17 @@
                             name="biblStruct.note.note"
                             />
                         <div class="controls control-row">
-                            <input class="span6"
+                            <label for="biblStruct.note.ref" class="span2">License name/URL:</label>
+                            <input class="span5"
                                 data-ng-model="editor.content.biblStruct.note.ref.__text"
+                                data-ng-required="editor.content.biblStruct.note.ref._target"
                                 name="biblStruct.note.ref"
                                 placeholder="Name of copyright license"
                                 />
-                            <input class="span6"
+                            <input class="span5"
                                 data-ng-model="editor.content.biblStruct.note.ref._target"
                                 name="biblStruct.note.ref._target"
+                                data-ng-required="editor.content.biblStruct.note.ref.__text"
                                 placeholder="URL of license (eg, http://www.creativecommons.org/publicdomain/zero/1.0)"
                                 />
                         </div>
@@ -378,7 +395,11 @@
             </form>
         </div>
     </div>
-    <div class="row-fluid">
-    </div>
-    <!--div data-os-instance="editor.content" data-form-template="sourceFormTemplate"><tei:biblStruct xmlns:tei="http://www.tei-c.org/ns/1.0" /></div-->
+    <style type="text/css">/*<![CDATA[*/
+        select.ng-invalid,
+        input.ng-invalid,
+        textarea.ng-invalid {
+            background-color:#FA787E
+        }
+    /*]]>*/</style>
 </div>
