@@ -109,6 +109,7 @@ OpenSiddurClientApp.controller(
                     })
                     .success(function(data) {
                         $scope.sourcesForm.$setPristine();
+                        $scope.editor.isNew = false;
                     })
                     .error(function(data) {
                         $scope.errorMessage = getApiError(data);
@@ -117,7 +118,7 @@ OpenSiddurClientApp.controller(
             }
         };            
         $scope.saveButtonText = function() {
-            return this.sourcesForm.$pristine ? "Saved" : "Save";
+            return this.sourcesForm.$pristine ? (($scope.editor.isNew) ? "Unsaved, No changes" : "Saved" ) : "Save";
         };
         $scope.$watch("editor.currentDocument", 
             function(newDoc, oldDoc) {
