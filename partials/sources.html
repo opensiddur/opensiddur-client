@@ -4,19 +4,23 @@
         data-source-key="sources"
         data-api="/api/data/sources"
         data-selection="editor.currentDocument">
+        <span class="span5 brand">{{editor.content.biblStruct.monogr.title_asArray[0].__text}}</span>
+        <div class="btn-group span3">
+            <div class="pull-right">
+              <button class="btn btn-primary " type="submit" 
+                  data-ng-click="editor.newDocument()"  
+                  >New</button>
+              <button data-ng-class="{'btn' : true, 'btn-primary' : true, 'btn-success' : sourcesForm.$pristine}" type="submit" 
+                  data-ng-click="editor.saveDocument()"  
+                  data-ng-disabled="sourcesForm.$invalid || sourcesForm.$pristine">{{saveButtonText()}}</button>
+            </div>
+        </div>
     </div>
     <div class="navbar row-fluid sources-editor">
-        <div class="span8 offset1 text-center lead">{{editor.content.biblStruct.monogr.title_asArray[0].__text}}</div>
-        <button class="btn btn-large btn-primary" type="submit" 
-            data-ng-click="editor.newDocument()"  
-            >New</button>
-        <button data-ng-class="{'btn' : true,  'btn-large' : true, 'btn-primary' : true, 'btn-success' : sourcesForm.$pristine}" type="submit" 
-            data-ng-click="editor.saveDocument()"  
-            data-ng-disabled="sourcesForm.$invalid || sourcesForm.$pristine">{{saveButtonText()}}</button>
         <hr/>
     </div>
     <div class="row-fluid">
-        <div class="span5 offset1 alert alert-warn text-center" data-ng-hide="!sourcesForm.$invalid">All fields must have validdata.</div>
+        <div class="span5 offset1 alert alert-warn text-center" data-ng-hide="!sourcesForm.$invalid">All fields must have valid data.</div>
         <div class="span5 alert alert-warn text-center" data-ng-hide="!sourcesForm.$error.required">All required fields must be filled in.</div>
     </div>
     <div class="row-fluid" data-ng-hide="!errorMessage">
