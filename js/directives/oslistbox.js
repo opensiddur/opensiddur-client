@@ -48,14 +48,25 @@ OpenSiddurClientApp.directive(
                     };
                  }],
                  link: function(scope, elem, attrs, ctrl) {
+                    // listen for search service
                     scope.$on('SearchService.complete_' + scope.sourceKey,
                         function(ev, results, start, maxResults) {
                             console.log("Search complete received: results =", results, " start=", start, " maxResults=", maxResults);
                             if (start == 1) 
                                 scope.search.results = results;        // clear previous results
                             else
-                                scope.search.results.concat(results);  // append to them
+                                scope.search.results = scope.search.results.concat(results);  // append to them
                             scope.search.done = results.length < 100;
+                        }
+                    );
+                    scope.$on('ListBox.Append_' + scope.sourceKey,
+                        function(ev, results) {
+                            console.log("Manual append to list box =", results);
+                            scope.search.results = scope.search.results.concat(results);  // append to them
+                            // resort list
+                            console.log("search results: ", scope.search.results);
+                            scope.search.results.sort(function(a, b) { return a.a.__text > b.a.__text ? 1 : -1});
+                            //console.log("search results after sort: ", scope.search.results);
                         }
                     );
                  },

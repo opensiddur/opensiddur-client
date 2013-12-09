@@ -6,8 +6,8 @@
  */
 OpenSiddurClientApp.controller(
     'SourcesCtrl',
-    ['$scope', '$http', 'XsltService',
-    function ($scope, $http, XsltService) {
+    ['$rootScope', '$scope', '$http', 'XsltService',
+    function ($rootScope, $scope, $http, XsltService) {
         $scope.editor = {
             "supportedLanguages" : supportedLanguages, 
             "monographScopes" : { 
@@ -107,9 +107,15 @@ OpenSiddurClientApp.controller(
                             return cleanedXmlData;
                         }
                     })
-                    .success(function(data) {
+                    .success(function(data, statusCode, headers) {
                         $scope.sourcesForm.$setPristine();
-                        $scope.editor.isNew = false;
+                        if ($scope.editor.isNew) {
+                            // add to the search results listing
+                            $rootScope.$broadcast("ListBox.Append_sources", 
+                                [x2js.xml_str2json("<li class='result'><a class='document' href='"+headers('Location')+"'>"+$scope.editor.content.biblStruct.monogr.title_asArray[0].__text+"</a></li>").li]
+                            );
+                            $scope.editor.isNew = false;
+                        };
                     })
                     .error(function(data) {
                         $scope.errorMessage = getApiError(data);
