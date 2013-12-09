@@ -33,11 +33,14 @@ OpenSiddurClientApp.directive(
                         done : false            // any more results available?
                     };
                     $scope.nextSearch = function() {
-                        if (!$scope.search.done)
+                        console.log("nextSearch() called");
+                        if (!$scope.search.done) {  
+                            console.log("nextSearch() active");
                             SearchService.query(
                                 $scope.sourceKey, $scope.api, 
                                 $scope.search.query, $scope.search.results.length + 1, 100
                             );
+                        }
                     };
                     $scope.select = function(what) {
                         console.log("Selected:", what);
