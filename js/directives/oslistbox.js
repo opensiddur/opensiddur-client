@@ -64,9 +64,7 @@ OpenSiddurClientApp.directive(
                             console.log("Manual append to list box =", results);
                             scope.search.results = scope.search.results.concat(results);  // append to them
                             // resort list
-                            console.log("search results: ", scope.search.results);
                             scope.search.results.sort(function(a, b) { return a.a.__text > b.a.__text ? 1 : -1});
-                            //console.log("search results after sort: ", scope.search.results);
                         }
                     );
                  },
