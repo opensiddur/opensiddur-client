@@ -39,7 +39,10 @@ OpenSiddurClientApp.directive(
                                 $scope.search.query, $scope.search.results.length + 1, 100
                             );
                     };
-
+                    $scope.select = function(what) {
+                        console.log("Selected:", what);
+                        $scope.selection = what;
+                    };
                  }],
                  link: function(scope, elem, attrs, ctrl) {
                     scope.$on('SearchService.complete_' + scope.sourceKey,
@@ -53,7 +56,7 @@ OpenSiddurClientApp.directive(
                         }
                     );
                  },
-                 transclude : false,
+                 transclude : true,
                  templateUrl : "/js/directives/oslistbox.html"
              };
         }
