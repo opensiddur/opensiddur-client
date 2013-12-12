@@ -1,0 +1,11 @@
+<div class="control-group">
+  <label class="control-label" for="{{name}}1">{{label}}</label>
+  <div class="controls">
+    <input name="{{name}}{{$index + 1}}" class="input-block-level"
+        placeholder="{{placeholder}} {{$index + 1}}"
+        data-ng-model="element.__text"
+        data-ng-show="$index == 0 || array[$index - 1].__text || element.__text"
+        data-ng-repeat="element in array"/>
+  </div>
+</div>
+
