@@ -9,16 +9,23 @@
     <xsl:param name="base" select="."/>
     <tei:address>
       <xsl:copy-of select="$base/tei:address/tei:addrLine"/>
-      <xsl:if test="not($base/tei:address/tei:addrLine)">
-        <tei:addrLine/>
-        <tei:addrLine/>
-        <tei:addrLine/>
-        <tei:addrLine/>
-        <tei:addrLine/>
-      </xsl:if>
+      <xsl:call-template name="add-addrLine">
+        <xsl:with-param name="n" select="5 - count($base/tei:address/tei:addrLine)"/>
+      </xsl:call-template>
     </tei:address>
   </xsl:template>
   
+  <!-- add an address line up to n times --> 
+  <xsl:template name="add-addrLine">
+    <xsl:param name="n" select="0"/>
+    <xsl:if test="$n > 0">
+      <tei:addrLine/>
+      <xsl:call-template name="add-addrLine">
+        <xsl:with-param name="n" select="$n - 1"/>
+      </xsl:call-template>
+    </xsl:if>
+  </xsl:template> 
+ 
   <xsl:template match="j:contributor">
     <xsl:copy>
       <xsl:copy-of select="@*"/>

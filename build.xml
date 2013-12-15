@@ -14,7 +14,7 @@
 
   <target name="dist" 
         description="generate the xar distribution" >
-    <zip destfile="${dist}/opensiddur-client.xar" update="true"
+    <zip destfile="${dist}/opensiddur-client.xar" 
         >
         <fileset dir=".">
             <include name="**/*.html"/>
@@ -22,6 +22,7 @@
             <include name="**/*.js"/>
             <include name="**/*.xml"/>
             <include name="**/*.xq?"/> 
+            <include name="**/*.xsl"/>
             <include name="img/*"/> 
             <exclude name="{$dist}/**" />
             <exclude name="**/*.xar" />

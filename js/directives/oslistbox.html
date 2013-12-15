@@ -1,0 +1,30 @@
+<div class="row-fluid">
+    <div class="navbar">
+        <div class="navbar-inner">
+            <span class="span2 brand">{{title}} - </span>
+            <div data-ng-transclude="1"></div>
+            <ul class="span2 nav pull-right">
+                <li class="navbar-search" 
+                    data-os-search-box="{{api}}" 
+                    data-query="search.query" 
+                    data-results="search.results"
+                    data-source-key="{{sourceKey}}"></li>
+            </ul>
+        </div>
+    </div>
+    <div class="row-fluid search-results">
+        <table class="table table-hover table-condensed table-striped table-scrollable" 
+        data-infinite-scroll="nextSearch()">
+            <tbody>
+                <tr data-ng-repeat="result in search.results">
+                    <td data-ng-click="select(result.a._href)">{{result.a.__text}}</td>     
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <style type="text/css">/*<![CDATA[*/
+        .search-results {
+            overflow-y: scroll;
+        }
+    /*]]>*/</style>
+</div>

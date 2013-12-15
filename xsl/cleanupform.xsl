@@ -16,15 +16,24 @@
       </xsl:if>
     </xsl:template>
     
-    <!-- the content of a ptr is its target -->
-    <xsl:template match="tei:ptr">
+    <!-- the content of a ptr or relatedItem is its target -->
+    <xsl:template match="tei:ptr|tei:relatedItem">
       <xsl:if test="string-length(normalize-space(@target)) > 0">
         <xsl:copy>
           <xsl:apply-templates select="@*"/>
         </xsl:copy>
       </xsl:if>
     </xsl:template>
-    
+
+    <!-- the content of a biblScope is its @from|@to -->
+    <xsl:template match="tei:biblScope">
+      <xsl:if test="string-length(normalize-space(concat(@from, @to))) > 0">
+        <xsl:copy>
+          <xsl:apply-templates select="@*"/>
+        </xsl:copy>
+      </xsl:if>
+    </xsl:template>
+
     <!-- reject empty elements and elements whose only children are empty -->
     <xsl:template match="*">
       <xsl:if test="text()|*">

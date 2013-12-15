@@ -21,5 +21,5 @@ else
         then
             <exist:ignore/>
         else
-            <exist:forward url="/index.html"/>
+            <exist:forward url="index.html"/>
     }</exist:dispatch>

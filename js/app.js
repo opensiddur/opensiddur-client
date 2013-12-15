@@ -5,6 +5,14 @@
  * Licensed under the GNU Lesser General Public License, version 3 or later
  */
 var host = "";
+var x2js = new X2JS({ "arrayAccessForm" : "property", "emptyNodeForm" : "object" });   
+
+// list of all languages supported by the app
+var supportedLanguages = {
+    "en" : "English",
+    "he" : "עברית (Hebrew)",
+    "arc" : "ארמית (Aramaic)"
+};
 
 /* retrieve an API error return value and return the string */
 var getApiError = function(data) {
@@ -14,7 +22,10 @@ var getApiError = function(data) {
 var OpenSiddurClientApp = 
   angular.module(
       'OpenSiddurClientApp',
-      ['LocalStorageModule']);
+      ['ngRoute',
+       'LocalStorageModule',
+       'infinite-scroll'
+      ]);
 
 OpenSiddurClientApp.config(
   ['$httpProvider', 
@@ -36,6 +47,7 @@ OpenSiddurClientApp.config(
     $locationProvider.html5Mode(true).hashPrefix("!");
     $routeProvider
       .when('/signin', {templateUrl: '/partials/signin.html', controller: "AuthenticationCtrl"})
+      .when('/sources', {templateUrl: '/partials/sources.html', controller: "SourcesCtrl"})
       .when('/profile/:userName', {templateUrl: '/partials/profile.html', controller: "ProfileCtrl"})
       .when('/changepassword', {templateUrl: '/partials/changepassword.html', controller: "ChangePasswordCtrl"})
       .when('/about', {templateUrl: '/partials/about.html', controller: "AboutCtrl"})
