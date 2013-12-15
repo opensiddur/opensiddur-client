@@ -5,9 +5,10 @@
             data-source-key="sources"
             data-api="/api/data/sources"
             data-selection="editor.currentDocument">
-            <span class="span5 brand">{{editor.content.biblStruct.monogr.title_asArray[0].__text}}</span>
-            <div class="btn-group span3">
-                <div class="pull-right">
+            <span class="span5 brand"
+                data-ng-show="!editor.isNew || editor.loggedIn">{{editor.content.biblStruct.monogr.title_asArray[0].__text}}</span>
+            <div class="btn-group span3" data-ng-show="editor.loggedIn">
+                <div class="pull-right" data-ng-show="editor.loggedIn">
                   <button class="btn btn-primary " type="submit" 
                       data-ng-click="editor.newDocument()"  
                       >New</button>
@@ -16,9 +17,13 @@
                       data-ng-disabled="sourcesForm.$invalid || sourcesForm.$pristine">{{saveButtonText()}}</button>
                 </div>
             </div>
+            <span class="span5" data-ng-hide="!editor.isNew || editor.loggedIn"></span>
+            <div class="span3" data-ng-hide="editor.loggedIn">
+                <div class="pull-right">Not logged in: Read only.</div>
+            </div>
         </div>
     </div>
-    <div class="sources-editor">
+    <div class="sources-editor" data-ng-show="!editor.isNew || editor.loggedIn">
         <div class="row-fluid">
             <div class="span5 offset1 alert alert-warn text-center" data-ng-hide="!sourcesForm.$invalid">All fields must have valid data.</div>
             <div class="span5 alert alert-warn text-center" data-ng-hide="!sourcesForm.$error.required">All required fields must be filled in.</div>

@@ -6,9 +6,10 @@
  */
 OpenSiddurClientApp.controller(
     'SourcesCtrl',
-    ['$rootScope', '$scope', '$http', 'XsltService',
-    function ($rootScope, $scope, $http, XsltService) {
+    ['$rootScope', '$scope', '$http', 'XsltService', 'AuthenticationService',
+    function ($rootScope, $scope, $http, XsltService, AuthenticationService) {
         $scope.editor = {
+            loggedIn : AuthenticationService.loggedIn,
             "supportedLanguages" : supportedLanguages, 
             "monographScopes" : { 
                 volume : "volume",
