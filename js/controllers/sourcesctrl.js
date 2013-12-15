@@ -22,7 +22,8 @@ OpenSiddurClientApp.controller(
             isAnalytic: 0,       // this bibliographic entry has an "analytic" section
             isSeries : 0,        // this entry has a "series" section
             isNew : 1,           // this entry is a new document 
-            content : null,  
+            content : null,
+            requiredExample : null,       // example of a required field
             /* determine if any text nodes in any elements in documentPart have any data in the elements. Does not check attributes */
             hasData : function(documentPart) {
                 hd = false;
