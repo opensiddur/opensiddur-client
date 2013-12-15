@@ -46,6 +46,7 @@ OpenSiddurClientApp.directive(
                         console.log("Selected:", what);
                         $scope.selection = what;
                     };
+                    $scope.nextSearch();
                  }],
                  link: function(scope, elem, attrs, ctrl) {
                     // listen for search service

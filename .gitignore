@@ -31,4 +31,4 @@ private-scripts/
 *.rej
 
 # nginx conf file
-conf/nginx.conf
+conf/*.conf
