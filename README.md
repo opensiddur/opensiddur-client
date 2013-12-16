@@ -7,20 +7,20 @@ Installation
 ============
 
  1. Clone the repository
- 2. If you do not have a copy of [nginx] (http://nginx.org/en/docs/), install it according to the package directions.
- 3. Copy `conf/nginx.conf.tmpl` to `conf/nginx.conf`
- 4. Edit `conf/nginx.conf`. If you do not have an @opensiddur server installation, comment the line that begins `proxy_pass` that references `localhost` and uncomment the line that references `dev.jewishliturgy.org`
+ 2. If you do not have a copy of [nginx] (http://nginx.org/en/docs/), install it according to the package directions. You need version 1.4 or later.
+ 3. Copy `conf/nginx-dev.conf.tmpl` to `conf/nginx-dev.conf`
+ 4. Edit `conf/nginx-dev.conf`. Make local configuration changes. The most important lines are:
+     * `root /home/efeinstein/src/opensiddur-client;`: must be changed to point to your source directory
+     * `listen 5000` :  the port to listen on 
+     * `server_name localhost` : the server name
  5. Optional: Make any additional local configuration changes you want.
 
 Running the app
 ===============
 
-Run (you may need to be root and the working directory should be the clone!):
-```bash
-/path/to/clone/of/opensiddur-client$ nginx -c conf/nginx.conf -p /path/to/clone/of/opensiddur-client
-```
+Link the nginx.conf file to the nginx sites-enabled directory (`/etc/nginx/sites-enabled`, on Ubuntu, for example) and restart nginx.
 
-Point a web browser to [http://localhost:5000] (http://localhost:5000).
+Point a web browser to <http://localhost:5000> (or the server_name:port you specified in your nginx.conf).
 
 Setting up your local clone
 ===========================
