@@ -17,7 +17,7 @@
         data-infinite-scroll="nextSearch()">
             <tbody>
                 <tr data-ng-repeat="result in search.results">
-                    <td data-ng-click="select(result.a._href)">{{result.a.__text}}</td>     
+                    <td data-ng-click="select(result.a_asArray[0]._href)">{{result.a_asArray[0].__text}}</td>     
                 </tr>
             </tbody>
         </table>
