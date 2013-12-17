@@ -46,6 +46,10 @@ OpenSiddurClientApp.directive(
                         console.log("Selected:", what);
                         $scope.selection = what;
                     };
+                    $scope.collapsed = 0;
+                    $scope.toggleCollapse = function() {
+                        $scope.collapsed = 1 - $scope.collapsed;
+                    };
                     $scope.nextSearch();
                  }],
                  link: function(scope, elem, attrs, ctrl) {
