@@ -1,9 +1,53 @@
 <div class="container-fluid">
     <div class="secondary-fixed-top">
+        <div
+            data-os-list-box="Texts"
+            data-source-key="texts"
+            data-api="/api/data/original"
+            data-selection="editor.currentDocument">
+            <span class="span5 brand"
+                data-ng-show="!editor.isNew || editor.loggedIn">New?</span>
+            <div class="btn-group span3" data-ng-show="editor.loggedIn">
+                <div class="pull-right" data-ng-show="editor.loggedIn">
+                  <button class="btn btn-primary " type="submit" 
+                      data-ng-click="editor.newDocument()"  
+                      >New</button>
+                  <button data-ng-class="{'btn' : true, 'btn-primary' : true, 'btn-success' : textsForm.$pristine}" type="submit" 
+                      data-ng-click="editor.saveDocument()"  
+                      data-ng-disabled="textsForm.$invalid || textsForm.$pristine">{{saveButtonText()}}</button>
+                </div>
+            </div>
+            <span class="span5" data-ng-hide="!editor.isNew || editor.loggedIn"></span>
+            <div class="span3" data-ng-hide="editor.loggedIn">
+                <div class="pull-right alert alert-warn">You must be logged in to enter data!</div>
+            </div>
+        </div>
     </div>
     <div class="texts-editor">
+        <div>{{editor.currentDocument}}</div>
+        <form name="textsForm">
+            <textarea name="text"></textarea>
+        </form>
     </div>
     <style type="text/css">/*<![CDATA[*/
+        .secondary-fixed-top {
+            top: 45px;
+            position: fixed;
+            right: 0;
+            left: 0;
+            z-index: 1020;      /* just below navbar-fixed-top=1030 */
+            margin-bottom: 0;
+            border-bottom: thick solid black;
+            /*height: 210px;*/
+            background-color:white;
+        }
 
+        .search-results {
+            height: 130px;
+        }
+
+        body {
+            padding-top: 270px; /* 60px + 200px + 10px */
+        }
     /*]]>*/</style>
 </div>
