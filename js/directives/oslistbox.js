@@ -28,17 +28,26 @@ OpenSiddurClientApp.directive(
                     console.log("In list box controller");
                     $scope.errorMessage = "";
                     $scope.search = {
-                        query : "",             // active query
+                        query : { q : "" },             // active query
+                        prevQuery : "",                 // last query
                         results : [],           // list of search results, JSON-ified li
                         done : false            // any more results available?
                     };
+                    $scope.scroll = {
+                        searchTimeOutSecs : 10,  // how much time to wait for a response before scrolling
+                        nextStart : 1,
+                        inProgress : 0           // timestamp of last scrolled search
+                    };
                     $scope.nextSearch = function() {
                         console.log("nextSearch() called");
-                        if (!$scope.search.done) {  
-                            console.log("nextSearch() active");
+                        if (!$scope.search.done && 
+                            (!$scope.scroll.inProgress || ($scope.scroll.inProgress - 
+                                (new Date()/1000)) > $scope.scroll.searchTimeOutSecs )) {  
+                            console.log("nextSearch() active: query=", $scope.search.query.q);
+                            $scope.scroll.inProgress = new Date()/1000;
                             SearchService.query(
                                 $scope.sourceKey, $scope.api, 
-                                $scope.search.query, $scope.search.results.length + 1, 100
+                                $scope.search.query.q, $scope.scroll.nextStart, 100
                             );
                         }
                     };
@@ -56,12 +65,21 @@ OpenSiddurClientApp.directive(
                     // listen for search service
                     scope.$on('SearchService.complete_' + scope.sourceKey,
                         function(ev, results, start, maxResults) {
-                            console.log("Search complete received: results =", results, " start=", start, " maxResults=", maxResults);
+                            if (scope.search.prevQuery != scope.search.query.q) {
+                                // new query
+                                scope.search.prevQuery = scope.search.query.q;
+                                scope.search.done = false;
+                                scope.scroll.nextStart = 1;
+                                scope.search.results = [];
+                            }
+                            console.log("Search complete received: results =", results, " start=", start, " maxResults=", maxResults, " length=", results.length);
                             if (start == 1) 
                                 scope.search.results = results;        // clear previous results
                             else
                                 scope.search.results = scope.search.results.concat(results);  // append to them
                             scope.search.done = results.length < 100;
+                            scope.scroll.nextStart += 100;
+                            scope.scroll.inProgress = 0;
                         }
                     );
                     scope.$on('ListBox.Append_' + scope.sourceKey,

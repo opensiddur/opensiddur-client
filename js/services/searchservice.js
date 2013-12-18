@@ -42,7 +42,7 @@ OpenSiddurClientApp.service(
                       ls = (jsTransformed.ul) ? jsTransformed.ul.li_asArray : jsTransformed.ol.li_asArray;
                       $rootScope.$broadcast(
                         'SearchService.complete_' + sourceKey,
-                        ls,
+                        ls === undefined ? [] : ls,
                         start,
                         maxResults
                       )
