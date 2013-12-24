@@ -12,7 +12,13 @@
         <xsl:copy-of select="."/>
     </xsl:template>
 
-    <xsl:template match="@lang|@class|@contenteditable"/>
+    <xsl:template match="@lang">
+        <xsl:if test="not(../@xml:lang)">
+            <xsl:attribute name="xml:lang"><xsl:value-of select="."/></xsl:attribute>
+        </xsl:if>
+    </xsl:template>
+
+    <xsl:template match="@class|@contenteditable"/>
 
     <xsl:template name="underscored-to-namespaced-name">
         <xsl:param name="string" as="xs:string"/>
