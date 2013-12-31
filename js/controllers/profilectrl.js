@@ -8,12 +8,15 @@
 
 OpenSiddurClientApp.controller(
   'ProfileCtrl',
-  ['$scope', '$routeParams', '$http', 'XsltService',
-  function ($scope, $routeParams, $http, XsltService) {
+  ['$scope', '$routeParams', '$http', 'AuthenticationService', 'XsltService',
+  function ($scope, $routeParams, $http, AuthenticationService, XsltService) {
     console.log("Profile controller.")
     
     $scope.errorMessage = "";
-    $scope.userName = $routeParams.userName;
+    $scope.loggedIn = AuthenticationService.loggedIn;
+    $scope.userName = $routeParams.userName;    
+    $scope.userApi = $scope.userName ? ("/api/user/" + $scope.userName) : "";
+    $scope.isNew = $routeParams.userName == "";
     $scope.get = function () {
         $http.get(
           host + "/api/user/" + this.userName,

@@ -46,6 +46,7 @@ OpenSiddurClientApp.config(
   function($routeProvider, $locationProvider) {
     $locationProvider.html5Mode(true).hashPrefix("!");
     $routeProvider
+      .when('/contributors', {templateUrl: '/partials/profile.html', controller: "ProfileCtrl"})
       .when('/signin', {templateUrl: '/partials/signin.html', controller: "AuthenticationCtrl"})
       .when('/sources', {templateUrl: '/partials/sources.html', controller: "SourcesCtrl"})
       .when('/texts', {templateUrl: '/partials/texts.html', controller: "TextsCtrl"})

@@ -1,28 +1,49 @@
 <div class="container-fluid">
     <div class="secondary-fixed-top">
-        <div class="navbar">
-          <div class="navbar-inner">
-            <div class="span9 brand">Profile</div>
-                <div class="btn-group span3">
-                    <div class="pull-right">
-                        <button data-ng-class="{'btn' : true,  'btn-primary' : true, 'btn-success' : profileForm.$pristine}" type="submit" data-ng-click="save()"  data-ng-disabled="profileForm.$invalid || profileForm.$pristine">{{saveButtonText()}}</button>
-                    </div>
+        <div
+            data-os-list-box="Profile"
+            data-source-key="profile"
+            data-api="/api/user"
+            data-selection="userApi">
+            <span class="span5 brand"
+                data-ng-show="!isNew || loggedIn">{{userName}}</span>
+            <div class="btn-group span3" data-ng-show="loggedIn">
+                <div class="pull-right" data-ng-show="loggedIn">
+                  <button class="btn btn-primary " type="submit"
+                      data-ng-show="!userName" 
+                      data-ng-click="new()"
+                      >New</button>
+                  <button data-ng-class="{'btn' : true, 'btn-primary' : true, 'btn-success' : sourcesForm.$pristine}" type="submit" 
+                      data-ng-click="save()"  
+                      data-ng-disabled="profileForm.$invalid || profileForm.$pristine">{{saveButtonText()}}</button>
                 </div>
             </div>
-          </div>
+            <span class="span5" data-ng-hide="!isNew || loggedIn"></span>
+            <div class="span3" data-ng-hide="loggedIn">
+                <div class="pull-right alert alert-warn">You must be logged in to enter data!</div>
+            </div>
         </div>
   </div>
   <div class="row-fluid">
     <div class="span8 offset2">
       <div data-ng-hide="!errorMessage" class="alert alert-error">{{errorMessage}}</div>
-      <p>Your profile is <strong>public</strong> information that you want to be used
-      to identify or contact you on Open Siddur. Only a username is required for a profile,
-      all other information is optional. Third party individuals and contributors whose
-      work is used within Open Siddur (such as websites) also have
-      profiles that are managed by the community. These profiles are used to assign credit for 
-      the third party's work and use only the public information that identifies the source.</p>
-      <p>A future revision of the profile editor will allow searching and browsing of all user profiles
-      and community editing of third party source profiles.</p>
+      <div data-ng-show="userName">
+        <p>Your profile is <strong>public</strong> information that you want to be used
+        to identify or contact you on Open Siddur. Only a username is required for a profile,
+        all other information is optional. Third party individuals and contributors whose
+        work is used within Open Siddur (such as websites) also have
+        profiles that are managed by the community. These profiles are used to assign credit for 
+        the third party's work and use only the public information that identifies the source.</p>
+      </div>
+      <div data-ng-show="!userName">
+        <p>This is a community-managed third party profile for a contributor who is not contributing
+        directly to Open Siddur, but instead offers freely licensed material from another source,
+        online or offline. A profile is required for the third party contributor to receive credit for
+        work that went into producing the content. Please only include the same public information that 
+        the contributor includes on their own site or in their own published material.</p>
+        <p>If the material is being copied from a published work, it may not be necessary to enter a 
+        third party contributor. Instead, enter bibliographic information of the <a href="/sources">source</a>.</p> 
+      </div>
       <form class="form-horizontal" name="profileForm">
         <div class="control-group">
           <label class="control-label inline">This profile is for an:</label>
