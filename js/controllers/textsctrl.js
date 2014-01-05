@@ -12,23 +12,29 @@ OpenSiddurClientApp.controller(
         $scope.errorMessage = "";
         $scope.editor = {
             loggedIn : AuthenticationService.loggedIn,
+            title : "",
             currentDocument : null,
             content : "",
             isNew : 0,
             newDocument : function() {
                 console.log("Start a new document");
+                this.title = "New";
             },
             setDocument : function(toDocument) {
                 if (toDocument == "") {
                     this.newDocument();
                 }
                 else {
-                    $http.get(toDocument + "/flat") 
+                    $http.get(toDocument) 
                         .success(
                             function(data) {
+                                /*
                                 transformed = XsltService.transformString("teiToHtml", data);
                                 console.log(transformed);
                                 $scope.editor.content = (new XMLSerializer()).serializeToString(transformed);
+                                */
+                                $scope.editor.content = data; 
+                                $scope.editor.title = $("tei\\:title[type=main]", data).html();
                                 $scope.editor.isNew = 0;
                                 $scope.errorMessage = "";
                                 $scope.textsForm.$setPristine();
@@ -42,6 +48,13 @@ OpenSiddurClientApp.controller(
                             }
                         )
                 }
+            },
+            loaded : function( _editor ) {
+                this.ace = {
+                    editor : _editor,
+                    session : _editor.getSession(),
+                    renderer : _editor.renderer
+                };
             }
         };
         $scope.saveButtonText = function() {

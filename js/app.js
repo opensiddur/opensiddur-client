@@ -24,7 +24,8 @@ var OpenSiddurClientApp =
       'OpenSiddurClientApp',
       ['ngRoute',
        'LocalStorageModule',
-       'infinite-scroll'
+       'infinite-scroll',
+       'ui.ace'
       ]);
 
 OpenSiddurClientApp.config(

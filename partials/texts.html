@@ -6,7 +6,7 @@
             data-api="/api/data/original"
             data-selection="editor.currentDocument">
             <span class="span5 brand"
-                data-ng-show="!editor.isNew || editor.loggedIn">New?</span>
+                data-ng-show="!editor.isNew || editor.loggedIn">{{editor.title}}</span>
             <div class="btn-group span3" data-ng-show="editor.loggedIn">
                 <div class="pull-right" data-ng-show="editor.loggedIn">
                   <button class="btn btn-primary " type="submit" 
@@ -24,9 +24,15 @@
         </div>
     </div>
     <div class="texts-editor">
-        <div>{{editor.currentDocument}}</div>
         <form name="textsForm">
-            <textarea class="span10" name="text" data-ng-model="editor.content"></textarea>
+            <div class="span12" 
+                data-ui-ace="{showGutter : true, 
+                    useWrapMode : false,
+                    mode : 'xml',
+                    onLoad : editor.loaded
+                    }"
+                data-ng-model="editor.content"
+                data-readonly="{{!editor.loggedIn}}"></div>
         </form>
     </div>
     <style type="text/css">/*<![CDATA[*/
