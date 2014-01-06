@@ -6,8 +6,8 @@
  */
 OpenSiddurClientApp.controller(
     'TextsCtrl',
-    ['$scope', '$http', 'XsltService', 'AuthenticationService',
-    function ($scope, $http, XsltService, AuthenticationService) {
+    ['$scope', '$http', 'XsltService', 'AuthenticationService', 'AccessService',
+    function ($scope, $http, XsltService, AuthenticationService, AccessService) {
         console.log("Texts controller.");
         $scope.errorMessage = "";
         $scope.editor = {
@@ -15,10 +15,22 @@ OpenSiddurClientApp.controller(
             title : "",
             currentDocument : null,
             content : "",
-            isNew : 0,
+            access : {},
+            title : "",
+            isNew : 1,
             newDocument : function() {
                 console.log("Start a new document");
                 this.title = "New";
+                $scope.editor.isNew = 1;
+                $scope.editor.content = "";
+                $scope.editor.access = {
+                    owner : AuthenticationService.userName,
+                    group : AuthenticationService.userName,
+                    read : true, 
+                    write : true,
+                    relicense : true,
+                    chmod : true
+                }
             },
             setDocument : function(toDocument) {
                 if (toDocument == "") {
@@ -33,6 +45,19 @@ OpenSiddurClientApp.controller(
                                 console.log(transformed);
                                 $scope.editor.content = (new XMLSerializer()).serializeToString(transformed);
                                 */
+                                // the access data is needed outside of angular, so just using the promise object 
+                                // is less practical.
+                                $scope.editor.access = {
+                                    owner : undefined,
+                                    group : undefined,
+                                    read : undefined,
+                                    write : undefined,
+                                    relicense : undefined,
+                                    chmod : undefined
+                                };
+                                AccessService.get(toDocument).then(function(a) { 
+                                    $scope.editor.access = a;
+                                });
                                 $scope.editor.content = data; 
                                 $scope.editor.title = $("tei\\:title[type=main]", data).html();
                                 $scope.editor.isNew = 0;
