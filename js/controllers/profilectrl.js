@@ -1,25 +1,32 @@
 /* 
  * controller for profile page 
  * Open Siddur Project
- * Copyright 2013 Efraim Feinstein <efraim@opensiddur.org>
+ * Copyright 2013-2014 Efraim Feinstein <efraim@opensiddur.org>
  * Licensed under the GNU Lesser General Public License, version 3 or later
  */
 
 
 OpenSiddurClientApp.controller(
   'ProfileCtrl',
-  ['$scope', '$routeParams', '$http', 'AuthenticationService', 'XsltService',
-  function ($scope, $routeParams, $http, AuthenticationService, XsltService) {
+  ['$scope', '$routeParams', '$http', /*'AccessService',*/ 'AuthenticationService', 'XsltService',
+  function ($scope, $routeParams, $http, /*AccessService,*/ AuthenticationService, XsltService) {
     console.log("Profile controller.")
     
     $scope.errorMessage = "";
+    $scope.access = {
+        read : true,
+        write : true,
+        chmod : true
+    };
     $scope.loggedIn = AuthenticationService.loggedIn;
+    $scope.loggedInUser = AuthenticationService.userName;
     $scope.userName = $routeParams.userName;    
     $scope.userApi = $scope.userName ? ("/api/user/" + $scope.userName) : "";
+    $scope.profileType = 'unknown'; // may be 'self', 'other' or 'thirdparty'
     $scope.isNew = $routeParams.userName == "";
     $scope.get = function () {
         $http.get(
-          host + "/api/user/" + this.userName,
+          host + (this.userApi) ? this.userApi : "/templates/contributor.xml",
           {
             transformResponse: function(data, headers) {
                 console.log(data);
@@ -27,6 +34,15 @@ OpenSiddurClientApp.controller(
                 console.log(xsltTransformed);
                 jsTransformed = x2js.xml2json(xsltTransformed);
                 console.log(jsTransformed);
+                if ($scope.userApi) {
+                    var splits = $scope.userApi.split("/")
+                    $scope.profileType =  
+                        ($scope.loggedIn && decodeURI(splits[splits.length - 1]) == $scope.loggedInUser) ?
+                            'self' : 'thirdparty';
+                }
+                else {
+                    $scope.profileType = 'thirdparty';
+                }
                 return jsTransformed;
             }
           })
@@ -73,6 +89,9 @@ OpenSiddurClientApp.controller(
         return this.profileForm.$pristine ? "Saved" : "Save";
     };
     
+    $scope.$watch("userApi", 
+        function(newUser, oldUser) { $scope.get(); }
+    );
     $scope.get();
   }
   ]

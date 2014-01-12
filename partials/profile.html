@@ -1,6 +1,20 @@
 <div class="container-fluid">
     <div class="secondary-fixed-top">
+        <div class="navbar" data-ng-show="userName">
+            <div class="navbar-inner">
+                <span class="span2 brand">Profile - </span>
+                <span class="span5 brand">{{userName}}</span>
+                <div class="btn-group span3" data-ng-show="loggedIn">
+                    <div class="pull-right" data-ng-show="loggedIn">
+                      <button data-ng-class="{'btn' : true, 'btn-primary' : true, 'btn-success' : sourcesForm.$pristine}" type="submit" 
+                          data-ng-click="save()"  
+                          data-ng-disabled="profileForm.$invalid || profileForm.$pristine">{{saveButtonText()}}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div
+            data-ng-show="!userName"
             data-os-list-box="Profile"
             data-source-key="profile"
             data-api="/api/user"
@@ -27,23 +41,28 @@
   <div class="row-fluid">
     <div class="span8 offset2">
       <div data-ng-hide="!errorMessage" class="alert alert-error">{{errorMessage}}</div>
-      <div data-ng-show="userName">
-        <p>Your profile is <strong>public</strong> information that you want to be used
-        to identify or contact you on Open Siddur. Only a username is required for a profile,
-        all other information is optional. Third party individuals and contributors whose
-        work is used within Open Siddur (such as websites) also have
-        profiles that are managed by the community. These profiles are used to assign credit for 
-        the third party's work and use only the public information that identifies the source.</p>
-      </div>
-      <div data-ng-show="!userName">
-        <p>This is a community-managed third party profile for a contributor who is not contributing
-        directly to Open Siddur, but instead offers freely licensed material from another source,
-        online or offline. A profile is required for the third party contributor to receive credit for
-        work that went into producing the content. Please only include the same public information that 
-        the contributor includes on their own site or in their own published material.</p>
-        <p>If the material is being copied from a published work, it may not be necessary to enter a 
-        third party contributor. Instead, enter bibliographic information of the <a href="/sources">source</a>.</p> 
-      </div>
+      <div data-ng-switch="profileType">
+        <div data-ng-switch-when="'self'">
+          <p>Your profile is <strong>public</strong> information that you want to be used
+          to identify or contact you on Open Siddur. Only a username is required for a profile,
+          all other information is optional. Third party individuals and contributors whose
+          work is used within Open Siddur (such as websites) also have
+          profiles that are managed by the community. These profiles are used to assign credit for 
+          the third party's work and use only the public information that identifies the source.</p>
+        </div>
+        <div data-ng-switch-when="'other'">
+          <p>This is another user's public profile information. Only that user may edit his/her own profile.</p>
+        </div>
+        <div data-ng-switch-when="'thirdparty'">
+          <p>This is a community-managed third party profile for a contributor who is not contributing
+          directly to Open Siddur, but instead offers freely licensed material from another source,
+          online or offline. A profile is required for the third party contributor to receive credit for
+          work that went into producing the content. Please only include the same public information that 
+          the contributor includes on their own site or in their own published material.</p>
+          <p>If the material is being copied from a published work, it may not be necessary to enter a 
+          third party contributor. Instead, enter bibliographic information of the <a href="/sources">source</a>.</p> 
+        </div>
+      </div>  
       <form class="form-horizontal" name="profileForm">
         <div class="control-group">
           <label class="control-label inline">This profile is for an:</label>
@@ -150,12 +169,16 @@
             z-index: 1020;      /* just below navbar-fixed-top=1030 */
             margin-bottom: 0;
             border-bottom: thick solid black;
-            height: 40px;
+            /*height: 40px;*/
             background-color:white;
         }
 
+        .search-results {
+            height: 130px;
+        }
+
         body {
-            padding-top: 120px;
+            padding-top: 270px;
         }
 
     /*]]>*/</style>
