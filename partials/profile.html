@@ -41,8 +41,8 @@
   <div class="row-fluid">
     <div class="span8 offset2">
       <div data-ng-hide="!errorMessage" class="alert alert-error">{{errorMessage}}</div>
-      <div data-ng-switch="profileType">
-        <div data-ng-switch-when="'self'">
+      <div data-ng-switch="profileOwnership">
+        <div data-ng-switch-when="self">
           <p>Your profile is <strong>public</strong> information that you want to be used
           to identify or contact you on Open Siddur. Only a username is required for a profile,
           all other information is optional. Third party individuals and contributors whose
@@ -50,10 +50,10 @@
           profiles that are managed by the community. These profiles are used to assign credit for 
           the third party's work and use only the public information that identifies the source.</p>
         </div>
-        <div data-ng-switch-when="'other'">
+        <div data-ng-switch-when="other">
           <p>This is another user's public profile information. Only that user may edit his/her own profile.</p>
         </div>
-        <div data-ng-switch-when="'thirdparty'">
+        <div data-ng-switch-when="thirdparty">
           <p>This is a community-managed third party profile for a contributor who is not contributing
           directly to Open Siddur, but instead offers freely licensed material from another source,
           online or offline. A profile is required for the third party contributor to receive credit for

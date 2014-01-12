@@ -22,7 +22,7 @@ OpenSiddurClientApp.controller(
     $scope.loggedInUser = AuthenticationService.userName;
     $scope.userName = $routeParams.userName;    
     $scope.userApi = $scope.userName ? ("/api/user/" + $scope.userName) : "";
-    $scope.profileType = 'unknown'; // may be 'self', 'other' or 'thirdparty'
+    $scope.profileOwnership = 'unknown'; // may be 'self', 'other' or 'thirdparty'
     $scope.isNew = $routeParams.userName == "";
     $scope.get = function () {
         $http.get(
@@ -36,12 +36,12 @@ OpenSiddurClientApp.controller(
                 console.log(jsTransformed);
                 if ($scope.userApi) {
                     var splits = $scope.userApi.split("/")
-                    $scope.profileType =  
+                    $scope.profileOwnership =  
                         ($scope.loggedIn && decodeURI(splits[splits.length - 1]) == $scope.loggedInUser) ?
                             'self' : 'thirdparty';
                 }
                 else {
-                    $scope.profileType = 'thirdparty';
+                    $scope.profileOwnership = 'thirdparty';
                 }
                 return jsTransformed;
             }
