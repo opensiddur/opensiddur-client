@@ -6,8 +6,8 @@
  */
 OpenSiddurClientApp.controller(
     'TextsCtrl',
-    ['$scope', '$http', 'XsltService', 'AuthenticationService', 'AccessService',
-    function ($scope, $http, XsltService, AuthenticationService, AccessService) {
+    ['$scope', '$rootScope', '$http', '$window', 'XsltService', 'AuthenticationService', 'AccessService',
+    function ($scope, $rootScope, $http, $window, XsltService, AuthenticationService, AccessService) {
         console.log("Texts controller.");
         $scope.errorMessage = "";
         $scope.editor = {
@@ -19,8 +19,10 @@ OpenSiddurClientApp.controller(
             isNew : 1,
             newDocument : function() {
                 console.log("Start a new document");
+                this.title = "New";
                 $scope.editor.isNew = 1;
                 $scope.editor.content = "";
+                // default access rights for a new file
                 $scope.editor.access = {
                     owner : AuthenticationService.userName,
                     group : AuthenticationService.userName,
@@ -29,31 +31,44 @@ OpenSiddurClientApp.controller(
                     relicense : true,
                     chmod : true
                 }
+                // load a new document template
+                documentTemplate = "/templates/original.xml";
+                $http.get(documentTemplate) 
+                    .success(
+                        function(data) {
+                            $scope.editor.content = data; 
+                            $scope.editor.title = "New, Untitled";
+                            $scope.errorMessage = "";
+                            $scope.textsForm.$setPristine();
+                        }
+                    )
+                    .error(
+                        function(data) {
+                            $scope.errorMessage = getApiError(data);
+                            console.log("error loading", documentTemplate);
+                        }
+                    )
+                
             },
             setDocument : function(toDocument) {
-                if (toDocument == "") {
+                if (!toDocument) {
                     this.newDocument();
                 }
                 else {
-                    $http.get(toDocument + "/flat") 
+                    $http.get(toDocument) 
                         .success(
                             function(data) {
+                                /*
                                 transformed = XsltService.transformString("teiToHtml", data);
                                 console.log(transformed);
-                                // the access data is needed outside of angular, so just using the promise object 
-                                // is less practical.
-                                $scope.editor.access = {
-                                    owner : undefined,
-                                    group : undefined,
-                                    read : undefined,
-                                    write : undefined,
-                                    relicense : undefined,
-                                    chmod : undefined
-                                };
-                                AccessService.get(toDocument).then(function(a) { 
-                                    $scope.editor.access = a;
-                                });
                                 $scope.editor.content = (new XMLSerializer()).serializeToString(transformed);
+                                */
+                                $scope.editor.access = {};
+                                AccessService.get(toDocument).then(
+                                    function(result) { $scope.editor.access = result; return result; }
+                                );
+                                $scope.editor.content = data; 
+                                $scope.editor.title = $("tei\\:title[type=main]", data).html();
                                 $scope.editor.isNew = 0;
                                 $scope.errorMessage = "";
                                 $scope.textsForm.$setPristine();
@@ -67,6 +82,40 @@ OpenSiddurClientApp.controller(
                             }
                         )
                 }
+            },
+            saveDocument : function () {
+                console.log("Save:", this);
+                var httpOperation = (this.isNew) ? $http.post : $http.put;
+                var url = (this.isNew) ? "/api/data/original" : $scope.editor.currentDocument;
+                indata = $scope.editor.content;
+                httpOperation(url, indata)
+                    .success(function(data, statusCode, headers) {
+                        $scope.textsForm.$setPristine();
+                        if ($scope.editor.isNew) {
+                            // add to the search results listing
+                            $rootScope.$broadcast("ListBox.Append_texts", 
+                                [x2js.xml_str2json("<li class='result'><a class='document' href='"+headers('Location')+"'>"+ $("tei\\:title[type=main]", indata).html()+"</a></li>").li]
+                            );
+                            $scope.editor.isNew = 0;
+                            $scope.editor.currentDocument=headers('Location');
+                        };
+                    })
+                    .error(function(data) {
+                        $scope.errorMessage = getApiError(data);
+                        console.log("error saving", url);
+                    });
+
+            },
+            compile : function () {
+                // TODO: give this a nice loading/compiling/info interface.
+                $window.open($scope.editor.currentDocument + "/combined?transclude=true");
+            },
+            loaded : function( _editor ) {
+                this.ace = {
+                    editor : _editor,
+                    session : _editor.getSession(),
+                    renderer : _editor.renderer
+                };
             }
         };
         $scope.saveButtonText = function() {

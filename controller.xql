@@ -17,7 +17,7 @@ then
 else
     (: forward every request that comes here and is not to one of the special dirs to index.html :)
     <exist:dispatch>{
-        if (matches($exist:path, "^/(js|partials|css|img|ico|xsl)/"))
+        if (matches($exist:path, "^/(js|partials|templates|css|img|ico|xsl)/"))
         then
             <exist:ignore/>
         else

@@ -1,0 +1,10 @@
+/* application-wide CSS
+ *
+ * Open Siddur Project
+ * Copyright 2013-2014 Efraim Feinstein
+ * Licensed under the GNU Lesser General Public License, version 3 or later
+ */
+.ace_editor { 
+    height : 300px; 
+}
+
