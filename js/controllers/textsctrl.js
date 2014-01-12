@@ -6,8 +6,8 @@
  */
 OpenSiddurClientApp.controller(
     'TextsCtrl',
-    ['$scope', '$rootScope', '$http', 'XsltService', 'AuthenticationService', 'AccessService',
-    function ($scope, $rootScope, $http, XsltService, AuthenticationService, AccessService) {
+    ['$scope', '$rootScope', '$http', '$window', 'XsltService', 'AuthenticationService', 'AccessService',
+    function ($scope, $rootScope, $http, $window, XsltService, AuthenticationService, AccessService) {
         console.log("Texts controller.");
         $scope.errorMessage = "";
         $scope.editor = {
@@ -105,6 +105,10 @@ OpenSiddurClientApp.controller(
                         console.log("error saving", url);
                     });
 
+            },
+            compile : function () {
+                // TODO: give this a nice loading/compiling/info interface.
+                $window.open($scope.editor.currentDocument + "/combined?transclude=true");
             },
             loaded : function( _editor ) {
                 this.ace = {

@@ -15,6 +15,11 @@
                   <button data-ng-class="{'btn' : true, 'btn-primary' : true, 'btn-success' : textsForm.$pristine}" type="submit" 
                       data-ng-click="editor.saveDocument()"  
                       data-ng-disabled="textsForm.$invalid || textsForm.$pristine">{{saveButtonText()}}</button>
+                  <button class="btn btn-primary" type="submit"
+                      data-ng-show="editor.currentDocument"
+                      data-ng-disabled="textsForm.$invalid || textsForm.$dirty"
+                      data-ng-click="editor.compile()"
+                      >Compile to HTML</button>
                 </div>
             </div>
             <span class="span5" data-ng-hide="!editor.isNew || editor.loggedIn"></span>
