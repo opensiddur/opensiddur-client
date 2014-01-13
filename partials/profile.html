@@ -8,7 +8,7 @@
                     <div class="pull-right" data-ng-show="loggedIn">
                       <button data-ng-class="{'btn' : true, 'btn-primary' : true, 'btn-success' : sourcesForm.$pristine}" type="submit" 
                           data-ng-click="save()"  
-                          data-ng-disabled="profileForm.$invalid || profileForm.$pristine">{{saveButtonText()}}</button>
+                          data-ng-disabled="!access.write || profileForm.$invalid || profileForm.$pristine">{{saveButtonText()}}</button>
                     </div>
                 </div>
             </div>
@@ -25,7 +25,7 @@
                 <div class="pull-right" data-ng-show="loggedIn">
                   <button class="btn btn-primary " type="submit"
                       data-ng-show="!userName" 
-                      data-ng-click="new()"
+                      data-ng-click="newProfile()"
                       >New</button>
                   <button data-ng-class="{'btn' : true, 'btn-primary' : true, 'btn-success' : sourcesForm.$pristine}" type="submit" 
                       data-ng-click="save()"  
@@ -86,7 +86,13 @@
         <div class="control-group">
           <label class="control-label" for="formUserName">Username: </label>
           <div class="controls">
-            <input name="formUserName" class="input-block-level" data-ng-model="profile.contributor.idno.__text" data-ng-readonly="true"/>
+            <input 
+                name="formUserName" 
+                class="input-block-level"
+                required="1" 
+                data-ng-model="profile.contributor.idno.__text" 
+                data-ng-readonly="!isNew"
+                placeholder="Link name"/>
           </div>
         </div>
         <div data-ng-switch="profileType">

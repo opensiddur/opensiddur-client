@@ -8,9 +8,9 @@
 
 OpenSiddurClientApp.controller(
   'ProfileCtrl',
-  ['$scope', '$routeParams', '$http', /*'AccessService',*/ 'AuthenticationService', 'XsltService',
-  function ($scope, $routeParams, $http, /*AccessService,*/ AuthenticationService, XsltService) {
-    console.log("Profile controller.")
+  ['$scope', '$rootScope', '$routeParams', '$http', 'AccessService', 'AuthenticationService', 'XsltService',
+  function ($scope, $rootScope, $routeParams, $http, AccessService, AuthenticationService, XsltService) {
+    console.log("Profile controller.");
     
     $scope.errorMessage = "";
     $scope.access = {
@@ -23,7 +23,10 @@ OpenSiddurClientApp.controller(
     $scope.userName = $routeParams.userName;    
     $scope.userApi = $scope.userName ? ("/api/user/" + $scope.userName) : "";
     $scope.profileOwnership = 'unknown'; // may be 'self', 'other' or 'thirdparty'
-    $scope.isNew = $routeParams.userName == "";
+    $scope.isNew = Number($routeParams.userName == "");
+    $scope.newProfile = function() {
+        $scope.userApi = "";
+    }; 
     $scope.get = function () {
         $http.get(
           host + (this.userApi) ? this.userApi : "/templates/contributor.xml",
@@ -34,15 +37,6 @@ OpenSiddurClientApp.controller(
                 console.log(xsltTransformed);
                 jsTransformed = x2js.xml2json(xsltTransformed);
                 console.log(jsTransformed);
-                if ($scope.userApi) {
-                    var splits = $scope.userApi.split("/")
-                    $scope.profileOwnership =  
-                        ($scope.loggedIn && decodeURI(splits[splits.length - 1]) == $scope.loggedInUser) ?
-                            'self' : 'thirdparty';
-                }
-                else {
-                    $scope.profileOwnership = 'thirdparty';
-                }
                 return jsTransformed;
             }
           })
@@ -51,7 +45,26 @@ OpenSiddurClientApp.controller(
                   $scope.errorMessage = "";
                   console.log(data);
                   $scope.profile = data;
-                  $scope.profileType = ($scope.profile.contributor.orgName.length > 0) ? 'organization' : 'individual';
+                  $scope.profileType = ($scope.profile.contributor.orgName.__text) ? 'organization' : 'individual';
+                  
+                  if ($scope.userApi) {
+                    var splits = $scope.userApi.split("/");
+                    AccessService.get($scope.userApi).then(
+                        function(acc) { 
+                            $scope.profileOwnership =  
+                                ($scope.loggedIn && decodeURI(splits[splits.length - 1]) == $scope.loggedInUser) ?
+                                    'self' : 
+                                    ((acc.owner == $scope.profile.contributor.idno.__text) ? 'other' : 'thirdparty');
+                            $scope.access = acc;
+                            return acc; 
+                        }
+                    );
+                    $scope.isNew = 0;
+                  }
+                  else {
+                    $scope.profileOwnership = 'thirdparty';
+                    $scope.isNew = 1;
+                  }
               }
           )
           .error(
@@ -62,7 +75,7 @@ OpenSiddurClientApp.controller(
         
     };
     $scope.save = function () {       
-        $http.put(host + "/api/user/" + this.userName,
+        $http.put(host + "/api/user/" + ((this.userName) ? this.userName : this.profile.contributor.idno.__text),
             $(".instance").html(),
             {
                 transformRequest: function (data, headerGetters) {
@@ -76,6 +89,15 @@ OpenSiddurClientApp.controller(
             function(data, status, headers, config) {
                 $scope.errorMessage = "";
                 $scope.profileForm.$setPristine();
+                if ($scope.isNew) {
+                    $rootScope.$broadcast("ListBox.Append_profile",
+                        [x2js.xml_str2json(
+                            "<li class='result'><a class='document' href='"+headers('Location')+"'>" +
+                            $( ($scope.profileType == "individual") ? ".tei-name" : ".tei-orgName", ".instance").html() +
+                            "</a></li>").li
+                        ]);
+                }
+                $scope.isNew = 0;
             }
         )
         .error(
@@ -86,7 +108,9 @@ OpenSiddurClientApp.controller(
         
     };
     $scope.saveButtonText = function() {
-        return this.profileForm.$pristine ? "Saved" : "Save";
+        return ($scope.access.write) ? (
+                    this.profileForm.$pristine ? ((this.isNew) ? "Unsaved" : "Saved") : "Save")
+                    : "Read-only";
     };
     
     $scope.$watch("userApi", 
