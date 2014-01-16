@@ -87,11 +87,11 @@
           </button>
           <a class="brand" href="/about"><img src="/img/open-siddur-logo.png"/>Open Siddur Project</a>
           
-          <div class="nav-collapse collapse">
-            <ul id="navbar-menus" class="nav">
-              <li><a data-ng-href="/contributors" class="navbar-link">Contributors</a></li>
-              <li><a data-ng-href="/sources" class="navbar-link">Sources</a></li>
-              <li><a data-ng-href="/texts" class="navbar-link">Texts</a></li>
+          <div class="nav-collapse collapse" data-ng-controller="NavbarCtrl">
+            <ul id="navbar-menus" class="nav nav-pills">
+              <li data-ng-class="{active : isActive('/contributors')}"><a data-ng-href="/contributors" class="navbar-link">Contributors</a></li>
+              <li data-ng-class="{active : isActive('/sources')}"><a data-ng-href="/sources" class="navbar-link">Sources</a></li>
+              <li data-ng-class="{active : isActive('/texts')}"><a data-ng-href="/texts" class="navbar-link">Texts</a></li>
             </ul>
             <ul id="authentication-widget" class="nav pull-right" data-ng-controller="AuthenticationWidgetCtrl" data-ng-switch="loggedIn">
               <li data-ng-switch-when="false"><a data-ng-href="/signin" class="navbar-link">Sign in/Register</a></li>
@@ -111,7 +111,7 @@
         </div>
       </div>
     </div>
-    <div data-ng-view="1"></div>
+    <div class="tab-content" data-ng-view="1"></div>
     <div id="footer" class="container-fluid">
       <hr/>
   
@@ -151,6 +151,7 @@
     <script src="/js/controllers/authenticationwidgetctrl.js" ></script>
     <script src="/js/controllers/authenticationctrl.js" ></script>
     <script src="/js/controllers/changepasswordctrl.js" ></script>
+    <script src="/js/controllers/NavbarCtrl.js" ></script>
     <script src="/js/controllers/profilectrl.js" ></script>
     <script src="/js/controllers/sourcesctrl.js" ></script>
     <script src="/js/controllers/textsctrl.js" ></script>
