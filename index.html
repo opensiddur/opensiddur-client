@@ -111,23 +111,32 @@
         </div>
       </div>
     </div>
-    <div class="tab-content" data-ng-view="1"></div>
-    <div id="footer" class="container-fluid">
-      <hr/>
-  
-      <footer>
-        <p>&#169; 2013-2014 <a href="http://opensiddur.org">Contributors to the Open Siddur Project</a>. See <a href="#">About</a> for links to the source code and information about open source licensing.</p>
-      </footer>  
-    </div><!--/.fluid-container-->
+    <div class="page" data-ng-controller="IndexCtrl">
+      <div class="page-content">
+        <div class="page-search"
+            data-ng-hide="search.collapsed">
+            <os-search-list api="search.api" selection="search.selection">
+            </os-search-list>
+            <div>Current selection: {{search.selection}}</div>
+        </div>
+        <div class="tab-content" data-ng-view="1"></div>
+      </div>  
+      <div id="footer" class="container-fluid">
+        <hr/>
     
+        <footer>
+          <p>&#169; 2013-2014 <a href="http://opensiddur.org">Contributors to the Open Siddur Project</a>. See <a href="#">About</a> for links to the source code and information about open source licensing.</p>
+        </footer>  
+      </div><!--/.fluid-container-->
+   </div> 
     <!-- Le javascript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="http://code.jquery.com/jquery-2.0.3.min.js" ></script>
-    <script src="http://code.angularjs.org/1.2.3/angular.min.js" ></script>
-    <script src="http://code.angularjs.org/1.2.3/angular-resource.min.js" ></script>
-    <script src="http://code.angularjs.org/1.2.3/angular-cookies.min.js"></script>
-    <script src="http://code.angularjs.org/1.2.3/angular-route.min.js"></script>
+    <script src="http://code.angularjs.org/1.2.9/angular.min.js" ></script>
+    <script src="http://code.angularjs.org/1.2.9/angular-resource.min.js" ></script>
+    <script src="http://code.angularjs.org/1.2.9/angular-cookies.min.js"></script>
+    <script src="http://code.angularjs.org/1.2.9/angular-route.min.js"></script>
     <script src="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js" ></script>
     <script src="/js/infinite-scroll/ng-infinite-scroll.min.js" ></script>
     <script src="/js/base64.js" ></script>
@@ -149,13 +158,15 @@
     <script src="/js/directives/osinstance.js"></script>
     <script src="/js/services/authenticationservice.js" ></script>
     <script src="/js/services/accessservice.js" ></script>
+    <script src="/js/services/IndexService.js" ></script>
     <script src="/js/services/RestApi.js" ></script>
     <script src="/js/services/searchservice.js" ></script>
     <script src="/js/services/xsltservice.js" ></script>
-    <script src="/js/controllers/aboutctrl.js" ></script>
+    <script src="/js/controllers/AboutCtrl.js" ></script>
     <script src="/js/controllers/authenticationwidgetctrl.js" ></script>
     <script src="/js/controllers/authenticationctrl.js" ></script>
     <script src="/js/controllers/changepasswordctrl.js" ></script>
+    <script src="/js/controllers/IndexCtrl.js" ></script>
     <script src="/js/controllers/NavbarCtrl.js" ></script>
     <script src="/js/controllers/profilectrl.js" ></script>
     <script src="/js/controllers/sourcesctrl.js" ></script>
