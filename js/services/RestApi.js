@@ -6,8 +6,8 @@
 
 OpenSiddurClientApp.factory( 
     'RestApi', 
-    ['$resource',
-    function( $resource ) {
+    ['$resource', 'XsltService',
+    function( $resource, XsltService ) {
         var queryApi = {
             method : 'GET',
             params : { 
@@ -46,6 +46,23 @@ OpenSiddurClientApp.factory(
                 },
                 {
                     'query' : queryApi
+                }
+            ),
+            "/api/user" : $resource(
+                "/api/user\/:resource",
+                {
+                    resource : ""
+                },
+                {
+                    "getJson" : {
+                        method : "GET",
+                        transformResponse: function(data, headers) {
+                            xsltTransformed = XsltService.transformString('profileFormTemplate', data);
+                            jsTransformed = x2js.xml2json(xsltTransformed);
+                            return jsTransformed;
+                        }
+                    },
+                    "query" : queryApi
                 }
             )
         };
