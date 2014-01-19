@@ -23,6 +23,7 @@ var OpenSiddurClientApp =
   angular.module(
       'OpenSiddurClientApp',
       ['ngRoute',
+       'ngResource',
        'LocalStorageModule',
        'infinite-scroll',
        'ui.ace'
