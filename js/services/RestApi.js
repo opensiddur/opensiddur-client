@@ -8,40 +8,47 @@ OpenSiddurClientApp.factory(
     'RestApi', 
     ['$resource',
     function( $resource ) {
-        return $resource(
-            ':api',
-            { 
+        var queryApi = {
+            method : 'GET',
+            params : { 
                 q : "",
                 start : 1,
                 'max-results' : 100
             },
-            {
-                'query' : {
-                    method : 'GET',
-                    isArray : true,
-                    transformResponse : function( data ) {
-                        return $( $.parseXML( data ) )
-                            .find( "li.result" )
-                            .map( function( index, result ) {
-                                var doc = $("a.document", result);
-                                return {
-                                    title : doc.html(),
-                                    url : doc.attr("href"),
-                                    contexts : doc.find(".context").map(
-                                        function( cindex, context ) {
-                                            return {
-                                                previous : $(context, ".previous").html(),
-                                                match : $(context, ".match").html(),
-                                                following : $(context, ".following").html()
-                                            }
-                                        }
-                                    )
-                                };
-                            });
-                    }
-                }
+            isArray : false,
+            transformResponse : function( data ) {
+                return $( $.parseXML( data ) )
+                    .find( "li.result" )
+                    .map( function( index, result ) {
+                        var doc = $("a.document", result);
+                        return {
+                            title : doc.html(),
+                            url : doc.attr("href"),
+                            contexts : $(".context", result).map(
+                                function( cindex, context ) {
+                                    return {
+                                        previous : $(".previous", context).html(),
+                                        match : $(".match", context).html(),
+                                        following : $(".following", context).html()
+                                    }
+                                }
+                            )
+                        };
+                    });
             }
-        );
+        };
+
+        return {
+            "/api/data/original" : $resource(
+                '/api/data/original\/:resource',
+                { 
+                    resource : ""
+                },
+                {
+                    'query' : queryApi
+                }
+            )
+        };
   }
   ]
 );
