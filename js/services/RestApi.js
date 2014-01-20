@@ -48,6 +48,15 @@ OpenSiddurClientApp.factory(
                     'query' : queryApi
                 }
             ),
+            "/api/data/sources" : $resource(
+                '/api/data/sources\/:resource',
+                { 
+                    resource : ""
+                },
+                {
+                    'query' : queryApi
+                }
+            ),
             "/api/user" : $resource(
                 "/api/user\/:resource",
                 {

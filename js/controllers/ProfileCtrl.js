@@ -124,11 +124,11 @@ OpenSiddurClientApp.controller(
                 $scope.errorMessage = "";
                 $scope.profileForm.$setPristine();
                 if ($scope.isNew) {
-                    IndexService.addResult({
+                    IndexService.search.addResult({
                         title:  $( ($scope.profileType == "individual") ? ".tei-name" : ".tei-orgName", ".instance").html(), 
                         url : headers('Location'),
                         contexts : []
-                    })
+                    });
                 }
                 $scope.isNew = 0;
                 $scope.userName = headers("Location").split("/").pop();
