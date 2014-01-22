@@ -1,30 +1,34 @@
 <div class="container-fluid">
-    <div class="secondary-fixed-top">
-        <div
-            data-os-list-box="Texts"
-            data-source-key="texts"
-            data-api="/api/data/original"
-            data-selection="editor.currentDocument">
-            <span class="span5 brand"
-                data-ng-show="!editor.isNew || editor.loggedIn">{{editor.title}}</span>
-            <div class="btn-group span3" data-ng-show="editor.loggedIn">
-                <div class="pull-right" data-ng-show="editor.loggedIn">
-                  <button class="btn btn-primary " type="submit" 
-                      data-ng-click="editor.newDocument()"  
-                      >New</button>
+    <div class="toolbar nav">
+        <div class="btn-toolbar">
+            <div class="btn-group">
+                <button class="btn btn-primary"
+                    data-ng-show="!search.collapsed"
+                    data-ng-click="search.collapse()">&#x25b2;</button>
+                <button class="btn btn-primary"
+                    data-ng-show="search.collapsed"
+                    data-ng-click="search.expand()">&#x25bc;</button>
+            </div>
+            <div class="btn-group">
+                  <a class="btn btn-primary" type="submit"
+                      data-ng-disabled="!editor.loggedIn" 
+                      data-ng-click="/texts"  
+                      >New</a>
                   <button data-ng-class="{'btn' : true, 'btn-primary' : true, 'btn-success' : textsForm.$pristine}" type="submit" 
                       data-ng-click="editor.saveDocument()"  
                       data-ng-disabled="textsForm.$invalid || textsForm.$pristine">{{saveButtonText()}}</button>
+            </div>
+            <div class="btn-group">
+                <button class="btn-warning pull-right" data-ng-hide="editor.loggedIn">
+                    You must be logged in to enter data!
+                </button>
+            </div>
+            <div class="btn-group">
                   <button class="btn btn-primary" type="submit"
                       data-ng-show="editor.currentDocument"
                       data-ng-disabled="textsForm.$invalid || textsForm.$dirty"
                       data-ng-click="editor.compile()"
                       >Compile to HTML</button>
-                </div>
-            </div>
-            <span class="span5" data-ng-hide="!editor.isNew || editor.loggedIn"></span>
-            <div class="span3" data-ng-hide="editor.loggedIn">
-                <div class="pull-right alert alert-warn">You must be logged in to enter data!</div>
             </div>
         </div>
     </div>
@@ -48,24 +52,8 @@
         </div>
     </div>
     <style type="text/css">/*<![CDATA[*/
-        .secondary-fixed-top {
-            top: 45px;
-            position: fixed;
-            right: 0;
-            left: 0;
-            z-index: 1020;      /* just below navbar-fixed-top=1030 */
-            margin-bottom: 0;
-            border-bottom: thick solid black;
-            /*height: 210px;*/
-            background-color:white;
-        }
-
-        .search-results {
-            height: 130px;
-        }
-
         body {
-            padding-top: 270px; /* 60px + 200px + 10px */
+            padding-top: 60px; /* 60px + 200px + 10px */
         }
     /*]]>*/</style>
 </div>
