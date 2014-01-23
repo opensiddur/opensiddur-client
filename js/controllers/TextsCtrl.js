@@ -1,18 +1,22 @@
 /* 
  * controller for texts page 
  * Open Siddur Project
- * Copyright 2013 Efraim Feinstein <efraim@opensiddur.org>
+ * Copyright 2013-2014 Efraim Feinstein <efraim@opensiddur.org>
  * Licensed under the GNU Lesser General Public License, version 3 or later
  */
 OpenSiddurClientApp.controller(
     'TextsCtrl',
-    ['$scope', '$rootScope', '$http', '$window', 'XsltService', 'AuthenticationService', 'AccessService',
-    function ($scope, $rootScope, $http, $window, XsltService, AuthenticationService, AccessService) {
+    ['$scope', '$location', '$routeParams', '$http', '$window', 'XsltService', 'AuthenticationService', 'AccessService',
+    'IndexService',
+    function ($scope, $location, $routeParams, $http, $window, XsltService, AuthenticationService, AccessService, IndexService) {
         console.log("Texts controller.");
+        IndexService.search.enable( "/api/data/original" );
+        $scope.search = IndexService.search;
+
         $scope.errorMessage = "";
         $scope.editor = {
             loggedIn : AuthenticationService.loggedIn,
-            currentDocument : null,
+            currentDocument : $routeParams.resource,
             content : "",
             access : {},
             title : "",
@@ -50,12 +54,14 @@ OpenSiddurClientApp.controller(
                     )
                 
             },
-            setDocument : function(toDocument) {
+            setDocument : function() {
+                var toDocument = this.currentDocument;
+
                 if (!toDocument) {
                     this.newDocument();
                 }
                 else {
-                    $http.get(toDocument) 
+                    $http.get("/api/data/original/" + toDocument) 
                         .success(
                             function(data) {
                                 /*
@@ -86,16 +92,19 @@ OpenSiddurClientApp.controller(
             saveDocument : function () {
                 console.log("Save:", this);
                 var httpOperation = (this.isNew) ? $http.post : $http.put;
-                var url = (this.isNew) ? "/api/data/original" : $scope.editor.currentDocument;
+                var url = "/api/data/original" + ((this.isNew) ? "" : ("/" + $scope.editor.currentDocument));
                 indata = $scope.editor.content;
                 httpOperation(url, indata)
                     .success(function(data, statusCode, headers) {
                         $scope.textsForm.$setPristine();
                         if ($scope.editor.isNew) {
                             // add to the search results listing
-                            $rootScope.$broadcast("ListBox.Append_texts", 
-                                [x2js.xml_str2json("<li class='result'><a class='document' href='"+headers('Location')+"'>"+ $("tei\\:title[type=main]", indata).html()+"</a></li>").li]
-                            );
+                            IndexService.search.addResult({
+                                title:  $( "tei\\:title[type=main]", indata).html(), 
+                                url : headers('Location'),
+                                contexts : []
+                            });
+
                             $scope.editor.isNew = 0;
                             $scope.editor.currentDocument=headers('Location');
                         };
@@ -108,7 +117,7 @@ OpenSiddurClientApp.controller(
             },
             compile : function () {
                 // TODO: give this a nice loading/compiling/info interface.
-                $window.open($scope.editor.currentDocument + "/combined?transclude=true");
+                $window.open("/api/data/original/" + $scope.editor.currentDocument + "/combined?transclude=true");
             },
             loaded : function( _editor ) {
                 this.ace = {
@@ -122,14 +131,15 @@ OpenSiddurClientApp.controller(
             return this.textsForm.$pristine ? (($scope.editor.isNew) ? "Unsaved, No changes" : "Saved" ) : "Save";
         };
 
-        $scope.$watch("editor.currentDocument",
-            function(newDoc, oldDoc) {
-                $scope.editor.setDocument(newDoc);
+        $scope.$watch("search.selection",
+            function( selection ) { 
+                var resourceName = selection.split("/").pop();
+                if (resourceName && resourceName != $scope.editor.currentDocument)
+                    $location.path( "/texts/" + resourceName );
             }
         );
 
-        if ($scope.editor.loggedIn) {
-            $scope.editor.currentDocument = "";
-        }
+        $scope.editor.setDocument();
+
     }]
 );

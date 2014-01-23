@@ -1,0 +1,16 @@
+/* 
+ * controller for about page 
+ * Open Siddur Project
+ * Copyright 2013-2014 Efraim Feinstein <efraim@opensiddur.org>
+ * Licensed under the GNU Lesser General Public License, version 3 or later
+ */
+OpenSiddurClientApp.controller(
+  'AboutCtrl',
+  ['$scope', 'IndexService',
+  function ($scope, IndexService) {
+    console.log("About controller.");
+
+    IndexService.search.api = "";
+    IndexService.search.collapsed = true;
+  }]
+);
