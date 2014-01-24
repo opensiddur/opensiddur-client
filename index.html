@@ -87,11 +87,11 @@
           </button>
           <a class="brand" href="/about"><img src="/img/open-siddur-logo.png"/>Open Siddur Project</a>
           
-          <div class="nav-collapse collapse">
-            <ul id="navbar-menus" class="nav">
-              <li><a data-ng-href="/contributors" class="navbar-link">Contributors</a></li>
-              <li><a data-ng-href="/sources" class="navbar-link">Sources</a></li>
-              <li><a data-ng-href="/texts" class="navbar-link">Texts</a></li>
+          <div class="nav-collapse collapse" data-ng-controller="NavbarCtrl">
+            <ul id="navbar-menus" class="nav nav-pills">
+              <li data-ng-class="{active : isActive('/contributors')}"><a data-ng-href="/contributors" class="navbar-link">Contributors</a></li>
+              <li data-ng-class="{active : isActive('/sources')}"><a data-ng-href="/sources" class="navbar-link">Sources</a></li>
+              <li data-ng-class="{active : isActive('/texts')}"><a data-ng-href="/texts" class="navbar-link">Texts</a></li>
             </ul>
             <ul id="authentication-widget" class="nav pull-right" data-ng-controller="AuthenticationWidgetCtrl" data-ng-switch="loggedIn">
               <li data-ng-switch-when="false"><a data-ng-href="/signin" class="navbar-link">Sign in/Register</a></li>
@@ -111,23 +111,31 @@
         </div>
       </div>
     </div>
-    <div data-ng-view="1"></div>
+    <div class="page" data-ng-controller="IndexCtrl">
+      <div class="page-content">
+        <div class="page-search"
+            data-ng-hide="search.collapsed">
+            <os-search-list api="search.api" selection="search.selection">
+            </os-search-list>
+            <!--div>Current selection: {{search.selection}}</div-->
+        </div>
+        <div class="page-view tab-content" data-ng-view="1"></div>
+    </div><!--/.page--> 
     <div id="footer" class="container-fluid">
-      <hr/>
-  
-      <footer>
-        <p>&#169; 2013-2014 <a href="http://opensiddur.org">Contributors to the Open Siddur Project</a>. See <a href="#">About</a> for links to the source code and information about open source licensing.</p>
-      </footer>  
+          <hr/>
+      
+          <footer>
+            <p>&#169; 2013-2014 <a href="http://opensiddur.org">Contributors to the Open Siddur Project</a>. See <a href="/">About</a> for links to the source code and information about open source licensing.</p>
+          </footer>  
     </div><!--/.fluid-container-->
-    
     <!-- Le javascript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="http://code.jquery.com/jquery-2.0.3.min.js" ></script>
-    <script src="http://code.angularjs.org/1.2.3/angular.min.js" ></script>
-    <script src="http://code.angularjs.org/1.2.3/angular-resource.min.js" ></script>
-    <script src="http://code.angularjs.org/1.2.3/angular-cookies.min.js"></script>
-    <script src="http://code.angularjs.org/1.2.3/angular-route.min.js"></script>
+    <script src="http://code.angularjs.org/1.2.9/angular.min.js" ></script>
+    <script src="http://code.angularjs.org/1.2.9/angular-resource.min.js" ></script>
+    <script src="http://code.angularjs.org/1.2.9/angular-cookies.min.js"></script>
+    <script src="http://code.angularjs.org/1.2.9/angular-route.min.js"></script>
     <script src="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js" ></script>
     <script src="/js/infinite-scroll/ng-infinite-scroll.min.js" ></script>
     <script src="/js/base64.js" ></script>
@@ -140,20 +148,28 @@
     <!--script src="js/ckeditor/adapters/jquery.js"></script-->
     <script src="/js/app.js" ></script>
     <script src="/js/directives/osarrayinput.js"></script>
+    <script src="/js/directives/osErrorBox.js"></script>
+    <script src="/js/directives/osQueryBox.js"></script>
+    <script src="/js/directives/osResultsBox.js"></script>
     <script src="/js/directives/ossearchbox.js"></script>
+    <script src="/js/directives/osSearchList.js"></script>
     <script src="/js/directives/oslistbox.js"></script>
     <script src="/js/directives/osinstance.js"></script>
     <script src="/js/services/authenticationservice.js" ></script>
     <script src="/js/services/accessservice.js" ></script>
+    <script src="/js/services/IndexService.js" ></script>
+    <script src="/js/services/RestApi.js" ></script>
     <script src="/js/services/searchservice.js" ></script>
     <script src="/js/services/xsltservice.js" ></script>
-    <script src="/js/controllers/aboutctrl.js" ></script>
+    <script src="/js/controllers/AboutCtrl.js" ></script>
     <script src="/js/controllers/authenticationwidgetctrl.js" ></script>
-    <script src="/js/controllers/authenticationctrl.js" ></script>
-    <script src="/js/controllers/changepasswordctrl.js" ></script>
-    <script src="/js/controllers/profilectrl.js" ></script>
-    <script src="/js/controllers/sourcesctrl.js" ></script>
-    <script src="/js/controllers/textsctrl.js" ></script>
+    <script src="/js/controllers/AuthenticationCtrl.js" ></script>
+    <script src="/js/controllers/ChangePasswordCtrl.js" ></script>
+    <script src="/js/controllers/IndexCtrl.js" ></script>
+    <script src="/js/controllers/NavbarCtrl.js" ></script>
+    <script src="/js/controllers/ProfileCtrl.js" ></script>
+    <script src="/js/controllers/SourcesCtrl.js" ></script>
+    <script src="/js/controllers/TextsCtrl.js" ></script>
     <!-- 
     <script src="js/bootstrap-transition.js"></script>
     <script src="js/bootstrap-alert.js"></script>

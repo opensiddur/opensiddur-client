@@ -1,7 +1,7 @@
 /* 
  * AngularJS app
  * Open Siddur Project
- * Copyright 2013 Efraim Feinstein <efraim@opensiddur.org>
+ * Copyright 2013-2014 Efraim Feinstein <efraim@opensiddur.org>
  * Licensed under the GNU Lesser General Public License, version 3 or later
  */
 var host = "";
@@ -23,6 +23,7 @@ var OpenSiddurClientApp =
   angular.module(
       'OpenSiddurClientApp',
       ['ngRoute',
+       'ngResource',
        'LocalStorageModule',
        'infinite-scroll',
        'ui.ace'
@@ -47,10 +48,10 @@ OpenSiddurClientApp.config(
   function($routeProvider, $locationProvider) {
     $locationProvider.html5Mode(true).hashPrefix("!");
     $routeProvider
-      .when('/contributors', {templateUrl: '/partials/profile.html', controller: "ProfileCtrl"})
+      .when('/contributors/:userName?', {templateUrl: '/partials/profile.html', controller: "ProfileCtrl"})
       .when('/signin', {templateUrl: '/partials/signin.html', controller: "AuthenticationCtrl"})
-      .when('/sources', {templateUrl: '/partials/sources.html', controller: "SourcesCtrl"})
-      .when('/texts', {templateUrl: '/partials/texts.html', controller: "TextsCtrl"})
+      .when('/sources/:resource?', {templateUrl: '/partials/sources.html', controller: "SourcesCtrl"})
+      .when('/texts/:resource?', {templateUrl: '/partials/texts.html', controller: "TextsCtrl"})
       .when('/profile/:userName', {templateUrl: '/partials/profile.html', controller: "ProfileCtrl"})
       .when('/changepassword', {templateUrl: '/partials/changepassword.html', controller: "ChangePasswordCtrl"})
       .when('/about', {templateUrl: '/partials/about.html', controller: "AboutCtrl"})

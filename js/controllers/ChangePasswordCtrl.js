@@ -1,14 +1,18 @@
 /* 
  * Change password control
  * Open Siddur Project
- * Copyright 2013 Efraim Feinstein <efraim@opensiddur.org>
+ * Copyright 2013-2014 Efraim Feinstein <efraim@opensiddur.org>
  * Licensed under the GNU Lesser General Public License, version 3 or later
  */
 /* controller for signin and registration page */
 OpenSiddurClientApp.controller(
   'ChangePasswordCtrl', 
-  ['$scope', '$http', '$location', 'AuthenticationService',
-  function ($scope, $http, $location, AuthenticationService){
+  ['$scope', '$http', '$location', 'AuthenticationService', 'IndexService',
+  function ($scope, $http, $location, AuthenticationService, IndexService){
+      // turn off the index search service
+      IndexService.search.collapsed = true;
+      IndexService.search.api = "";
+
       who = AuthenticationService.whoami();
       $scope.userName = who.userName; 
       $scope.realCurrentPassword = who.password;

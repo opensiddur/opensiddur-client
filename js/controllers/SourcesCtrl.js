@@ -1,13 +1,17 @@
 /* 
  * controller for sources page 
  * Open Siddur Project
- * Copyright 2013 Efraim Feinstein <efraim@opensiddur.org>
+ * Copyright 2013-2014 Efraim Feinstein <efraim@opensiddur.org>
  * Licensed under the GNU Lesser General Public License, version 3 or later
  */
 OpenSiddurClientApp.controller(
     'SourcesCtrl',
-    ['$rootScope', '$scope', '$http', 'XsltService', 'AuthenticationService',
-    function ($rootScope, $scope, $http, XsltService, AuthenticationService) {
+    ['$rootScope', '$location', '$routeParams', '$scope', '$http', 'XsltService', 'IndexService', 'AuthenticationService',
+    function ($rootScope, $location, $routeParams, $scope, $http, XsltService, IndexService, AuthenticationService) {
+        IndexService.search.enable( "/api/data/sources" );
+
+        $scope.search = IndexService.search;
+
         $scope.editor = {
             loggedIn : AuthenticationService.loggedIn,
             "supportedLanguages" : supportedLanguages, 
@@ -18,10 +22,10 @@ OpenSiddurClientApp.controller(
                 chapter : "chapters",
                 part : "parts"
             },
-            currentDocument : "",   // document to load
+            currentDocument : $routeParams.resource,   // document to load
             isAnalytic: 0,       // this bibliographic entry has an "analytic" section
             isSeries : 0,        // this entry has a "series" section
-            isNew : 1,           // this entry is a new document 
+            isNew : !($routeParams.resource),           // this entry is a new document 
             content : null,
             requiredExample : null,       // example of a required field
             /* determine if any text nodes in any elements in documentPart have any data in the elements. Does not check attributes */
@@ -56,14 +60,15 @@ OpenSiddurClientApp.controller(
                 transformed = XsltService.transformString("sourceFormTemplate", "<tei:biblStruct xmlns:tei='http://www.tei-c.org/ns/1.0'/>"); 
                 $scope.editor.content = x2js.xml2json(transformed);
                 $scope.editor.content.biblStruct.monogr.title_asArray[0].__text = "New Bibliography Entry";
-                $scope.sourcesForm.$setPristine();
+                //$scope.sourcesForm.$setPristine();
             },
-            setDocument : function(toDocument) {
-                if (toDocument == "") {
+            setDocument : function( ) {
+                var toDocument = $scope.editor.currentDocument;
+                if (!toDocument) {
                     this.newDocument();
                 }
                 else {
-                        $http.get(toDocument)
+                        $http.get("/api/data/sources/" + toDocument)
                             .success(
                                 function(data) {
                                     transformed = XsltService.transformString("sourceFormTemplate", data);
@@ -72,8 +77,7 @@ OpenSiddurClientApp.controller(
                                     $scope.editor.isSeries = $scope.editor.hasData($scope.editor.content.biblStruct.series) ? 1 : 0;
                                     $scope.editor.isNew = 0;
                                     $scope.errorMessage = "";
-                                    $scope.sourcesForm.$setPristine();
-                                    //$scope.editor.currentDocument = toDocument;
+                                    //$scope.sourcesForm.$setPristine();
                                 }
                             ) 
                             .error(
@@ -113,9 +117,11 @@ OpenSiddurClientApp.controller(
                         $scope.sourcesForm.$setPristine();
                         if ($scope.editor.isNew) {
                             // add to the search results listing
-                            $rootScope.$broadcast("ListBox.Append_sources", 
-                                [x2js.xml_str2json("<li class='result'><a class='document' href='"+headers('Location')+"'>"+$scope.editor.content.biblStruct.monogr.title_asArray[0].__text+"</a></li>").li]
-                            );
+                            IndexService.search.addResult({
+                                title:  $( ".tei-monogr .tei-title[data-type=main]").html(), 
+                                url : headers('Location'),
+                                contexts : []
+                            });
                             $scope.editor.isNew = false;
                         };
                     })
@@ -128,11 +134,14 @@ OpenSiddurClientApp.controller(
         $scope.saveButtonText = function() {
             return this.sourcesForm.$pristine ? (($scope.editor.isNew) ? "Unsaved, No changes" : "Saved" ) : "Save";
         };
-        $scope.$watch("editor.currentDocument", 
-            function(newDoc, oldDoc) {
-                $scope.editor.setDocument(newDoc);
+
+        $scope.$watch("search.selection", 
+            function( selection ) {
+                if (selection) 
+                    $location.path( "/sources/" + selection.split("/").pop() );
             }
         ); 
-        $scope.editor.currentDocument = "";
+
+        $scope.editor.setDocument();
     }]
 );

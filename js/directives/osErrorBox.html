@@ -1,0 +1,5 @@
+<div class="osErrorBox">
+    <alert data-ng-repeat="message in messages" 
+        type="message.level" 
+        close="closeAlert($index)">{{message.message}}</alert>
+</div>
