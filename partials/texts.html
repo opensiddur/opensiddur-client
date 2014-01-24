@@ -12,7 +12,7 @@
             <div class="btn-group">
                   <a class="btn btn-primary" type="submit"
                       data-ng-disabled="!editor.loggedIn" 
-                      data-ng-click="/texts"  
+                      data-ng-href="/texts"  
                       >New</a>
                   <button data-ng-class="{'btn' : true, 'btn-primary' : true, 'btn-success' : textsForm.$pristine}" type="submit" 
                       data-ng-click="editor.saveDocument()"  
@@ -55,7 +55,18 @@
                     </ul>
                     <div class="tab-content">
                         <div class="tab-pane active in" id="link-helper">
-                            Link helper
+                            <label for="link.type">Search for a link to:</label>
+                            <select
+                                name="link.type" 
+                                data-ng-model="helper.link.selectedType"
+                                data-ng-options="key as value for (key , value) in helper.link.types"/>
+                            <os-search-list api="helper.link.selectedType" selection="helper.link.selection">
+                            </os-search-list>
+                            <div>Selected: {{helper.link.insertable}}</div>
+                            <button
+                                data-ng-disabled="!helper.link.selection || !editor.access.write"
+                                class="btn btn-primary" 
+                                data-ng-click="helper.link.insert()">Insert</button>
                         </div>
                         <div class="tab-pane" id="xml-helper">
                             XML Helper

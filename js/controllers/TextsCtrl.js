@@ -70,7 +70,7 @@ OpenSiddurClientApp.controller(
                                 $scope.editor.content = (new XMLSerializer()).serializeToString(transformed);
                                 */
                                 $scope.editor.access = {};
-                                AccessService.get(toDocument).then(
+                                AccessService.get("/api/data/original/" + toDocument).then(
                                     function(result) { $scope.editor.access = result; return result; }
                                 );
                                 $scope.editor.content = data; 
@@ -120,7 +120,8 @@ OpenSiddurClientApp.controller(
                 $window.open("/api/data/original/" + $scope.editor.currentDocument + "/combined?transclude=true");
             },
             loaded : function( _editor ) {
-                this.ace = {
+                console.log("editor loaded");
+                $scope.editor.ace = {
                     editor : _editor,
                     session : _editor.getSession(),
                     renderer : _editor.renderer
@@ -138,6 +139,25 @@ OpenSiddurClientApp.controller(
                     $location.path( "/texts/" + resourceName );
             }
         );
+
+        $scope.helper = {
+            link : {
+                selectedType : "/api/data/original",
+                types : {
+                    "/api/user" : "Contributor",
+                    "/api/data/original" : "Original text",
+                    "/api/data/sources" : "Source"
+                },
+                selection : "",
+                insertable : "",
+                insert : function () {
+                    $scope.editor.ace.editor.insert(this.insertable);
+                }
+            }
+        };
+        $scope.$watch("helper.link.selection", function (newSelection) {
+            $scope.helper.link.insertable = newSelection.replace(/^\/exist\/restxq\/api/, "")
+        });
 
         $scope.editor.setDocument();
 
