@@ -12,6 +12,7 @@ OpenSiddurClientApp.directive(
                  restrict : 'AE',
                  controller: ['$scope', 'ErrorService', function ($scope, ErrorService) {
                      $scope.messages = ErrorService.messages;
+                     $scope.closeAlert = ErrorService.closeAlert;
                  }],
                  transclude : false,
                  templateUrl : "/js/directives/osErrorBox.html"

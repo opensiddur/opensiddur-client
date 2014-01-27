@@ -18,8 +18,8 @@
 
 OpenSiddurClientApp.controller(
   'ProfileCtrl',
-  ['$scope', '$location', '$rootScope', '$routeParams', '$http', 'AccessService', 'AuthenticationService', 'IndexService', 'XsltService',
-  function ($scope, $location, $rootScope, $routeParams, $http, AccessService, AuthenticationService, IndexService, XsltService) {
+  ['$scope', '$location', '$rootScope', '$routeParams', '$http', 'AccessService', 'AuthenticationService', 'ErrorService', 'IndexService', 'XsltService',
+  function ($scope, $location, $rootScope, $routeParams, $http, AccessService, AuthenticationService, ErrorService, IndexService, XsltService) {
     console.log("Profile controller.");
     
 
@@ -64,7 +64,6 @@ OpenSiddurClientApp.controller(
           })
           .success(
               function(data, status, headers, config) {
-                  $scope.errorMessage = "";
                   console.log(data);
                   $scope.profile = data;
                   $scope.profileType = ($scope.profile.contributor.orgName.__text) ? 'organization' : 'individual';
@@ -90,7 +89,7 @@ OpenSiddurClientApp.controller(
           )
           .error(
               function(data, status, headers, config) {
-                $scope.errorMessage = getApiError(data)
+                ErrorService.addApiError(data)
               }
           );
         
@@ -106,7 +105,6 @@ OpenSiddurClientApp.controller(
         $location.path( "/contributors" );    
     };
 
-    $scope.errorMessage = "";
 
     $scope.save = function () {       
         $http.put(host + "/api/user/" + ((this.userName) ? this.userName : this.profile.contributor.idno.__text),
@@ -121,7 +119,6 @@ OpenSiddurClientApp.controller(
         )
         .success(
             function(data, status, headers, config) {
-                $scope.errorMessage = "";
                 $scope.profileForm.$setPristine();
                 if ($scope.isNew) {
                     IndexService.search.addResult({
@@ -136,7 +133,7 @@ OpenSiddurClientApp.controller(
         )
         .error(
             function(data, status, headers, config) {
-              $scope.errorMessage = getApiError(data);
+              ErrorService.addApiError(data);
             }  
         );
         

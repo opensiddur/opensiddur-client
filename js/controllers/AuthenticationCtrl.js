@@ -1,14 +1,14 @@
 /* 
  * Controller for signin and registration page 
  * Open Siddur Project
- * Copyright 2013 Efraim Feinstein <efraim@opensiddur.org>
+ * Copyright 2013-2014 Efraim Feinstein <efraim@opensiddur.org>
  * Licensed under the GNU Lesser General Public License, version 3 or later
  */
 
 OpenSiddurClientApp.controller(
   'AuthenticationCtrl', 
-  ['$scope', '$http', '$location', 'AuthenticationService', 'IndexService',
-  function ($scope, $http, $location, AuthenticationService, IndexService){
+  ['$scope', '$http', '$location', 'AuthenticationService', 'IndexService', 'ErrorService',
+  function ($scope, $http, $location, AuthenticationService, IndexService, ErrorService){
     // turn off the index search service
     IndexService.search.collapsed = true;
     IndexService.search.api = "";
@@ -22,15 +22,12 @@ OpenSiddurClientApp.controller(
             userName : who.userName,
             password : who.password,
             rememberMe : $scope.loggedIn,
-            errorMessage : ""
     };
     $scope.register = $scope.signin;
     $scope.register.repeatPassword = "";
     
     $scope.signin = function() {
         console.log("login")
-        $scope.signin.errorMessage = "";
-        $scope.register.errorMessage = "";
 
         AuthenticationService.authenticate(
                 $scope.signin.userName, $scope.signin.password,
@@ -39,14 +36,12 @@ OpenSiddurClientApp.controller(
                     $location.path("/about");
                 },
                 function(data, status, headers, config) {
-                    $scope.signin.errorMessage = getApiError(data);
+                    ErrorService.addApiError(data);
                 }
         );
       
     };
     $scope.register = function() {
-        $scope.signin.errorMessage = "";
-        $scope.register.errorMessage = "";
 
         console.log("register")
         $http.post(
@@ -63,7 +58,7 @@ OpenSiddurClientApp.controller(
             )
             .error(
                     function(data, status, headers, config) {
-                        $scope.register.errorMessage = getApiError(data);
+                        ErrorService.addApiError(data);
                     }
             );
     

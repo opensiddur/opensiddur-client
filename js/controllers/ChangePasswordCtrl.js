@@ -7,8 +7,8 @@
 /* controller for signin and registration page */
 OpenSiddurClientApp.controller(
   'ChangePasswordCtrl', 
-  ['$scope', '$http', '$location', 'AuthenticationService', 'IndexService',
-  function ($scope, $http, $location, AuthenticationService, IndexService){
+  ['$scope', '$http', '$location', 'AuthenticationService', 'ErrorService', 'IndexService',
+  function ($scope, $http, $location, AuthenticationService, ErrorService, IndexService){
       // turn off the index search service
       IndexService.search.collapsed = true;
       IndexService.search.api = "";
@@ -19,12 +19,8 @@ OpenSiddurClientApp.controller(
       $scope.currentPassword = "";
       $scope.newPassword = "";
       $scope.repeatPassword = "";
-      $scope.errorMessage = "";
-      $scope.successMessage = "";
     
       $scope.changePassword = function() {
-          $scope.successMessage = "";
-          $scope.errorMessage = "";
           AuthenticationService.authenticate(
                 $scope.userName, $scope.currentPassword,
                 function(data, status, headers, config) {
@@ -35,17 +31,17 @@ OpenSiddurClientApp.controller(
                             "</password></change-password>")
                             .success(
                                     function(data, status, headers, config) {
-                                        $scope.successMessage = "Password changed";
+                                        ErrorService.addAlert("Password changed", "success");
                                     }
                             )
                             .error(
                                     function(data, status, headers, config) {
-                                        $scope.errorMessage = getApiError(data);
+                                        ErrorService.addApiError(data);
                                     }
                             );    
                 },
                 function(data, status, headers, config) {
-                    $scope.errorMessage = getApiError(data);
+                    ErrorService.addApiError(data);
                 }
           );
       };

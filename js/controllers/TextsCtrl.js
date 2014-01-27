@@ -6,14 +6,14 @@
  */
 OpenSiddurClientApp.controller(
     'TextsCtrl',
-    ['$scope', '$location', '$routeParams', '$http', '$window', 'XsltService', 'AuthenticationService', 'AccessService',
-    'IndexService',
-    function ($scope, $location, $routeParams, $http, $window, XsltService, AuthenticationService, AccessService, IndexService) {
+    ['$scope', '$location', '$routeParams', '$http', '$window', 'XsltService', 
+    'AuthenticationService', 'AccessService', 'IndexService', 'ErrorService',
+    function ($scope, $location, $routeParams, $http, $window, XsltService, 
+        AuthenticationService, AccessService, IndexService, ErrorService) {
         console.log("Texts controller.");
         IndexService.search.enable( "/api/data/original" );
         $scope.search = IndexService.search;
 
-        $scope.errorMessage = "";
         $scope.editor = {
             loggedIn : AuthenticationService.loggedIn,
             currentDocument : $routeParams.resource,
@@ -42,13 +42,12 @@ OpenSiddurClientApp.controller(
                         function(data) {
                             $scope.editor.content = data; 
                             $scope.editor.title = "New, Untitled";
-                            $scope.errorMessage = "";
                             $scope.textsForm.$setPristine();
                         }
                     )
                     .error(
                         function(data) {
-                            $scope.errorMessage = getApiError(data);
+                            ErrorService.addApiError(data);
                             console.log("error loading", documentTemplate);
                         }
                     )
@@ -76,13 +75,12 @@ OpenSiddurClientApp.controller(
                                 $scope.editor.content = data; 
                                 $scope.editor.title = $("tei\\:title[type=main]", data).html();
                                 $scope.editor.isNew = 0;
-                                $scope.errorMessage = "";
                                 $scope.textsForm.$setPristine();
                             }
                         )
                         .error(
                             function(data) {
-                                $scope.errorMessage = getApiError(data);
+                                ErrorService.addApiError(data);
                                 console.log("error loading", toDocument);
                                 $scope.editor.currentDocument = "";
                             }
@@ -110,7 +108,7 @@ OpenSiddurClientApp.controller(
                         };
                     })
                     .error(function(data) {
-                        $scope.errorMessage = getApiError(data);
+                        ErrorService.addApiError(data);
                         console.log("error saving", url);
                     });
 

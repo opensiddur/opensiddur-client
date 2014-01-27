@@ -6,8 +6,10 @@
  */
 OpenSiddurClientApp.controller(
     'SourcesCtrl',
-    ['$rootScope', '$location', '$routeParams', '$scope', '$http', 'XsltService', 'IndexService', 'AuthenticationService',
-    function ($rootScope, $location, $routeParams, $scope, $http, XsltService, IndexService, AuthenticationService) {
+    ['$rootScope', '$location', '$routeParams', '$scope', '$http', 'XsltService', 
+    'IndexService', 'AuthenticationService', 'ErrorService',
+    function ($rootScope, $location, $routeParams, $scope, $http, XsltService, 
+    IndexService, AuthenticationService, ErrorService) {
         IndexService.search.enable( "/api/data/sources" );
 
         $scope.search = IndexService.search;
@@ -76,13 +78,12 @@ OpenSiddurClientApp.controller(
                                     $scope.editor.isAnalytic = $scope.editor.hasData($scope.editor.content.biblStruct.analytic) ? 1 : 0;
                                     $scope.editor.isSeries = $scope.editor.hasData($scope.editor.content.biblStruct.series) ? 1 : 0;
                                     $scope.editor.isNew = 0;
-                                    $scope.errorMessage = "";
                                     //$scope.sourcesForm.$setPristine();
                                 }
                             ) 
                             .error(
                                 function(data) {
-                                    $scope.errorMessage = getApiError(data);
+                                    ErrorService.addApiError(data);
                                     console.log("error loading", toDocument);
                                     $scope.editor.currentDocument = "";
                                 }
@@ -126,7 +127,7 @@ OpenSiddurClientApp.controller(
                         };
                     })
                     .error(function(data) {
-                        $scope.errorMessage = getApiError(data);
+                        ErrorService.addApiError(data);
                         console.log("error saving", url);
                     });
             }

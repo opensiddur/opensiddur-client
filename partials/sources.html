@@ -32,9 +32,6 @@
             <div class="span5 offset1 alert alert-warn text-center" data-ng-hide="!sourcesForm.$invalid">All fields must have valid data.</div>
             <div class="span5 alert alert-warn text-center" data-ng-hide="!sourcesForm.$error.required">All required fields (<input class="input-mini" readonly="true" required="true" data-ng-model="editor.requiredExample"/>) must be filled in</div>
         </div>
-        <div class="row-fluid" data-ng-hide="!errorMessage">
-            <div class="span8 offset2 alert alert-error">{{errorMessage}}</div>
-        </div>
         <div class="row-fluid sources-editor">
             <div class="span11 offset1">
                 <form name="sourcesForm">

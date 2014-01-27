@@ -122,6 +122,9 @@
         <div class="page-view tab-content" data-ng-view="1"></div>
     </div><!--/.page--> 
     <div id="footer" class="navbar navbar-fixed-bottom">
+        <div class="container-fluid">
+            <os-error-box></os-error-box>
+        </div>
         <div class="navbar-inner">
             <div class="container-fluid">
               <p>&#169; 2013-2014 <a href="http://opensiddur.org">Contributors to the Open Siddur Project</a>. See <a href="/">About</a> for links to the source code and information about open source licensing.</p>
@@ -151,15 +154,13 @@
     <script src="/js/directives/osErrorBox.js"></script>
     <script src="/js/directives/osQueryBox.js"></script>
     <script src="/js/directives/osResultsBox.js"></script>
-    <script src="/js/directives/ossearchbox.js"></script>
     <script src="/js/directives/osSearchList.js"></script>
-    <script src="/js/directives/oslistbox.js"></script>
     <script src="/js/directives/osinstance.js"></script>
     <script src="/js/services/authenticationservice.js" ></script>
     <script src="/js/services/accessservice.js" ></script>
+    <script src="/js/services/ErrorService.js" ></script>
     <script src="/js/services/IndexService.js" ></script>
     <script src="/js/services/RestApi.js" ></script>
-    <script src="/js/services/searchservice.js" ></script>
     <script src="/js/services/xsltservice.js" ></script>
     <script src="/js/controllers/AboutCtrl.js" ></script>
     <script src="/js/controllers/authenticationwidgetctrl.js" ></script>
