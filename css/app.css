@@ -4,7 +4,34 @@
  * Copyright 2013-2014 Efraim Feinstein
  * Licensed under the GNU Lesser General Public License, version 3 or later
  */
+body {
+    padding-top : 50px; /* navbar */
+    padding-bottom : 50px;
+}
+
 .ace_editor { 
     height : 300px; 
+}
+
+.page-view .btn-toolbar {
+    background-color : gray;
+    padding : 0;
+    margin : 0;
+}
+
+.toolbar {
+    margin : 0;
+    padding : 0;
+}
+
+#footer {
+
+}
+
+/* forms and controls */
+select.ng-invalid,
+input.ng-invalid,
+textarea.ng-invalid {
+    background-color:#FA787E
 }
 

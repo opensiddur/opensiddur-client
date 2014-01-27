@@ -1,5 +1,5 @@
-<div class="container-fluid">
-    <div class="toolbar nav">
+<div>
+    <div class="toolbar navbar navbar-inverse">
         <div class="btn-toolbar">
             <div class="btn-group">
                 <button class="btn btn-primary"
@@ -12,16 +12,11 @@
             <div class="btn-group">
                   <a class="btn btn-primary" type="submit"
                       data-ng-disabled="!editor.loggedIn" 
-                      data-ng-click="/texts"  
+                      data-ng-href="/texts"  
                       >New</a>
                   <button data-ng-class="{'btn' : true, 'btn-primary' : true, 'btn-success' : textsForm.$pristine}" type="submit" 
                       data-ng-click="editor.saveDocument()"  
                       data-ng-disabled="textsForm.$invalid || textsForm.$pristine">{{saveButtonText()}}</button>
-            </div>
-            <div class="btn-group">
-                <button class="btn-warning pull-right" data-ng-hide="editor.loggedIn">
-                    You must be logged in to enter data!
-                </button>
             </div>
             <div class="btn-group">
                   <button class="btn btn-primary" type="submit"
@@ -30,30 +25,75 @@
                       data-ng-click="editor.compile()"
                       >Compile to HTML</button>
             </div>
+            <div class="btn-group pull-right">
+                <button 
+                    class="btn btn-small btn-success" 
+                    data-ng-disabled="1"
+                    data-ng-show="editor.access.relicense"
+                    title="Relicensing allowed">RL</button>
+                <button 
+                    class="btn btn-small btn-warning" 
+                    data-ng-disabled="1"
+                    data-ng-show="!editor.access.relicense"
+                    title="Relicensing not allowed: You must be logged in, own the document, and be its only editor in order to relicense a text">R/L</button>
+                <button 
+                    class="btn btn-small btn-success" 
+                    data-ng-disabled="1"
+                    data-ng-show="editor.access.write"
+                    title="Editing allowed">R/W</button>
+                <button 
+                    class="btn btn-small btn-warning" 
+                    data-ng-disabled="1"
+                    data-ng-show="!editor.access.write"
+                    title="Editing not allowed: You must be logged in and have sufficient privileges to edit this text">R/O</button>
+            </div>
         </div>
     </div>
-    <div data-ng-show="!editor.loggedIn && !editor.currentDocument">
-        Log in to be able to edit a new document, or choose a document from the list to view it.
-    </div>
-    <div data-ng-show="editor.loggedIn || editor.currentDocument">
-        <div class="texts-editor">
-            <p><b>Access:</b> You <b>can <span data-ng-hide="editor.access.write">not</span></b> write to this document. You <b>can <span data-ng-hide="editor.access.relicense">not</span></b> relicense the document.</p>
-            <div class="alert alert-error" data-ng-show="errorMessage">{{errorMessage}}</div>
-            <form name="textsForm">
-                <div class="span12" 
-                    data-ui-ace="{showGutter : true, 
-                        useWrapMode : false,
-                        mode : 'xml',
-                        onLoad : editor.loaded
-                        }"
-                    data-ng-model="editor.content"
-                    data-readonly="{{!editor.loggedIn || !editor.access.write }}"></div>
-            </form>
+    <div class="container-fluid">
+        <div data-ng-show="!editor.loggedIn && !editor.currentDocument">
+            Log in to be able to edit a new document, or choose a document from the list to view it.
+        </div>
+        <div data-ng-show="editor.loggedIn || editor.currentDocument">
+            <div class="texts-editor">
+                <div class="alert alert-error" data-ng-show="errorMessage">{{errorMessage}}</div>
+                <form name="textsForm">
+                    <div class="span9" 
+                        data-ui-ace="{showGutter : true, 
+                            useWrapMode : false,
+                            mode : 'xml',
+                            onLoad : editor.loaded
+                            }"
+                        data-ng-model="editor.content"
+                        data-readonly="{{!editor.loggedIn || !editor.access.write }}"></div>
+                    <div class="span3">
+                        <ul class="nav nav-tabs">
+                            <li class="active"><a data-target="#link-helper" data-toggle="tab">Links</a></li>
+                            <li><a data-target="#xml-helper" data-toggle="tab">XML</a></li>
+                        </ul>
+                        <div class="tab-content">
+                            <div class="tab-pane active in" id="link-helper">
+                                <label for="link.type">Search for a link to:</label>
+                                <select
+                                    name="link.type" 
+                                    data-ng-model="helper.link.selectedType"
+                                    data-ng-options="key as value for (key , value) in helper.link.types"/>
+                                <div>
+                                    <os-search-list api="helper.link.selectedType" selection="helper.link.selection">
+                                    </os-search-list>
+                                </div>
+                                <div>Selected: {{helper.link.insertable}}</div>
+                                <button
+                                    data-ng-disabled="!helper.link.selection || !editor.access.write"
+                                    class="btn btn-primary" 
+                                    data-ng-click="helper.link.insert()">Insert</button>
+                            </div>
+                            <div class="tab-pane" id="xml-helper">
+                                XML Helper
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
-    <style type="text/css">/*<![CDATA[*/
-        body {
-            padding-top: 60px; /* 60px + 200px + 10px */
-        }
-    /*]]>*/</style>
 </div>
