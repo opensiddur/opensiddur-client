@@ -87,7 +87,11 @@
                                     data-ng-click="helper.link.insert()">Insert</button>
                             </div>
                             <div class="tab-pane" id="xml-helper">
-                                XML Helper
+                                <button 
+                                    data-ng-disabled="!editor.access.write"
+                                    class="btn btn-primary"
+                                    data-ng-click="helper.xml.addIds()"
+                                    >Add required xml:id attributes</button>
                             </div>
                         </div>
                     </div>

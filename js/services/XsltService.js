@@ -1,6 +1,6 @@
 /* XSLT service 
  * Open Siddur Project
- * Copyright 2013 Efraim Feinstein <efraim@opensiddur.org>
+ * Copyright 2013-2014 Efraim Feinstein <efraim@opensiddur.org>
  * Licensed under the GNU Lesser General Public License, version 3 or later
  */
 OpenSiddurClientApp.service(
@@ -75,6 +75,7 @@ OpenSiddurClientApp.service(
         svc.addProcessor('profileFormTemplate', '/xsl/profileformtemplate.xsl');
         svc.addProcessor('sourceFormTemplate', '/xsl/sourceformtemplate.xsl');
         svc.addProcessor('cleanupForm', '/xsl/cleanupform.xsl');
+        svc.addProcessor('addXmlId', '/xsl/add-xml-id.xsl');
         return svc;
     }]
 );
