@@ -156,7 +156,7 @@ OpenSiddurClientApp.controller(
                 addIds : function () {
                     var position = $scope.editor.ace.editor.getCursorPosition();
                     var transformed = XsltService.transformString( "addXmlId", $scope.editor.content );
-                    $scope.editor.ace.editor.setValue((new XMLSerializer()).serializeToString(transformed));
+                    $scope.editor.ace.editor.setValue((new window.XMLSerializer()).serializeToString(transformed));
                     $scope.editor.ace.editor.moveCursorToPosition(position);
                     $scope.editor.ace.editor.clearSelection();
 
