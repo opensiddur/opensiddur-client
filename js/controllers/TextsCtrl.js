@@ -151,6 +151,23 @@ OpenSiddurClientApp.controller(
                 insert : function () {
                     $scope.editor.ace.editor.insert(this.insertable);
                 }
+            },
+            xml : {
+                applyXslt : function ( xslt ) {
+                    var position = $scope.editor.ace.editor.getCursorPosition();
+                    var transformed = XsltService.transformString( xslt, $scope.editor.content );
+                    $scope.editor.content = ((new window.XMLSerializer()).serializeToString(transformed));
+                    $scope.$apply(); 
+                    $scope.editor.ace.editor.moveCursorToPosition(position);
+                    $scope.editor.ace.editor.clearSelection();
+
+                },
+                addIds : function () {
+                    this.applyXslt( "addXmlId" );
+                },
+                wordify : function () {
+                    this.applyXslt( "wordify" );
+                }
             }
         };
         $scope.$watch("helper.link.selection", function (newSelection) {
