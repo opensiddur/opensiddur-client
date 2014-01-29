@@ -153,13 +153,20 @@ OpenSiddurClientApp.controller(
                 }
             },
             xml : {
-                addIds : function () {
+                applyXslt : function ( xslt ) {
                     var position = $scope.editor.ace.editor.getCursorPosition();
-                    var transformed = XsltService.transformString( "addXmlId", $scope.editor.content );
-                    $scope.editor.ace.editor.setValue((new window.XMLSerializer()).serializeToString(transformed));
+                    var transformed = XsltService.transformString( xslt, $scope.editor.content );
+                    $scope.editor.content = ((new window.XMLSerializer()).serializeToString(transformed));
+                    $scope.$apply(); 
                     $scope.editor.ace.editor.moveCursorToPosition(position);
                     $scope.editor.ace.editor.clearSelection();
 
+                },
+                addIds : function () {
+                    this.applyXslt( "addXmlId" );
+                },
+                wordify : function () {
+                    this.applyXslt( "wordify" );
                 }
             }
         };

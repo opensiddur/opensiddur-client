@@ -86,12 +86,19 @@
                                     class="btn btn-primary" 
                                     data-ng-click="helper.link.insert()">Insert</button>
                             </div>
-                            <div class="tab-pane" id="xml-helper">
-                                <button 
-                                    data-ng-disabled="!editor.access.write"
-                                    class="btn btn-primary"
-                                    data-ng-click="helper.xml.addIds()"
-                                    >Add required xml:id attributes</button>
+                            <div class="tab-pane text-center" id="xml-helper">
+                                <div class="btn-group btn-group-vertical">
+                                    <button 
+                                        data-ng-disabled="!editor.access.write"
+                                        class="span3 btn btn-primary"
+                                        data-ng-click="helper.xml.addIds()"
+                                        >Add required xml:id attributes</button>
+                                    <button 
+                                        data-ng-disabled="!editor.access.write"
+                                        class="span3 btn btn-primary"
+                                        data-ng-click="helper.xml.wordify()"
+                                        >Tag words and punctuation</button>
+                                </div>
                             </div>
                         </div>
                     </div>
