@@ -7,6 +7,15 @@
 var host = "";
 var x2js = new X2JS({ "arrayAccessForm" : "property", "emptyNodeForm" : "object" });   
 
+// deferred bootstrap until after Saxon is loaded
+var windowName = window.name;
+window.name = "NG_DEFER_BOOTSTRAP!" + window.name;
+var onSaxonLoad = function() {
+    window.name = windowName;
+    angular.resumeBootstrap();
+};
+
+
 // list of all languages supported by the app
 var supportedLanguages = {
     "en" : "English",
