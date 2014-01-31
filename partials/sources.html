@@ -27,7 +27,7 @@
         </div>
     </div>
     
-    <div class="container-fluid sources-editor" data-ng-show="!editor.isNew || editor.loggedIn">
+    <div class="page-container container-fluid sources-editor" data-ng-show="!editor.isNew || editor.loggedIn">
         <div class="row-fluid">
             <div class="span5 offset1 alert alert-warn text-center" data-ng-hide="!sourcesForm.$invalid">All fields must have valid data.</div>
             <div class="span5 alert alert-warn text-center" data-ng-hide="!sourcesForm.$error.required">All required fields (<input class="input-mini" readonly="true" required="true" data-ng-model="editor.requiredExample"/>) must be filled in</div>

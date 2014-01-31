@@ -4,13 +4,42 @@
  * Copyright 2013-2014 Efraim Feinstein
  * Licensed under the GNU Lesser General Public License, version 3 or later
  */
-body {
-    padding-top : 50px; /* navbar */
-    padding-bottom : 50px;
+html, body {
+    margin:0;
+    padding:0;
+    height:100%;
+    /*overflow-y:hidden;  * turn off the scroll bar*/
+    border-size:border-box;
 }
 
-.ace_editor { 
-    height : 300px; 
+body {
+    padding-top:50px;
+    padding-bottom:50px;
+}
+
+.page {
+    position:absolute;
+    top:50px;           /* header and footer */
+    bottom:42px;
+    width:100%;
+}
+
+.page-search {
+    position:relative;
+    top:0;
+    height:auto;
+}
+
+.page-view {
+    position:relative;
+    top:auto;
+    bottom:0;
+}
+
+.toolbar {
+    position:relative;
+    margin : 0;
+    padding : 0;
 }
 
 .page-view .btn-toolbar {
@@ -19,14 +48,18 @@ body {
     margin : 0;
 }
 
-.toolbar {
-    margin : 0;
-    padding : 0;
+.page-container {
+    position:relative;
+    top:auto;
+    bottom:0;
+    height:100%;
+    overflow-y:scroll;
 }
 
-#footer {
-
+.ace_editor { 
+    height : 300px; 
 }
+
 
 /* forms and controls */
 select.ng-invalid,
@@ -35,3 +68,8 @@ textarea.ng-invalid {
     background-color:#FA787E
 }
 
+
+/* search results */
+.search-results tr {
+    cursor:pointer;
+}
