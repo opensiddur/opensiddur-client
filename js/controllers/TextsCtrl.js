@@ -23,7 +23,7 @@ OpenSiddurClientApp.controller(
             isNew : 1,
             newDocument : function() {
                 console.log("Start a new document");
-                this.title = "New";
+                this.title = "New text";
                 $scope.editor.isNew = 1;
                 $scope.editor.content = "";
                 // default access rights for a new file
@@ -41,7 +41,7 @@ OpenSiddurClientApp.controller(
                     .success(
                         function(data) {
                             $scope.editor.content = data; 
-                            $scope.editor.title = "New, Untitled";
+                            $scope.editor.title = "New text";
                             $scope.textsForm.$setPristine();
                         }
                     )

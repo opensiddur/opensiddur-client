@@ -34,18 +34,16 @@ body {
     position:relative;
     top:auto;
     bottom:0;
+
+.page-view .btn-toolbar {
+    padding : 0;
+    margin : 0;
 }
 
 .toolbar {
     position:relative;
     margin : 0;
     padding : 0;
-}
-
-.page-view .btn-toolbar {
-    background-color : gray;
-    padding : 0;
-    margin : 0;
 }
 
 .page-container {
