@@ -54,32 +54,50 @@ body {
 }
 
 .page {
-    position:absolute;
-    top:50px;           /* header and footer */
-    bottom:42px;
-    width:100%;
+    position: absolute;
+    top: 50px;           /* header and footer */
+    bottom: 42px;
+    width: 100%;
 }
 
 .page-search {
+    position: fixed;
+    z-index:1000;
+    top: 50px;
+    width:100%; 
+    height: auto;
+    background-color:white;
+}
+
+.page-header-waste-of-space {
     position:relative;
-    top:0;
-    height:auto;
+    top: 0;
+    height :150px;
+}
+
+.toolbar {
+    position:fixed;
+    z-index:900;
+    top: 50px;
+    width:100%;
+    margin : 0;
+    padding : 0;
+}
+
+.toolbar-waste-of-space {
+    background-color:white;
+    height:150px;
 }
 
 .page-view {
     position:relative;
     top:auto;
     bottom:0;
+}
 
 .page-view .btn-toolbar {
     padding : 0;
     margin : 0;
-}
-
-.toolbar {
-    position:relative;
-    margin : 0;
-    padding : 0;
 }
 
 .page-container {
@@ -87,7 +105,8 @@ body {
     top:auto;
     bottom:0;
     height:100%;
-    overflow-y:scroll;
+    padding-top: 50px;
+    padding-bottom: 50px;
 }
 
 .ace_editor { 
