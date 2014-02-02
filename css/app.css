@@ -8,7 +8,6 @@ html, body {
     margin:0;
     padding:0;
     height:100%;
-    /*overflow-y:hidden;  * turn off the scroll bar*/
     border-size:border-box;
 }
 
@@ -105,12 +104,15 @@ body {
     top:auto;
     bottom:0;
     height:100%;
-    padding-top: 50px;
+    padding-top: 43px;
     padding-bottom: 50px;
 }
 
-.ace_editor { 
+.ace_editor {
+    position: relative;
     height : 300px; 
+    margin : 0;
+    padding : 0;
 }
 
 
