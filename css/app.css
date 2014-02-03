@@ -77,7 +77,7 @@ body {
 .toolbar {
     position:fixed;
     z-index:900;
-    top: 50px;
+    top: 48px;
     width:100%;
     margin : 0;
     padding : 0;
