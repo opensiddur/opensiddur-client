@@ -37,6 +37,25 @@ OpenSiddurClientApp.factory(
                     });
             }
         };
+        var getAccessApi = function( urlBase ) { 
+            return {
+                method : 'GET',
+                url : urlBase + "/access",
+                params : { },
+                isArray : false,
+                transformResponse : function( data ) {
+                    js = x2js.xml_str2json(data);
+                    return {
+                        owner : js.access.owner.__text,
+                        group : js.access.group.__text,
+                        read : js.access.you._read == "true",
+                        write : js.access.you._write == "true",
+                        relicense : js.access.you._relicense == "true",
+                        chmod : js.access.you._chmod == "true"
+                    };
+                }
+            };
+        };
 
         return {
             "/api/data/original" : $resource(
@@ -45,7 +64,8 @@ OpenSiddurClientApp.factory(
                     resource : ""
                 },
                 {
-                    'query' : queryApi
+                    'query' : queryApi,
+                    'getAccess' : getAccessApi("/api/data/original\/:resource")
                 }
             ),
             "/api/data/sources" : $resource(
@@ -71,7 +91,8 @@ OpenSiddurClientApp.factory(
                             return jsTransformed;
                         }
                     },
-                    "query" : queryApi
+                    "query" : queryApi,
+                    'getAccess' : getAccessApi("/api/user\/:resource")
                 }
             )
         };
