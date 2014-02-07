@@ -18,8 +18,8 @@
 
 OpenSiddurClientApp.controller(
   'ProfileCtrl',
-  ['$scope', '$location', '$rootScope', '$routeParams', '$http', 'AccessService', 'AuthenticationService', 'ErrorService', 'IndexService', 'XsltService',
-  function ($scope, $location, $rootScope, $routeParams, $http, AccessService, AuthenticationService, ErrorService, IndexService, XsltService) {
+  ['$scope', '$location', '$rootScope', '$routeParams', '$http', 'AuthenticationService', 'ErrorService', 'IndexService', 'RestApi', 'XsltService',
+  function ($scope, $location, $rootScope, $routeParams, $http, AuthenticationService, ErrorService, IndexService, RestApi, XsltService) {
     console.log("Profile controller.");
     
 
@@ -69,16 +69,16 @@ OpenSiddurClientApp.controller(
                   $scope.profileType = ($scope.profile.contributor.orgName.__text) ? 'organization' : 'individual';
                   
                   if ($scope.userName) {
-                    AccessService.get("/api/user/" + $scope.userName).then(
-                        function(acc) { 
-                            $scope.ownership =  
-                                ($scope.loggedIn && $scope.userName == $scope.loggedInUser) ?
-                                    'self' : 
-                                    ((acc.owner == $scope.profile.contributor.idno.__text) ? 'other' : 'thirdparty');
-                            $scope.access = acc;
-                            return acc; 
-                        }
-                    );
+                    $scope.access = RestApi["/api/user"].getAccess({
+                        resource : $scope.userName
+                    }, function ( acc ) {
+                        $scope.ownership =  
+                            ($scope.loggedIn && $scope.userName == $scope.loggedInUser) ?
+                                'self' : 
+                                ((acc.owner == $scope.profile.contributor.idno.__text) ? 'other' : 'thirdparty');
+    
+                    });
+
                     $scope.isNew = 0;
                   }
                   else {

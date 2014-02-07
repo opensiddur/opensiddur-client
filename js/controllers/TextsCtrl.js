@@ -7,9 +7,9 @@
 OpenSiddurClientApp.controller(
     'TextsCtrl',
     ['$scope', '$location', '$routeParams', '$http', '$window', 'XsltService', 
-    'AuthenticationService', 'AccessService', 'IndexService', 'ErrorService',
+    'AuthenticationService', 'IndexService', 'ErrorService', 'RestApi',
     function ($scope, $location, $routeParams, $http, $window, XsltService, 
-        AuthenticationService, AccessService, IndexService, ErrorService) {
+        AuthenticationService, IndexService, ErrorService, RestApi) {
         console.log("Texts controller.");
         IndexService.search.enable( "/api/data/original" );
         $scope.search = IndexService.search;
@@ -63,15 +63,10 @@ OpenSiddurClientApp.controller(
                     $http.get("/api/data/original/" + toDocument) 
                         .success(
                             function(data) {
-                                /*
-                                transformed = XsltService.transformString("teiToHtml", data);
-                                console.log(transformed);
-                                $scope.editor.content = (new XMLSerializer()).serializeToString(transformed);
-                                */
-                                $scope.editor.access = {};
-                                AccessService.get("/api/data/original/" + toDocument).then(
-                                    function(result) { $scope.editor.access = result; return result; }
-                                );
+                                $scope.editor.access = RestApi["/api/data/original"].getAccess({
+                                    "resource" : toDocument
+                                });
+                                
                                 $scope.editor.content = data; 
                                 $scope.editor.title = $("tei\\:title[type=main]", data).html();
                                 $scope.editor.isNew = 0;
