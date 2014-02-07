@@ -44,7 +44,7 @@
             </tei:sourceDesc>
         </tei:fileDesc>
         <tei:revisionDesc>
-            <!-- this will be edited automatically when you save -->
+            <tei:change><!-- ?? Enter a commit log message here. --></tei:change>
         </tei:revisionDesc>
     </tei:teiHeader>
     <tei:text>
@@ -69,7 +69,7 @@
                 <tei:pc xml:id="seg2pc10">.</tei:pc>
             </tei:seg>
             <tei:anchor xml:id="anchor2"/>
-            <tei:ptr target="/data/original/name#stream"/>  <!-- this is an inclusion of external text -->
+            <tei:ptr xml:id="ptr1" target="/data/original/name#stream"/>  <!-- this is an inclusion of external text -->
         </j:streamText>
         <!-- here's a section of concurrent hierarchies -->
         <j:concurrent>
