@@ -126,9 +126,9 @@ OpenSiddurClientApp.controller(
                         url : headers('Location'),
                         contexts : []
                     });
+                    $scope.userName = headers("Location").split("/").pop();
                 }
                 $scope.isNew = 0;
-                $scope.userName = headers("Location").split("/").pop();
             }
         )
         .error(
