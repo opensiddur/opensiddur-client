@@ -101,6 +101,8 @@ OpenSiddurClientApp.controller(
                             $scope.editor.isNew = 0;
                             $scope.editor.currentDocument=headers('Location');
                         };
+                        // reset the title in the title bar
+                        $scope.editor.title = $("tei\\:title[type=main]", indata).html();
                     })
                     .error(function(data) {
                         ErrorService.addApiError(data);
