@@ -30,6 +30,7 @@ OpenSiddurClientApp.service(
         svc.addProcessor('instance', '/xsl/instance.xsl');
         svc.addProcessor('teiToHtml', '/xsl/tei2html.xsl');
         svc.addProcessor('htmlToTei', '/xsl/html2tei.xsl');
+        svc.addProcessor('originalTemplate', '/xsl/originaltemplate.xsl');
         svc.addProcessor('profileFormTemplate', '/xsl/profileformtemplate.xsl');
         svc.addProcessor('sourceFormTemplate', '/xsl/sourceformtemplate.xsl');
         svc.addProcessor('cleanupForm', '/xsl/cleanupform.xsl');

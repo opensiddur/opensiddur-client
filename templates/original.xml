@@ -43,7 +43,10 @@
                 <tei:distributor>
                     <tei:ref target="http://opensiddur.org">Open Siddur Project</tei:ref>
                 </tei:distributor>
-                <tei:date><!-- ?? Date the file was started, on or offline: YYYY-MM-DD --></tei:date>
+                <!-- ?? This is the publication date: It defaults to the date the file was started
+                at Open Siddur, but it might be earlier if the file was published by someone else: 
+                 -->
+                <tei:date></tei:date>
             </tei:publicationStmt>
             <tei:sourceDesc>
                 <tei:link type="bibl" target="#stream /data/sources/Born%20Digital"/>
@@ -51,7 +54,6 @@
             </tei:sourceDesc>
         </tei:fileDesc>
         <tei:revisionDesc>
-            <tei:change><!-- ?? Enter a commit log message here. --></tei:change>
         </tei:revisionDesc>
     </tei:teiHeader>
     <tei:text>
@@ -60,7 +62,7 @@
             all elements in the streamText are required to have an xml:id attribute,
             and each xml:id attribute has to have a value that is unique within the document.
             -->
-            <tei:seg xml:id="seg1">This is a segment of text.</tei:seg>
+            <tei:seg xml:id="seg1">This is a segment of text. Edit or delete me.</tei:seg>
         </j:streamText>
    </tei:text>
 </tei:TEI>

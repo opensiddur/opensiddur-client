@@ -6,9 +6,9 @@
  */
 OpenSiddurClientApp.controller(
     'TextsCtrl',
-    ['$scope', '$location', '$routeParams', '$http', '$window', 'XsltService', 
+    ['$scope', '$location', '$route', '$routeParams', '$http', '$window', 'XsltService', 
     'AuthenticationService', 'IndexService', 'ErrorService', 'RestApi',
-    function ($scope, $location, $routeParams, $http, $window, XsltService, 
+    function ($scope, $location, $route, $routeParams, $http, $window, XsltService, 
         AuthenticationService, IndexService, ErrorService, RestApi) {
         console.log("Texts controller.");
         IndexService.search.enable( "/api/data/original" );
@@ -40,7 +40,7 @@ OpenSiddurClientApp.controller(
                 $http.get(documentTemplate) 
                     .success(
                         function(data) {
-                            $scope.editor.content = data; 
+                            $scope.editor.content = ((new window.XMLSerializer()).serializeToString(XsltService.transformString( "originalTemplate", data ))); 
                             $scope.editor.title = "New text";
                             $scope.textsForm.$setPristine();
                         }
@@ -67,7 +67,7 @@ OpenSiddurClientApp.controller(
                                     "resource" : toDocument
                                 });
                                 
-                                $scope.editor.content = data; 
+                                $scope.editor.content = ((new window.XMLSerializer()).serializeToString(XsltService.transformString( "originalTemplate", data ))); 
                                 $scope.editor.title = $("tei\\:title[type=main]", data).html();
                                 $scope.editor.isNew = 0;
                                 $scope.textsForm.$setPristine();
@@ -109,6 +109,12 @@ OpenSiddurClientApp.controller(
                         console.log("error saving", url);
                     });
 
+            },
+            newButton : function () {
+                if ($location.path() == "/texts")
+                    $route.reload();
+                else 
+                    $location.path( "/texts" );
             },
             compile : function () {
                 // TODO: give this a nice loading/compiling/info interface.

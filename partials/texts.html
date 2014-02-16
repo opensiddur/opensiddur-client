@@ -13,10 +13,10 @@
                     <span class="btn btn-inverse" data-ng-disabled="1">{{ editor.title }}</span>
                 </div>
                 <div class="btn-group">
-                      <a class="btn btn-primary" type="submit"
+                      <button class="btn btn-primary" type="submit"
                           data-ng-disabled="!editor.loggedIn" 
-                          data-ng-href="/texts"  
-                          >New</a>
+                          data-ng-click="editor.newButton()"  
+                          >New</button>
                       <button data-ng-class="{'btn' : true, 'btn-primary' : true, 'btn-success' : textsForm.$pristine}" type="submit" 
                           data-ng-click="editor.saveDocument()"  
                           data-ng-disabled="textsForm.$invalid || textsForm.$pristine">{{saveButtonText()}}</button>
