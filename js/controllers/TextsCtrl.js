@@ -99,7 +99,7 @@ OpenSiddurClientApp.controller(
                             });
 
                             $scope.editor.isNew = 0;
-                            $scope.editor.currentDocument=headers('Location');
+                            $scope.editor.currentDocument=headers('Location').replace("/exist/restxq/api/data/original/", "");
                         };
                         // reset the title in the title bar
                         $scope.editor.title = $("tei\\:title[type=main]", indata).html();
