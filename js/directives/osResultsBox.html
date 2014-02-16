@@ -7,7 +7,11 @@
                     <td>{{result.title}}</td>
                     <td>
                         <ul class="search-contexts">
-                            <li data-ng-repeat="context in result.contexts"><span data-ng-repeat="(key, value) in context" data-ng-class="key">{{value}} </span></li>
+                            <li data-ng-repeat="context in result.contexts">
+                                <span class="previous">{{context.previous}} </span>
+                                <span class="match">{{context.match}} </span>
+                                <span class="following">{{context.following}} </span>
+                            </li>
                         </ul>
                     </td>   
                 </tr>
