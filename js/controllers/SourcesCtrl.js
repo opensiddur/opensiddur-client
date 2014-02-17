@@ -61,7 +61,7 @@ OpenSiddurClientApp.controller(
                 $scope.editor.isSeries = 0;
                 transformed = XsltService.transformString("sourceFormTemplate", "<tei:biblStruct xmlns:tei='http://www.tei-c.org/ns/1.0'/>"); 
                 $scope.editor.content = x2js.xml2json(transformed);
-                $scope.editor.content.biblStruct.monogr.title_asArray[0].__text = "New Bibliography Entry";
+                //$scope.editor.content.biblStruct.monogr.title_asArray[0].__text = "New Bibliography Entry";
                 //$scope.sourcesForm.$setPristine();
             },
             setDocument : function( ) {
@@ -119,7 +119,7 @@ OpenSiddurClientApp.controller(
                         if ($scope.editor.isNew) {
                             // add to the search results listing
                             IndexService.search.addResult({
-                                title:  $( ".tei-monogr .tei-title[data-type=main]").html(), 
+                                title:  decodeURI(headers("Location").split("/").pop()), 
                                 url : headers('Location'),
                                 contexts : []
                             });
