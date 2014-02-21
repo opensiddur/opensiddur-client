@@ -12,6 +12,9 @@ OpenSiddurClientApp.controller(
         AuthenticationService, IndexService, ErrorService, RestApi) {
         console.log("Texts controller.");
         IndexService.search.enable( "/api/data/original" );
+        if ($routeParams.resource) {
+            IndexService.search.collapse();
+        }
         $scope.search = IndexService.search;
 
         $scope.editor = {

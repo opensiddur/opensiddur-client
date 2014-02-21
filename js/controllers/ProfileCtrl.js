@@ -45,7 +45,9 @@ OpenSiddurClientApp.controller(
     else {
         IndexService.search.disable();
     }
-
+    if ($scope.userName) {
+        IndexService.search.collapse();
+    }
    
     $scope.get = function ( ) {  
         // HTTP interaction with the API
@@ -89,7 +91,7 @@ OpenSiddurClientApp.controller(
           )
           .error(
               function(data, status, headers, config) {
-                ErrorService.addApiError(data)
+                ErrorService.addApiError(data);
               }
           );
         

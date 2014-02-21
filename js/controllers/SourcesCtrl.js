@@ -11,7 +11,9 @@ OpenSiddurClientApp.controller(
     function ($rootScope, $location, $routeParams, $scope, $http, XsltService, 
     IndexService, AuthenticationService, ErrorService) {
         IndexService.search.enable( "/api/data/sources" );
-
+        if ($routeParams.resource) {
+            IndexService.search.collapse();
+        }
         $scope.search = IndexService.search;
 
         $scope.editor = {
