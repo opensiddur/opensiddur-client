@@ -53,7 +53,7 @@ OpenSiddurClientApp.controller(
                     )
                 
             },
-            setDocument : function() {
+            setDocument : function( cursorLocation ) {
                 var toDocument = this.currentDocument;
 
                 if (!toDocument) {
@@ -71,6 +71,12 @@ OpenSiddurClientApp.controller(
                                 $scope.editor.title = $("tei\\:title[type=main]", data).html();
                                 $scope.editor.isNew = 0;
                                 $scope.textsForm.$setPristine();
+
+                                if (cursorLocation) {
+                                    $scope.$apply(); 
+                                    $scope.editor.ace.editor.moveCursorToPosition(cursorLocation);
+                                    $scope.editor.ace.editor.clearSelection();
+                                }
                             }
                         )
                         .error(
@@ -101,8 +107,8 @@ OpenSiddurClientApp.controller(
                             $scope.editor.isNew = 0;
                             $scope.editor.currentDocument=headers('Location').replace("/exist/restxq/api/data/original/", "");
                         };
-                        // reset the title in the title bar
-                        $scope.editor.title = $("tei\\:title[type=main]", indata).html();
+                        // reload the document to get the change log in there correctly
+                        $scope.editor.setDocument($scope.editor.ace.editor.getCursorPosition());
                     })
                     .error(function(data) {
                         ErrorService.addApiError(data);
