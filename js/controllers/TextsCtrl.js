@@ -73,7 +73,7 @@ OpenSiddurClientApp.controller(
                                 $scope.textsForm.$setPristine();
 
                                 if (cursorLocation) {
-                                    $scope.$apply(); 
+                                    //$scope.$apply(); 
                                     $scope.editor.ace.editor.moveCursorToPosition(cursorLocation);
                                     $scope.editor.ace.editor.clearSelection();
                                 }
@@ -92,7 +92,8 @@ OpenSiddurClientApp.controller(
                 console.log("Save:", this);
                 var httpOperation = (this.isNew) ? $http.post : $http.put;
                 var url = "/api/data/original" + ((this.isNew) ? "" : ("/" + $scope.editor.currentDocument));
-                indata = $scope.editor.content;
+                indata = (new window.XMLSerializer()).serializeToString(
+                    XsltService.transformString( "originalBeforeSave", $scope.editor.content ));
                 httpOperation(url, indata)
                     .success(function(data, statusCode, headers) {
                         $scope.textsForm.$setPristine();
