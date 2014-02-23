@@ -11,7 +11,12 @@ OpenSiddurClientApp.service(
         return {
             messages : [],
             addApiError : function ( message ) {
-                this.addAlert( $( $.parseXML( message ) ).find( "message" ).text(), "error");
+                this.addAlert(
+                    $.makeArray( 
+                        $( "message", $.parseXML( message ) ).map(
+                            function( i, x ) { return $(x).text().trim(); }
+                        )
+                    ).join("<br/>"), "error");
             },
             addAlert : function( message, level ) {
                 this.messages.push( { 'message' : message, 'level' : level } );

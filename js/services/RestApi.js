@@ -50,25 +50,82 @@ OpenSiddurClientApp.factory(
                         function ( cindex, context, attribute ) {
                             var c = $(context);
                             var name = c.text();
-                            var write = c.attr(attribute);
+                            var permission = c.attr(attribute);
                             return {
-                                name : write 
+                                "group" : name,
+                                "value" : permission 
                             };
                         };
                     var aclToJsW = function (cindex, context) { return aclToJs( cindex, context, "write"); }
                     var aclToJsR = function (cindex, context) { return aclToJs( cindex, context, "read"); }
+                    var flatten = function ( arrayOfObjects ) {
+                        var obj = {};
+                        for (var i = 0; i < arrayOfObjects.length; i++) {
+                            obj[arrayOfObjects[i].group] = arrayOfObjects[i].value;
+                        }
+                        return obj;
+                    };
                     return {
                         owner : acc.find("a\\:owner").text(),
                         group : acc.find("a\\:group").text(),
+                        groupWrite : acc.find("a\\:group").attr("write") == "true",
+                        worldRead : acc.find("a\\:world").attr("read") == "true",
+                        worldWrite : acc.find("a\\:world").attr("write") == "true",
                         read : you.attr("read") == "true",
                         write : you.attr("write") == "true",
                         relicense : you.attr("relicense") == "true",
                         chmod : you.attr("chmod") == "true",
-                        grantGroups : acc.find("a\\:grant-group").map(aclToJsW),
-                        grantUsers : acc.find("a\\:grant-user").map(aclToJsW),
-                        denyGroups : acc.find("a\\:deny-group").map(aclToJsR),
-                        denyUsers : acc.find("a\\:deny-user").map(aclToJsR)
+                        grantGroups : flatten(acc.find("a\\:grant-group").map(aclToJsW)),
+                        grantUsers : flatten(acc.find("a\\:grant-user").map(aclToJsW)),
+                        denyGroups : flatten(acc.find("a\\:deny-group").map(aclToJsR)),
+                        denyUsers : flatten(acc.find("a\\:deny-user").map(aclToJsR))
                     };
+                }
+            };
+        };
+
+        var setAccessApi = function( urlBase ) { 
+            return {
+                method : 'PUT',
+                url : urlBase + "/access",
+                params : { },
+                isArray : false,
+                transformRequest : function( acc ) {
+                    var grantGroups = 
+                        $.map(acc.grantGroups, function ( i, group ) {
+                            return "<a:grant-group write='"+acc.grantGroups[group]+"'>"+group+"</a:grant-group>";
+                        }).join("");
+                    var grantUsers = 
+                        $.map(acc.grantUsers, function ( i, user ) {
+                            return "<a:grant-user write='"+acc.grantUsers[user]+"'>"+user+"</a:grant-user>";
+                        }).join("");
+                    var denyGroups = 
+                        $.map(acc.denyGroups, function ( i, group ) {
+                            return "<a:deny-group read='"+acc.denyGroups[group]+"'>"+group+"</a:deny-group>";
+                        }).join("");
+                    var denyUsers = 
+                        $.map(acc.denyUsers, function ( i, user ) {
+                            return "<a:deny-user read='"+acc.denyUsers[user]+"'>"+user+"</a:deny-user>";
+                        }).join("");
+                    var grants = 
+                        (grantGroups || grantUsers) ?
+                            "<a:grant>"+ grantGroups + grantUsers + "</a:grant>" :
+                            "";
+                    var denies = 
+                        (denyGroups || denyUsers) ?
+                            "<a:deny>"+ denyGroups + denyUsers + "</a:deny>" :
+                            "";
+                    return (
+                        "<a:access xmlns:a='http://jewishliturgy.org/ns/access/1.0'>" +
+                            "<a:owner>" + acc.owner + "</a:owner>" +
+                            "<a:group write='"+ acc.groupWrite +"'>" + acc.group + "</a:group>" +
+                            "<a:world read='"+ acc.worldRead + "' write='" + acc.worldWrite + "'/>" + 
+                            grants +
+                            denies +
+                        "</a:access>"
+                    );
+            
+                    
                 }
             };
         };
@@ -108,7 +165,8 @@ OpenSiddurClientApp.factory(
                         }
                     },
                     "query" : queryApi,
-                    'getAccess' : getAccessApi("/api/user\/:resource")
+                    "getAccess" : getAccessApi("/api/user\/:resource"),
+                    "setAccess" : setAccessApi("/api/user\/:resource")
                 }
             )
         };

@@ -33,6 +33,7 @@ var OpenSiddurClientApp =
       'OpenSiddurClientApp',
       ['ngRoute',
        'ngResource',
+       'ngSanitize', 
        'LocalStorageModule',
        'infinite-scroll',
        'ui.ace'

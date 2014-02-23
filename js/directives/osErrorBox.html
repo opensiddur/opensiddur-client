@@ -9,7 +9,8 @@
             'alert-info' : message.level == 'info',
             'alert-success' : message.level == 'success'
         }"
-        >{{message.message}}
+        >
         <button type="button" class="close" data-ng-click="closeAlert($index)">&times;</button>
+        <div data-ng-bind-html="message.message"></div>
     </div>
 </div>
