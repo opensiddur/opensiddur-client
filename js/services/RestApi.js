@@ -138,7 +138,8 @@ OpenSiddurClientApp.factory(
                 },
                 {
                     'query' : queryApi,
-                    'getAccess' : getAccessApi("/api/data/original\/:resource")
+                    'getAccess' : getAccessApi("/api/data/original\/:resource"),
+                    'setAccess' : setAccessApi("/api/data/original\/:resource")
                 }
             ),
             "/api/data/sources" : $resource(
@@ -165,8 +166,7 @@ OpenSiddurClientApp.factory(
                         }
                     },
                     "query" : queryApi,
-                    "getAccess" : getAccessApi("/api/user\/:resource"),
-                    "setAccess" : setAccessApi("/api/user\/:resource")
+                    "getAccess" : getAccessApi("/api/user\/:resource")
                 }
             )
         };
