@@ -17,11 +17,38 @@ OpenSiddurClientApp.controller(
         }
         $scope.search = IndexService.search;
 
+
         $scope.editor = {
             loggedIn : AuthenticationService.loggedIn,
             currentDocument : $routeParams.resource,
             content : "",
             access : {},
+            accessModel : "restricted",
+            setAccessModel : function() {
+                this.accessModel = (this.isNew) ? "restricted" : (
+                    (this.access.group == "everyone" && this.access.groupWrite) ? "public" : "restricted"
+                );
+            },
+            saveAccessModel : function() {
+                if (this.access.chmod && !this.isNew) {
+                    if (this.accessModel == "public") {
+                        this.access.groupWrite = true;
+                        this.access.group = "everyone";
+                    }
+                    else {  // restricted
+                        this.access.groupWrite = false;
+                        this.access.group = "everyone";
+                    }
+                    RestApi["/api/data/original"].setAccess({
+                            "resource" : this.currentDocument
+                        }, this.access, 
+                        function() {}, 
+                        function( data ) { 
+                            ErrorService.addApiError(data);
+                        }
+                    );
+                }
+            },
             title : "",
             isNew : 1,
             newDocument : function() {
@@ -37,7 +64,7 @@ OpenSiddurClientApp.controller(
                     write : true,
                     relicense : true,
                     chmod : true
-                }
+                };
                 // load a new document template
                 documentTemplate = "/templates/original.xml";
                 $http.get(documentTemplate) 
@@ -68,6 +95,8 @@ OpenSiddurClientApp.controller(
                             function(data) {
                                 $scope.editor.access = RestApi["/api/data/original"].getAccess({
                                     "resource" : toDocument
+                                }, function( access ) {
+                                    $scope.editor.setAccessModel();
                                 });
                                 
                                 $scope.editor.content = ((new window.XMLSerializer()).serializeToString(XsltService.transformString( "originalTemplate", data ))); 
@@ -110,6 +139,8 @@ OpenSiddurClientApp.controller(
 
                             $scope.editor.isNew = 0;
                             $scope.editor.currentDocument=headers('Location').replace("/exist/restxq/api/data/original/", "");
+                            // save the access model for the new document
+                            $scope.editor.saveAccessModel();
                         };
                         // reload the document to get the change log in there correctly
                         $scope.editor.setDocument($scope.editor.ace.editor.getCursorPosition());
