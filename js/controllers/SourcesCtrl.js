@@ -106,7 +106,7 @@ OpenSiddurClientApp.controller(
                 }
                 
                 var httpOperation = (this.isNew) ? $http.post : $http.put;
-                var url = (this.isNew) ? "/api/data/sources" : $scope.editor.currentDocument;
+                var url = "/api/data/sources" + ((this.isNew) ? "" : ("/" + $scope.editor.currentDocument));
                 httpOperation(url, indata, {
                         transformRequest : function(data) {
                             var xmlData = x2js.json2xml(data);
@@ -120,12 +120,14 @@ OpenSiddurClientApp.controller(
                         $scope.sourcesForm.$setPristine();
                         if ($scope.editor.isNew) {
                             // add to the search results listing
+                            var newDocName = decodeURI(headers("Location").split("/").pop());
                             IndexService.search.addResult({
-                                title:  decodeURI(headers("Location").split("/").pop()), 
+                                title:  newDocName, 
                                 url : headers('Location'),
                                 contexts : []
                             });
                             $scope.editor.isNew = false;
+                            $scope.editor.currentDocument = newDocName;
                         };
                     })
                     .error(function(data) {
