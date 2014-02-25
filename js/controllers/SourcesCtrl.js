@@ -6,9 +6,9 @@
  */
 OpenSiddurClientApp.controller(
     'SourcesCtrl',
-    ['$rootScope', '$location', '$routeParams', '$scope', '$http', 'XsltService', 
+    ['$rootScope', '$location', '$route', '$routeParams', '$scope', '$http', 'XsltService', 
     'IndexService', 'AuthenticationService', 'ErrorService',
-    function ($rootScope, $location, $routeParams, $scope, $http, XsltService, 
+    function ($rootScope, $location, $route, $routeParams, $scope, $http, XsltService, 
     IndexService, AuthenticationService, ErrorService) {
         IndexService.search.enable( "/api/data/sources" );
         if ($routeParams.resource) {
@@ -55,6 +55,13 @@ OpenSiddurClientApp.controller(
                         }
                     }
                 }
+            },
+            newButton : function () {
+                if ($location.path() == "/sources")
+                    $route.reload();
+                else 
+                    $location.path( "/sources" );
+                
             },
             newDocument : function () {
                 //this.currentDocument = "";

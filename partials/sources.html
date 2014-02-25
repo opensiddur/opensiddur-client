@@ -13,9 +13,10 @@
                     <span class="btn btn-inverse" data-ng-disabled="1">{{ editor.content.biblStruct.monogr.title_asArray[0].__text }}</span>
                 </div>
                 <div class="btn-group">
-                    <a class="btn btn-primary" 
-                        href="/sources"
-                        >New</a>
+                    <button class="btn btn-primary" 
+                        data-ng-disabled="!editor.loggedIn"
+                        data-ng-click="editor.newButton()"
+                        >New</button>
                     <button
                         class="btn btn-primary"
                         data-ng-class="{'btn-success' : sourcesForm.$pristine}" type="submit" 
