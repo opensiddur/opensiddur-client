@@ -23,9 +23,9 @@ OpenSiddurClientApp.controller(
             currentDocument : $routeParams.resource,
             content : "",
             access : {},
-            accessModel : "restricted",
+            accessModel : "public",
             setAccessModel : function() {
-                this.accessModel = (this.isNew) ? "restricted" : (
+                this.accessModel = (this.isNew) ? "public" : (
                     (this.access.group == "everyone" && this.access.groupWrite) ? "public" : "restricted"
                 );
             },
