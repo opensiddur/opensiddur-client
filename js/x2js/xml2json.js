@@ -169,7 +169,7 @@ function X2JS(config) {
 			for(var aidx=0; aidx <node.attributes.length; aidx++) {
 				var attr = node.attributes.item(aidx); // [aidx];
 				result.__cnt++;
-				result[config.attributePrefix+attr.name]=attr.value;
+				result[config.attributePrefix+attr.name]=(config.escapeMode) ? unescapeXmlChars(attr.value) : attr.value;
 			}
 			
 			// Node namespace prefix
@@ -232,7 +232,7 @@ function X2JS(config) {
 		if(attrList!=null) {
 			for(var aidx = 0; aidx < attrList.length; aidx++) {
 				var attrName = attrList[aidx];
-				var attrVal = jsonObj[attrName];
+				var attrVal = (config.escapeMode) ? escapeXmlChars(jsonObj[attrName]) : jsonObj[attrName];
 				resultStr+=" "+attrName.substr(config.attributePrefix.length)+"='"+attrVal+"'";
 			}
 		}
