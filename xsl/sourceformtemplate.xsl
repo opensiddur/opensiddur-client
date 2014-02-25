@@ -2,7 +2,7 @@
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:tei="http://www.tei-c.org/ns/1.0"
     xmlns:j="http://jewishliturgy.org/ns/jlptei/1.0"  
-    version="1.0">
+    version="2.0">
     <xsl:output method="xml" indent="yes"/>
   
     <xsl:param name="default-lang">en</xsl:param>
@@ -34,15 +34,15 @@
     </xsl:template>
   
     <xsl:template name="present-or-default">
-        <xsl:param name="present"/>
-        <xsl:param name="default"/>
+        <xsl:param name="present" as="node()*"/>
+        <xsl:param name="default" as="node()*"/>
         <xsl:choose>
             <!-- hmmm... why does $present require normalize-space() to work? -->
-            <xsl:when test="normalize-space($present)">
-                <xsl:copy-of select="$present"/>
+            <xsl:when test="exists($present)">
+                <xsl:sequence select="$present"/>
             </xsl:when>
             <xsl:otherwise>
-                <xsl:copy-of select="$default"/>
+                <xsl:sequence select="$default"/>
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
