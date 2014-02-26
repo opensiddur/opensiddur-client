@@ -21,6 +21,12 @@ OpenSiddurClientApp.controller(
         $scope.editor = {
             loggedIn : AuthenticationService.loggedIn,
             currentDocument : $routeParams.resource,
+            codemirrorOptions : {
+                lineWrapping : true,
+                lineNumbers : true,
+                mode : 'xml',
+                readOnly : !AuthenticationService.loggedIn 
+            },
             content : "",
             access : {},
             accessModel : "public",
@@ -97,6 +103,8 @@ OpenSiddurClientApp.controller(
                                     "resource" : toDocument
                                 }, function( access ) {
                                     $scope.editor.setAccessModel();
+                                    if (!access.write)
+                                        $scope.editor.codemirror.readOnly = true; 
                                 });
                                 
                                 $scope.editor.content = ((new window.XMLSerializer()).serializeToString(XsltService.transformString( "originalTemplate", data ))); 
@@ -106,8 +114,8 @@ OpenSiddurClientApp.controller(
 
                                 if (cursorLocation) {
                                     //$scope.$apply(); 
-                                    $scope.editor.ace.editor.moveCursorToPosition(cursorLocation);
-                                    $scope.editor.ace.editor.clearSelection();
+                                    $scope.editor.codemirror.doc.setCursor(cursorLocation);
+                                    //$scope.editor.ace.editor.clearSelection();
                                 }
                             }
                         )
@@ -143,7 +151,7 @@ OpenSiddurClientApp.controller(
                             $scope.editor.saveAccessModel();
                         };
                         // reload the document to get the change log in there correctly
-                        $scope.editor.setDocument($scope.editor.ace.editor.getCursorPosition());
+                        $scope.editor.setDocument($scope.editor.codemirror.doc.getCursor());
                     })
                     .error(function(data) {
                         ErrorService.addApiError(data);
@@ -163,11 +171,11 @@ OpenSiddurClientApp.controller(
             },
             loaded : function( _editor ) {
                 console.log("editor loaded");
-                $scope.editor.ace = {
+                $scope.editor.codemirror = {
                     editor : _editor,
-                    session : _editor.getSession(),
-                    renderer : _editor.renderer
+                    doc : _editor.getDoc()
                 };
+                $scope.editor.codemirror.doc.markClean();
             }
         };
         $scope.saveButtonText = function() {
@@ -193,18 +201,17 @@ OpenSiddurClientApp.controller(
                 selection : "",
                 insertable : "",
                 insert : function () {
-                    $scope.editor.ace.editor.insert(this.insertable);
+                    $scope.editor.codemirror.doc.replaceSelection(this.insertable, "end");
                 }
             },
             xml : {
                 applyXslt : function ( xslt ) {
-                    var position = $scope.editor.ace.editor.getCursorPosition();
+                    var position = $scope.editor.codemirror.doc.getCursor();
                     var transformed = XsltService.transformString( xslt, $scope.editor.content );
                     $scope.editor.content = ((new window.XMLSerializer()).serializeToString(transformed));
                     $scope.$apply(); 
-                    $scope.editor.ace.editor.moveCursorToPosition(position);
-                    $scope.editor.ace.editor.clearSelection();
-
+                    $scope.editor.codemirror.doc.setCursor(position);
+                    //$scope.editor.ace.editor.clearSelection();
                 },
                 addIds : function () {
                     this.applyXslt( "addXmlId" );
