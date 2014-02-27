@@ -25,7 +25,10 @@ OpenSiddurClientApp.controller(
                 lineWrapping : true,
                 lineNumbers : true,
                 mode : 'xml',
-                readOnly : !AuthenticationService.loggedIn 
+                tabSize : 4,
+                indentUnit : 4,
+                indentWithTabs : false,
+                readOnly : !AuthenticationService.loggedIn  // controlled by logged in state and access.write 
             },
             content : "",
             access : {},
