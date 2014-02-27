@@ -28,7 +28,11 @@ OpenSiddurClientApp.controller(
                 tabSize : 4,
                 indentUnit : 4,
                 indentWithTabs : false,
-                readOnly : !AuthenticationService.loggedIn  // controlled by logged in state and access.write 
+                readOnly : !AuthenticationService.loggedIn,  // controlled by logged in state and access.write 
+                autoCloseTags : {
+                    whenClosing : true,
+                    whenOpening : false
+                }
             },
             content : "",
             access : {},
