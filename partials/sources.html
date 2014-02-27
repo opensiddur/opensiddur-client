@@ -39,8 +39,17 @@
     
     <div class="page-container container-fluid sources-editor" data-ng-show="!editor.isNew || editor.loggedIn">
         <div class="row-fluid">
+            <div class="span10 offset1 alert alert-info text-center">
+                <p>For <strong>printed works</strong>, the following information is <strong>required</strong>: 
+                a main title, a publisher or distributor, and a publication date. 
+                </p>
+                <p>For <strong>online works</strong>, the following information is <strong>required</strong>: a main title, a distributor website title, a distributor URL, and an access date.</p>
+                <p>The bibliographic entry can be saved only if the minimally required highlighted fields (<input class="input-mini" readonly="true" required="true" data-ng-model="editor.requiredExample"/>) are filled in and have valid data.</p>
+                <!--<p>Required fields are highlighted .</p>-->
+            </div>
+            <!--
             <div class="span5 offset1 alert alert-warn text-center" data-ng-hide="!sourcesForm.$invalid">All fields must have valid data.</div>
-            <div class="span5 alert alert-warn text-center" data-ng-hide="!sourcesForm.$error.required">All required fields (<input class="input-mini" readonly="true" required="true" data-ng-model="editor.requiredExample"/>) must be filled in</div>
+            <div class="span5 alert alert-warn text-center" data-ng-hide="!sourcesForm.$error.required">All required fields (<input class="input-mini" readonly="true" required="true" data-ng-model="editor.requiredExample"/>) must be filled in</div>-->
         </div>
         <div class="row-fluid sources-editor">
             <div class="span11 offset1">
@@ -281,7 +290,7 @@
                                 data-ng-model="editor.content.biblStruct.monogr.imprint.distributor.name_asArray[0].__text"
                                 data-ng-required="!editor.content.biblStruct.monogr.imprint.publisher.__text &amp;&amp; !editor.content.biblStruct.monogr.imprint.distributor.ref_asArray[0].__text"
                                 name="biblStruct.monogr.imprint.distributor.name" 
-                                placeholder="Distributor"
+                                placeholder="Offline distributor"
                                 />
                         </div>
                         <div class="controls controls-row">
@@ -290,8 +299,8 @@
                                 class="span4"
                                 data-ng-model="editor.content.biblStruct.monogr.imprint.distributor.ref_asArray[0].__text"
                                 name="biblStruct.monogr.imprint.distributor.ref" 
-                                data-ng-required="editor.content.biblStruct.monogr.imprint.distributor.ref_asArray[0]._target"
-                                placeholder="Title"
+                                data-ng-required="(!editor.content.biblStruct.monogr.imprint.distributor.name_asArray[0].__text &amp;&amp; !editor.content.biblStruct.monogr.imprint.publisher_asArray[0].__text) || editor.content.biblStruct.monogr.imprint.distributor.ref_asArray[0]._target"
+                                placeholder="Online distributor website title"
                                 />
                             <input
                                 class="span4"
