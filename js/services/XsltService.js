@@ -20,11 +20,16 @@ OpenSiddurClientApp.service(
                     parameters : parameters,
                     method : "transformToDocument"
                 });
-                return transformed.getResultDocument();
+                var doc = transformed.getResultDocument();
+                return doc;
             },
             transformString : function ( processorName, data, parameters ) {
                 var dataDomDoc = Saxon.parseXML(data);
                 return this.transform(processorName, dataDomDoc, parameters);
+            },
+            serializeToString : function ( doc ) {
+                return ((new window.XMLSerializer()).serializeToString(doc))
+                    .replace(/\s+xmlns:xml="http:\/\/www.w3.org\/XML\/1998\/namespace"/g, "");
             }
         }
         svc.addProcessor('instance', '/xsl/instance.xsl');
