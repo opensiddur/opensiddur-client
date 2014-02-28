@@ -146,7 +146,8 @@ OpenSiddurClientApp.controller(
                 if (jindata.prop("tagName") == "PARSERERROR") {
                     ErrorService.addAlert("Unable to save because the document could not be parsed. It probably contains some invalid XML.", "error");    
                 }
-                else if (!$("tei\\:title[type=main]", jindata).html()) {
+                else if ($("tei\\:title[type=main]", jindata).text().length == 0 && 
+                        $("tei\\:title[type=main]", jindata).children().length == 0) {
                     ErrorService.addAlert("A main title is required!", "error");
                 }
                 else {
