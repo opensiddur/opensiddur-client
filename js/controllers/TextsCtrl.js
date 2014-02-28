@@ -83,7 +83,7 @@ OpenSiddurClientApp.controller(
                 $http.get(documentTemplate) 
                     .success(
                         function(data) {
-                            $scope.editor.content = XsltService.serializeToString(XsltService.transformString( "originalTemplate", data ))); 
+                            $scope.editor.content = XsltService.serializeToString(XsltService.transformString( "originalTemplate", data )); 
                             $scope.editor.title = "New text";
                             $scope.textsForm.$setPristine();
                         }
@@ -114,7 +114,7 @@ OpenSiddurClientApp.controller(
                                         $scope.editor.codemirror.readOnly = true; 
                                 });
                                 
-                                $scope.editor.content = XsltService.serializeToString(XsltService.transformString( "originalTemplate", data ))); 
+                                $scope.editor.content = XsltService.serializeToString(XsltService.transformString( "originalTemplate", data )); 
                                 $scope.editor.title = $("tei\\:title[type=main]", data).html();
                                 $scope.editor.isNew = 0;
                                 $scope.textsForm.$setPristine();
@@ -141,10 +141,11 @@ OpenSiddurClientApp.controller(
                 var url = "/api/data/original" + ((this.isNew) ? "" : ("/" + $scope.editor.currentDocument));
                 indata = XsltService.serializeToString(
                     XsltService.transformString( "originalBeforeSave", $scope.editor.content ));
-                if ($(indata, "parsererror").html()) {
+                jindata = $(indata);
+                if (jindata.prop("tagName") == "PARSERERROR") {
                     ErrorService.addAlert("Unable to save because the document could not be parsed. It probably contains some invalid XML.", "error");    
                 }
-                else if (!$(indata, "tei\\:title[type=main]").html()) {
+                else if (!$("tei\\:title[type=main]", jindata).html()) {
                     ErrorService.addAlert("A main title is required!", "error");
                 }
                 else {
@@ -222,15 +223,15 @@ OpenSiddurClientApp.controller(
                 applyXslt : function ( xslt ) {
                     var position = $scope.editor.codemirror.doc.getCursor();
                     var transformed = XsltService.transformString( xslt, $scope.editor.content );
-                    var str = XsltService.serializeToString(transformed));
-                    var error = $(str, "parsererror").html();
-                    if (error) {
-                        ErrorService.addAlert(error, "error");
+                    var str = XsltService.serializeToString(transformed);
+                    var jstr = $(str);
+                    if (jstr.prop("tagName")=="PARSERERROR") {
+                        ErrorService.addAlert(jstr.html(), "error");
                     }
                     else {
                         $scope.editor.content = str;
-                    }
                     //$scope.$apply(); 
+                    }
                     $scope.editor.codemirror.doc.setCursor(position);
                     //$scope.editor.ace.editor.clearSelection();
                 },
