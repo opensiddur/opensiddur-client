@@ -215,8 +215,15 @@ OpenSiddurClientApp.controller(
                 applyXslt : function ( xslt ) {
                     var position = $scope.editor.codemirror.doc.getCursor();
                     var transformed = XsltService.transformString( xslt, $scope.editor.content );
-                    $scope.editor.content = ((new window.XMLSerializer()).serializeToString(transformed));
-                    $scope.$apply(); 
+                    var str = ((new window.XMLSerializer()).serializeToString(transformed));
+                    var error = $(str, "parsererror").html();
+                    if (error) {
+                        ErrorService.addAlert(error, "error");
+                    }
+                    else {
+                        $scope.editor.content = str;
+                    }
+                    //$scope.$apply(); 
                     $scope.editor.codemirror.doc.setCursor(position);
                     //$scope.editor.ace.editor.clearSelection();
                 },
