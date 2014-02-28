@@ -20,8 +20,7 @@ OpenSiddurClientApp.service(
                     parameters : parameters,
                     method : "transformToDocument"
                 });
-                var doc = transformed.getResultDocument();
-                return doc;
+                return transformed.getResultDocument();
             },
             transformString : function ( processorName, data, parameters ) {
                 var dataDomDoc = Saxon.parseXML(data);

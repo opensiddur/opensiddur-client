@@ -139,8 +139,9 @@ OpenSiddurClientApp.controller(
                 console.log("Save:", this);
                 var httpOperation = (this.isNew) ? $http.post : $http.put;
                 var url = "/api/data/original" + ((this.isNew) ? "" : ("/" + $scope.editor.currentDocument));
-                indata = XsltService.serializeToString(
-                    XsltService.transformString( "originalBeforeSave", $scope.editor.content ));
+                var content = $scope.editor.codemirror.doc.getValue();
+                var indata = XsltService.serializeToString(
+                    XsltService.transformString( "originalBeforeSave", content ));
                 jindata = $(indata);
                 if (jindata.prop("tagName") == "PARSERERROR") {
                     ErrorService.addAlert("Unable to save because the document could not be parsed. It probably contains some invalid XML.", "error");    
