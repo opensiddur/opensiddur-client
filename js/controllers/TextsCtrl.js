@@ -83,7 +83,7 @@ OpenSiddurClientApp.controller(
                 $http.get(documentTemplate) 
                     .success(
                         function(data) {
-                            $scope.editor.content = ((new window.XMLSerializer()).serializeToString(XsltService.transformString( "originalTemplate", data ))); 
+                            $scope.editor.content = XsltService.serializeToString(XsltService.transformString( "originalTemplate", data ))); 
                             $scope.editor.title = "New text";
                             $scope.textsForm.$setPristine();
                         }
@@ -114,7 +114,7 @@ OpenSiddurClientApp.controller(
                                         $scope.editor.codemirror.readOnly = true; 
                                 });
                                 
-                                $scope.editor.content = ((new window.XMLSerializer()).serializeToString(XsltService.transformString( "originalTemplate", data ))); 
+                                $scope.editor.content = XsltService.serializeToString(XsltService.transformString( "originalTemplate", data ))); 
                                 $scope.editor.title = $("tei\\:title[type=main]", data).html();
                                 $scope.editor.isNew = 0;
                                 $scope.textsForm.$setPristine();
@@ -139,32 +139,39 @@ OpenSiddurClientApp.controller(
                 console.log("Save:", this);
                 var httpOperation = (this.isNew) ? $http.post : $http.put;
                 var url = "/api/data/original" + ((this.isNew) ? "" : ("/" + $scope.editor.currentDocument));
-                indata = (new window.XMLSerializer()).serializeToString(
+                indata = XsltService.serializeToString(
                     XsltService.transformString( "originalBeforeSave", $scope.editor.content ));
-                httpOperation(url, indata)
-                    .success(function(data, statusCode, headers) {
-                        $scope.textsForm.$setPristine();
-                        if ($scope.editor.isNew) {
-                            // add to the search results listing
-                            IndexService.search.addResult({
-                                title:  $( "tei\\:title[type=main]", indata).html(), 
-                                url : headers('Location'),
-                                contexts : []
-                            });
+                if ($(indata, "parsererror").html()) {
+                    ErrorService.addAlert("Unable to save because the document could not be parsed. It probably contains some invalid XML.", "error");    
+                }
+                else if (!$(indata, "tei\\:title[type=main]").html()) {
+                    ErrorService.addAlert("A main title is required!", "error");
+                }
+                else {
+                    httpOperation(url, indata)
+                        .success(function(data, statusCode, headers) {
+                            $scope.textsForm.$setPristine();
+                            if ($scope.editor.isNew) {
+                                // add to the search results listing
+                                IndexService.search.addResult({
+                                    title:  $( "tei\\:title[type=main]", indata).html(), 
+                                    url : headers('Location'),
+                                    contexts : []
+                                });
 
-                            $scope.editor.isNew = 0;
-                            $scope.editor.currentDocument=headers('Location').replace("/exist/restxq/api/data/original/", "");
-                            // save the access model for the new document
-                            $scope.editor.saveAccessModel();
-                        };
-                        // reload the document to get the change log in there correctly
-                        $scope.editor.setDocument($scope.editor.codemirror.doc.getCursor());
-                    })
-                    .error(function(data) {
-                        ErrorService.addApiError(data);
-                        console.log("error saving", url);
-                    });
-
+                                $scope.editor.isNew = 0;
+                                $scope.editor.currentDocument=headers('Location').replace("/exist/restxq/api/data/original/", "");
+                                // save the access model for the new document
+                                $scope.editor.saveAccessModel();
+                            };
+                            // reload the document to get the change log in there correctly
+                            $scope.editor.setDocument($scope.editor.codemirror.doc.getCursor());
+                        })
+                        .error(function(data) {
+                            ErrorService.addApiError(data);
+                            console.log("error saving", url);
+                        });
+                }
             },
             newButton : function () {
                 if ($location.path() == "/texts")
@@ -215,7 +222,7 @@ OpenSiddurClientApp.controller(
                 applyXslt : function ( xslt ) {
                     var position = $scope.editor.codemirror.doc.getCursor();
                     var transformed = XsltService.transformString( xslt, $scope.editor.content );
-                    var str = ((new window.XMLSerializer()).serializeToString(transformed));
+                    var str = XsltService.serializeToString(transformed));
                     var error = $(str, "parsererror").html();
                     if (error) {
                         ErrorService.addAlert(error, "error");
