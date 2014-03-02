@@ -34,7 +34,6 @@
                 <tei:distributor>
                     <tei:ref target="http://opensiddur.org">Open Siddur Project</tei:ref>
                 </tei:distributor>
-                <tei:date></tei:date>
                 <tei:availability status="free">
                     <!--                  ^^^ ?? "free" (CC0 license/public domain) or 
                                               ?? "restricted" (any other license)
@@ -44,6 +43,7 @@
                     <tei:licence target="http://www.creativecommons.org/licenses/by-sa/4.0"/> <- CC-BY-SA 4.0
                     -->
                 </tei:availability>
+                <tei:date></tei:date>
             </tei:publicationStmt>
             <tei:sourceDesc>
                 <tei:link type="bibl" target="#stream /data/sources/Born%20Digital"/>
