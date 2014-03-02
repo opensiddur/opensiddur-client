@@ -72,11 +72,17 @@ OpenSiddurClientApp.controller(
                 // default access rights for a new file
                 $scope.editor.access = {
                     owner : AuthenticationService.userName,
-                    group : AuthenticationService.userName,
-                    read : true, 
+                    group : "everyone",
+                    worldRead : true,
+                    worldWrite : false,
+                    read : true,
                     write : true,
                     relicense : true,
-                    chmod : true
+                    chmod : true,
+                    grantGroups : [],
+                    grantUsers :[],
+                    denyGroups : [],
+                    denyUsers : []
                 };
                 // load a new document template
                 documentTemplate = "/templates/original.xml";
