@@ -15,7 +15,7 @@
     >
     <xsl:output method="xml" indent="yes"/>
 
-    <xsl:template match="text()[ancestor::tei:seg][ancestor::j:streamText][not(ancestor::tei:w)][normalize-space(.)]">
+    <xsl:template match="text()[ancestor::tei:seg][ancestor::j:streamText][not(ancestor::tei:w)][not(ancestor::tei:pc)][normalize-space(.)]">
         <xsl:variable name="context" select="."/>
 		<xsl:analyze-string select="normalize-space(.)" 
             regex="(\s+)|([\p{{L}}\p{{M}}\p{{N}}\p{{S}}\p{{C}}]+)|(\p{{P}})">
