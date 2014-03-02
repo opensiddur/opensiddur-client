@@ -53,7 +53,7 @@ OpenSiddurClientApp.controller(
                         this.access.group = "everyone";
                     }
                     RestApi["/api/data/original"].setAccess({
-                            "resource" : this.currentDocument
+                            "resource" : decodeURI(this.currentDocument)
                         }, this.access, 
                         function() {}, 
                         function( data ) { 
@@ -107,7 +107,7 @@ OpenSiddurClientApp.controller(
                         .success(
                             function(data) {
                                 $scope.editor.access = RestApi["/api/data/original"].getAccess({
-                                    "resource" : toDocument
+                                    "resource" : decodeURI(toDocument)
                                 }, function( access ) {
                                     $scope.editor.setAccessModel();
                                     if (!access.write)
