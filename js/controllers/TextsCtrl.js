@@ -230,11 +230,12 @@ OpenSiddurClientApp.controller(
             xml : {
                 applyXslt : function ( xslt ) {
                     var position = $scope.editor.codemirror.doc.getCursor();
-                    var transformed = XsltService.transformString( xslt, $scope.editor.content );
+                    var content = $scope.editor.codemirror.doc.getValue();
+                    var transformed = XsltService.transformString( xslt, content );
                     var str = XsltService.serializeToString(transformed);
                     var jstr = $(str);
                     if (jstr.prop("tagName")=="PARSERERROR") {
-                        ErrorService.addAlert(jstr.html(), "error");
+                        ErrorService.addAlert("Unable to run the transform because the document could not be parsed. It probably contains some invalid XML.", "error");    
                     }
                     else {
                         $scope.editor.content = str;
