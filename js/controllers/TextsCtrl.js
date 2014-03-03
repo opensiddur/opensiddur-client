@@ -146,40 +146,42 @@ OpenSiddurClientApp.controller(
                 var httpOperation = (this.isNew) ? $http.post : $http.put;
                 var url = "/api/data/original" + ((this.isNew) ? "" : ("/" + $scope.editor.currentDocument));
                 var content = $scope.editor.codemirror.doc.getValue();
-                var indata = XsltService.serializeToString(
-                    XsltService.transformString( "originalBeforeSave", content ));
-                jindata = $(indata);
-                if (jindata.prop("tagName") == "PARSERERROR") {
-                    ErrorService.addAlert("Unable to save because the document could not be parsed. It probably contains some invalid XML.", "error");    
-                }
-                else if ($("tei\\:title[type=main]", jindata).text().length == 0 && 
-                        $("tei\\:title[type=main]", jindata).children().length == 0) {
-                    ErrorService.addAlert("A main title is required!", "error");
-                }
-                else {
-                    httpOperation(url, indata)
-                        .success(function(data, statusCode, headers) {
-                            $scope.textsForm.$setPristine();
-                            if ($scope.editor.isNew) {
-                                // add to the search results listing
-                                IndexService.search.addResult({
-                                    title:  $( "tei\\:title[type=main]", indata).html(), 
-                                    url : headers('Location'),
-                                    contexts : []
-                                });
+                var transformed = XsltService.transformString( "originalBeforeSave", content );
+                if (transformed) {
+                    var indata = XsltService.serializeToString(transformed);
+                    jindata = $(indata);
+                    if (jindata.prop("tagName") == "PARSERERROR") {
+                        ErrorService.addAlert("Unable to save because the document could not be parsed. It probably contains some invalid XML.", "error");    
+                    }
+                    else if ($("tei\\:title[type=main]", jindata).text().length == 0 && 
+                            $("tei\\:title[type=main]", jindata).children().length == 0) {
+                        ErrorService.addAlert("A main title is required!", "error");
+                    }
+                    else {
+                        httpOperation(url, indata)
+                            .success(function(data, statusCode, headers) {
+                                $scope.textsForm.$setPristine();
+                                if ($scope.editor.isNew) {
+                                    // add to the search results listing
+                                    IndexService.search.addResult({
+                                        title:  $( "tei\\:title[type=main]", indata).html(), 
+                                        url : headers('Location'),
+                                        contexts : []
+                                    });
 
-                                $scope.editor.isNew = 0;
-                                $scope.editor.currentDocument=headers('Location').replace("/exist/restxq/api/data/original/", "");
-                                // save the access model for the new document
-                                $scope.editor.saveAccessModel();
-                            };
-                            // reload the document to get the change log in there correctly
-                            $scope.editor.setDocument($scope.editor.codemirror.doc.getCursor());
-                        })
-                        .error(function(data) {
-                            ErrorService.addApiError(data);
-                            console.log("error saving", url);
-                        });
+                                    $scope.editor.isNew = 0;
+                                    $scope.editor.currentDocument=headers('Location').replace("/exist/restxq/api/data/original/", "");
+                                    // save the access model for the new document
+                                    $scope.editor.saveAccessModel();
+                                };
+                                // reload the document to get the change log in there correctly
+                                $scope.editor.setDocument($scope.editor.codemirror.doc.getCursor());
+                            })
+                            .error(function(data) {
+                                ErrorService.addApiError(data);
+                                console.log("error saving", url);
+                            });
+                    }
                 }
             },
             newButton : function () {
@@ -232,17 +234,19 @@ OpenSiddurClientApp.controller(
                     var position = $scope.editor.codemirror.doc.getCursor();
                     var content = $scope.editor.codemirror.doc.getValue();
                     var transformed = XsltService.transformString( xslt, content );
-                    var str = XsltService.serializeToString(transformed);
-                    var jstr = $(str);
-                    if (jstr.prop("tagName")=="PARSERERROR") {
-                        ErrorService.addAlert("Unable to run the transform because the document could not be parsed. It probably contains some invalid XML.", "error");    
+                    if (transformed) {
+                        var str = XsltService.serializeToString(transformed);
+                        var jstr = $(str);
+                        if (jstr.prop("tagName")=="PARSERERROR") {
+                            ErrorService.addAlert("Unable to run the transform because the document could not be parsed. It probably contains some invalid XML.", "error");    
+                        }
+                        else {
+                            $scope.editor.content = str;
+                        //$scope.$apply(); 
+                        }
+                        $scope.editor.codemirror.doc.setCursor(position);
+                        //$scope.editor.ace.editor.clearSelection();
                     }
-                    else {
-                        $scope.editor.content = str;
-                    //$scope.$apply(); 
-                    }
-                    $scope.editor.codemirror.doc.setCursor(position);
-                    //$scope.editor.ace.editor.clearSelection();
                 },
                 addIds : function () {
                     this.applyXslt( "addXmlId" );

@@ -5,8 +5,8 @@
  */
 OpenSiddurClientApp.service(
     'XsltService',
-    ['$rootScope', '$http', '$location',
-    function ( $rootScope, $http, $location ) {
+    ['$rootScope', '$http', '$location', 'ErrorService',
+    function ( $rootScope, $http, $location, ErrorService ) {
         // initialize all of the stylesheets
         svc = {
             xsltProcessors : {},
@@ -18,7 +18,11 @@ OpenSiddurClientApp.service(
                     stylesheet : this.xsltProcessors[processorName],
                     source : domDoc,
                     parameters : parameters,
-                    method : "transformToDocument"
+                    method : "transformToDocument",
+                    errorHandler : function (err) {
+                        ErrorService.addAlert(err.message, "error");
+                    }),
+                    logLevel : "SEVERE"
                 });
                 return transformed.getResultDocument();
             },
