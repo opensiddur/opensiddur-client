@@ -21,7 +21,7 @@ OpenSiddurClientApp.service(
                     method : "transformToDocument",
                     errorHandler : function (err) {
                         ErrorService.addAlert(err.message, "error");
-                    }),
+                    },
                     logLevel : "SEVERE"
                 });
                 return transformed.getResultDocument();
