@@ -175,7 +175,12 @@ OpenSiddurClientApp.controller(
                                     $scope.editor.saveAccessModel();
                                 };
                                 // reload the document to get the change log in there correctly
-                                $scope.editor.setDocument($scope.editor.codemirror.doc.getCursor());
+                                // add a 1s delay to allow the server some processing time before reload
+                                setTimeout(
+                                    function() { 
+                                        $scope.editor.setDocument($scope.editor.codemirror.doc.getCursor()); 
+                                    }, 1000
+                                );
                             })
                             .error(function(data) {
                                 ErrorService.addApiError(data);
