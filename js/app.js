@@ -36,7 +36,7 @@ var OpenSiddurClientApp =
        'ngSanitize', 
        'LocalStorageModule',
        'infinite-scroll',
-       'ui.ace'
+       'ui.codemirror'
       ]);
 
 OpenSiddurClientApp.config(

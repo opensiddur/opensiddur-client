@@ -5,8 +5,8 @@
  */
 OpenSiddurClientApp.service(
     'XsltService',
-    ['$rootScope', '$http', '$location',
-    function ( $rootScope, $http, $location ) {
+    ['$rootScope', '$http', '$location', 'ErrorService',
+    function ( $rootScope, $http, $location, ErrorService ) {
         // initialize all of the stylesheets
         svc = {
             xsltProcessors : {},
@@ -18,13 +18,21 @@ OpenSiddurClientApp.service(
                     stylesheet : this.xsltProcessors[processorName],
                     source : domDoc,
                     parameters : parameters,
-                    method : "transformToDocument"
+                    method : "transformToDocument",
+                    errorHandler : function (err) {
+                        ErrorService.addAlert(err.message, "error");
+                    },
+                    logLevel : "SEVERE"
                 });
                 return transformed.getResultDocument();
             },
             transformString : function ( processorName, data, parameters ) {
                 var dataDomDoc = Saxon.parseXML(data);
                 return this.transform(processorName, dataDomDoc, parameters);
+            },
+            serializeToString : function ( doc ) {
+                return ((new window.XMLSerializer()).serializeToString(doc))
+                    .replace(/\s+xmlns:xml="http:\/\/www.w3.org\/XML\/1998\/namespace"/g, "");
             }
         }
         svc.addProcessor('instance', '/xsl/instance.xsl');

@@ -19,7 +19,7 @@
                           >New</button>
                       <button data-ng-class="{'btn' : true, 'btn-primary' : true, 'btn-success' : textsForm.$pristine}" type="submit" 
                           data-ng-click="editor.saveDocument()"  
-                          data-ng-disabled="textsForm.$invalid || textsForm.$pristine">{{saveButtonText()}}</button>
+                          data-ng-disabled="!editor.access.write || textsForm.$invalid || textsForm.$pristine">{{saveButtonText()}}</button>
                 </div>
                 <div class="btn-group">
                       <button class="btn btn-primary" type="submit"
@@ -109,14 +109,13 @@
         <div data-ng-show="editor.loggedIn || editor.currentDocument">
             <div class="texts-editor">
                 <form name="textsForm">
-                    <div class="span9"
-                        data-ui-ace="{showGutter : true, 
-                            useWrapMode : false,
-                            mode : 'xml',
-                            onLoad : editor.loaded
-                            }"
-                        data-ng-model="editor.content"
-                        data-readonly="{{!editor.loggedIn || !editor.access.write }}"></div>
+                    <div class="span9">
+                        <textarea  
+                            data-ui-codemirror="{ onLoad : editor.loaded }"
+                            data-ui-codemirror-opts="editor.codemirrorOptions"
+                            data-ng-model="editor.content"
+                            ></textarea>
+                    </div>
                     <div class="span3">
                         <ul class="nav nav-tabs">
                             <li class="active"><a data-target="#link-helper" data-toggle="tab">Links</a></li>

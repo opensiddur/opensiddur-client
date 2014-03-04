@@ -1,3 +1,4 @@
+## configuration for both client and server on the database
 server {
         ## CHANGE: only listen on local, port 5000
         listen 5000;
@@ -38,6 +39,6 @@ server {
             expires -1;
             add_header Pragma "no-cache";
             add_header Cache-Control "no-store, no-cache, must-revalidate, post-check=0, pre-check=0";
-            proxy_pass   http://localhost:8080/exist/apps/opensiddur-client/; 
+            proxy_pass   $scheme://127.0.0.1:8080/exist/apps/opensiddur-client/; 
         }
 }

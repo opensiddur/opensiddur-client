@@ -43,9 +43,6 @@
                     <tei:licence target="http://www.creativecommons.org/licenses/by-sa/4.0"/> <- CC-BY-SA 4.0
                     -->
                 </tei:availability>
-                <!-- ?? This is the publication date: It defaults to the date the file was started
-                at Open Siddur, but it might be earlier if the file was published by someone else: 
-                 -->
                 <tei:date></tei:date>
             </tei:publicationStmt>
             <tei:sourceDesc>

@@ -91,22 +91,26 @@ OpenSiddurClientApp.factory(
                 params : { },
                 isArray : false,
                 transformRequest : function( acc ) {
-                    var grantGroups = 
-                        $.map(acc.grantGroups, function ( i, group ) {
-                            return "<a:grant-group write='"+acc.grantGroups[group]+"'>"+group+"</a:grant-group>";
-                        }).join("");
+                    var grantGroups =
+                        (acc.grantGroups) ? 
+                            $.map(acc.grantGroups, function ( i, group ) {
+                                return "<a:grant-group write='"+acc.grantGroups[group]+"'>"+group+"</a:grant-group>";
+                            }).join("") : "";
                     var grantUsers = 
-                        $.map(acc.grantUsers, function ( i, user ) {
-                            return "<a:grant-user write='"+acc.grantUsers[user]+"'>"+user+"</a:grant-user>";
-                        }).join("");
-                    var denyGroups = 
-                        $.map(acc.denyGroups, function ( i, group ) {
-                            return "<a:deny-group read='"+acc.denyGroups[group]+"'>"+group+"</a:deny-group>";
-                        }).join("");
-                    var denyUsers = 
-                        $.map(acc.denyUsers, function ( i, user ) {
-                            return "<a:deny-user read='"+acc.denyUsers[user]+"'>"+user+"</a:deny-user>";
-                        }).join("");
+                        (acc.grantUsers) ? 
+                            $.map(acc.grantUsers, function ( i, user ) {
+                                return "<a:grant-user write='"+acc.grantUsers[user]+"'>"+user+"</a:grant-user>";
+                            }).join("") : "";
+                    var denyGroups =
+                        (acc.denyGroups) ? 
+                            $.map(acc.denyGroups, function ( i, group ) {
+                                return "<a:deny-group read='"+acc.denyGroups[group]+"'>"+group+"</a:deny-group>";
+                            }).join("") : "";
+                    var denyUsers =
+                        (acc.denyUsers) ? 
+                            $.map(acc.denyUsers, function ( i, user ) {
+                                return "<a:deny-user read='"+acc.denyUsers[user]+"'>"+user+"</a:deny-user>";
+                            }).join("") : "";
                     var grants = 
                         (grantGroups || grantUsers) ?
                             "<a:grant>"+ grantGroups + grantUsers + "</a:grant>" :
