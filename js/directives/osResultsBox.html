@@ -1,0 +1,34 @@
+<div class="osResultsBox">
+    <div class="row-fluid search-results">
+        <table class="table table-hover table-condensed table-striped table-scrollable" 
+        data-infinite-scroll="endReached()" data-infinite-scroll-distance="3">
+            <tbody>
+                <tr data-ng-repeat="result in results" data-ng-click="select(result.url)">
+                    <td>{{result.title}}</td>
+                    <td>
+                        <ul class="search-contexts">
+                            <li data-ng-repeat="context in result.contexts">
+                                <span class="previous">{{context.previous}} </span>
+                                <span class="match">{{context.match}} </span>
+                                <span class="following">{{context.following}} </span>
+                            </li>
+                        </ul>
+                    </td>   
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <style type="text/css">/*<![CDATA[*/
+        .search-results {
+            height: 100px;
+            overflow-y: scroll;
+        }
+
+        ul.search-contexts {
+            list-style-type:none;
+        }
+        span.match {
+            font-weight:bold;
+        }
+    /*]]>*/</style>
+</div>

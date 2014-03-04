@@ -86,9 +86,6 @@ OpenSiddurClientApp.service(
                    'userName' : this.userName,
                    'password' : this.password
                }
-           },
-           loggedIn : function() {
-               return this.loggedIn;
            }
       };
       

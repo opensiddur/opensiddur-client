@@ -1,0 +1,16 @@
+<div class="osErrorBox">
+    <div 
+        data-ng-repeat="message in messages" 
+        data-ng-class="{
+            'alert' : true,
+            'alert-block' : message.message.length > 50, 
+            'alert-error' : message.level == 'error' || message.level == 'danger', 
+            'alert-warning' : message.level == 'warning',
+            'alert-info' : message.level == 'info',
+            'alert-success' : message.level == 'success'
+        }"
+        >
+        <button type="button" class="close" data-ng-click="closeAlert($index)">&times;</button>
+        <div data-ng-bind-html="message.message"></div>
+    </div>
+</div>

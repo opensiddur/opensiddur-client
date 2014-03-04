@@ -2,7 +2,7 @@
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:tei="http://www.tei-c.org/ns/1.0"
     xmlns:j="http://jewishliturgy.org/ns/jlptei/1.0"  
-    version="1.0">
+    version="2.0">
     <xsl:output method="xml" indent="yes"/>
   
     <xsl:param name="default-lang">en</xsl:param>
@@ -34,31 +34,31 @@
     </xsl:template>
   
     <xsl:template name="present-or-default">
-        <xsl:param name="present"/>
-        <xsl:param name="default"/>
+        <xsl:param name="present" as="node()*"/>
+        <xsl:param name="default" as="node()*"/>
         <xsl:choose>
             <!-- hmmm... why does $present require normalize-space() to work? -->
-            <xsl:when test="normalize-space($present)">
-                <xsl:copy-of select="$present"/>
+            <xsl:when test="exists($present)">
+                <xsl:sequence select="$present"/>
             </xsl:when>
             <xsl:otherwise>
-                <xsl:copy-of select="$default"/>
+                <xsl:sequence select="$default"/>
             </xsl:otherwise>
         </xsl:choose>
     </xsl:template>
     
     <xsl:template name="title-block">
-        <xsl:param name="base"/>
+        <xsl:param name="base" as="element()?"/>
         <xsl:param name="max" select="10"/>
         <xsl:call-template name="present-or-default">
-            <xsl:with-param name="present"> 
+            <xsl:with-param name="present" as="node()*"> 
                 <xsl:for-each select="$base/tei:title[@type='main' or not(@type)]">
                     <xsl:copy>
-                        <xsl:copy-of select="@*"/>
+                        <xsl:sequence select="@*"/>
                         <xsl:if test="not(@type)">
                             <xsl:attribute name="type">main</xsl:attribute>
                         </xsl:if>
-                        <xsl:copy-of select="node()"/>
+                        <xsl:sequence select="node()"/>
                     </xsl:copy>
                 </xsl:for-each>
             </xsl:with-param>
@@ -154,7 +154,7 @@
             <!-- we will support a single analytic level, one monogr level, and one series -->
             <tei:analytic>
                 <xsl:call-template name="title-block">
-                    <xsl:with-param name="base" select="tei:analytic"/> 
+                    <xsl:with-param name="base" select="tei:analytic" as="element()?"/> 
                 </xsl:call-template>
                 <xsl:call-template name="author-editor-block">
                     <xsl:with-param name="base" select="tei:analytic"/> 
@@ -162,7 +162,7 @@
             </tei:analytic>
             <tei:monogr>
                 <xsl:call-template name="title-block">
-                    <xsl:with-param name="base" select="tei:monogr"/> 
+                    <xsl:with-param name="base" select="tei:monogr" as="element()?"/> 
                 </xsl:call-template>
                 <xsl:call-template name="author-editor-block">
                     <xsl:with-param name="base" select="tei:monogr"/> 
@@ -210,7 +210,7 @@
             </tei:monogr>
             <tei:series>
                 <xsl:call-template name="title-block">
-                    <xsl:with-param name="base" select="tei:series"/> 
+                    <xsl:with-param name="base" select="tei:series" as="element()?"/> 
                 </xsl:call-template>
                 <xsl:call-template name="author-editor-block">
                     <xsl:with-param name="base" select="tei:series"/> 

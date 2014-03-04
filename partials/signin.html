@@ -12,9 +12,6 @@
             <label class="checkbox">
               <input type="checkbox" value="false" data-ng-model="signin.rememberMe"/>Remember me
             </label>
-            <div data-ng-hide="!signin.errorMessage">
-              <div class="alert alert-error">{{signin.errorMessage}}</div>
-            </div>
             <button id="signin-button" class="btn btn-large btn-primary" type="submit" data-ng-click="signin()"  data-ng-disabled="signinForm.$invalid">Sign in</button>
           </form>
         </div>
@@ -35,9 +32,6 @@
             <label class="checkbox">
               <input type="checkbox" value="false" data-ng-model="register.rememberMe"/>Remember me
             </label>
-            <div data-ng-hide="!register.errorMessage">
-              <div class="alert alert-error">{{register.errorMessage}}</div>
-            </div>
             <button id="register-button" class="btn btn-large btn-primary" type="submit" data-ng-click="register()" data-ng-disabled="registrationForm.$invalid">Register</button>
           </form>
         </div><!--/span-->

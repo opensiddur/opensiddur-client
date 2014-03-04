@@ -1,11 +1,20 @@
 /* 
  * AngularJS app
  * Open Siddur Project
- * Copyright 2013 Efraim Feinstein <efraim@opensiddur.org>
+ * Copyright 2013-2014 Efraim Feinstein <efraim@opensiddur.org>
  * Licensed under the GNU Lesser General Public License, version 3 or later
  */
 var host = "";
 var x2js = new X2JS({ "arrayAccessForm" : "property", "emptyNodeForm" : "object" });   
+
+// deferred bootstrap until after Saxon is loaded
+var windowName = window.name;
+window.name = "NG_DEFER_BOOTSTRAP!" + window.name;
+var onSaxonLoad = function() {
+    window.name = windowName;
+    angular.resumeBootstrap();
+};
+
 
 // list of all languages supported by the app
 var supportedLanguages = {
@@ -23,8 +32,11 @@ var OpenSiddurClientApp =
   angular.module(
       'OpenSiddurClientApp',
       ['ngRoute',
+       'ngResource',
+       'ngSanitize', 
        'LocalStorageModule',
-       'infinite-scroll'
+       'infinite-scroll',
+       'ui.codemirror'
       ]);
 
 OpenSiddurClientApp.config(
@@ -46,8 +58,10 @@ OpenSiddurClientApp.config(
   function($routeProvider, $locationProvider) {
     $locationProvider.html5Mode(true).hashPrefix("!");
     $routeProvider
+      .when('/contributors/:userName?', {templateUrl: '/partials/profile.html', controller: "ProfileCtrl"})
       .when('/signin', {templateUrl: '/partials/signin.html', controller: "AuthenticationCtrl"})
-      .when('/sources', {templateUrl: '/partials/sources.html', controller: "SourcesCtrl"})
+      .when('/sources/:resource?', {templateUrl: '/partials/sources.html', controller: "SourcesCtrl"})
+      .when('/texts/:resource?', {templateUrl: '/partials/texts.html', controller: "TextsCtrl"})
       .when('/profile/:userName', {templateUrl: '/partials/profile.html', controller: "ProfileCtrl"})
       .when('/changepassword', {templateUrl: '/partials/changepassword.html', controller: "ChangePasswordCtrl"})
       .when('/about', {templateUrl: '/partials/about.html', controller: "AboutCtrl"})
@@ -78,107 +92,3 @@ OpenSiddurClientApp.directive(
   ]
 );
 
-/* import XML as part of the DOM */
-OpenSiddurClientApp.directive(
-  'osXmlImport', 
-  function ($http) {
-  var directiveDefinitionObject = {
-      restrict: 'A',
-      scope : {
-        source : '@osXmlImport',
-        contenteditable : '@contenteditable',
-        errorMessage : '='
-      },
-      link: function postLink(scope, elem, attrs) {
-        // TODO: place this in an XSLT service!
-        var teiToHtml = 
-          "<xsl:stylesheet "+ 
-          " xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\" "+ 
-          " xmlns=\"http://www.w3.org/1999/xhtml\" "+
-          " version=\"1.0\"> "+
-          " <xsl:output method='xml' indent='yes'/> "+
-          " " +
-          " <xsl:template name='make-name'> "+
-          "   <xsl:param name='string'/> "+
-          "     <xsl:choose> "+
-          "       <xsl:when test=\"contains($string, ':')\"> "+
-          "         <xsl:value-of select=\"concat(substring-before($string, ':'), '-', substring-after($string, ':'))\"/> "+
-          "       </xsl:when> "+
-          "       <xsl:otherwise> "+
-          "         <xsl:value-of select='$string'/>"+
-          "       </xsl:otherwise> "+
-          "     </xsl:choose> "+
-          " </xsl:template> "+
-          " " + 
-          " <xsl:template match='@xml:lang'> " +
-          "   <xsl:copy-of select='.'/> "+
-          "   <xsl:attribute name='lang'><xsl:value-of select='.'/></xsl:attribute> "+
-          " </xsl:template> " +
-          " " +
-          " <xsl:template match='@*'> "+
-          "   <xsl:variable name='attr-name'> "+
-          "     <xsl:call-template name='make-name'> " +
-          "       <xsl:with-param name='string' select='name()'/> "+
-          "     </xsl:call-template> "+
-          "   </xsl:variable> "+
-          "   <xsl:attribute name='data-{$attr-name}'> "+
-          "     <xsl:value-of select='.'/> "+
-          "   </xsl:attribute> "+
-          " </xsl:template> "+
-          " "+
-          " <xsl:template match='*'> "+
-          "   <xsl:variable name='elem-name'> " +
-          "     <xsl:call-template name='make-name'> "+
-          "       <xsl:with-param name='string' select='name()'/> "+
-          "     </xsl:call-template> "+
-          "   </xsl:variable> "+
-          "   <div class='{$elem-name}'> "+
-          "     <xsl:apply-templates select='@*'/> "+
-          "     <xsl:apply-templates select='node()'/> "+
-          "   </div> "+
-          " </xsl:template> "+
-          "</xsl:stylesheet>";
-        var loadXml = function() {
-          $http.get(host + scope.source)
-            .success( function ( data, status, headers, config ) {
-              var xslDomDoc = Sarissa.getDomDocument();
-              xslDomDoc = (new DOMParser()).parseFromString(teiToHtml, "text/xml");  
-              
-              var dataDomDoc = Sarissa.getDomDocument();
-              dataDomDoc = (new DOMParser()).parseFromString(data, "text/xml");
-              
-              var processor = new XSLTProcessor();
-              processor.importStylesheet(xslDomDoc);
-              
-              var htmlDocument = 
-                processor.transformToDocument(dataDomDoc);
-              
-              elem.append(htmlDocument.documentElement);
-              
-              if (scope.contenteditable) {
-                scope.editor = 
-                  CKEDITOR.inline(elem[0], {
-                    extraPlugins : 'tei-idno',
-                    allowedContent : {
-                      div : {
-                        classes : 'j-contributor, tei-idno',
-                        attributes : 'xml:lang, lang, data-xml-id, data-type'
-                      }
-                    }
-                    
-                  });
-              }
-              else
-                scope.editor = null;
-            })
-            .error( function ( data, status, headers, config ) {
-              scope.errorMessage = getApiError(data);
-            })
-                
-        }
-        console.log("xml import directive found: import from " + scope.source)
-        loadXml()
-      }
-    };
-    return directiveDefinitionObject;
-  });
