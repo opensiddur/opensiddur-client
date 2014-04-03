@@ -135,6 +135,17 @@ OpenSiddurClientApp.factory(
         };
 
         return {
+            "/api/data/linkage" : $resource(
+                '/api/data/linkage\/:resource',
+                { 
+                    resource : ""
+                },
+                {
+                    'query' : queryApi,
+                    'getAccess' : getAccessApi("/api/data/linkage\/:resource"),
+                    'setAccess' : setAccessApi("/api/data/linkage\/:resource")
+                }
+            ),
             "/api/data/original" : $resource(
                 '/api/data/original\/:resource',
                 { 
