@@ -36,6 +36,9 @@ OpenSiddurClientApp.directive(
                     selection : "=",
                     end : "="
                 },
+                link: function(scope, elem, attrs) {
+                    scope.parentElement = elem;
+                },
                 controller: ['$scope', function ($scope) {
                     console.log("In results box controller");
                     $scope.endReached = function() {
@@ -44,8 +47,13 @@ OpenSiddurClientApp.directive(
                             $scope.end = true;
                         }
                     };
-                    $scope.select = function(what) {
+                    $scope.select = function(what, index) {
                         console.log("Selected:", what);
+                        // clear existing selections
+                        $scope.parentElement.find("tr").removeClass("info");
+                        // set the selected class
+                        $scope.parentElement.find("tr").eq(index).addClass("info"); 
+
                         $scope.selection = what;
                     };
                  }],
