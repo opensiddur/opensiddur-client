@@ -10,7 +10,7 @@
                     <button class="btn btn-primary"
                         data-ng-show="search.collapsed"
                         data-ng-click="search.expand()">&#x25bc;</button>
-                    <span class="btn btn-inverse" data-ng-disabled="1">{{ editor.title }}</span>
+                    <span class="btn btn-inverse" data-ng-disabled="1">{{ editor.content.title.text }}</span>
                 </div>
                 <div class="btn-group">
                       <button class="btn btn-primary" type="submit"
@@ -101,12 +101,112 @@
             Log in to be able to edit a new document, or choose a document from the list to view it.
         </div>
         <div data-ng-show="editor.loggedIn || editor.currentDocument">
-            <div class="translationss-editor">
-                <form name="trForm">
-                    <div>coming soon</div>
-                </form>
+            <div class="row-fluid translations-editor">
+                <div>
+                    <form name="trForm">
+                        <div class="controls controls-row">
+                            <label class="span1" for="title_lang">Title</label>
+                            <select 
+                                class="span2"
+                                name="title_lang"
+                                data-ng-model="editor.content.title.lang" 
+                                required="true"
+                                data-ng-options="code as language for (code, language) in editor.supportedLanguages"/>
+                            <input class="span8" name="title" data-ng-model="editor.content.title.text"
+                                placeholder="Main title"/>
+                        </div>
+
+                        <div class="controls controls-row">
+                            <label class="span3" for="transtitle">Translation Title</label>
+                
+                            <input class="span8" name="transtitle" data-ng-model="editor.content.idno"
+                                placeholder="Title of translation"/>
+                        </div>
+
+                        <div class="controls controls-row">
+                            <label class="span3" for="license">Licensed under</label>
+                
+                            <select class="span8" name="license" 
+                                data-ng-disabled="!editor.access.relicense"
+                                data-ng-model="editor.content.license"
+                                required="true"
+                                data-ng-options="target as license for (target, license) in editor.supportedLicenses"/>
+                        </div>
+
+                        <div class="controls controls-row">
+                            <label class="span2" for="link-1-resource">Link</label>
+                            <input class="span3" name="link-1-resource"
+                                data-ng-model="editor.content.links[0].resource"
+                                readonly="true"/> 
+                            <a class="span1 btn btn-primary"
+                                href="#openDialogLeft"
+                                role="button"
+                                data-toggle="modal"
+                                >Set</a>
+
+                            <label class="span1" for="link-2-resource">to</label>
+                            <input class="span3" name="link-2-resource"
+                                data-ng-model="editor.content.links[1].resource"
+                                readonly="true"/> 
+                            <a class="span1 btn btn-primary"
+                                href="#openDialogRight"
+                                role="button"
+                                data-toggle="modal"
+                                >Set</a>
+                        </div>
+                        <hr/>
+                        <div data-ng-repeat="linkage in editor.content.linkages" class="span12"
+                            data-ng-init="linkageFirst = $first; linkageLast = $last; linkageIndex = $index">
+                            <div class="translation-left span6">
+                                <div data-ng-repeat="item in linkage.left">
+                                    <div>
+                                        <div data-ng-show="item.name=='tei:seg'">{{item.text}}</div>
+                                        <div data-ng-show="item.external">External link to {{item.text}}</div>
+                                        <div data-ng-show="item.name=='tei:anchor'">Anchor: {{item.id}}</div>
+                                    </div>
+                                    <div>
+                                        <button 
+                                            data-ng-click="editor.moveSegment(linkageIndex, $index, 'left', -1)"
+                                            data-ng-hide="linkageFirst && linkage.right.length == 0"
+                                            >Up</button>
+                                        <button 
+                                            data-ng-click="editor.moveSegment(linkageIndex, $index, 'left', 1)"
+                                            data-ng-hide="linkageLast && linkage.right.length == 0"
+                                            >Down</button>
+                                    </div>
+                                    <hr/>
+                                </div>
+                            </div>
+                            <div class="translation-right span6">
+                                <div data-ng-repeat="item in linkage.right">
+                                    <div>
+                                        <div data-ng-show="item.name=='tei:seg'">{{item.text}}</div>
+                                        <div data-ng-show="item.external">External link to {{item.text}}</div>
+                                        <div data-ng-show="item.name=='tei:anchor'">Anchor: {{item.id}}</div>
+                                    </div>
+                                    <div>
+                                        <button 
+                                            data-ng-click="editor.moveSegment(linkageIndex, $index, 'right', -1)"
+                                            data-ng-hide="linkageFirst && linkage.left.length == 0"
+                                            >Up</button>
+                                        <button 
+                                            data-ng-click="editor.moveSegment(linkageIndex, $index, 'right', 1)"
+                                            data-ng-hide="linkageLast && linkage.right.length == 0"
+                                            >Down</button>
+                                    </div>
+                                    <hr/>
+                                </div>
+                            </div>
+                            <div class="span12">
+                                <hr/>
+                            </div>
+                        </div> 
+                    </form>
+                </div>
             </div>
         </div>
     </div>
+    <os-open-dialog api="'/api/data/original'" selection="temporary.link1" name="openDialogLeft" title="Set parallel text 1"></os-open-dialog> 
+    <os-open-dialog api="'/api/data/original'" selection="temporary.link2" name="openDialogRight" title="Set parallel text 2"></os-open-dialog> 
 </div>
 
