@@ -289,14 +289,17 @@ OpenSiddurClientApp.controller(
             saveDocument : function() {
                 console.log("TBD");
             },
-            moveSegment : function(linkageIdx, segmentIdx, domain, direction) {
+            moveSegment : function(linkage, segment, domain, direction) {
+                var linkages = this.content.linkages;
+                var linkageIdx = linkages.indexOf(linkage);
+                var segmentIdx = linkages[linkageIdx][domain].indexOf(segment);
                 console.log("Move segment: ", linkageIdx, segmentIdx, domain, direction);
-                var linkages = this.content.linkage;
                 var oppositeDomain = (domain == "left") ? "right" : "left";
                 // determine the range of segments that will move
                 var firstSegmentIdx = (direction > 0) ? segmentIdx : 0;
                 var lastSegmentIdx = (direction > 0) ? (linkages[linkageIdx][domain].length - 1) : segmentIdx;
-                var movedSegments = linkages[linkageIdx][domain].splice(firstSegmentIdx, lastSegmentIdx - firstSegmentIdx);
+                // with hashkey removal...
+                var movedSegments = angular.fromJson(angular.toJson(linkages[linkageIdx][domain].splice(firstSegmentIdx, lastSegmentIdx - firstSegmentIdx + 1)));
                 // determine where to put them
                 if ((direction > 0 && linkageIdx == linkages.length - 1) || 
                     ((direction < 0) && linkageIdx == 0 )) {
@@ -312,8 +315,12 @@ OpenSiddurClientApp.controller(
                 }
                 else if (linkages[linkageIdx][oppositeDomain].length == 0) {
                     // insert in the next|previous existing linkage block
-                    var insertionPosition = (direction > 0) ? 0 : linkages[linkageIdx][domain].length;
-                    linkages[linkageIdx + direction][domain].splice(insertionPosition, 0, movedSegments)
+                    if (direction > 0) {
+                        linkages[linkageIdx + direction][domain] = movedSegments.concat(linkages[linkageIdx + direction][domain]);
+                    }
+                    else {
+                        linkages[linkageIdx + direction][domain] = linkages[linkageIdx + direction][domain].concat(movedSegments);
+                    }
                 }
                 else {
                     // insert in a new linkage block below|above, update linkageIdx

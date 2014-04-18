@@ -155,10 +155,10 @@
                                 >Set</a>
                         </div>
                         <hr/>
-                        <div data-ng-repeat="linkage in editor.content.linkages" class="span12"
+                        <div data-ng-repeat="linkage in editor.content.linkages" class="translation-linkage span12"
                             data-ng-init="linkageFirst = $first; linkageLast = $last; linkageIndex = $index">
                             <div class="translation-left span6">
-                                <div data-ng-repeat="item in linkage.left">
+                                <div class="translation-segment" data-ng-repeat="item in linkage.left">
                                     <div>
                                         <div data-ng-show="item.name=='tei:seg'">{{item.text}}</div>
                                         <div data-ng-show="item.external">External link to {{item.text}}</div>
@@ -166,11 +166,11 @@
                                     </div>
                                     <div>
                                         <button 
-                                            data-ng-click="editor.moveSegment(linkageIndex, $index, 'left', -1)"
+                                            data-ng-click="editor.moveSegment(linkage, item, 'left', -1)"
                                             data-ng-hide="linkageFirst && linkage.right.length == 0"
                                             >Up</button>
                                         <button 
-                                            data-ng-click="editor.moveSegment(linkageIndex, $index, 'left', 1)"
+                                            data-ng-click="editor.moveSegment(linkage, item, 'left', 1)"
                                             data-ng-hide="linkageLast && linkage.right.length == 0"
                                             >Down</button>
                                     </div>
@@ -178,7 +178,7 @@
                                 </div>
                             </div>
                             <div class="translation-right span6">
-                                <div data-ng-repeat="item in linkage.right">
+                                <div class="translation-segment" data-ng-repeat="item in linkage.right">
                                     <div>
                                         <div data-ng-show="item.name=='tei:seg'">{{item.text}}</div>
                                         <div data-ng-show="item.external">External link to {{item.text}}</div>
@@ -186,11 +186,11 @@
                                     </div>
                                     <div>
                                         <button 
-                                            data-ng-click="editor.moveSegment(linkageIndex, $index, 'right', -1)"
+                                            data-ng-click="editor.moveSegment(linkage, item, 'right', -1)"
                                             data-ng-hide="linkageFirst && linkage.left.length == 0"
                                             >Up</button>
                                         <button 
-                                            data-ng-click="editor.moveSegment(linkageIndex, $index, 'right', 1)"
+                                            data-ng-click="editor.moveSegment(linkage, item, 'right', 1)"
                                             data-ng-hide="linkageLast && linkage.right.length == 0"
                                             >Down</button>
                                     </div>
