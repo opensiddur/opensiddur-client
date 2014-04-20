@@ -138,21 +138,21 @@
                             <input class="span3" name="link-1-resource"
                                 data-ng-model="editor.content.links[0].resource"
                                 readonly="true"/> 
-                            <a class="span1 btn btn-primary"
-                                href="#openDialogLeft"
+                            <button class="span1 btn btn-primary"
+                                data-ng-click="openDialog('openDialogLeft')"
                                 role="button"
                                 data-toggle="modal"
-                                >Set</a>
+                                >Set</button>
 
                             <label class="span1" for="link-2-resource">to</label>
                             <input class="span3" name="link-2-resource"
                                 data-ng-model="editor.content.links[1].resource"
                                 readonly="true"/> 
-                            <a class="span1 btn btn-primary"
-                                href="#openDialogRight"
+                            <button class="span1 btn btn-primary"
+                                data-ng-click="openDialog('openDialogRight')"
                                 role="button"
                                 data-toggle="modal"
-                                >Set</a>
+                                >Set</button>
                         </div>
                         <hr/>
                         <div data-ng-repeat="linkage in editor.content.linkages" class="translation-linkage span12"

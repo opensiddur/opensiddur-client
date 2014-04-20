@@ -108,7 +108,18 @@ OpenSiddurClientApp.controller(
                     },
                     license : license,
                     idno : idnoElement.html(),
-                    links : [], 
+                    links : [
+                        {
+                            resource : "",
+                            domain : "stream",
+                            stream : []
+                        },
+                        {
+                            resource : "",
+                            domain : "stream",
+                            stream : []
+                        }
+                    ], 
                     linkages : []
                 };
 
@@ -174,7 +185,9 @@ OpenSiddurClientApp.controller(
                         var exl = existingLinkages[i];
                         linkages = linkages.concat( catchUp(exl["leftstart"], exl["rightstart"]) ).concat( blockLink(exl["leftend"], exl["rightend"]) );
                     }
-                    linkages = linkages.concat( catchUp(leftStream[leftStream.length - 1].id, rightStream[rightStream.length - 1].id) );
+                    if (leftStream.length > 0 || rightStream.length > 0) {
+                        linkages = linkages.concat( catchUp(leftStream[leftStream.length - 1].id, rightStream[rightStream.length - 1].id) );
+                    }
 
                     $scope.editor.content.linkages = linkages;
                     console.log("Both linkage documents loaded:", linkages); 
@@ -243,10 +256,27 @@ OpenSiddurClientApp.controller(
                     );
                 }
             },
+            resetLinkageBlocks : function(domain) {
+                // clear linkages from the given domain
+                // if the other domain exists, reset it so it has its own, single linkage block
+
+                $scope.editor.content.linkages = [
+                    $scope.editor.newLinkageBlock(),
+                    $scope.editor.newLinkageBlock()
+                ];
+                $scope.editor.content.linkages[0]["left"] = 
+                    ($scope.editor.content.links[0]["stream"]) ?
+                        $scope.editor.content.links[0].stream : []
+                    ; 
+                $scope.editor.content.linkages[1]["right"] = 
+                    ($scope.editor.content.links[1]["stream"]) ? 
+                        $scope.editor.content.links[1].stream : []; 
+            },
             updateParallelText : function(n, api) {
                 $scope.editor.content.links[n] = {
                     resource : api.replace("/exist/restxq/api", "")
                 };
+                
 
                 // load the resource from the API
                 return $http.get(decodeURI(api)) 
@@ -270,7 +300,7 @@ OpenSiddurClientApp.controller(
                                 text : isExternal ? e.attr("target") : e.text().replace(/^\s*|\s(?=\s)|\s*$/g, "")
                             }
                         }
-                    );
+                    ).toArray();
                     console.log("loaded:", $scope.editor.content.links[n].stream);
                 })
                 .error(function(error) {
@@ -338,6 +368,10 @@ OpenSiddurClientApp.controller(
             }
         };
 
+        $scope.openDialog = function(dialog) {
+            $("#"+dialog).modal();
+        };
+
         $scope.saveButtonText = function() {
             return this.trForm.$pristine ? (($scope.editor.isNew) ? "Unsaved, No changes" : "Saved" ) : "Save";
         };
@@ -353,15 +387,21 @@ OpenSiddurClientApp.controller(
 
         $scope.$watch("temporary.link1", 
             function(t) {
-                if (t != "") { 
-                    $scope.editor.updateParallelText(0, t);
+                if (t != "") {
+                    $scope.editor.updateParallelText(0, t)
+                    .then( function () {
+                        $scope.editor.resetLinkageBlocks(); 
+                    } );
                 }
             }
         );
         $scope.$watch("temporary.link2", 
             function(t) {
                 if (t != "") {
-                    $scope.editor.updateParallelText(1, t);
+                    $scope.editor.updateParallelText(1, t)
+                    .then( function () {
+                        $scope.editor.resetLinkageBlocks();
+                    } ); 
                 }
             }
         );

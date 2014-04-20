@@ -27,7 +27,6 @@
         <j:parallelText xml:id="parallel">
             <tei:idno></tei:idno>
             <tei:linkGrp domains="">
-                <tei:link target=""/>
             </tei:linkGrp>
         </j:parallelText>
    </tei:text>
