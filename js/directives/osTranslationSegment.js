@@ -47,7 +47,8 @@ OpenSiddurClientApp.directive(
                                 linkages.splice(0, 0, newlb);
                             }
                         }
-                        else if (linkages[linkageIdx][oppositeDomain].length == 0) {
+                        else if (linkages[linkageIdx][oppositeDomain].length == 0 || 
+                                linkages[linkageIdx + direction][oppositeDomain].length == 0) {
                             // insert in the next|previous existing linkage block
                             if (direction > 0) {
                                 linkages[linkageIdx + direction][domain] = movedSegments.concat(linkages[linkageIdx + direction][domain]);
