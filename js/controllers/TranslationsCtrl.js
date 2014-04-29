@@ -6,8 +6,9 @@
  */
 OpenSiddurClientApp.controller(
     'TranslationsCtrl',
-    ['$scope', '$http', '$location', '$route', '$routeParams', '$q', 'AuthenticationService', 'ErrorService', 'IndexService', 'RestApi', 
-    function($scope, $http, $location, $route, $routeParams, $q, AuthenticationService, ErrorService, IndexService, RestApi) {
+    ['$scope', '$http', '$location', '$route', '$routeParams', '$q', 'AuthenticationService', 'ErrorService', 'IndexService', 'RestApi',
+     'XsltService', 
+    function($scope, $http, $location, $route, $routeParams, $q, AuthenticationService, ErrorService, IndexService, RestApi, XsltService) {
         console.log("translations controller");
         IndexService.search.enable( "/api/data/linkage" );
         if ($routeParams.resource) {
@@ -87,7 +88,7 @@ OpenSiddurClientApp.controller(
                             [fragment, fragment] );
                 };
 
-                return linkGrp.find("tei\\:link").map(
+                return linkGrp.find("link").map(
                     function(idx, link) {
                         var targets = $(link).attr("target").split(/\s+/);
                         var left = startAndEndFromTarget(targets[0]);
@@ -98,10 +99,13 @@ OpenSiddurClientApp.controller(
             },
             loadDocument : function(docXml) {
                 // expects an XML string
-                var titleElement =  $("tei\\:title[type=main]", docXml);
-                var license = $("tei\\:licence", docXml).attr("target");
-                var idnoElement = $("j\\:parallelText tei\\:idno",docXml);
+                var $docXml = $.parseXML(docXml)
+                var $$docXml = $($docXml);
+                var titleElement =  $$docXml.find("title[type=main]");
+                var license = $$docXml.find("licence").attr("target");
+                var idnoElement = $$docXml.find("parallelText").find("idno");
                 $scope.editor.content = {
+                    loaded : $docXml,
                     title : {
                         text : titleElement.html(),
                         lang : titleElement.attr("xml:lang")
@@ -123,10 +127,10 @@ OpenSiddurClientApp.controller(
                     linkages : []
                 };
 
-                var existingLinkages = this.parseParallelLinkages($("j\\:parallelText tei\\:linkGrp", docXml));
+                var existingLinkages = this.parseParallelLinkages($$docXml.find("parallelText").find("linkGrp"));
 
                 $q.all(
-                    $("j\\:parallelText tei\\:linkGrp", docXml).attr("domains").split(/\s+/).map(
+                    $$docXml.find("parallelText").find("linkGrp").attr("domains").split(/\s+/).map(
                         function(domain, idx) {
                             return $scope.editor.updateParallelText(idx, "/exist/restxq/api" + domain.split("#")[0]);
                         }
@@ -190,6 +194,7 @@ OpenSiddurClientApp.controller(
                     }
 
                     $scope.editor.content.linkages = linkages;
+                    $scope.trForm.$setPristine();
                     console.log("Both linkage documents loaded:", linkages); 
                 });
             },
@@ -309,15 +314,39 @@ OpenSiddurClientApp.controller(
             },
             saveDocument : function() {
                 console.log("Save: TBD");
+                // convert scope.editor.content.linkages to XML
+                var leftDomain = $scope.editor.content.links[0].resource;
+                var rightDomain = $scope.editor.content.links[1].resource;
+                var blockToTarget = function(block, domain) {
+                    return domain+"#"+(
+                        (block.length == 1) ? 
+                            block[0].id : 
+                            ("range("+block[0].id+","+block[block.length - 1].id+")"));
+                };
+                var linkageXml = ""+ 
+                    $scope.editor.content.linkages.filter(
+                        function(linkageBlock) {
+                            return (
+                                (linkageBlock.left.length > 0 && linkageBlock.right.length > 0) &&
+                                !(linkageBlock.left[0].isExternal || linkageBlock.right[0].isExternal) 
+                                );
+                        }
+                    ).map(function(linkageBlock) {
+                            var targets = blockToTarget(linkageBlock.left, leftDomain) + " " + blockToTarget(linkageBlock.right, rightDomain);
+                            return "<tei:link target=\""+ targets +"\"/>";
+                        }
+                    ).join("\n");
+                var newContent = XsltService.serializeToString( 
+                    $($scope.editor.content.loaded).find("parallelText").find("linkGrp").html(linkageXml).parent().parent().parent().parent()[0]
+                );
+                console.log("Saving:", newContent);
+                $scope.trForm.$setPristine();
             },
             newButton : function() {
                 if ($location.path() == "/translations")
                     $route.reload();
                 else 
                     $location.path("/translations");
-            },
-            saveDocument : function() {
-                console.log("TBD");
             }
         };
 
@@ -358,7 +387,9 @@ OpenSiddurClientApp.controller(
                 }
             }
         );
-
+        $scope.$watch("editor.content.linkages", function() {
+            $scope.trForm.$setDirty();
+        } );
 
         $scope.editor.setDocument();
     }
