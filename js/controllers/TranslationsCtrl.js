@@ -336,11 +336,55 @@ OpenSiddurClientApp.controller(
                             return "<tei:link target=\""+ targets +"\"/>";
                         }
                     ).join("\n");
+
+                // title
+                var $doc = $($scope.editor.content.loaded);
+                var docTitle = ($scope.editor.content.title.text == "") ? 
+                    { "text" : "Linkage of " + decodeURI($scope.editor.content.links[0].resource) + " and " + decodeURI($scope.editor.content.links[1].resource),
+                      "lang" : "en" } :
+                    $scope.editor.content.title ;
+                
+                $doc.find("title[type=main]").replaceWith("<tei:title type=\"main\" xml:lang=\""+docTitle.lang+"\">"+docTitle.text+"</tei:title>");
+
                 var newContent = XsltService.serializeToString( 
-                    $($scope.editor.content.loaded).find("parallelText").find("linkGrp").html(linkageXml).parent().parent().parent().parent()[0]
+                    $doc.find("parallelText").find("linkGrp").html(linkageXml).parent().parent().parent() // tei:TEI
+                    .parent()[0]        // document node
                 );
+                
                 console.log("Saving:", newContent);
-                $scope.trForm.$setPristine();
+                
+                // save operation
+                var httpOperation = (this.isNew) ? $http.post : $http.put;
+                var url = "/api/data/linkage" + ((this.isNew) ? "" : ("/" + $scope.editor.currentDocument));
+                httpOperation(url, newContent)
+                    .success(function(data, statusCode, headers) {
+                        $scope.trForm.$setPristine();
+                        if ($scope.editor.isNew) {
+                            // add to the search results listing
+                            IndexService.search.addResult({
+                                title:  docTitle, 
+                                url : headers('Location'),
+                                contexts : []
+                            });
+
+                            $scope.editor.isNew = 0;
+                            $scope.editor.currentDocument=headers('Location').replace("/exist/restxq/api/data/linkage/", "");
+                            // save the access model for the new document
+                            $scope.editor.saveAccessModel();
+                        };
+                        // reload the document to get the change log in there correctly
+                        // add a 1s delay to allow the server some processing time before reload
+                        setTimeout(
+                            function() { 
+                                $scope.editor.setDocument(); 
+                            }, 1000
+                        );
+                    })
+                    .error(function(data) {
+                        ErrorService.addApiError(data);
+                        console.log("error saving", url);
+                    });
+
             },
             newButton : function() {
                 if ($location.path() == "/translations")
