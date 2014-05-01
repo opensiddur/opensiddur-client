@@ -433,9 +433,14 @@ OpenSiddurClientApp.controller(
                 }
             }
         );
-        $scope.$watch("editor.content.linkages", function() {
+
+        $scope.$watch("editor.content.linkages", function(newVal, oldVal) {
+            if (newVal == oldVal || oldVal.length == 0) {  
+                // skip the watch before data is loaded
+                return; 
+            }
             $scope.trForm.$setDirty();
-        } );
+        }, true );
 
         $scope.editor.setDocument();
     }
