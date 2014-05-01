@@ -340,11 +340,13 @@ OpenSiddurClientApp.controller(
                 // title
                 var $doc = $($scope.editor.content.loaded);
                 var docTitle = ($scope.editor.content.title.text == "") ? 
-                    { "text" : "Linkage of " + decodeURI($scope.editor.content.links[0].resource) + " and " + decodeURI($scope.editor.content.links[1].resource),
+                    { "text" : "Linkage of " + decodeURI($scope.editor.content.links[0].resource.split("/").pop()) + " and " + decodeURI($scope.editor.content.links[1].resource.split("/").pop()),
                       "lang" : "en" } :
                     $scope.editor.content.title ;
-                
                 $doc.find("title[type=main]").replaceWith("<tei:title type=\"main\" xml:lang=\""+docTitle.lang+"\">"+docTitle.text+"</tei:title>");
+
+                // domains
+                $doc.find("parallelText").find("linkGrp").attr("domains", $scope.editor.content.links.map(function(x) {return x.resource+"#"+x.domain;} ).join(" "));
 
                 var newContent = XsltService.serializeToString( 
                     $doc.find("parallelText").find("linkGrp").html(linkageXml).parent().parent().parent() // tei:TEI
@@ -362,13 +364,13 @@ OpenSiddurClientApp.controller(
                         if ($scope.editor.isNew) {
                             // add to the search results listing
                             IndexService.search.addResult({
-                                title:  docTitle, 
+                                title:  docTitle.text, 
                                 url : headers('Location'),
                                 contexts : []
                             });
 
                             $scope.editor.isNew = 0;
-                            $scope.editor.currentDocument=headers('Location').replace("/exist/restxq/api/data/linkage/", "");
+                            $scope.editor.currentDocument=decodeURI(headers('Location').replace("/exist/restxq/api/data/linkage/", ""));
                             // save the access model for the new document
                             $scope.editor.saveAccessModel();
                         };

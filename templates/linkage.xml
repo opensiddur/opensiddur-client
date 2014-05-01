@@ -21,6 +21,7 @@
             </tei:sourceDesc>
         </tei:fileDesc>
         <tei:revisionDesc>
+            <tei:change/>
         </tei:revisionDesc>
     </tei:teiHeader>
     <tei:text>
