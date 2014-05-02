@@ -1,0 +1,19 @@
+<div class="osOpenDialog modal hide" aria-hidden="true" aria-labelledBy="openDialogHeader">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3 id="openDialogHeader">{{title}}</h3>
+    </div>
+    <div class="modal-body">
+        <os-query-box query-model="query">
+        </os-query-box>
+        <os-results-box results="results" selection="lastSelected" end="resultsEnd">
+        </os-results-box>
+    </div>
+    <div class="modal-footer">
+        <a href="#" class="btn" data-dismiss="modal">Close</a>
+        <a href="#" class="btn btn-primary" data-dismiss="modal" 
+            data-ng-click="OKButton()">Open</a>
+    </div>
+
+</div>
+

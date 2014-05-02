@@ -128,3 +128,12 @@ textarea.ng-invalid {
 .search-results tr {
     cursor:pointer;
 }
+
+/* translations */
+.translation-linkage {
+    border:2px solid black;
+}
+.translation-segment {
+    border:1px solid gray;
+}
+
