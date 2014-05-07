@@ -7,15 +7,16 @@
 OpenSiddurClientApp.controller(
     'TextsCtrl',
     ['$scope', '$location', '$route', '$routeParams', '$http', '$window', 'XsltService', 
-    'AuthenticationService', 'IndexService', 'ErrorService', 'RestApi',
+    'AuthenticationService', 'DialogService', 'IndexService', 'ErrorService', 'RestApi',
     function ($scope, $location, $route, $routeParams, $http, $window, XsltService, 
-        AuthenticationService, IndexService, ErrorService, RestApi) {
+        AuthenticationService, DialogService, IndexService, ErrorService, RestApi) {
         console.log("Texts controller.");
         IndexService.search.enable( "/api/data/original" );
         if ($routeParams.resource) {
             IndexService.search.collapse();
         }
         $scope.search = IndexService.search;
+        $scope.DialogService = DialogService;
 
 
         $scope.editor = {

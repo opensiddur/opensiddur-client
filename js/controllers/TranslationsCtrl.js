@@ -6,15 +6,17 @@
  */
 OpenSiddurClientApp.controller(
     'TranslationsCtrl',
-    ['$scope', '$http', '$location', '$route', '$routeParams', '$q', 'AuthenticationService', 'ErrorService', 'IndexService', 'RestApi',
+    ['$scope', '$http', '$location', '$route', '$routeParams', '$q', 'AuthenticationService', 'DialogService', 'ErrorService', 'IndexService', 'RestApi',
      'XsltService', 
-    function($scope, $http, $location, $route, $routeParams, $q, AuthenticationService, ErrorService, IndexService, RestApi, XsltService) {
+    function($scope, $http, $location, $route, $routeParams, $q, AuthenticationService, DialogService, ErrorService, IndexService, RestApi, XsltService) {
         console.log("translations controller");
         IndexService.search.enable( "/api/data/linkage" );
         if ($routeParams.resource) {
             IndexService.search.collapse();
         }
         $scope.search = IndexService.search;
+        $scope.DialogService = DialogService;
+
         $scope.temporary = {
             link1 : "",
             link2 : ""
