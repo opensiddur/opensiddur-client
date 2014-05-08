@@ -18,6 +18,9 @@ OpenSiddurClientApp.controller(
 
         $scope.editor = {
             loggedIn : AuthenticationService.loggedIn,
+            access : {
+                write : AuthenticationService.loggedIn
+            },
             "supportedLanguages" : supportedLanguages, 
             "monographScopes" : { 
                 volume : "volume",
