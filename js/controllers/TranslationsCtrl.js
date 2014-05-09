@@ -6,15 +6,17 @@
  */
 OpenSiddurClientApp.controller(
     'TranslationsCtrl',
-    ['$scope', '$http', '$location', '$route', '$routeParams', '$q', 'AuthenticationService', 'ErrorService', 'IndexService', 'RestApi',
+    ['$scope', '$http', '$location', '$route', '$routeParams', '$q', 'AccessModelService', 'AuthenticationService', 'DialogService', 'ErrorService', 'IndexService', 'RestApi',
      'XsltService', 
-    function($scope, $http, $location, $route, $routeParams, $q, AuthenticationService, ErrorService, IndexService, RestApi, XsltService) {
+    function($scope, $http, $location, $route, $routeParams, $q, AccessModelService, AuthenticationService, DialogService, ErrorService, IndexService, RestApi, XsltService) {
         console.log("translations controller");
         IndexService.search.enable( "/api/data/linkage" );
         if ($routeParams.resource) {
             IndexService.search.collapse();
         }
         $scope.search = IndexService.search;
+        $scope.DialogService = DialogService;
+
         $scope.temporary = {
             link1 : "",
             link2 : ""
@@ -23,7 +25,7 @@ OpenSiddurClientApp.controller(
             loggedIn : AuthenticationService.loggedIn,
             currentDocument : $routeParams.resource,
             // TODO: this is copied verbatim from TextsCtrl... need some serious refactoring
-            access : {},
+            access : AccessModelService.default(AuthenticationService.userName),
             accessModel : "public",
             setAccessModel : function() {
                 this.accessModel = (this.isNew) ? "public" : (
@@ -202,20 +204,7 @@ OpenSiddurClientApp.controller(
                 console.log("New document");
 
                 // default access rights for a new file
-                $scope.editor.access = {
-                    owner : AuthenticationService.userName,
-                    group : "everyone",
-                    worldRead : true,
-                    worldWrite : false,
-                    read : true,
-                    write : true,
-                    relicense : true,
-                    chmod : true,
-                    grantGroups : [],
-                    grantUsers :[],
-                    denyGroups : [],
-                    denyUsers : []
-                };
+                $scope.editor.access = AccessModelService.default(AuthenticationService.userName);
                 // load a new document template
                 documentTemplate = "/templates/linkage.xml";
                 $http.get(documentTemplate) 

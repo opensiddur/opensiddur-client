@@ -7,15 +7,16 @@
 OpenSiddurClientApp.controller(
     'TextsCtrl',
     ['$scope', '$location', '$route', '$routeParams', '$http', '$window', 'XsltService', 
-    'AuthenticationService', 'IndexService', 'ErrorService', 'RestApi',
+    'AccessModelService', 'AuthenticationService', 'DialogService', 'IndexService', 'ErrorService', 'RestApi',
     function ($scope, $location, $route, $routeParams, $http, $window, XsltService, 
-        AuthenticationService, IndexService, ErrorService, RestApi) {
+        AccessModelService, AuthenticationService, DialogService, IndexService, ErrorService, RestApi) {
         console.log("Texts controller.");
         IndexService.search.enable( "/api/data/original" );
         if ($routeParams.resource) {
             IndexService.search.collapse();
         }
         $scope.search = IndexService.search;
+        $scope.DialogService = DialogService;
 
 
         $scope.editor = {
@@ -35,7 +36,7 @@ OpenSiddurClientApp.controller(
                 }
             },
             content : "",
-            access : {},
+            access : AccessModelService.default(AuthenticationService.userName),
             accessModel : "public",
             setAccessModel : function() {
                 this.accessModel = (this.isNew) ? "public" : (
@@ -70,20 +71,7 @@ OpenSiddurClientApp.controller(
                 $scope.editor.isNew = 1;
                 $scope.editor.content = "";
                 // default access rights for a new file
-                $scope.editor.access = {
-                    owner : AuthenticationService.userName,
-                    group : "everyone",
-                    worldRead : true,
-                    worldWrite : false,
-                    read : true,
-                    write : true,
-                    relicense : true,
-                    chmod : true,
-                    grantGroups : [],
-                    grantUsers :[],
-                    denyGroups : [],
-                    denyUsers : []
-                };
+                $scope.editor.access = AccessModelService.default(AuthenticationService.userName);
                 // load a new document template
                 documentTemplate = "/templates/original.xml";
                 $http.get(documentTemplate) 
