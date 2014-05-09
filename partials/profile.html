@@ -17,7 +17,7 @@
                 </div>
                 <div class="btn-group">
                     <button class="btn btn-primary" type="submit"
-                        data-ng-show="mode == 'thirdparty'" 
+                        data-ng-show="mode == 'thirdparty' && loggedIn" 
                         data-ng-click="newProfile()"
                         >New</button>
                     <button
@@ -34,6 +34,10 @@
       <div class="row-fluid">
         <div class="span8 offset2">
           <div data-ng-switch="ownership">
+            <div data-ng-switch-when="nobody">
+              <p>You must be logged in to edit a new third party profile. 
+              You may view other people's public profiles while not logged in.</p>
+            </div>
             <div data-ng-switch-when="self">
               <p>Your profile is <strong>public</strong> information that you want to be used
               to identify or contact you on Open Siddur. Only a username is required for a profile,
@@ -55,7 +59,7 @@
               third party contributor. Instead, enter bibliographic information of the <a href="/sources">source</a>.</p> 
             </div>
           </div>  
-          <form class="form-horizontal" name="profileForm">
+          <form class="form-horizontal" name="profileForm" data-ng-hide="ownership == 'nobody'">
             <div class="control-group">
               <label class="control-label inline">This profile is for an:</label>
               <div class="controls">
