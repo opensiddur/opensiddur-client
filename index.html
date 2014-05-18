@@ -64,12 +64,6 @@
       </div>
     </div>
     <div class="page" data-ng-controller="IndexCtrl">
-        <div class="page-search"
-            data-ng-hide="search.collapsed">
-            <os-search-list api="search.api" selection="search.selection">
-            </os-search-list>
-        </div>
-        <div class="page-header-waste-of-space" data-ng-hide="search.collapsed"></div>
         <div class="page-view tab-content" data-ng-view="1"></div>
     </div><!--/.page--> 
     <div id="footer" class="navbar navbar-fixed-bottom">
@@ -122,7 +116,7 @@
     <script src="/js/services/AccessModelService.js" ></script>
     <script src="/js/services/DialogService.js" ></script>
     <script src="/js/services/ErrorService.js" ></script>
-    <script src="/js/services/IndexService.js" ></script>
+    <!--script src="/js/services/IndexService.js" ></script-->
     <script src="/js/services/RestApi.js" ></script>
     <script src="/js/services/XsltService.js" ></script>
     <script src="/js/controllers/AboutCtrl.js" ></script>

@@ -20,10 +20,11 @@
 OpenSiddurClientApp.controller(
   'ProfileCtrl',
   ['$scope', '$location', '$rootScope', '$routeParams', '$http', 
-   'AccessModelService', 'AuthenticationService', 'ErrorService', 'IndexService', 'RestApi', 'XsltService',
-  function ($scope, $location, $rootScope, $routeParams, $http, AccessModelService, AuthenticationService, ErrorService, IndexService, RestApi, XsltService) {
+   'AccessModelService', 'AuthenticationService', 'DialogService', 'ErrorService', 'RestApi', 'XsltService',
+  function ($scope, $location, $rootScope, $routeParams, $http, AccessModelService, AuthenticationService, DialogService, ErrorService, RestApi, XsltService) {
     console.log("Profile controller.");
     
+    $scope.DialogService = DialogService;
 
     $scope.userName = $routeParams.userName;    
     $scope.loggedIn = AuthenticationService.loggedIn;
@@ -32,10 +33,8 @@ OpenSiddurClientApp.controller(
     $scope.mode = ($location.path().indexOf("/contributors")==0 ? "thirdparty" : "self");
     $scope.isNew = !$scope.userName; 
 
-    $scope.search = IndexService.search;
-
     $scope.access = AccessModelService.default($scope.loggedInUser)
-    
+    /*
     // set up the index service
     if ($scope.mode == "thirdparty") {
         IndexService.search.enable( "/api/user" );
@@ -46,7 +45,7 @@ OpenSiddurClientApp.controller(
     if ($scope.userName) {
         IndexService.search.collapse();
     }
-   
+    */
     $scope.get = function ( ) {  
         // HTTP interaction with the API
         // TODO: use a RestApi service 
@@ -94,9 +93,14 @@ OpenSiddurClientApp.controller(
           );
         
     };
-
+    $scope.selection = "/exist/restxq/api/user" + ((this.isNew) ? "" : ("/" + $scope.userName));
+    var selectionWatchCtr = 0;
     // load a profile or start a new one
-    $scope.$watch("search.selection", function ( selection ) {
+    $scope.$watch("selection", function ( selection ) {
+        if (!selectionWatchCtr) {
+            selectionWatchCtr++;
+            return;
+        }
         if (selection) {
             $location.path( "/contributors/" + selection.split("/").pop() ); 
         }
@@ -121,11 +125,13 @@ OpenSiddurClientApp.controller(
             function(data, status, headers, config) {
                 $scope.profileForm.$setPristine();
                 if ($scope.isNew) {
+                    /*
                     IndexService.search.addResult({
                         title:  $( ($scope.profileType == "individual") ? ".tei-name" : ".tei-orgName", ".instance").html(), 
                         url : headers('Location'),
                         contexts : []
                     });
+                    */
                     $scope.userName = headers("Location").split("/").pop();
                 }
                 $scope.isNew = 0;

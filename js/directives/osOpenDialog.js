@@ -29,7 +29,11 @@ OpenSiddurClientApp.directive(
                     };
                     $scope.OKButton = function() {
                         $scope.selection = $scope.lastSelected;
+                        $("#"+$scope.name).modal('hide');
                     }; 
+                    $scope.CloseButton = function() {
+                        $("#"+$scope.name).modal('hide');
+                    };
                     $scope.lastSelected = "";
                     $scope.inProgress = false;
                     $scope.results = [];

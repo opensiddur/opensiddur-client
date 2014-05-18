@@ -7,12 +7,8 @@
 /* controller for signin and registration page */
 OpenSiddurClientApp.controller(
   'ChangePasswordCtrl', 
-  ['$scope', '$http', '$location', 'AuthenticationService', 'ErrorService', 'IndexService',
-  function ($scope, $http, $location, AuthenticationService, ErrorService, IndexService){
-      // turn off the index search service
-      IndexService.search.collapsed = true;
-      IndexService.search.api = "";
-
+  ['$scope', '$http', '$location', 'AuthenticationService', 'ErrorService', 
+  function ($scope, $http, $location, AuthenticationService, ErrorService){
       who = AuthenticationService.whoami();
       $scope.userName = who.userName; 
       $scope.realCurrentPassword = who.password;

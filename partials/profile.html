@@ -1,15 +1,8 @@
 <div>
     <div class="toolbar navbar navbar-inverse">
-        <div class="toolbar-waste-of-space" data-ng-hide="search.collapsed"></div>
         <div class="navbar-inner">
             <div class="btn-toolbar">
                 <div class="btn-group" data-ng-show="mode == 'thirdparty'">
-                    <button class="btn btn-primary"
-                        data-ng-show="!search.collapsed"
-                        data-ng-click="search.collapse()">&#x25b2;</button>
-                    <button class="btn btn-primary"
-                        data-ng-show="search.collapsed"
-                        data-ng-click="search.expand()">&#x25bc;</button>
                     <span class="btn btn-inverse" data-ng-disabled="1"
                         data-ng-show="!isNew">{{ profile.contributor.name.__text }}{{ profile.contributor.orgName.__text }}</span>
                     <span class="btn btn-inverse" data-ng-disabled="1"
@@ -20,6 +13,10 @@
                         data-ng-show="mode == 'thirdparty' && loggedIn" 
                         data-ng-click="newProfile()"
                         >New</button>
+                    <button class="btn btn-primary" 
+                        data-ng-show="mode == 'thirdparty'"
+                        data-ng-click="DialogService.open('openDialog')"
+                        >Open</button>
                     <button
                         class="btn btn-primary"
                         data-ng-class="{'btn-success' : profileForm.$pristine}" type="submit" 
@@ -163,4 +160,6 @@
         </div>
       </div>
     </div>
+    <os-open-dialog api="'/api/user'" selection="selection" 
+        title="Open Profile" name="openDialog"></os-open-dialog>
 </div>

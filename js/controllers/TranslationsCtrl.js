@@ -6,15 +6,12 @@
  */
 OpenSiddurClientApp.controller(
     'TranslationsCtrl',
-    ['$scope', '$http', '$location', '$route', '$routeParams', '$q', 'AccessModelService', 'AuthenticationService', 'DialogService', 'ErrorService', 'IndexService', 'RestApi',
+    ['$scope', '$http', '$location', '$route', '$routeParams', '$q', 'AccessModelService', 'AuthenticationService', 'DialogService', 'ErrorService', 'RestApi',
      'XsltService', 
-    function($scope, $http, $location, $route, $routeParams, $q, AccessModelService, AuthenticationService, DialogService, ErrorService, IndexService, RestApi, XsltService) {
+    function($scope, $http, $location, $route, $routeParams, $q, AccessModelService, AuthenticationService, DialogService, ErrorService, RestApi, XsltService) {
         console.log("translations controller");
-        IndexService.search.enable( "/api/data/linkage" );
-        if ($routeParams.resource) {
-            IndexService.search.collapse();
-        }
-        $scope.search = IndexService.search;
+        
+        $scope.selection = "";
         $scope.DialogService = DialogService;
 
         $scope.temporary = {
@@ -352,12 +349,13 @@ OpenSiddurClientApp.controller(
                         $scope.trForm.$setPristine();
                         if ($scope.editor.isNew) {
                             // add to the search results listing
+                            /*
                             IndexService.search.addResult({
                                 title:  docTitle.text, 
                                 url : headers('Location'),
                                 contexts : []
                             });
-
+                            */
                             $scope.editor.isNew = 0;
                             $scope.editor.currentDocument=decodeURI(headers('Location').replace("/exist/restxq/api/data/linkage/", ""));
                             // save the access model for the new document
@@ -385,19 +383,21 @@ OpenSiddurClientApp.controller(
             }
         };
 
-        $scope.openDialog = function(dialog) {
-            $("#"+dialog).modal();
-        };
-
         $scope.saveButtonText = function() {
             return this.trForm.$pristine ? (($scope.editor.isNew) ? "Unsaved, No changes" : "Saved" ) : "Save";
         };
 
-        $scope.$watch("search.selection",
+        var selectionWatchCtr = 0;
+        $scope.$watch("selection",
             function(selection) { 
-                var resourceName = selection.split("/").pop();
-                if (resourceName && resourceName != $scope.editor.currentDocument)
-                    $location.path( "/translations/" + resourceName );
+                if (!selectionWatchCtr) {
+                    selectionWatchCtr++;
+                }
+                else {
+                    var resourceName = selection.split("/").pop();
+                    if (resourceName && resourceName != $scope.editor.currentDocument)
+                        $location.path( "/translations/" + resourceName );
+                }
             }
         );
         

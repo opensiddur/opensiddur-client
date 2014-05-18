@@ -1,15 +1,8 @@
 <div>
     <div class="toolbar navbar navbar-inverse">
-        <div class="toolbar-waste-of-space" data-ng-hide="search.collapsed"></div>
         <div class="navbar-inner">
             <div class="btn-toolbar">
                 <div class="btn-group">
-                    <button class="btn btn-primary"
-                        data-ng-show="!search.collapsed"
-                        data-ng-click="search.collapse()">&#x25b2;</button>
-                    <button class="btn btn-primary"
-                        data-ng-show="search.collapsed"
-                        data-ng-click="search.expand()">&#x25bc;</button>
                     <span class="btn btn-inverse" data-ng-disabled="1">{{ editor.title }}</span>
                 </div>
                 <div class="btn-group">
@@ -17,6 +10,9 @@
                           data-ng-disabled="!editor.loggedIn" 
                           data-ng-click="editor.newButton()"  
                           >New</button>
+                      <button class="btn btn-primary" type="submit"
+                          data-ng-click="DialogService.open('openDialog')"  
+                          >Open</button>
                       <button data-ng-class="{'btn' : true, 'btn-primary' : true, 'btn-success' : textsForm.$pristine}" type="submit" 
                           data-ng-click="editor.saveDocument()"  
                           data-ng-disabled="!editor.access.write || textsForm.$invalid || textsForm.$pristine">{{saveButtonText()}}</button>
@@ -35,7 +31,7 @@
     <!-- page content -->
     <div class="page-container container-fluid">
         <div data-ng-show="!editor.loggedIn && !editor.currentDocument">
-            Log in to be able to edit a new document, or choose a document from the list to view it.
+            Log in to be able to edit a new document, or open a document to view it.
         </div>
         <div data-ng-show="editor.loggedIn || editor.currentDocument">
             <div class="texts-editor">
@@ -89,6 +85,8 @@
             </div>
         </div>
     </div>
+    <os-open-dialog api="'/api/data/original'" selection="selection"
+        title="Open Text" name="openDialog"></os-open-dialog>
     <os-sharing-dialog api="'/api/data/original'" 
             access-model="editor.access" current-document="editor.currentDocument" 
             is-new="editor.isNew" name="sharingDialog" title="Sharing"></os-sharing-dialog>

@@ -6,11 +6,9 @@
  */
 OpenSiddurClientApp.controller(
   'IndexCtrl',
-  ['$scope', 'IndexService', 
-  function ($scope, IndexService) {
+  ['$scope', 
+  function ($scope) {
     console.log("Index controller.");
-
-    $scope.search = IndexService.search;
   }]
 );
 

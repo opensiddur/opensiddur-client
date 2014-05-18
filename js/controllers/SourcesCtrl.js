@@ -7,15 +7,10 @@
 OpenSiddurClientApp.controller(
     'SourcesCtrl',
     ['$rootScope', '$location', '$route', '$routeParams', '$scope', '$http', 'XsltService', 
-    'IndexService', 'AuthenticationService', 'ErrorService',
+    'DialogService', 'AuthenticationService', 'ErrorService',
     function ($rootScope, $location, $route, $routeParams, $scope, $http, XsltService, 
-    IndexService, AuthenticationService, ErrorService) {
-        IndexService.search.enable( "/api/data/sources" );
-        if ($routeParams.resource) {
-            IndexService.search.collapse();
-        }
-        $scope.search = IndexService.search;
-
+    DialogService, AuthenticationService, ErrorService) {
+        $scope.DialogService = DialogService;
         $scope.editor = {
             loggedIn : AuthenticationService.loggedIn,
             access : {
@@ -130,12 +125,15 @@ OpenSiddurClientApp.controller(
                         $scope.sourcesForm.$setPristine();
                         if ($scope.editor.isNew) {
                             // add to the search results listing
+                            
                             var newDocName = decodeURI(headers("Location").split("/").pop());
+                            /*
                             IndexService.search.addResult({
                                 title:  newDocName, 
                                 url : headers('Location'),
                                 contexts : []
                             });
+                            */
                             $scope.editor.isNew = false;
                             $scope.editor.currentDocument = newDocName;
                         };
@@ -150,10 +148,17 @@ OpenSiddurClientApp.controller(
             return this.sourcesForm.$pristine ? (($scope.editor.isNew) ? "Unsaved, No changes" : "Saved" ) : "Save";
         };
 
-        $scope.$watch("search.selection", 
+        $scope.selection = "/exist/restxq/api" + ($scope.editor.isNew ? "" : ("/" + $routeParams.resource));
+        
+        var selectionWatchCtr = 0;
+        $scope.$watch("selection", 
             function( selection ) {
-                if (selection) 
+                if (!selectionWatchCtr) {
+                    selectionWatchCtr++;
+                }
+                else if (selection) {
                     $location.path( "/sources/" + selection.split("/").pop() );
+                }
             }
         ); 
 

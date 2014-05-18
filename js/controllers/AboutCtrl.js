@@ -6,11 +6,8 @@
  */
 OpenSiddurClientApp.controller(
   'AboutCtrl',
-  ['$scope', 'IndexService',
-  function ($scope, IndexService) {
+  ['$scope', 
+  function ($scope) {
     console.log("About controller.");
-
-    IndexService.search.api = "";
-    IndexService.search.collapsed = true;
   }]
 );
