@@ -317,7 +317,6 @@ OpenSiddurClientApp.controller(
                 });
             },
             saveDocument : function() {
-                console.log("Save: TBD");
                 // convert scope.editor.content.linkages to XML
                 var leftDomain = $scope.editor.content.links[0].resource;
                 var rightDomain = $scope.editor.content.links[1].resource;
@@ -348,6 +347,15 @@ OpenSiddurClientApp.controller(
                       "lang" : "en" } :
                     $scope.editor.content.title ;
                 $doc.find("title[type=main]").replaceWith("<tei:title type=\"main\" xml:lang=\""+docTitle.lang+"\">"+docTitle.text+"</tei:title>");
+                // license
+                $doc.find("licence").attr("target", $scope.editor.content.license);
+                $doc.find("availability").attr("status", 
+                    ($scope.editor.content.license.match(/publicdomain/)) ?
+                    "free" : "restricted"
+                );
+
+                // idno
+                $doc.find("parallelText").find("idno").replaceWith("<tei:idno>"+$scope.editor.content.idno+"</tei:idno>");                
 
                 // domains
                 $doc.find("parallelText").find("linkGrp").attr("domains", $scope.editor.content.links.map(function(x) {return x.resource+"#"+x.domain;} ).join(" "));
