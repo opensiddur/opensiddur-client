@@ -250,18 +250,36 @@ OpenSiddurClientApp.controller(
             resetLinkageBlocks : function(domain) {
                 // clear linkages from the given domain
                 // if the other domain exists, reset it so it has its own, single linkage block
+                $scope.editor.content.linkages = [];
+                if ($scope.editor.content.links[0]["stream"]) {
+                    $scope.editor.content.linkages = this.splitExternalLinkageBlocks($scope.editor.content.links[0].stream, "left");
+                    
+                }
+                if ($scope.editor.content.links[1]["stream"]) { 
+                    $scope.editor.content.linkages = $scope.editor.content.linkages.concat(this.splitExternalLinkageBlocks($scope.editor.content.links[1].stream, "right"));
+                }
+            },
+            splitExternalLinkageBlocks : function(stream, side) {
+                // split the externals in all linkage blocks into their own blocks
+                // really only makes sense for when a new parallel text is loaded
+                var newLinkages = [];
 
-                $scope.editor.content.linkages = [
-                    $scope.editor.newLinkageBlock(),
-                    $scope.editor.newLinkageBlock()
-                ];
-                $scope.editor.content.linkages[0]["left"] = 
-                    ($scope.editor.content.links[0]["stream"]) ?
-                        $scope.editor.content.links[0].stream : []
-                    ; 
-                $scope.editor.content.linkages[1]["right"] = 
-                    ($scope.editor.content.links[1]["stream"]) ? 
-                        $scope.editor.content.links[1].stream : []; 
+                for (var i = 0, j = 0; i < stream.length; i++) {
+                    if (stream[i].external) {
+                        newLinkages.push(this.newLinkageBlock());
+                        j++;
+                        newLinkages[j][side] = [stream[i]];
+                        j++;
+                    }
+                    else {
+                        if (newLinkages.length <= j) {
+                            newLinkages.push(this.newLinkageBlock());
+                        }
+                        newLinkages[j][side].push(stream[i]);
+                    }
+                }
+
+                return newLinkages;
             },
             updateParallelText : function(n, api) {
                 $scope.editor.content.links[n] = {

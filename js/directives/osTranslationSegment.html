@@ -7,11 +7,11 @@
     <div>
         <button 
             data-ng-click="moveSegment(model[block], item, side, -1)"
-            data-ng-hide="(block == 0 || (block > 0 && (model[block -1][side][0].isExternal || model[block - 1][otherSide][0].isExternal))) && model[block][otherSide].length == 0 "
+            data-ng-hide="item.external || ((block == 0 || (block > 0 && (model[block -1][side][0].isExternal || model[block - 1][otherSide][0].isExternal))) && model[block][otherSide].length == 0 )"
             >Up</button>
         <button 
             data-ng-click="moveSegment(model[block], item, side, 1)"
-            data-ng-hide="(block == model.length - 1 || (block < model.length - 1 && (model[block + 1][side][0].isExternal || model[block + 1][otherSide][0].isExternal))) && model[block][otherSide].length == 0"
+            data-ng-hide="item.external || ((block == model.length - 1 || (block < model.length - 1 && (model[block + 1][side][0].isExternal || model[block + 1][otherSide][0].isExternal))) && model[block][otherSide].length == 0)"
             >Down</button>
     </div>
     <hr/>
