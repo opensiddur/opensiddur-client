@@ -258,6 +258,7 @@ OpenSiddurClientApp.controller(
                 if ($scope.editor.content.links[1]["stream"]) { 
                     $scope.editor.content.linkages = $scope.editor.content.linkages.concat(this.splitExternalLinkageBlocks($scope.editor.content.links[1].stream, "right"));
                 }
+                console.log("Linkages after split:", $scope.editor.content.linkages);
             },
             splitExternalLinkageBlocks : function(stream, side) {
                 // split the externals in all linkage blocks into their own blocks
