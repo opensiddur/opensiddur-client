@@ -1,20 +1,27 @@
-<div class="os-translation-segment" data-ng-repeat="item in model[block][side]">
-    <div>
-        <div data-ng-show="item.name=='tei:seg'">{{item.text}}</div>
-        <div data-ng-show="item.external">External link to {{item.text}}</div>
-        <div data-ng-show="item.name=='tei:anchor'">Anchor: {{item.id}}</div>
+<div class="os-translation-block">
+    <button
+        data-ng-click="moveLinkageGroup(-1)"
+        data-ng-hide="hideMoveLinkageGroupButton(-1)"
+        >Up</button>
+    <div class="os-translation-segment" data-ng-repeat="item in block[side]">
+        <div>
+            <div data-ng-show="item.name=='tei:seg'">{{item.text}}</div>
+            <div data-ng-show="item.external">External link to {{item.text}}</div>
+            <div data-ng-show="item.name=='tei:anchor'">Anchor: {{item.id}}</div>
+        </div>
+        <div>
+            <button 
+                data-ng-click="breakAtSegment(item)"
+                data-ng-hide="hideBreakButton(item)">-- Break --</button> 
+        </div>
+        <hr/>
     </div>
-    <div>
-        <button 
-            data-ng-click="moveSegment(model[block], item, side, -1)"
-            data-ng-hide="(block == 0 || (block > 0 && (model[block -1][side][0].isExternal || model[block - 1][otherSide][0].isExternal))) && model[block][otherSide].length == 0 "
-            >Up</button>
-        <button 
-            data-ng-click="moveSegment(model[block], item, side, 1)"
-            data-ng-hide="(block == model.length - 1 || (block < model.length - 1 && (model[block + 1][side][0].isExternal || model[block + 1][otherSide][0].isExternal))) && model[block][otherSide].length == 0"
-            >Down</button>
-    </div>
-    <hr/>
+    <button
+        data-ng-click="combineLinkageGroups()"
+        data-ng-hide="hideCombineButton()"
+        >Combine</button>
+    <button
+        data-ng-click="moveLinkageGroup(+1)"
+        data-ng-hide="hideMoveLinkageGroupButton(+1)"
+        >Down</button>
 </div>
-
-

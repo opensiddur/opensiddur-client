@@ -81,13 +81,12 @@
                                 >Set</button>
                         </div>
                         <hr/>
-                        <div data-ng-repeat="linkage in editor.content.linkages" class="translation-linkage span12"
-                            data-ng-init="linkageFirst = $first; linkageLast = $last; linkageIndex = $index">
+                        <div data-ng-repeat="linkage in editor.content.linkages" class="translation-linkage span12">
                             <div class="translation-left span6">
-                                <os-translation-segment model="editor.content.linkages" block="{{$index}}" side="left"></os-translation-segment>
+                                <os-translation-segment model="editor.content.linkages" block="linkage" side="left"></os-translation-segment>
                             </div>
                             <div class="translation-right span6">
-                                <os-translation-segment model="editor.content.linkages" block="{{$index}}" side="right"></os-translation-segment>
+                                <os-translation-segment model="editor.content.linkages" block="linkage" side="right"></os-translation-segment>
                             </div>
                             <div class="span12">
                                 <hr/>
