@@ -7,15 +7,12 @@
 OpenSiddurClientApp.controller(
     'TextsCtrl',
     ['$scope', '$location', '$route', '$routeParams', '$http', '$window', 'XsltService', 
-    'AuthenticationService', 'IndexService', 'ErrorService', 'RestApi',
+    'AccessModelService', 'AuthenticationService', 'DialogService', 'ErrorService', 'RestApi',
     function ($scope, $location, $route, $routeParams, $http, $window, XsltService, 
-        AuthenticationService, IndexService, ErrorService, RestApi) {
+        AccessModelService, AuthenticationService, DialogService, ErrorService, RestApi) {
         console.log("Texts controller.");
-        IndexService.search.enable( "/api/data/original" );
-        if ($routeParams.resource) {
-            IndexService.search.collapse();
-        }
-        $scope.search = IndexService.search;
+        $scope.selection = "";
+        $scope.DialogService = DialogService;
 
 
         $scope.editor = {
@@ -35,7 +32,7 @@ OpenSiddurClientApp.controller(
                 }
             },
             content : "",
-            access : {},
+            access : AccessModelService.default(AuthenticationService.userName),
             accessModel : "public",
             setAccessModel : function() {
                 this.accessModel = (this.isNew) ? "public" : (
@@ -70,20 +67,7 @@ OpenSiddurClientApp.controller(
                 $scope.editor.isNew = 1;
                 $scope.editor.content = "";
                 // default access rights for a new file
-                $scope.editor.access = {
-                    owner : AuthenticationService.userName,
-                    group : "everyone",
-                    worldRead : true,
-                    worldWrite : false,
-                    read : true,
-                    write : true,
-                    relicense : true,
-                    chmod : true,
-                    grantGroups : [],
-                    grantUsers :[],
-                    denyGroups : [],
-                    denyUsers : []
-                };
+                $scope.editor.access = AccessModelService.default(AuthenticationService.userName);
                 // load a new document template
                 documentTemplate = "/templates/original.xml";
                 $http.get(documentTemplate) 
@@ -163,12 +147,13 @@ OpenSiddurClientApp.controller(
                                 $scope.textsForm.$setPristine();
                                 if ($scope.editor.isNew) {
                                     // add to the search results listing
+                                    /*
                                     IndexService.search.addResult({
                                         title:  $( "tei\\:title[type=main]", indata).html(), 
                                         url : headers('Location'),
                                         contexts : []
                                     });
-
+                                    */
                                     $scope.editor.isNew = 0;
                                     $scope.editor.currentDocument=headers('Location').replace("/exist/restxq/api/data/original/", "");
                                     // save the access model for the new document
@@ -212,11 +197,17 @@ OpenSiddurClientApp.controller(
             return this.textsForm.$pristine ? (($scope.editor.isNew) ? "Unsaved, No changes" : "Saved" ) : "Save";
         };
 
-        $scope.$watch("search.selection",
+        var selectionWatchCtr = 0;
+        $scope.$watch("selection",
             function( selection ) { 
-                var resourceName = selection.split("/").pop();
-                if (resourceName && resourceName != $scope.editor.currentDocument)
-                    $location.path( "/texts/" + resourceName );
+                if (!selectionWatchCtr) {
+                    selectionWatchCtr++;
+                }
+                else {
+                    var resourceName = selection.split("/").pop();
+                    if (resourceName && resourceName != $scope.editor.currentDocument)
+                        $location.path( "/texts/" + resourceName );
+                }
             }
         );
 

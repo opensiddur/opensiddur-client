@@ -1,15 +1,8 @@
 <div>
     <div class="toolbar navbar navbar-inverse">
-        <div class="toolbar-waste-of-space" data-ng-hide="search.collapsed"></div>
         <div class="navbar-inner">
             <div class="btn-toolbar">
                 <div class="btn-group" data-ng-show="mode == 'thirdparty'">
-                    <button class="btn btn-primary"
-                        data-ng-show="!search.collapsed"
-                        data-ng-click="search.collapse()">&#x25b2;</button>
-                    <button class="btn btn-primary"
-                        data-ng-show="search.collapsed"
-                        data-ng-click="search.expand()">&#x25bc;</button>
                     <span class="btn btn-inverse" data-ng-disabled="1"
                         data-ng-show="!isNew">{{ profile.contributor.name.__text }}{{ profile.contributor.orgName.__text }}</span>
                     <span class="btn btn-inverse" data-ng-disabled="1"
@@ -17,25 +10,20 @@
                 </div>
                 <div class="btn-group">
                     <button class="btn btn-primary" type="submit"
-                        data-ng-show="mode == 'thirdparty'" 
+                        data-ng-show="mode == 'thirdparty' && loggedIn" 
                         data-ng-click="newProfile()"
                         >New</button>
+                    <button class="btn btn-primary" 
+                        data-ng-show="mode == 'thirdparty'"
+                        data-ng-click="DialogService.open('openDialog')"
+                        >Open</button>
                     <button
                         class="btn btn-primary"
                         data-ng-class="{'btn-success' : profileForm.$pristine}" type="submit" 
                         data-ng-click="save()"  
                         data-ng-disabled="!access.write || profileForm.$invalid || profileForm.$pristine">{{saveButtonText()}}</button>
                 </div>
-                <div class="btn-group pull-right">
-                    <button class="btn btn-small btn-warning" 
-                        data-ng-disabled="1"
-                        data-ng-show="!access.write"
-                        title="Read-only. You cannot save this page. You must be logged in and the profile must be your own or you must have write access to the profile.">R/O</button>
-                    <button
-                        data-ng-disabled="1" 
-                        class="btn btn-small btn-success" data-ng-show="access.write" 
-                        title="Saving is allowed">R/W</button>
-                </div>
+                <os-sharing-status access-model="access" relicense-disabled="1" chmod-disabled="1"></os-sharing-status>
             </div>
         </div>
     </div>
@@ -43,6 +31,10 @@
       <div class="row-fluid">
         <div class="span8 offset2">
           <div data-ng-switch="ownership">
+            <div data-ng-switch-when="nobody">
+              <p>You must be logged in to edit a new third party profile. 
+              You may view other people's public profiles while not logged in.</p>
+            </div>
             <div data-ng-switch-when="self">
               <p>Your profile is <strong>public</strong> information that you want to be used
               to identify or contact you on Open Siddur. Only a username is required for a profile,
@@ -64,7 +56,7 @@
               third party contributor. Instead, enter bibliographic information of the <a href="/sources">source</a>.</p> 
             </div>
           </div>  
-          <form class="form-horizontal" name="profileForm">
+          <form class="form-horizontal" name="profileForm" data-ng-hide="ownership == 'nobody'">
             <div class="control-group">
               <label class="control-label inline">This profile is for an:</label>
               <div class="controls">
@@ -168,4 +160,6 @@
         </div>
       </div>
     </div>
+    <os-open-dialog api="'/api/user'" selection="selection" 
+        title="Open Profile" name="openDialog"></os-open-dialog>
 </div>

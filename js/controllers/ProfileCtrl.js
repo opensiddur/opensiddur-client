@@ -6,6 +6,7 @@
  * If it's started as /profile/:userName, it's in self mode and will not allow the userName to be changed
  *
  * If no username is provided, profile ownership is thirdparty and the profile is new.
+ * If no username is provided, and not logged in, profile ownership is nobody (no editing is possible).
  * If the userName and the logged in name are the same, profile ownership is self.
  * If they are different and there is no write access, profile ownership is other.
  * If they are different and there is write access, profile ownership is thirdparty
@@ -18,10 +19,12 @@
 
 OpenSiddurClientApp.controller(
   'ProfileCtrl',
-  ['$scope', '$location', '$rootScope', '$routeParams', '$http', 'AuthenticationService', 'ErrorService', 'IndexService', 'RestApi', 'XsltService',
-  function ($scope, $location, $rootScope, $routeParams, $http, AuthenticationService, ErrorService, IndexService, RestApi, XsltService) {
+  ['$scope', '$location', '$rootScope', '$routeParams', '$http', 
+   'AccessModelService', 'AuthenticationService', 'DialogService', 'ErrorService', 'RestApi', 'XsltService',
+  function ($scope, $location, $rootScope, $routeParams, $http, AccessModelService, AuthenticationService, DialogService, ErrorService, RestApi, XsltService) {
     console.log("Profile controller.");
     
+    $scope.DialogService = DialogService;
 
     $scope.userName = $routeParams.userName;    
     $scope.loggedIn = AuthenticationService.loggedIn;
@@ -30,14 +33,8 @@ OpenSiddurClientApp.controller(
     $scope.mode = ($location.path().indexOf("/contributors")==0 ? "thirdparty" : "self");
     $scope.isNew = !$scope.userName; 
 
-    $scope.search = IndexService.search;
-
-    $scope.access = {
-        read : true,
-        write : true,
-        chmod : true
-    };
-    
+    $scope.access = AccessModelService.default($scope.loggedInUser)
+    /*
     // set up the index service
     if ($scope.mode == "thirdparty") {
         IndexService.search.enable( "/api/user" );
@@ -48,7 +45,7 @@ OpenSiddurClientApp.controller(
     if ($scope.userName) {
         IndexService.search.collapse();
     }
-   
+    */
     $scope.get = function ( ) {  
         // HTTP interaction with the API
         // TODO: use a RestApi service 
@@ -84,7 +81,7 @@ OpenSiddurClientApp.controller(
                     $scope.isNew = 0;
                   }
                   else {
-                    $scope.ownership = 'thirdparty';
+                    $scope.ownership = ($scope.loggedIn) ? 'thirdparty' : 'nobody';
                     $scope.isNew = 1;
                   }
               }
@@ -96,9 +93,14 @@ OpenSiddurClientApp.controller(
           );
         
     };
-
+    $scope.selection = "/exist/restxq/api/user" + ((this.isNew) ? "" : ("/" + $scope.userName));
+    var selectionWatchCtr = 0;
     // load a profile or start a new one
-    $scope.$watch("search.selection", function ( selection ) {
+    $scope.$watch("selection", function ( selection ) {
+        if (!selectionWatchCtr) {
+            selectionWatchCtr++;
+            return;
+        }
         if (selection) {
             $location.path( "/contributors/" + selection.split("/").pop() ); 
         }
@@ -123,11 +125,13 @@ OpenSiddurClientApp.controller(
             function(data, status, headers, config) {
                 $scope.profileForm.$setPristine();
                 if ($scope.isNew) {
+                    /*
                     IndexService.search.addResult({
                         title:  $( ($scope.profileType == "individual") ? ".tei-name" : ".tei-orgName", ".instance").html(), 
                         url : headers('Location'),
                         contexts : []
                     });
+                    */
                     $scope.userName = headers("Location").split("/").pop();
                 }
                 $scope.isNew = 0;

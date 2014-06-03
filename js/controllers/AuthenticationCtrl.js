@@ -7,12 +7,8 @@
 
 OpenSiddurClientApp.controller(
   'AuthenticationCtrl', 
-  ['$scope', '$http', '$location', 'AuthenticationService', 'IndexService', 'ErrorService',
-  function ($scope, $http, $location, AuthenticationService, IndexService, ErrorService){
-    // turn off the index search service
-    IndexService.search.collapsed = true;
-    IndexService.search.api = "";
-
+  ['$scope', '$http', '$location', 'AuthenticationService', 'ErrorService',
+  function ($scope, $http, $location, AuthenticationService, ErrorService){
     $http.defaults.useXDomain = true;
     
     who = AuthenticationService.whoami();

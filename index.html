@@ -43,6 +43,7 @@
               <li data-ng-class="{active : isActive('/contributors')}"><a data-ng-href="/contributors" class="navbar-link">Contributors</a></li>
               <li data-ng-class="{active : isActive('/sources')}"><a data-ng-href="/sources" class="navbar-link">Sources</a></li>
               <li data-ng-class="{active : isActive('/texts')}"><a data-ng-href="/texts" class="navbar-link">Texts</a></li>
+              <li data-ng-class="{active : isActive('/translations')}"><a data-ng-href="/translations" class="navbar-link">Translation Linkages</a></li>
             </ul>
             <ul id="authentication-widget" class="nav pull-right" data-ng-controller="AuthenticationWidgetCtrl" data-ng-switch="loggedIn">
               <li data-ng-switch-when="false"><a data-ng-href="/signin" class="navbar-link">Sign in/Register</a></li>
@@ -63,12 +64,6 @@
       </div>
     </div>
     <div class="page" data-ng-controller="IndexCtrl">
-        <div class="page-search"
-            data-ng-hide="search.collapsed">
-            <os-search-list api="search.api" selection="search.selection">
-            </os-search-list>
-        </div>
-        <div class="page-header-waste-of-space" data-ng-hide="search.collapsed"></div>
         <div class="page-view tab-content" data-ng-view="1"></div>
     </div><!--/.page--> 
     <div id="footer" class="navbar navbar-fixed-bottom">
@@ -109,13 +104,19 @@
     <script src="/js/app.js" ></script>
     <script src="/js/directives/osarrayinput.js"></script>
     <script src="/js/directives/osErrorBox.js"></script>
+    <script src="/js/directives/osOpenDialog.js"></script>
     <script src="/js/directives/osQueryBox.js"></script>
     <script src="/js/directives/osResultsBox.js"></script>
     <script src="/js/directives/osSearchList.js"></script>
+    <script src="/js/directives/osSharingDialog.js"></script>
+    <script src="/js/directives/osSharingStatus.js"></script>
+    <script src="/js/directives/osTranslationSegment.js"></script>
     <script src="/js/directives/osinstance.js"></script>
     <script src="/js/services/authenticationservice.js" ></script>
+    <script src="/js/services/AccessModelService.js" ></script>
+    <script src="/js/services/DialogService.js" ></script>
     <script src="/js/services/ErrorService.js" ></script>
-    <script src="/js/services/IndexService.js" ></script>
+    <!--script src="/js/services/IndexService.js" ></script-->
     <script src="/js/services/RestApi.js" ></script>
     <script src="/js/services/XsltService.js" ></script>
     <script src="/js/controllers/AboutCtrl.js" ></script>
@@ -127,6 +128,7 @@
     <script src="/js/controllers/ProfileCtrl.js" ></script>
     <script src="/js/controllers/SourcesCtrl.js" ></script>
     <script src="/js/controllers/TextsCtrl.js" ></script>
+    <script src="/js/controllers/TranslationsCtrl.js" ></script>
     <!-- 
     <script src="js/bootstrap-transition.js"></script>
     <script src="js/bootstrap-alert.js"></script>

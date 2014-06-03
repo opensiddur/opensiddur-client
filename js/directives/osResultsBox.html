@@ -3,7 +3,7 @@
         <table class="table table-hover table-condensed table-striped table-scrollable" 
         data-infinite-scroll="endReached()" data-infinite-scroll-distance="3">
             <tbody>
-                <tr data-ng-repeat="result in results" data-ng-click="select(result.url)">
+                <tr data-ng-repeat="result in results" data-ng-click="select(result.url, $index)">
                     <td>{{result.title}}</td>
                     <td>
                         <ul class="search-contexts">

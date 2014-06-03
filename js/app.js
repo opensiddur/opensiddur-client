@@ -23,6 +23,15 @@ var supportedLanguages = {
     "arc" : "ארמית (Aramaic)"
 };
 
+// list of licenses supported by the app
+var supportedLicenses = {
+    "http://www.creativecommons.org/publicdomain/zero/1.0" : "Creative Commons Zero 1.0",
+    "http://www.creativecommons.org/licenses/by/4.0" : "Creative Commons Attribution 4.0",
+    "http://www.creativecommons.org/licenses/by-sa/4.0" : "Creative Commons Attribution-ShareAlike 4.0",
+    "http://www.creativecommons.org/licenses/by/3.0" : "Creative Commons Attribution 3.0 Unported",
+    "http://www.creativecommons.org/licenses/by-sa/3.0" : "Creative Commons Attribution-ShareAlike 3.0 Unported"
+};
+
 /* retrieve an API error return value and return the string */
 var getApiError = function(data) {
   return $($.parseXML(data)).find("message").text();
@@ -62,6 +71,7 @@ OpenSiddurClientApp.config(
       .when('/signin', {templateUrl: '/partials/signin.html', controller: "AuthenticationCtrl"})
       .when('/sources/:resource?', {templateUrl: '/partials/sources.html', controller: "SourcesCtrl"})
       .when('/texts/:resource?', {templateUrl: '/partials/texts.html', controller: "TextsCtrl"})
+      .when('/translations/:resource?', {templateUrl: '/partials/translations.html', controller: "TranslationsCtrl"})
       .when('/profile/:userName', {templateUrl: '/partials/profile.html', controller: "ProfileCtrl"})
       .when('/changepassword', {templateUrl: '/partials/changepassword.html', controller: "ChangePasswordCtrl"})
       .when('/about', {templateUrl: '/partials/about.html', controller: "AboutCtrl"})
