@@ -17,14 +17,14 @@
                           data-ng-click="editor.saveDocument()"  
                           data-ng-disabled="!editor.access.write || textsForm.$invalid || textsForm.$pristine">{{saveButtonText()}}</button>
                 </div>
-                <div class="btn-group">
+                <div class="btn-group" data-ng-hide="!resourceType.supportsCompile">
                       <button class="btn btn-primary" type="submit"
                           data-ng-show="editor.currentDocument"
                           data-ng-disabled="textsForm.$invalid || textsForm.$dirty"
                           data-ng-click="editor.compile()"
                           >Compile to HTML</button>
                 </div>
-                <os-sharing-status access-model="editor.access" sharing-dialog="sharingDialog"></os-sharing-status>
+                <os-sharing-status data-ng-hide="!resourceType.supportsAccess" access-model="editor.access" sharing-dialog="sharingDialog"></os-sharing-status>
             </div>
         </div>
     </div>
@@ -85,9 +85,11 @@
             </div>
         </div>
     </div>
-    <os-open-dialog api="'/api/data/original'" selection="selection"
+    <os-open-dialog api="resourceType.api" selection="selection"
         title="Open Text" name="openDialog"></os-open-dialog>
-    <os-sharing-dialog api="'/api/data/original'" 
+    <os-sharing-dialog 
+            data-ng-hide="!resourceType.supportsAccess"
+            api="resourceType.api" 
             access-model="editor.access" current-document="editor.currentDocument" 
             is-new="editor.isNew" name="sharingDialog" title="Sharing"></os-sharing-dialog>
 </div>
