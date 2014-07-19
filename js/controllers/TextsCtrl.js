@@ -17,6 +17,7 @@ OpenSiddurClientApp.controller(
         // state associated with the resource type
         $scope.resourceType = {
             initAs : function (type) {
+                this.path = type;
                 if (type == "texts") {
                     this.type = "original";
                     this.api = "/api/data/original";
@@ -194,10 +195,10 @@ OpenSiddurClientApp.controller(
                 }
             },
             newButton : function () {
-                if ($location.path() == "/"+$scope.resourceType.type)
+                if ($location.path() == "/"+$scope.resourceType.path)
                     $route.reload();
                 else 
-                    $location.path( "/"+$scope.resourceType.type );
+                    $location.path( "/"+$scope.resourceType.path );
             },
             compile : function () {
                 // TODO: give this a nice loading/compiling/info interface.
@@ -225,7 +226,7 @@ OpenSiddurClientApp.controller(
                 else {
                     var resourceName = selection.split("/").pop();
                     if (resourceName && resourceName != $scope.editor.currentDocument)
-                        $location.path( "/" + $scope.resourceType.type + "/" + resourceName );
+                        $location.path( "/" + $scope.resourceType.path + "/" + resourceName );
                 }
             }
         );
