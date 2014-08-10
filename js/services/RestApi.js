@@ -135,6 +135,15 @@ OpenSiddurClientApp.factory(
         };
 
         return {
+            "/api/data/conditionals" : $resource(
+                '/api/data/conditionals\/:resource',
+                { 
+                    resource : ""
+                },
+                {
+                    'query' : queryApi
+                }
+            ),
             "/api/data/linkage" : $resource(
                 '/api/data/linkage\/:resource',
                 { 

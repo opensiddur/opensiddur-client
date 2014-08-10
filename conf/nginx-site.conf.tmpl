@@ -5,6 +5,12 @@ server {
         server_name localhost;
         charset utf-8;
 
+        proxy_connect_timeout       600;
+        proxy_send_timeout          600;
+        proxy_read_timeout          600;
+        send_timeout                600;
+
+
         ## proxy pass to the dev server ##
         location /api {
             proxy_pass $scheme://127.0.0.1:8080/exist/restxq$request_uri;

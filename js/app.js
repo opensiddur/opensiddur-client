@@ -72,6 +72,7 @@ OpenSiddurClientApp.config(
       .when('/sources/:resource?', {templateUrl: '/partials/sources.html', controller: "SourcesCtrl"})
       .when('/texts/:resource?', {templateUrl: '/partials/texts.html', controller: "TextsCtrl"})
       .when('/translations/:resource?', {templateUrl: '/partials/translations.html', controller: "TranslationsCtrl"})
+      .when('/conditionals/:resource?', {templateUrl: '/partials/texts.html', controller: "TextsCtrl"})
       .when('/profile/:userName', {templateUrl: '/partials/profile.html', controller: "ProfileCtrl"})
       .when('/changepassword', {templateUrl: '/partials/changepassword.html', controller: "ChangePasswordCtrl"})
       .when('/about', {templateUrl: '/partials/about.html', controller: "AboutCtrl"})

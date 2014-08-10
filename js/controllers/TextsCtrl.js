@@ -1,5 +1,5 @@
 /* 
- * controller for texts page 
+ * controller for texts page, which is the generic XML editor 
  * Open Siddur Project
  * Copyright 2013-2014 Efraim Feinstein <efraim@opensiddur.org>
  * Licensed under the GNU Lesser General Public License, version 3 or later
@@ -14,6 +14,29 @@ OpenSiddurClientApp.controller(
         $scope.selection = "";
         $scope.DialogService = DialogService;
 
+        // state associated with the resource type
+        $scope.resourceType = {
+            initAs : function (type) {
+                this.path = type;
+                if (type == "texts") {
+                    this.type = "original";
+                    this.api = "/api/data/original";
+                    this.supportsAccess = true;
+                    this.supportsCompile = true;
+                    this.defaultTitle = "New text";
+                    this.documentTemplate = "/templates/original.xml";             
+                }
+                else if (type == "conditionals") {
+                    this.type = "conditionals";
+                    this.api = "/api/data/conditionals";
+                    this.supportsAccess = false;
+                    this.supportsCompile = false;
+                    this.defaultTitle = "New conditional";
+                    this.documentTemplate = "/templates/conditionals.xml";
+                }
+            }
+        };
+        $scope.resourceType.initAs($location.path().split("/")[1]);
 
         $scope.editor = {
             loggedIn : AuthenticationService.loggedIn,
@@ -49,7 +72,7 @@ OpenSiddurClientApp.controller(
                         this.access.groupWrite = false;
                         this.access.group = "everyone";
                     }
-                    RestApi["/api/data/original"].setAccess({
+                    RestApi[$scope.resourceType.api].setAccess({
                             "resource" : decodeURI(this.currentDocument)
                         }, this.access, 
                         function() {}, 
@@ -63,18 +86,18 @@ OpenSiddurClientApp.controller(
             isNew : 1,
             newDocument : function() {
                 console.log("Start a new document");
-                this.title = "New text";
+                this.title = $scope.resourceType.defaultTitle;
                 $scope.editor.isNew = 1;
                 $scope.editor.content = "";
                 // default access rights for a new file
                 $scope.editor.access = AccessModelService.default(AuthenticationService.userName);
                 // load a new document template
-                documentTemplate = "/templates/original.xml";
+                var documentTemplate = $scope.resourceType.documentTemplate;
                 $http.get(documentTemplate) 
                     .success(
                         function(data) {
                             $scope.editor.content = XsltService.serializeToString(XsltService.transformString( "originalTemplate", data )); 
-                            $scope.editor.title = "New text";
+                            $scope.editor.title = $scope.resourceType.defaultTitle;
                             $scope.textsForm.$setPristine();
                         }
                     )
@@ -93,16 +116,18 @@ OpenSiddurClientApp.controller(
                     this.newDocument();
                 }
                 else {
-                    $http.get("/api/data/original/" + toDocument) 
+                    $http.get($scope.resourceType.api + "/" + toDocument) 
                         .success(
                             function(data) {
-                                $scope.editor.access = RestApi["/api/data/original"].getAccess({
-                                    "resource" : decodeURI(toDocument)
-                                }, function( access ) {
-                                    $scope.editor.setAccessModel();
-                                    if (!access.write)
-                                        $scope.editor.codemirror.readOnly = true; 
-                                });
+                                if ($scope.resourceType.supportsAccess) {
+                                    $scope.editor.access = RestApi[$scope.resourceType.api].getAccess({
+                                        "resource" : decodeURI(toDocument)
+                                    }, function( access ) {
+                                        $scope.editor.setAccessModel();
+                                        if (!access.write)
+                                            $scope.editor.codemirror.readOnly = true; 
+                                    });
+                                };
                                 
                                 $scope.editor.content = XsltService.serializeToString(XsltService.transformString( "originalTemplate", data )); 
                                 $scope.editor.title = $("tei\\:title[type=main]", data).html();
@@ -128,7 +153,7 @@ OpenSiddurClientApp.controller(
             saveDocument : function () {
                 console.log("Save:", this);
                 var httpOperation = (this.isNew) ? $http.post : $http.put;
-                var url = "/api/data/original" + ((this.isNew) ? "" : ("/" + $scope.editor.currentDocument));
+                var url = $scope.resourceType.api + ((this.isNew) ? "" : ("/" + $scope.editor.currentDocument));
                 var content = $scope.editor.codemirror.doc.getValue();
                 var transformed = XsltService.transformString( "originalBeforeSave", content );
                 if (transformed) {
@@ -147,17 +172,12 @@ OpenSiddurClientApp.controller(
                                 $scope.textsForm.$setPristine();
                                 if ($scope.editor.isNew) {
                                     // add to the search results listing
-                                    /*
-                                    IndexService.search.addResult({
-                                        title:  $( "tei\\:title[type=main]", indata).html(), 
-                                        url : headers('Location'),
-                                        contexts : []
-                                    });
-                                    */
                                     $scope.editor.isNew = 0;
-                                    $scope.editor.currentDocument=headers('Location').replace("/exist/restxq/api/data/original/", "");
+                                    $scope.editor.currentDocument=headers('Location').replace("/exist/restxq"+$scope.resourceType.api+"/", "");
                                     // save the access model for the new document
-                                    $scope.editor.saveAccessModel();
+                                    if ($scope.resourceType.supportsAccess) {
+                                        $scope.editor.saveAccessModel();
+                                    }
                                 };
                                 // reload the document to get the change log in there correctly
                                 // add a 1s delay to allow the server some processing time before reload
@@ -175,14 +195,14 @@ OpenSiddurClientApp.controller(
                 }
             },
             newButton : function () {
-                if ($location.path() == "/texts")
+                if ($location.path() == "/"+$scope.resourceType.path)
                     $route.reload();
                 else 
-                    $location.path( "/texts" );
+                    $location.path( "/"+$scope.resourceType.path );
             },
             compile : function () {
                 // TODO: give this a nice loading/compiling/info interface.
-                $window.open("/api/data/original/" + $scope.editor.currentDocument + "/combined?transclude=true");
+                $window.open($scope.resourceType.api + "/" + $scope.editor.currentDocument + "/combined?transclude=true");
             },
             loaded : function( _editor ) {
                 console.log("editor loaded");
@@ -206,18 +226,19 @@ OpenSiddurClientApp.controller(
                 else {
                     var resourceName = selection.split("/").pop();
                     if (resourceName && resourceName != $scope.editor.currentDocument)
-                        $location.path( "/texts/" + resourceName );
+                        $location.path( "/" + $scope.resourceType.path + "/" + resourceName );
                 }
             }
         );
 
         $scope.helper = {
             link : {
-                selectedType : "/api/data/original",
+                selectedType : $scope.resourceType.api,
                 types : {
                     "/api/user" : "Contributor",
                     "/api/data/original" : "Original text",
-                    "/api/data/sources" : "Source"
+                    "/api/data/sources" : "Source",
+                    "/api/data/conditionals" : "Conditional"
                 },
                 selection : "",
                 insertable : "",
