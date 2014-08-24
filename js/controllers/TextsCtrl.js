@@ -34,6 +34,14 @@ OpenSiddurClientApp.controller(
                     this.defaultTitle = "New conditional";
                     this.documentTemplate = "/templates/conditionals.xml";
                 }
+                else if (type == "annotations") {
+                    this.type = "annotations";
+                    this.api = "/api/data/notes";
+                    this.supportsAccess = true;
+                    this.supportsCompile = false;
+                    this.defaultTitle = "New annotations";
+                    this.documentTemplate = "/templates/annotations.xml";
+                }
             }
         };
         $scope.resourceType.initAs($location.path().split("/")[1]);
@@ -235,6 +243,7 @@ OpenSiddurClientApp.controller(
             link : {
                 selectedType : $scope.resourceType.api,
                 types : {
+                    "/api/data/notes" : "Annotations",
                     "/api/user" : "Contributor",
                     "/api/data/original" : "Original text",
                     "/api/data/sources" : "Source",

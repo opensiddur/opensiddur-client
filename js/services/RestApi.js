@@ -155,6 +155,17 @@ OpenSiddurClientApp.factory(
                     'setAccess' : setAccessApi("/api/data/linkage\/:resource")
                 }
             ),
+            "/api/data/notes" : $resource(
+                '/api/data/notes\/:resource',
+                { 
+                    resource : ""
+                },
+                {
+                    'query' : queryApi,
+                    'getAccess' : getAccessApi("/api/data/notes\/:resource"),
+                    'setAccess' : setAccessApi("/api/data/notes\/:resource")
+                }
+            ),
             "/api/data/original" : $resource(
                 '/api/data/original\/:resource',
                 { 
