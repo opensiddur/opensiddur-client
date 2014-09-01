@@ -34,9 +34,28 @@ OpenSiddurClientApp.service(
                 return ((new window.XMLSerializer()).serializeToString(doc))
                     .replace(/\s+xmlns:xml="http:\/\/www.w3.org\/XML\/1998\/namespace"/g, "");
             },
-            indent : function ( xmlstr) {
-                return vkbeautify.xml(xmlstr);
-            }
+            indentToString : function ( xmlDoc ) {
+                // create an instance of XSLTProcessor for XSLT 1.0  
+                var processor = new XSLTProcessor();  
+  
+                var xslDoc = Sarissa.getDomDocument();  
+                var xslStr = "<?xml version='1.0' encoding='UTF-8'?>"+  
+                "<xsl:stylesheet version='1.0' xmlns:xsl='http://www.w3.org/1999/XSL/Transform' >"+  
+                "<xsl:output method='xml' version='1.0' encoding='UTF-8' indent='yes'/>"+  
+                "<xsl:template match='*|comment()'>"+  
+                    "<xsl:copy>"+
+                        "<xsl:copy-of select='@*'/>"+
+                        "<xsl:apply-templates/>"+
+                    "</xsl:copy>"+
+                "</xsl:template>"+  
+                "</xsl:stylesheet>";  
+                xslDoc = (new DOMParser()).parseFromString(xslStr, "text/xml");  
+  
+                processor.importStylesheet(xslDoc);  
+  
+                var indented = processor.transformToDocument(xmlDoc);  
+                return (new XMLSerializer().serializeToString(indented));  
+            }  
         }
         svc.addProcessor('instance', '/xsl/instance.xsl');
         svc.addProcessor('teiToHtml', '/xsl/tei2html.xsl');

@@ -107,10 +107,11 @@ OpenSiddurClientApp.controller(
                 // load a new document template
                 var documentTemplate = $scope.resourceType.documentTemplate;
                 var templateParameters = x2js.json2xml($scope.editor.newTemplate);
-                $scope.editor.content = XsltService.indent(
-                        XsltService.serializeToString(
+                $scope.editor.content = XsltService.indentToString(
+                        //XsltService.serializeToString(
                             XsltService.transform(documentTemplate, templateParameters)
-                        ));
+                        //));
+                )
                 $scope.editor.title = $("tei\\:title[type=main]", $scope.editor.content).html();
                 $scope.editor.isLoaded = 1;
                 $scope.textsForm.$setDirty();
