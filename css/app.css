@@ -42,6 +42,11 @@ body {
     padding: 7px 9px;
 }
 
+.full-window-message {
+    font-size:x-large;
+    text-align:center;
+    margin-top:50px;
+}
 
 @media (max-width: 980px) {
     /* Enable use of floated navbar text */
