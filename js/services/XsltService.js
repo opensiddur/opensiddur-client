@@ -33,6 +33,9 @@ OpenSiddurClientApp.service(
             serializeToString : function ( doc ) {
                 return ((new window.XMLSerializer()).serializeToString(doc))
                     .replace(/\s+xmlns:xml="http:\/\/www.w3.org\/XML\/1998\/namespace"/g, "");
+            },
+            indent : function ( xmlstr) {
+                return vkbeautify.xml(xmlstr);
             }
         }
         svc.addProcessor('instance', '/xsl/instance.xsl');
@@ -42,6 +45,9 @@ OpenSiddurClientApp.service(
         svc.addProcessor('originalBeforeSave', '/xsl/OriginalBeforeSave.xsl');
         svc.addProcessor('profileFormTemplate', '/xsl/profileformtemplate.xsl');
         svc.addProcessor('sourceFormTemplate', '/xsl/sourceformtemplate.xsl');
+        svc.addProcessor('templateNewOriginal', '/templates/original.xsl');
+        svc.addProcessor('templateNewConditionals', '/templates/conditionals.xsl');
+        svc.addProcessor('templateNewAnnotations', '/templates/annotations.xsl');
         svc.addProcessor('cleanupForm', '/xsl/cleanupform.xsl');
         svc.addProcessor('addXmlId', '/xsl/add-xml-id.xsl');
         svc.addProcessor('wordify', '/xsl/wordify.xsl');
