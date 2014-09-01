@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+      * Copyright 2004-2007 Emmanouil Batsis
+      *
+      * ====================================================================
+      * Licence
+      * ====================================================================
+      * Sarissa is free software distributed under the GNU GPL version 2 (see <a href="gpl.txt">gpl.txt</a>) or higher, 
+      * GNU LGPL version 2.1 (see <a href="lgpl.txt">lgpl.txt</a>) or higher and Apache Software License 2.0 or higher 
+      * (see <a href="asl.txt">asl.txt</a>). This means you can choose one of the three and use that if you like. If 
+      * you make modifications under the ASL, i would appreciate it if you submitted those.
+      * In case your copy of Sarissa does not include the license texts, you may find
+      * them online in various formats at <a href="http://www.gnu.org">http://www.gnu.org</a> and 
+      * <a href="http://www.apache.org">http://www.apache.org</a>.
+      *
+      * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY 
+      * KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE 
+      * WARRANTIES OF MERCHANTABILITY,FITNESS FOR A PARTICULAR PURPOSE 
+      * AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR 
+      * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+      * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR 
+      * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE 
+      * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+  http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>gr.abiss.js</groupId>
+  <artifactId>sarissa</artifactId>
+  <name>Sarissa</name>
+  <version>0.9.9.6</version>
+  <packaging>jar</packaging>
+  <description> Sarissa is an ECMAScript library acting as a cross-browser wrapper for native XML
+    APIs. It offers various XML related goodies like Document instantiation, XML loading from URLs
+    or strings, XSLT transformations, XPath queries etc and comes especially handy for people doing
+    what is lately known as "AJAX" development. Supported browsers are Mozilla - Firefox and family,
+    Internet Explorer with MSXML3.0 and up, Konqueror (KDE 3.3+ for sure), Safari, Chrome and Opera 9. </description>
+  <url>http://dev.abiss.gr/sarissa/</url>
+  <inceptionYear>2003</inceptionYear>
+  <organization>
+    <name>Abiss.gr</name>
+    <url>http://www.abiss.gr</url>
+  </organization>
+  <mailingLists>
+    <mailingList>
+      <name>${pom.name} User Mailing list</name>
+      <subscribe>http://lists.sourceforge.net/lists/listinfo/${pom.artifactId}-users</subscribe>
+      <unsubscribe>http://lists.sourceforge.net/lists/listinfo/${pom.artifactId}-users</unsubscribe>
+      <archive>http://sourceforge.net/mailarchive/forum.php?forum_name=${pom.artifactId}-users</archive>
+    </mailingList>
+  </mailingLists>
+  <issueManagement>
+    <system>Sourceforge Tracker</system>
+    <url>http://sourceforge.net/tracker/?group_id=75155</url>
+  </issueManagement>
+  <developers>
+    <developer>
+      <id>manos</id>
+      <name>Manos Batsis</name>
+      <email>manos (AT) abiss.gr</email>
+      <organization>Abiss.gr</organization>
+        <url>http://blog.abiss.gr/manos/</url>
+      <roles>
+        <role>Beach Bum</role>
+      </roles>
+      <timezone>+2</timezone>
+    </developer>
+    <developer>
+      <id>thepm</id>
+      <name>Aissam Bazzaoui</name>
+      <roles>
+        <role>Developer</role>
+      </roles>
+    </developer>
+  </developers>
+  <licenses>
+    <license>
+      <name>The Apache Software License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+    </license>
+    <license>
+      <name>The GNU General Public License, Version 2</name>
+      <url>http://www.gnu.org/licenses/gpl.txt</url>
+    </license>
+  </licenses>
+  <scm>
+    <connection>scm:cvs:pserver:anonymous:@${pom.artifactId}.cvs.sf.net:/cvsroot/${pom.artifactId}:${pom.artifactId}</connection>
+    <developerConnection>scm:cvs:ext:${maven.username}@${pom.artifactId}.cvs.sf.net:/cvsroot/${pom.artifactId}:${pom.artifactId}</developerConnection>
+    <url>http://${pom.artifactId}.cvs.sf.net/${pom.artifactId}</url>
+  </scm>
+  <build>    
+  <extensions>
+    <extension>
+      <groupId>org.apache.maven.wagon</groupId>
+      <artifactId>wagon-ssh-external</artifactId>
+      <version>1.0-alpha-5</version>
+    </extension>
+  </extensions>
+    <!--  site plugin -->
+    <resources>
+      <resource>
+        <directory>src/main/js</directory>
+        <filtering>true</filtering>
+      </resource>
+      <resource>
+        <directory>src/main/resources/js</directory>
+        <filtering>true</filtering>
+      </resource>
+    </resources>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-site-plugin</artifactId>
+        <version>2.0-beta-6</version>
+      </plugin>
+      <plugin>
+        <!--  -->
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>antrun-copy-js-to-site</id>
+            <phase>pre-site</phase>
+            <configuration>
+              <tasks>
+                <property name="project.version" value="${project.version}" />
+                <mkdir dir="${project.build.directory}/site/" />
+                <copy todir="${project.build.directory}/site/">
+                  <fileset dir="${project.build.directory}/classes"/>
+                </copy>
+              </tasks>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>antrun-create-full-dist</id>
+            <phase>site</phase>
+            <configuration>
+              <tasks>
+                <echo message="Running antrun-create-full-dist" />
+                <zip destfile="${project.build.directory}/${project.artifactId}-full-${project.version}.zip">
+                  <zipfileset dir="${project.build.directory}/site" prefix="${project.artifactId}-full-${project.version}"
+                    excludes="apidocs/**/*"
+                  />
+                </zip>
+              </tasks>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+        </plugin>
+      <plugin>
+        <groupId>com.mobilvox.ossi.mojo</groupId>
+        <artifactId>maven-js-plugin</artifactId>
+        <version>1.3-SNAPSHOT</version>
+        <configuration>
+          <replaceSiteJavaScript>false</replaceSiteJavaScript>
+          <siteClassifier>-compressed</siteClassifier>
+          <excludes>
+            <exclude>**/*-compressed.js</exclude>
+          </excludes>
+          <jsDirectory>target/classes</jsDirectory>
+          <outputDirectory>${basedir}/target/classes</outputDirectory>
+          <replaceJavaScript>false</replaceJavaScript>
+          <licenseFiles>
+            <licenseFile>compressed-js-header.txt</licenseFile>
+          </licenseFiles>
+        </configuration>      
+        <executions>
+          <execution>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>compress-custom</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins> 
+  </build>
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>gr.abiss.mvn.plugins</groupId>
+        <artifactId>maven-jstools-plugin</artifactId>
+        <version>0.9-SNAPSHOT</version>
+        <inherited>false</inherited>
+        <configuration>
+          <jsDir>${project.build.directory}/classes</jsDir>
+          <reportJslintErrorsOnly>true</reportJslintErrorsOnly>
+          <excludes>**/*-compressed.js</excludes>
+        </configuration>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>jslint</report>
+              <report>jsdoc</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+    </plugins>
+  </reporting>
+    <distributionManagement>
+        <site>
+            <id>dev.abiss.gr</id>
+            <url>scp://dev.abiss.gr/home2/m/mbatsis/dev_abiss_gr/sarissa</url>
+        </site>
+    </distributionManagement>
+  <repositories>
+    <repository>
+      <id>Codehaus Snapshots</id>
+      <url>http://snapshots.repository.codehaus.org/</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+    </repository>
+  </repositories>
+  <pluginRepositories>
+    <pluginRepository>
+      <id>Codehaus Snapshots</id>
+      <url>http://snapshots.repository.codehaus.org/</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+    </pluginRepository>
+    <pluginRepository>
+      <id>Mobilvox JS Plugin Snapshots</id>
+      <url>http://maven-js-plugin.sourceforge.net/m2snapshotrepo/</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+    </pluginRepository>
+  </pluginRepositories>
+</project>
