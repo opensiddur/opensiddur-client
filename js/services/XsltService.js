@@ -35,6 +35,7 @@ OpenSiddurClientApp.service(
                     .replace(/\s+xmlns:xml="http:\/\/www.w3.org\/XML\/1998\/namespace"/g, "");
             },
             indentToString : function ( xmlDoc ) {
+                /*
                 // create an instance of XSLTProcessor for XSLT 1.0  
                 var processor = new XSLTProcessor();  
   
@@ -54,7 +55,9 @@ OpenSiddurClientApp.service(
                 processor.importStylesheet(xslDoc);  
   
                 var indented = processor.transformToDocument(xmlDoc);  
-                return (new XMLSerializer().serializeToString(indented));  
+                return (new XMLSerializer().serializeToString(indented));   
+                */
+                return vkbeautify.xml(new XMLSerializer().serializeToString(xmlDoc), 4);  
             }  
         }
         svc.addProcessor('instance', '/xsl/instance.xsl');
