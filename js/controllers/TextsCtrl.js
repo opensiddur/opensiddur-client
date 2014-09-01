@@ -117,7 +117,7 @@ OpenSiddurClientApp.controller(
                 $scope.textsForm.$setDirty();
                 // work around a bug where the editor does not refresh after load
                 setTimeout(
-                    function() { $scope.editor.codemirror.editor.refresh(); }, 500
+                    function() { $scope.editor.codemirror.editor.refresh(); }, 250
                 );
             },
             setDocument : function( cursorLocation ) {
@@ -147,12 +147,15 @@ OpenSiddurClientApp.controller(
                                 $scope.editor.isNew = 0;
                                 $scope.editor.isLoaded = 1;
                                 $scope.textsForm.$setPristine();
+                                setTimeout(
+                                    function() { 
+                                        $scope.editor.codemirror.editor.refresh(); 
+                                        if (cursorLocation) {
+                                            $scope.editor.codemirror.doc.setCursor(cursorLocation);
+                                        }
+                                    }, 250
+                                );
 
-                                if (cursorLocation) {
-                                    //$scope.$apply(); 
-                                    $scope.editor.codemirror.doc.setCursor(cursorLocation);
-                                    //$scope.editor.ace.editor.clearSelection();
-                                }
                             }
                         )
                         .error(
