@@ -16,6 +16,11 @@
     <xsl:template match="tei:change[1]/text()[not(matches(., '\S'))]"/>
     <xsl:template match="tei:change[1]/text()"><xsl:sequence select="normalize-space(.)"/></xsl:template>
 
+    <!-- remove leading and trailing spaces from idno -->
+    <xsl:template match="tei:idno/text()">
+        <xsl:sequence select="replace(., '^\s+|\s+$', '')"/>
+    </xsl:template>
+
     <xsl:template match="*|comment()">
         <xsl:copy copy-namespaces="no">
             <xsl:sequence select="@*"/>
