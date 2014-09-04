@@ -10,12 +10,19 @@
     xmlns:j="http://jewishliturgy.org/ns/jlptei/1.0"
     version="2.0">
     <xsl:output method="xml" indent="yes"/>
-    
-    <!-- remove the comment from the commit log  -->
+
+    <!-- remove the comment and empty commit messages from the commit log  -->
     <xsl:template match="tei:change[1]/comment()"/>
+    <xsl:template match="tei:change[1]/text()[not(matches(., '\S'))]"/>
+    <xsl:template match="tei:change[1]/text()"><xsl:sequence select="normalize-space(.)"/></xsl:template>
+
+    <!-- remove leading and trailing spaces from idno -->
+    <xsl:template match="tei:idno/text()">
+        <xsl:sequence select="replace(., '^\s+|\s+$', '')"/>
+    </xsl:template>
 
     <xsl:template match="*|comment()">
-        <xsl:copy>
+        <xsl:copy copy-namespaces="no">
             <xsl:sequence select="@*"/>
             <xsl:apply-templates/>
         </xsl:copy>
