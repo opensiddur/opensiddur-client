@@ -41,4 +41,4 @@ Support branches? [support/]
 Version tag prefix? [] 
 ```
 
-To get your code committed to the main repository, send a pull request. Please only make a limited number of changes per pull request.
+To get your code committed to the main repository, send a pull request. Please only make a limited number of changes per pull request. Pull requests should ideally be made in feature branches.
