@@ -31,7 +31,7 @@
                         <li><a href="#" data-ng-click="helper.xml.addIds()">Add required xml:id attributes</a></li>
                     </ul>
                 </div>
-                <os-sharing-status data-ng-hide="!resourceType.supportsAccess" access-model="editor.access" sharing-dialog="sharingDialog"></os-sharing-status>
+                <os-sharing-status data-ng-hide="!resourceType.supportsAccess || !editor.isLoaded" access-model="editor.access" sharing-dialog="sharingDialog"></os-sharing-status>
             </div>
         </div>
     </div>
