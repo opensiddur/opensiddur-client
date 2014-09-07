@@ -279,7 +279,9 @@ OpenSiddurClientApp.controller(
                             $scope.editor.content = str;
                         //$scope.$apply(); 
                         }
-                        $scope.editor.codemirror.doc.setCursor(position);
+                        setTimeout(
+                            function() { $scope.editor.codemirror.doc.setCursor(position) }, 250
+                        );
                         //$scope.editor.ace.editor.clearSelection();
                     }
                 },
