@@ -24,6 +24,13 @@
                           data-ng-click="editor.compile()"
                           >Compile to HTML</button>
                 </div>
+                <div class="btn-group">
+                    <button data-ng-disabled="!editor.access.write || !editor.isLoaded" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#">XML<b class="caret"></b></button>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a href="#" data-ng-click="helper.xml.wordify()">Tag words and punctuation</a></li>
+                        <li><a href="#" data-ng-click="helper.xml.addIds()">Add required xml:id attributes</a></li>
+                    </ul>
+                </div>
                 <os-sharing-status data-ng-hide="!resourceType.supportsAccess" access-model="editor.access" sharing-dialog="sharingDialog"></os-sharing-status>
             </div>
         </div>
@@ -49,7 +56,6 @@
                     <div class="span3">
                         <ul class="nav nav-tabs">
                             <li class="active"><a data-target="#link-helper" data-toggle="tab">Links</a></li>
-                            <li><a data-target="#xml-helper" data-toggle="tab">XML</a></li>
                         </ul>
                         <div class="tab-content">
                             <div class="tab-pane active in" id="link-helper">
@@ -67,20 +73,6 @@
                                     data-ng-disabled="!helper.link.selection || !editor.access.write"
                                     class="btn btn-primary" 
                                     data-ng-click="helper.link.insert()">Insert</button>
-                            </div>
-                            <div class="tab-pane text-center" id="xml-helper">
-                                <div class="btn-group btn-group-vertical">
-                                    <button 
-                                        data-ng-disabled="!editor.access.write"
-                                        class="span3 btn btn-primary"
-                                        data-ng-click="helper.xml.addIds()"
-                                        >Add required xml:id attributes</button>
-                                    <button 
-                                        data-ng-disabled="!editor.access.write"
-                                        class="span3 btn btn-primary"
-                                        data-ng-click="helper.xml.wordify()"
-                                        >Tag words and punctuation</button>
-                                </div>
                             </div>
                         </div>
                     </div>
