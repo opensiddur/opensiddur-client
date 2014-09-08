@@ -27,6 +27,8 @@
                 <div class="btn-group">
                     <button data-ng-disabled="!editor.access.write || !editor.isLoaded" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#">XML<b class="caret"></b></button>
                     <ul class="dropdown-menu" role="menu">
+                        <li><a href="#" data-ng-click="DialogService.open('linkDialog')">Insert link...</a></li>
+                        <li class="divider"></li>
                         <li><a href="#" data-ng-click="helper.xml.wordify()">Tag words and punctuation</a></li>
                         <li><a href="#" data-ng-click="helper.xml.addIds()">Add required xml:id attributes</a></li>
                     </ul>
@@ -46,35 +48,12 @@
         <div data-ng-show="editor.isLoaded && (editor.loggedIn || editor.currentDocument)">
             <div class="texts-editor">
                 <form name="textsForm">
-                    <div class="span9">
+                    <div class="span12">
                         <textarea  
                             data-ui-codemirror="{ onLoad : editor.loaded }"
                             data-ui-codemirror-opts="editor.codemirrorOptions"
                             data-ng-model="editor.content"
                             ></textarea>
-                    </div>
-                    <div class="span3">
-                        <ul class="nav nav-tabs">
-                            <li class="active"><a data-target="#link-helper" data-toggle="tab">Links</a></li>
-                        </ul>
-                        <div class="tab-content">
-                            <div class="tab-pane active in" id="link-helper">
-                                <label for="link.type">Search for a link to:</label>
-                                <select
-                                    name="link.type" 
-                                    data-ng-model="helper.link.selectedType"
-                                    data-ng-options="key as value for (key , value) in helper.link.types"/>
-                                <div>
-                                    <os-search-list api="helper.link.selectedType" selection="helper.link.selection">
-                                    </os-search-list>
-                                </div>
-                                <div>Selected: {{helper.link.insertable}}</div>
-                                <button
-                                    data-ng-disabled="!helper.link.selection || !editor.access.write"
-                                    class="btn btn-primary" 
-                                    data-ng-click="helper.link.insert()">Insert</button>
-                            </div>
-                        </div>
                     </div>
                 </form>
             </div>
@@ -94,4 +73,10 @@
             name="newDialog"
             on-ok="editor.newDocument"
             on-close="editor.newCanceled"></os-new-dialog>
+    <os-insert-link-dialog
+            name="linkDialog"
+            title="Insert Link"
+            on-ok="helper.link.insert"
+            on-close="helper.link.cancel"
+            ></os-insert-link-dialog>
 </div>

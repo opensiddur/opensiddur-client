@@ -260,9 +260,11 @@ OpenSiddurClientApp.controller(
                 },
                 selection : "",
                 insertable : "",
-                insert : function () {
-                    $scope.editor.codemirror.doc.replaceSelection(this.insertable, "end");
-                }
+                insert : function (link) {
+                    $scope.editor.codemirror.doc.replaceSelection(link, "end");
+                    $scope.textsForm.$setDirty();
+                },
+                cancel : function() { ; }
             },
             xml : {
                 applyXslt : function ( xslt ) {
