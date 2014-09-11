@@ -1,0 +1,46 @@
+<div class="osIdList">
+    <div class="row-fluid id-list">
+        <form class="form-inline">
+            <span>Filters</span>
+            <input type="text" class="input-small" data-ng-model="filters.name" placeholder="Link id" name="idlist.idSearch"/>
+            <input type="text" class="input-small" data-ng-model="filters.element" placeholder="Element" name="idlist.elementSearch"/>
+            <label class="checkbox" for="idlist.streamOnly"><input class="input-small" type="checkbox"
+                data-ng-model="filters.stream"
+                name="idlist.streamOnly"
+                data-ng-true-value="Y"]
+                data-ng-false-value=""
+                />Stream elements</label>
+        </form>
+        <div class="id-list-table">
+            <table class="table table-hover table-condensed table-striped table-scrollable">
+                <thead>
+                    <tr>
+                        <th>Link id</th>
+                        <th>Element</th>
+                        <th>Stream?</th>
+                        <th>Context</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr data-ng-repeat="xmlid in xmlids | filter:filters" data-ng-click="select(xmlid.name, $index)">
+                        <td>{{xmlid.name}}</td>
+                        <td>{{xmlid.element}}</td>
+                        <td>{{xmlid.stream}}</td>
+                        <td>{{xmlid.context}}</td>   
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <button class="btn btn-primary" data-ng-click="links.select()">Select</button>
+        <button class="btn btn-primary" data-ng-hide="(!links.to && !links.selected) || !allowRange" data-ng-click="links.setFrom()">range(from</button>
+        <button class="btn btn-primary" data-ng-hide="(!links.from && !links.selected) || !allowRange" data-ng-click="links.setTo()">to)</button>
+        <button class="btn btn-primary" data-ng-click="links.clear()">Clear</button>        
+    </div>
+    <style type="text/css">/*<![CDATA[*/
+        .id-list-table {
+            overflow-y:scroll;
+            height: 100px;
+        }
+    /*]]>*/</style>
+</div>
+

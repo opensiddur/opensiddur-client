@@ -6,9 +6,9 @@
  */
 OpenSiddurClientApp.controller(
     'TextsCtrl',
-    ['$scope', '$location', '$route', '$routeParams', '$http', '$window', 'XsltService', 
+    ['$scope', '$location', '$route', '$routeParams', '$http', '$timeout', '$window', 'XsltService', 
     'AccessModelService', 'AuthenticationService', 'DialogService', 'ErrorService', 'RestApi',
-    function ($scope, $location, $route, $routeParams, $http, $window, XsltService, 
+    function ($scope, $location, $route, $routeParams, $http, $timeout, $window, XsltService, 
         AccessModelService, AuthenticationService, DialogService, ErrorService, RestApi) {
         console.log("Texts controller.");
         $scope.selection = "";
@@ -261,7 +261,7 @@ OpenSiddurClientApp.controller(
                 selection : "",
                 insertable : "",
                 insert : function (link) {
-                    $scope.editor.codemirror.doc.replaceSelection(link, "end");
+                    $timeout(function() { $scope.editor.codemirror.doc.replaceSelection(link, "end"); });
                     $scope.textsForm.$setDirty();
                 },
                 cancel : function() { ; }
