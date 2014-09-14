@@ -17,11 +17,11 @@
     <xsl:template match="*[@xml:id]">
         <xmlid>
             <name><xsl:value-of select="@xml:id"/></name>
-            <element><xsl:sequence select="
+            <element><xsl:value-of select="
                 string-join((name(),
                     if (@type) then ('[', @type, ']') else ()
                     ), '')"/></element>
-            <stream><xsl:sequence select="if (parent::j:streamText) then 'Y' else 'N'"/></stream>
+            <stream><xsl:value-of select="if (parent::j:streamText) then 'Y' else 'N'"/></stream>
             <context>
                 <xsl:variable name="text" select="normalize-space(.)"/>
                 <xsl:value-of select="
