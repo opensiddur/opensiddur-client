@@ -8,6 +8,13 @@ OpenSiddurClientApp.factory(
     'RestApi', 
     ['$resource', 'XsltService',
     function( $resource, XsltService ) {
+        var getApi = {
+            method : 'GET',
+            isArray : false,
+            transformResponse : function (data) {
+                return { "xml" : data };
+            }
+            };
         var queryApi = {
             method : 'GET',
             params : { 
@@ -172,6 +179,7 @@ OpenSiddurClientApp.factory(
                     resource : ""
                 },
                 {
+                    'get' : getApi,
                     'query' : queryApi,
                     'getAccess' : getAccessApi("/api/data/original\/:resource"),
                     'setAccess' : setAccessApi("/api/data/original\/:resource")
