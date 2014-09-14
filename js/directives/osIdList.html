@@ -22,7 +22,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr data-ng-repeat="xmlid in xmlids | filter:filters" data-ng-click="select(xmlid.name, $index)">
+                    <tr data-ng-repeat="xmlid in xmlids | filter:filters" data-ng-click="select(xmlid, $index)">
                         <td>{{xmlid.name}}</td>
                         <td>{{xmlid.element}}</td>
                         <td>{{xmlid.stream}}</td>
@@ -32,8 +32,14 @@
             </table>
         </div>
         <button class="btn btn-primary" data-ng-click="links.select()">Select</button>
-        <button class="btn btn-primary" data-ng-hide="(!links.to && !links.selected) || !allowRange" data-ng-click="links.setFrom()">range(from</button>
-        <button class="btn btn-primary" data-ng-hide="(!links.from && !links.selected) || !allowRange" data-ng-click="links.setTo()">to)</button>
+        <button class="btn btn-primary" 
+            data-ng-disabled="!links.canFrom()" 
+            data-ng-hide="(!links.to && !links.fragment) || !allowRange" 
+            data-ng-click="links.setFrom()">range(from</button>
+        <button class="btn btn-primary" 
+            data-ng-disabled="!links.canTo()" 
+            data-ng-hide="(!links.from && !links.fragment) || !allowRange" 
+            data-ng-click="links.setTo()">to)</button>
         <button class="btn btn-primary" data-ng-click="links.clear()">Clear</button>        
     </div>
     <style type="text/css">/*<![CDATA[*/

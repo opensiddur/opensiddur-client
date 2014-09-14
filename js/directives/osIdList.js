@@ -33,56 +33,70 @@ OpenSiddurClientApp.directive(
                     };
 
                     $scope.links = {
-                        selection : "",
-                        selected : "",
-                        from : "",
-                        to : "",
-                        composed : "",
+                        active : null,      /* active clicked on entity */
+                        fragment : null,    /* selected fragment when only a single fragment is selected */
+                        from : null,        /* beginning of range */
+                        to : null,          /* end of range */
+                        composed : "",      /* string representation of the current constructed #fragment or #range */
                         setComposed : function() {
                             if (this.from && (this.from == this.to)) {
-                                this.selected = this.from;
-                                this.from = "";
-                                this.to = "";
-                                this.composed = "#"+this.selected;
+                                this.fragment = this.from;
+                                this.from = null;
+                                this.to = null;
+                                this.composed = "#"+this.fragment.name;
                             }
                             else if (this.from || this.to) {
-                                this.composed = "#range("+(this.from || "FROM?")+","+(this.to || "TO?")+")"; 
+                                this.composed = "#range("+(this.from.name || "FROM?")+","+(this.to.name || "TO?")+")"; 
                             }
-                            else if (this.selected) {
-                                this.composed = "#"+this.selected;
+                            else if (this.fragment) {
+                                this.composed = "#"+this.fragment.name;
                             }
                             else {
                                 this.composed = "";
                             }
+                            // set the outward facing string
                             $scope.selection = this.composed;
                         },
                         setFrom : function() {
-                            this.from = this.selection;
+                            this.from = this.active;
                             if (!this.to)
-                                this.to = this.selected;
-                            this.selected = "";
+                                this.to = this.fragment;
+                            this.fragment = null;
                             this.setComposed();
                         },
                         setTo : function() {
-                            this.to = this.selection;
+                            this.to = this.active;
                             if (!this.from)
-                                this.from = this.selected;
-                            this.selected = "";
+                                this.from = this.fragment;
+                            this.fragment = null;
                             this.setComposed();
                         },
                         select : function() {
-                            this.from = "";
-                            this.to = "";
-                            this.selected = this.selection;
+                            this.from = null;
+                            this.to = null;
+                            this.fragment = this.active;
                             this.setComposed();
                         },
                         clear : function() {
-                            this.from = "";
-                            this.to = "";   
-                            this.selected = "";
+                            this.from = null;
+                            this.to = null;   
+                            this.fragment = null;
                             this.composed = "";
                             this.setComposed();
+                        },
+                        canFrom : function() {
+                            // return true if from can be set from the current active
+                            return $scope.allowRange && this.active && this.active.stream == 'Y' && 
+                                ((this.fragment && this.active.index < this.fragment.index) ||
+                                 (this.to &&  this.active.index < this.to.index)); 
+                        },
+                        canTo : function() {
+                            // return true if to can be set from the current active
+                            return $scope.allowRange && this.active && this.active.stream == 'Y' &&
+                                ((this.fragment && this.active.index > this.fragment.index) ||
+                                 (this.from &&  this.active.index > this.from.index)); 
                         }
+
                     };                    
 
 
@@ -93,7 +107,7 @@ OpenSiddurClientApp.directive(
                         // set the selected class
                         $scope.parentElement.find("tr").eq(index).addClass("info"); 
                         
-                        $scope.links.selection = what;
+                        $scope.links.active = what;
                     };
                  }],
                  link: function(scope, elem, attrs, ctrl) {
@@ -103,7 +117,12 @@ OpenSiddurClientApp.directive(
                     var loadXmlIds = function (update) {
                         if (update) {
                             var xid = XsltService.transformString("listXmlId", scope.content);
-                            scope.xmlids = x2js_simple.xml2json(xid).xmlids.xmlid;
+                            scope.xmlids = x2js_simple.xml2json(xid).xmlids.xmlid.map(
+                                function (xid, idx) {
+                                    xid.index = idx;
+                                    return xid;
+                                }
+                            );
                         }
                         scope.links.clear();
                     };
