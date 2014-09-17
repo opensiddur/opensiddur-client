@@ -1,0 +1,37 @@
+<div class="osInsertLinkDialog modal hide" aria-hidden="true" aria-labelledBy="insertLinkDialogHeader">
+    <div class="modal-header">
+        <button type="button" class="close" data-ng-click="CloseButton()" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3 id="insertLinkDialogHeader">{{ title }}</h3>
+    </div>
+    <div class="modal-body">
+        <label for="link.type">Search for a link to:</label>
+        <select
+            name="link.type" 
+            data-ng-model="links.selectedType"
+            data-ng-options="key as value for (key , value) in links.types"/>
+            <div>
+                <os-search-list api="links.selectedType" selection="links.selection">
+                </os-search-list>
+            </div>
+            <div>
+                <button
+                    data-ng-disabled="!links.selection"
+                    class="btn btn-primary" 
+                    data-ng-click="links.selectFile()">Select</button>
+            </div>
+            <div>
+                <os-id-list data-ng-show="allowedFragment && links.selectedFile" 
+                    content="links.content" allow-range="allowedRange" 
+                    selection="links.composedFragment" update="links.content">
+                </os-id-list>
+            </div>
+    </div>
+    <div class="modal-footer">
+        <span data-ng-show="links.composedLink">Link: <b>{{links.composedLink}}</b></span>
+        <a href="#" class="btn" data-ng-click="CloseButton()" data-dismiss="modal">Close</a>
+        <a href="#" class="btn btn-primary" data-dismiss="modal"
+            data-ng-disabled="!links.selectedFile" 
+            data-ng-click="OKButton()">Insert</a>
+    </div>
+</div>
+

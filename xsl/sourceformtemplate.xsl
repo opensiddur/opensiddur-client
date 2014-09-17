@@ -114,8 +114,8 @@
     </xsl:template>
 
     <!-- make a template for an existing tei:biblScope -->
-    <xsl:template match="tei:biblScope">
-        <xsl:copy>
+    <xsl:template match="tei:biblScope|tei:biblscope">
+        <tei:biblScope>
             <xsl:copy-of select="@*"/>
             <xsl:if test="not(@from)">
                 <xsl:attribute name="from"/>
@@ -126,11 +126,11 @@
             <xsl:if test="not(@unit)">
                 <xsl:attribute name="unit"/>
             </xsl:if>
-        </xsl:copy>
+        </tei:biblScope>
     </xsl:template>
 
-    <xsl:template match="tei:relatedItem">
-        <xsl:copy>
+    <xsl:template match="tei:relatedItem|tei:relateditem">
+        <tei:relatedItem>
             <xsl:copy-of select="@*"/>
             <xsl:if test="not(@type)">
                 <xsl:attribute name="type">scan</xsl:attribute>
@@ -141,7 +141,7 @@
             <xsl:if test="not(@targetPattern)">
                 <xsl:attribute name="targetPattern"/>
             </xsl:if>
-        </xsl:copy>
+        </tei:relatedItem>
     </xsl:template>
 
     <!-- lowercase or uppercase -->
@@ -204,7 +204,7 @@
                     <xsl:with-param name="default"><tei:extent/></xsl:with-param>
                 </xsl:call-template>
                 <xsl:call-template name="present-or-default">
-                    <xsl:with-param name="present"><xsl:apply-templates select="tei:monogr/tei:biblScope"/></xsl:with-param>
+                    <xsl:with-param name="present" as="node()*"><xsl:apply-templates select="tei:monogr/tei:biblScope"/></xsl:with-param>
                     <xsl:with-param name="default"><tei:biblScope from="" to="" unit=""/></xsl:with-param>
                 </xsl:call-template>
             </tei:monogr>
@@ -235,7 +235,7 @@
                 </xsl:with-param>
             </xsl:call-template>
             <xsl:call-template name="present-or-default">
-                <xsl:with-param name="present"><xsl:apply-templates select="tei:relatedItem"/></xsl:with-param>
+                <xsl:with-param name="present" as="node()*"><xsl:apply-templates select="tei:relatedItem|tei:relateditem"/></xsl:with-param>
                 <xsl:with-param name="default">
                     <tei:relatedItem type="scan" target="" targetPattern=""/>
                 </xsl:with-param>

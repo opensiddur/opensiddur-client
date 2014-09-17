@@ -6,9 +6,9 @@
  */
 OpenSiddurClientApp.controller(
     'TextsCtrl',
-    ['$scope', '$location', '$route', '$routeParams', '$http', '$window', 'XsltService', 
+    ['$scope', '$location', '$route', '$routeParams', '$http', '$timeout', '$window', 'XsltService', 
     'AccessModelService', 'AuthenticationService', 'DialogService', 'ErrorService', 'RestApi',
-    function ($scope, $location, $route, $routeParams, $http, $window, XsltService, 
+    function ($scope, $location, $route, $routeParams, $http, $timeout, $window, XsltService, 
         AccessModelService, AuthenticationService, DialogService, ErrorService, RestApi) {
         console.log("Texts controller.");
         $scope.selection = "";
@@ -228,7 +228,8 @@ OpenSiddurClientApp.controller(
                     doc : _editor.getDoc()
                 };
                 $scope.editor.codemirror.doc.markClean();
-            }
+            },
+            transcriptionViewer : false
         };
         $scope.saveButtonText = function() {
             return this.textsForm.$pristine ? (($scope.editor.isNew) ? "Unsaved, No changes" : "Saved" ) : "Save";
@@ -260,9 +261,11 @@ OpenSiddurClientApp.controller(
                 },
                 selection : "",
                 insertable : "",
-                insert : function () {
-                    $scope.editor.codemirror.doc.replaceSelection(this.insertable, "end");
-                }
+                insert : function (link) {
+                    $timeout(function() { $scope.editor.codemirror.doc.replaceSelection(link, "end"); });
+                    $scope.textsForm.$setDirty();
+                },
+                cancel : function() { ; }
             },
             xml : {
                 applyXslt : function ( xslt ) {
@@ -279,7 +282,9 @@ OpenSiddurClientApp.controller(
                             $scope.editor.content = str;
                         //$scope.$apply(); 
                         }
-                        $scope.editor.codemirror.doc.setCursor(position);
+                        setTimeout(
+                            function() { $scope.editor.codemirror.doc.setCursor(position) }, 250
+                        );
                         //$scope.editor.ace.editor.clearSelection();
                     }
                 },

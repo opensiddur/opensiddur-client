@@ -1,5 +1,5 @@
 <div>
-    <div class="toolbar navbar navbar-inverse">
+    <div class="toolbar navbar navbar-inverse nav-collapse collapse">
         <div class="navbar-inner">
             <div class="btn-toolbar">
                 <div class="btn-group">
@@ -24,7 +24,27 @@
                           data-ng-click="editor.compile()"
                           >Compile to HTML</button>
                 </div>
-                <os-sharing-status data-ng-hide="!resourceType.supportsAccess" access-model="editor.access" sharing-dialog="sharingDialog"></os-sharing-status>
+                <div class="btn-group">
+                    <button data-ng-disabled="!editor.access.write || !editor.isLoaded" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#">XML<b class="caret"></b></button>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a href="#" data-ng-click="DialogService.open('internalLinkDialog')">Insert internal link...</a></li>
+                        <li><a href="#" data-ng-click="DialogService.open('linkDialog')">Insert external link...</a></li>
+                        <li class="divider"></li>
+                        <li><a href="#" data-ng-click="helper.xml.wordify()">Tag words and punctuation</a></li>
+                        <li><a href="#" data-ng-click="helper.xml.addIds()">Add required xml:id attributes</a></li>
+                    </ul>
+                </div>
+                <div class="btn-group">
+                    <button class="btn btn-primary" 
+                        data-ng-disabled="!editor.isLoaded" 
+                        data-ng-show="!editor.transcriptionViewer"
+                        data-ng-click="editor.transcriptionViewer = !editor.transcriptionViewer">&#x25c0;Transcription</button>
+                    <button class="btn btn-primary" 
+                        data-ng-disabled="!editor.isLoaded" 
+                        data-ng-show="editor.transcriptionViewer"
+                        data-ng-click="editor.transcriptionViewer = !editor.transcriptionViewer">Transcription&#x25b6;</button>
+                </div>
+                <os-sharing-status data-ng-hide="!resourceType.supportsAccess || !editor.isLoaded" access-model="editor.access" sharing-dialog="sharingDialog"></os-sharing-status>
             </div>
         </div>
     </div>
@@ -39,50 +59,16 @@
         <div data-ng-show="editor.isLoaded && (editor.loggedIn || editor.currentDocument)">
             <div class="texts-editor">
                 <form name="textsForm">
-                    <div class="span9">
+                    <div data-ng-class="{true:'span6', false:'span12'}[editor.transcriptionViewer]">
                         <textarea  
                             data-ui-codemirror="{ onLoad : editor.loaded }"
                             data-ui-codemirror-opts="editor.codemirrorOptions"
                             data-ng-model="editor.content"
                             ></textarea>
                     </div>
-                    <div class="span3">
-                        <ul class="nav nav-tabs">
-                            <li class="active"><a data-target="#link-helper" data-toggle="tab">Links</a></li>
-                            <li><a data-target="#xml-helper" data-toggle="tab">XML</a></li>
-                        </ul>
-                        <div class="tab-content">
-                            <div class="tab-pane active in" id="link-helper">
-                                <label for="link.type">Search for a link to:</label>
-                                <select
-                                    name="link.type" 
-                                    data-ng-model="helper.link.selectedType"
-                                    data-ng-options="key as value for (key , value) in helper.link.types"/>
-                                <div>
-                                    <os-search-list api="helper.link.selectedType" selection="helper.link.selection">
-                                    </os-search-list>
-                                </div>
-                                <div>Selected: {{helper.link.insertable}}</div>
-                                <button
-                                    data-ng-disabled="!helper.link.selection || !editor.access.write"
-                                    class="btn btn-primary" 
-                                    data-ng-click="helper.link.insert()">Insert</button>
-                            </div>
-                            <div class="tab-pane text-center" id="xml-helper">
-                                <div class="btn-group btn-group-vertical">
-                                    <button 
-                                        data-ng-disabled="!editor.access.write"
-                                        class="span3 btn btn-primary"
-                                        data-ng-click="helper.xml.addIds()"
-                                        >Add required xml:id attributes</button>
-                                    <button 
-                                        data-ng-disabled="!editor.access.write"
-                                        class="span3 btn btn-primary"
-                                        data-ng-click="helper.xml.wordify()"
-                                        >Tag words and punctuation</button>
-                                </div>
-                            </div>
-                        </div>
+                    <div data-ng-class="{true:'span6', false:'off'}[editor.transcriptionViewer]">
+                        <os-transcription-window model="editor.content" active="editor.transcriptionViewer">
+                        </os-transcription-window>
                     </div>
                 </form>
             </div>
@@ -102,4 +88,18 @@
             name="newDialog"
             on-ok="editor.newDocument"
             on-close="editor.newCanceled"></os-new-dialog>
+    <os-insert-internal-link-dialog
+            content="editor.content"
+            name="internalLinkDialog"
+            title="Insert Internal Link"
+            on-ok="helper.link.insert"
+            on-close="helper.link.cancel"
+            allow-range="editor.content"
+            ></os-insert-internal-link-dialog>
+    <os-insert-link-dialog
+            name="linkDialog"
+            title="Insert External Link"
+            on-ok="helper.link.insert"
+            on-close="helper.link.cancel"
+            ></os-insert-link-dialog>
 </div>

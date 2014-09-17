@@ -60,9 +60,11 @@ OpenSiddurClientApp.service(
                 return vkbeautify.xml(new XMLSerializer().serializeToString(xmlDoc), 4);  
             }  
         }
+        svc.addProcessor('extractTranscriptionLinks', '/xsl/ExtractTranscriptionLinks.xsl');
         svc.addProcessor('instance', '/xsl/instance.xsl');
         svc.addProcessor('teiToHtml', '/xsl/tei2html.xsl');
         svc.addProcessor('htmlToTei', '/xsl/html2tei.xsl');
+        svc.addProcessor('listXmlId', '/xsl/ListXmlId.xsl');
         svc.addProcessor('originalTemplate', '/xsl/originaltemplate.xsl');
         svc.addProcessor('originalBeforeSave', '/xsl/OriginalBeforeSave.xsl');
         svc.addProcessor('profileFormTemplate', '/xsl/profileformtemplate.xsl');

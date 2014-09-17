@@ -113,11 +113,9 @@ body {
     padding-bottom: 50px;
 }
 
-.ace_editor {
-    position: relative;
-    height : 300px; 
-    margin : 0;
-    padding : 0;
+.CodeMirror {
+    height : 70vh;
+    width : 100%; 
 }
 
 
