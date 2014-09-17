@@ -62,6 +62,23 @@ OpenSiddurClientApp.config(
   }
 ]);
 
+// allow external URLs from Internet Archive, Google Books, and Wikimedia Commons to be loaded
+OpenSiddurClientApp.config(
+    ['$sceDelegateProvider', 
+    function($sceDelegateProvider) {
+        $sceDelegateProvider.resourceUrlWhitelist([
+            // Allow same origin resource loads.
+            'self',
+            // Internet Archive
+            'https://archive.org/stream/**',
+            // Google Books embedding
+            'http://books.google.com/books**',
+            // Wikimedia Commons
+            'http://upload.wikimedia.org/wikipedia/commons/thumb/**'
+        ]);
+    }]
+);
+
 OpenSiddurClientApp.config(
   ['$routeProvider', '$locationProvider',
   function($routeProvider, $locationProvider) {

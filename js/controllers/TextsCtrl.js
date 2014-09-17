@@ -228,7 +228,8 @@ OpenSiddurClientApp.controller(
                     doc : _editor.getDoc()
                 };
                 $scope.editor.codemirror.doc.markClean();
-            }
+            },
+            transcriptionViewer : false
         };
         $scope.saveButtonText = function() {
             return this.textsForm.$pristine ? (($scope.editor.isNew) ? "Unsaved, No changes" : "Saved" ) : "Save";

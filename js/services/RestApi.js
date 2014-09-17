@@ -190,7 +190,8 @@ OpenSiddurClientApp.factory(
                 { 
                     resource : ""
                 },
-                {
+                {   
+                    'get' : getApi,
                     'query' : queryApi
                 }
             ),
