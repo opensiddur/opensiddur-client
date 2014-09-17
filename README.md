@@ -38,7 +38,7 @@ Feature branches? [feature/]
 Release branches? [release/] 
 Hotfix branches? [hotfix/] 
 Support branches? [support/] 
-Version tag prefix? [] 
+Version tag prefix? [] client-v
 ```
 
-To get your code committed to the main repository, send a pull request. Please only make a limited number of changes per pull request.
+To get your code committed to the main repository, send a pull request. Please only make a limited number of changes per pull request. Generally, any changes should be made in feature branches.
