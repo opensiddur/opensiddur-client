@@ -142,7 +142,7 @@ OpenSiddurClientApp.controller(
                                     });
                                 };
                                 
-                                $scope.editor.content = XsltService.serializeToString(XsltService.transformString( "originalTemplate", data )); 
+                                $scope.editor.content = XsltService.serializeToStringTEINSClean(XsltService.transformString( "originalTemplate", data )); 
                                 $scope.editor.title = $("tei\\:title[type=main]", data).html();
                                 $scope.editor.isNew = 0;
                                 $scope.editor.isLoaded = 1;
