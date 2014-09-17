@@ -34,6 +34,12 @@ OpenSiddurClientApp.service(
                 return ((new window.XMLSerializer()).serializeToString(doc))
                     .replace(/\s+xmlns:xml="http:\/\/www.w3.org\/XML\/1998\/namespace"/g, "");
             },
+            serializeToStringTEINSClean : function (doc) {
+                // serialize to string, then clean up namespaces
+                return this.serializeToString(doc)
+                        .replace(/\s+xmlns:[^>\s]+/g, "")
+                        .replace(/^\<tei:TEI/, "<tei:TEI xmlns:tei=\"http://www.tei-c.org/ns/1.0\" xmlns:j=\"http://jewishliturgy.org/ns/jlptei/1.0\"")
+            },
             indentToString : function ( xmlDoc ) {
                 /*
                 // create an instance of XSLTProcessor for XSLT 1.0  
