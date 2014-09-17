@@ -34,6 +34,16 @@
                         <li><a href="#" data-ng-click="helper.xml.addIds()">Add required xml:id attributes</a></li>
                     </ul>
                 </div>
+                <div class="btn-group">
+                    <button class="btn btn-primary" 
+                        data-ng-disabled="!editor.isLoaded" 
+                        data-ng-show="!editor.transcriptionViewer"
+                        data-ng-click="editor.transcriptionViewer = !editor.transcriptionViewer">&#x25c0;Transcription</button>
+                    <button class="btn btn-primary" 
+                        data-ng-disabled="!editor.isLoaded" 
+                        data-ng-show="editor.transcriptionViewer"
+                        data-ng-click="editor.transcriptionViewer = !editor.transcriptionViewer">Transcription&#x25b6;</button>
+                </div>
                 <os-sharing-status data-ng-hide="!resourceType.supportsAccess || !editor.isLoaded" access-model="editor.access" sharing-dialog="sharingDialog"></os-sharing-status>
             </div>
         </div>
@@ -49,12 +59,16 @@
         <div data-ng-show="editor.isLoaded && (editor.loggedIn || editor.currentDocument)">
             <div class="texts-editor">
                 <form name="textsForm">
-                    <div class="span12">
+                    <div data-ng-class="{true:'span6', false:'span12'}[editor.transcriptionViewer]">
                         <textarea  
                             data-ui-codemirror="{ onLoad : editor.loaded }"
                             data-ui-codemirror-opts="editor.codemirrorOptions"
                             data-ng-model="editor.content"
                             ></textarea>
+                    </div>
+                    <div data-ng-class="{true:'span6', false:'off'}[editor.transcriptionViewer]">
+                        <os-transcription-window model="editor.content" active="editor.transcriptionViewer">
+                        </os-transcription-window>
                     </div>
                 </form>
             </div>
