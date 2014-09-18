@@ -174,7 +174,7 @@ OpenSiddurClientApp.controller(
                 var content = $scope.editor.codemirror.doc.getValue();
                 var transformed = XsltService.transformString( "originalBeforeSave", content );
                 if (transformed) {
-                    var indata = XsltService.serializeToString(transformed);
+                    var indata = XsltService.serializeToStringTEINSClean(transformed);
                     jindata = $(indata);
                     if (jindata.prop("tagName") == "PARSERERROR") {
                         ErrorService.addAlert("Unable to save because the document could not be parsed. It probably contains some invalid XML.", "error");    
@@ -273,7 +273,7 @@ OpenSiddurClientApp.controller(
                     var content = $scope.editor.codemirror.doc.getValue();
                     var transformed = XsltService.transformString( xslt, content );
                     if (transformed) {
-                        var str = XsltService.serializeToString(transformed);
+                        var str = XsltService.serializeToStringTEINSClean(transformed);
                         var jstr = $(str);
                         if (jstr.prop("tagName")=="PARSERERROR") {
                             ErrorService.addAlert("Unable to run the transform because the document could not be parsed. It probably contains some invalid XML.", "error");    
