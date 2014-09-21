@@ -274,7 +274,7 @@ OpenSiddurClientApp.controller(
                     var content = $scope.editor.codemirror.doc.getValue();
                     var transformed = XsltService.transformString( xslt, content );
                     if (transformed) {
-                        var str = XsltService.serializeToStringTEINSClean(transformed);
+                        var str = XsltService.indentToString(transformed);
                         var jstr = $(str);
                         if (jstr.prop("tagName")=="PARSERERROR") {
                             ErrorService.addAlert("Unable to run the transform because the document could not be parsed. It probably contains some invalid XML.", "error");    
@@ -291,6 +291,9 @@ OpenSiddurClientApp.controller(
                 },
                 addIds : function () {
                     this.applyXslt( "addXmlId" );
+                },
+                segment : function () {
+                    this.applyXslt ( "autoSegment" );
                 },
                 wordify : function () {
                     this.applyXslt( "wordify" );

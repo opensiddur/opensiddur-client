@@ -63,9 +63,10 @@ OpenSiddurClientApp.service(
                 var indented = processor.transformToDocument(xmlDoc);  
                 return (new XMLSerializer().serializeToString(indented));   
                 */
-                return vkbeautify.xml(new XMLSerializer().serializeToString(xmlDoc), 4);  
+                return vkbeautify.xml(this.serializeToStringTEINSClean(xmlDoc), 4);  
             }  
         }
+        svc.addProcessor('autoSegment', '/xsl/AutoSegment.xsl');
         svc.addProcessor('extractTranscriptionLinks', '/xsl/ExtractTranscriptionLinks.xsl');
         svc.addProcessor('instance', '/xsl/instance.xsl');
         svc.addProcessor('teiToHtml', '/xsl/tei2html.xsl');
