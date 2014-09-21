@@ -60,7 +60,8 @@ OpenSiddurClientApp.controller(
                 autoCloseTags : {
                     whenClosing : true,
                     whenOpening : false
-                }
+                },
+                rtlMoveVisually : true
             },
             content : "",
             access : AccessModelService.default(AuthenticationService.userName),
