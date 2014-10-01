@@ -37,7 +37,7 @@ OpenSiddurClientApp.service(
             serializeToStringTEINSClean : function (doc) {
                 // serialize to string, then clean up namespaces
                 return this.serializeToString(doc)
-                        .replace(/\s+xmlns:[^>\s]+/g, "")
+                        .replace(/\s+xmlns:[a-zA-Z0-9]+=["][^"]+["]/g, "")
                         .replace(/^\<([a-zA-Z:]+)/, "<$1 xmlns:tei=\"http://www.tei-c.org/ns/1.0\" xmlns:j=\"http://jewishliturgy.org/ns/jlptei/1.0\"")
             },
             indentToString : function ( xmlDoc ) {
