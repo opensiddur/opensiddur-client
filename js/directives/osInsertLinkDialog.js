@@ -94,6 +94,9 @@ OpenSiddurClientApp.directive(
                     scope.$watch("links.selectedType", function (type) {
                         scope.allowedRange = scope.typesWithAllowedRanges.indexOf(type) >= 0;
                         scope.allowedFragment = scope.typesWithAllowedFragments.indexOf(type) >= 0;
+                        if (type != scope.links.selectedType) {
+                            scope.links.selection = "";
+                        }
                     });
                     scope.$watch("links.selection", function (s) {
                         if (s == "") {
