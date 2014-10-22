@@ -269,6 +269,17 @@ OpenSiddurClientApp.controller(
                 cancel : function() { ; }
             },
             xml : {
+                getSelectedXmlIdRange : function () {
+                    // return the (complete) elements and ids that are in the current selection
+                    // can be filtered for a particular element type
+                    var selection = $scope.editor.codemirror.doc.getSelection();
+                    var elements = [];
+                    selection.replace(/\<([^\>\s]+)[^\>]*xml:id=\"([^\"]+)\"/g, 
+                        function(match, element, id) {
+                            elements.push({ "element": element, "id": id });
+                    });
+                    return elements;
+                },
                 applyXslt : function ( xslt ) {
                     var position = $scope.editor.codemirror.doc.getCursor();
                     var content = $scope.editor.codemirror.doc.getValue();
