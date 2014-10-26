@@ -46,6 +46,7 @@
               <li data-ng-class="{active : isActive('/annotations')}"><a data-ng-href="/annotations" class="navbar-link">Annotations</a></li>
               <li data-ng-class="{active : isActive('/translations')}"><a data-ng-href="/translations" class="navbar-link">Translation Linkages</a></li>
               <li data-ng-class="{active : isActive('/conditionals')}"><a data-ng-href="/conditionals" class="navbar-link">Conditionals</a></li>
+              <li data-ng-class="{active : isActive('/changes')}"><a data-ng-href="/changes" class="navbar-link">Recent changes</a></li>
             </ul>
             <ul id="authentication-widget" class="nav pull-right" data-ng-controller="AuthenticationWidgetCtrl" data-ng-switch="loggedIn">
               <li data-ng-switch-when="false"><a data-ng-href="/signin" class="navbar-link">Sign in/Register</a></li>
@@ -56,6 +57,7 @@
                 </a>
                 <ul class="dropdown-menu pull-right" role="menu" aria-labelledby="userDropdownLabel">
                   <li role="presentation"><a data-ng-href="/profile/{{userName}}">My profile</a></li>
+                  <li role="presentation"><a data-ng-href="/changes/{{userName}}">My recent changes</a></li>
                   <li role="presentation"><a data-ng-href="/changepassword">Change my password</a></li>
                   <li role="presentation"><a data-ng-click="signout()">Sign out</a></li>
                 </ul>
@@ -135,6 +137,7 @@
     <script src="/js/controllers/IndexCtrl.js" ></script>
     <script src="/js/controllers/NavbarCtrl.js" ></script>
     <script src="/js/controllers/ProfileCtrl.js" ></script>
+    <script src="/js/controllers/RecentChangesCtrl.js" ></script>
     <script src="/js/controllers/SourcesCtrl.js" ></script>
     <script src="/js/controllers/TextsCtrl.js" ></script>
     <script src="/js/controllers/TranslationsCtrl.js" ></script>

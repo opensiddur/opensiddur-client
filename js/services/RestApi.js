@@ -142,6 +142,42 @@ OpenSiddurClientApp.factory(
         };
 
         return {
+            "/api/changes" : $resource(
+                '/api/changes',
+                {
+                    "by" : "",
+                    "type" : "",
+                    "from" : "",
+                    "to" : "",
+                    "start" : 1,
+                    "max-results" : 100
+                },
+                {
+                    'getJSON': {
+                        method : "GET",
+                        transformResponse : function(data) {
+                            var jdata = $.parseXML(data);
+                            return $(".result", jdata).map(
+                                function(i, result) {
+                                    return {
+                                        "resource" : $("a",result).html(),
+                                        "api" : $("a",result).attr("href"),
+                                        "changes" : $(".change",result).map(
+                                            function(j, change) {
+                                                return {
+                                                    "who" : $(".who", change).html().replace(/^\/user\//, ""),
+                                                    "timestamp" : new Date(Date.parse($(".when", change).html())),
+                                                    "message" : $(".message", change).html()
+                                                };
+                                            }
+                                        )
+                                    };
+                                } 
+                            );
+                        }
+                    }
+                }
+            ),
             "/api/data/conditionals" : $resource(
                 '/api/data/conditionals\/:resource',
                 { 

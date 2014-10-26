@@ -1,0 +1,38 @@
+<div class="container-fluid">
+    <h1>Recent Changes</h1>
+
+    <form class="form-inline" novalidate="1" name="recentChangesForm">
+        <!-- put a query box here -->
+        <!-- show max N results -->
+        <label for="maxResults">Show up to</label>
+        <select class="input-small" name="maxResults" data-ng-model="searchParams['max-results']">
+            <option>20</option>
+            <option>50</option>
+            <option>100</option>
+            <option>500</option>
+            <option>1000</option>
+        </select>
+        <label for="maxResults">changes</label>
+        <label for="userName">that were made by</label> 
+        <input data-ng-model="searchParams.by" class="input-small" placeholder="any user"></input>
+        <label for="fromDate">after</label>
+        <input data-ng-model="searchParams.from" placeholder="yyyy-mm-dd" name="fromDate"
+            data-ng-pattern="/\d{4,4}-[01]\d-[0-3]\d/"
+            class="input-small"></input>
+        <label for="toDate">and before</label>
+        <input data-ng-model="searchParams.to" placeholder="yyyy-mm-dd" name="toDate"
+            data-ng-pattern="/\d{4,4}-[01]\d-[0-3]\d/" class="input-small"></input>
+        <button class="btn btn-primary" data-ng-click="load()"
+            data-ng-disabled="recentChangesForm.$invalid">Show changes</button>
+    </form>
+    <ol>
+        <li data-ng-repeat="result in changes">
+            <a data-ng-href="{{result.editLink}}">{{result.resource}}</a>
+            <ol>
+                <li data-ng-repeat="change in result.changes">
+                    <span class="date">{{change.timestamp.toLocaleDateString()}}</span> <span class="time">{{change.timestamp.toLocaleTimeString()}}</span>:<span class="who">{{change.who}}</span>:<span class="message">{{change.message}}</span>
+                </li>
+            </ol>
+        </li>
+    </ol>
+</div>
