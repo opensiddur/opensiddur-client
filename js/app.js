@@ -88,6 +88,7 @@ OpenSiddurClientApp.config(
       .when('/contributors/:userName?', {templateUrl: '/partials/profile.html', controller: "ProfileCtrl"})
       .when('/signin', {templateUrl: '/partials/signin.html', controller: "AuthenticationCtrl"})
       .when('/sources/:resource?', {templateUrl: '/partials/sources.html', controller: "SourcesCtrl"})
+      .when('/styles/:resource?', {templateUrl: '/partials/texts.html', controller: "TextsCtrl"})
       .when('/texts/:resource?', {templateUrl: '/partials/texts.html', controller: "TextsCtrl"})
       .when('/annotations/:resource?', {templateUrl: '/partials/texts.html', controller: "TextsCtrl"})
       .when('/translations/:resource?', {templateUrl: '/partials/translations.html', controller: "TranslationsCtrl"})

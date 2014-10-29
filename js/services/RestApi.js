@@ -231,6 +231,18 @@ OpenSiddurClientApp.factory(
                     'query' : queryApi
                 }
             ),
+            "/api/data/styles" : $resource(
+                '/api/data/styles\/:resource',
+                { 
+                    resource : ""
+                },
+                {   
+                    'get' : getApi,
+                    'query' : queryApi,
+                    'getAccess' : getAccessApi("/api/data/styles\/:resource"),
+                    'setAccess' : setAccessApi("/api/data/styles\/:resource")
+                }
+            ),
             "/api/user" : $resource(
                 "/api/user\/:resource",
                 {

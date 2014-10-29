@@ -42,12 +42,13 @@ OpenSiddurClientApp.directive(
                         };
                     var newSearch = function( ) {
                         // query has changed, rerun search
-                        scope.results = [];
-                        scope.selection = "";
-                        scope.query.start = 1;
-                        scope.resultsEnd = true;
 
                         if (scope.api && !scope.inProgress) {
+                            scope.results = [];
+                            scope.selection = "";
+                            scope.query.start = 1;
+                            scope.resultsEnd = true;
+      
                             scope.inProgress = true;
                             RestApi[scope.api].query({
                                     q : scope.query.q, 

@@ -16,32 +16,53 @@ OpenSiddurClientApp.controller(
 
         // state associated with the resource type
         $scope.resourceType = {
+            "texts" : {
+                path : "texts",
+                type : "original",
+                api : "/api/data/original",
+                supportsAccess : true,
+                supportsCompile : true,
+                supportsTranscriptionView : true,
+                defaultTitle : "New text",
+                documentTemplate : "templateNewOriginal",
+                editorMode : "xml"
+            },
+            "conditionals" : {
+                path : "conditionals",
+                type : "conditionals",
+                api : "/api/data/conditionals",
+                supportsAccess : false,
+                supportsCompile : false,
+                supportsTranscriptionView : true,
+                defaultTitle : "New conditional",
+                documentTemplate : "templateNewConditionals",
+                editorMode : "xml"
+            },
+            "annotations" : { 
+                path : "annotations",
+                type : "annotations",
+                api : "/api/data/notes",
+                supportsAccess : true,
+                supportsCompile : false,
+                supportsTranscriptionView : true,
+                defaultTitle : "New annotations",
+                documentTemplate : "templateNewAnnotations",
+                editorMode : "xml"
+            },
+            "styles" : { 
+                path : "styles",
+                type : "styles",
+                api : "/api/data/styles",
+                supportsAccess : true,
+                supportsCompile : false,
+                supportsTranscriptionView : false,
+                defaultTitle : "New style",
+                documentTemplate : "templateNewStyle",
+                editorMode : "css"
+            },
+            current : null,
             initAs : function (type) {
-                this.path = type;
-                if (type == "texts") {
-                    this.type = "original";
-                    this.api = "/api/data/original";
-                    this.supportsAccess = true;
-                    this.supportsCompile = true;
-                    this.defaultTitle = "New text";
-                    this.documentTemplate = "templateNewOriginal";             
-                }
-                else if (type == "conditionals") {
-                    this.type = "conditionals";
-                    this.api = "/api/data/conditionals";
-                    this.supportsAccess = false;
-                    this.supportsCompile = false;
-                    this.defaultTitle = "New conditional";
-                    this.documentTemplate = "templateNewConditionals";
-                }
-                else if (type == "annotations") {
-                    this.type = "annotations";
-                    this.api = "/api/data/notes";
-                    this.supportsAccess = true;
-                    this.supportsCompile = false;
-                    this.defaultTitle = "New annotations";
-                    this.documentTemplate = "templateNewAnnotations";
-                }
+                this.current = this[type];
             }
         };
         $scope.resourceType.initAs($location.path().split("/")[1]);
@@ -52,7 +73,7 @@ OpenSiddurClientApp.controller(
             codemirrorOptions : {
                 lineWrapping : true,
                 lineNumbers : true,
-                mode : 'xml',
+                mode : $scope.resourceType.current.editorMode,
                 tabSize : 4,
                 indentUnit : 4,
                 indentWithTabs : false,
@@ -64,6 +85,7 @@ OpenSiddurClientApp.controller(
                 rtlMoveVisually : true
             },
             content : "",
+            loadedContent : "",     // this has to be saved for revert or for when non-XML editing needs to be done as a subset of the XML
             access : AccessModelService.default(AuthenticationService.userName),
             accessModel : "public",
             setAccessModel : function() {
@@ -81,7 +103,7 @@ OpenSiddurClientApp.controller(
                         this.access.groupWrite = false;
                         this.access.group = "everyone";
                     }
-                    RestApi[$scope.resourceType.api].setAccess({
+                    RestApi[$scope.resourceType.current.api].setAccess({
                             "resource" : decodeURI(this.currentDocument)
                         }, this.access, 
                         function() {}, 
@@ -103,13 +125,22 @@ OpenSiddurClientApp.controller(
                 console.log("Start a new document");
                 $scope.editor.isNew = 1;
                 $scope.editor.content = "";
+                $scope.editor.loadedContent = "";
                 // default access rights for a new file
                 $scope.editor.access = AccessModelService.default(AuthenticationService.userName);
                 // load a new document template
-                var documentTemplate = $scope.resourceType.documentTemplate;
+                var documentTemplate = $scope.resourceType.current.documentTemplate;
+                if (!$scope.editor.newTemplate.template.source) {
+                    // default the source (this should happen in new dialog, but isn't because of a bug with defaulting
+                    $scope.editor.newTemplate.template.source = "/exist/restxq/api/data/sources/Born%20Digital";
+                }
                 var templateParameters = x2js.json2xml($scope.editor.newTemplate);
                 var strdoc = XsltService.indentToString(XsltService.transform(documentTemplate, templateParameters));
-                $scope.editor.content = strdoc; 
+                $scope.editor.loadedContent = strdoc;
+                $scope.editor.content = 
+                    ($scope.resourceType.current.editorMode == "xml") ? strdoc : 
+                        // at the moment, the only other option is css
+                        $("j\\:stylesheet", strdoc).html(); 
                 $scope.editor.title = $("tei\\:title[type=main]", strdoc).html();
                 $scope.editor.isLoaded = 1;
                 $scope.textsForm.$setDirty();
@@ -130,11 +161,12 @@ OpenSiddurClientApp.controller(
                     // nothing to do here...
                 }
                 else {
-                    $http.get($scope.resourceType.api + "/" + toDocument) 
+                    $http.get($scope.resourceType.current.api + "/" + toDocument,
+                        { headers : { "Accept": "application/xml" } } ) 
                         .success(
                             function(data) {
-                                if ($scope.resourceType.supportsAccess) {
-                                    $scope.editor.access = RestApi[$scope.resourceType.api].getAccess({
+                                if ($scope.resourceType.current.supportsAccess) {
+                                    $scope.editor.access = RestApi[$scope.resourceType.current.api].getAccess({
                                         "resource" : decodeURI(toDocument)
                                     }, function( access ) {
                                         $scope.editor.setAccessModel();
@@ -143,7 +175,11 @@ OpenSiddurClientApp.controller(
                                     });
                                 };
                                 
-                                $scope.editor.content = XsltService.serializeToStringTEINSClean(XsltService.transformString( "originalTemplate", data )); 
+                                $scope.editor.loadedContent = XsltService.serializeToStringTEINSClean(XsltService.transformString( "originalTemplate", data ));
+                                
+                                $scope.editor.content = ($scope.resourceType.current.editorMode == "xml") ? 
+                                    loadedContent
+                                    : $("j\\:stylesheet", data).html(); 
                                 $scope.editor.title = $("tei\\:title[type=main]", data).html();
                                 $scope.editor.isNew = 0;
                                 $scope.editor.isLoaded = 1;
@@ -171,9 +207,13 @@ OpenSiddurClientApp.controller(
             saveDocument : function () {
                 console.log("Save:", this);
                 var httpOperation = (this.isNew) ? $http.post : $http.put;
-                var url = $scope.resourceType.api + ((this.isNew) ? "" : ("/" + $scope.editor.currentDocument));
+                var url = $scope.resourceType.current.api + ((this.isNew) ? "" : ("/" + $scope.editor.currentDocument));
                 var content = $scope.editor.codemirror.doc.getValue();
-                var transformed = XsltService.transformString( "originalBeforeSave", content );
+                var transformed = 
+                    ($scope.resourceType.current.editorMode=="xml") ?
+                        XsltService.transformString( "originalBeforeSave", content ) :
+                        XsltService.transformString("styleBeforeSave", $scope.editor.loadedContent, 
+                            { "style" : content});
                 if (transformed) {
                     var indata = XsltService.serializeToStringTEINSClean(transformed);
                     jindata = $(indata);
@@ -191,9 +231,9 @@ OpenSiddurClientApp.controller(
                                 if ($scope.editor.isNew) {
                                     // add to the search results listing
                                     $scope.editor.isNew = 0;
-                                    $scope.editor.currentDocument=headers('Location').replace("/exist/restxq"+$scope.resourceType.api+"/", "");
+                                    $scope.editor.currentDocument=headers('Location').replace("/exist/restxq"+$scope.resourceType.current.api+"/", "");
                                     // save the access model for the new document
-                                    if ($scope.resourceType.supportsAccess) {
+                                    if ($scope.resourceType.current.supportsAccess) {
                                         $scope.editor.saveAccessModel();
                                     }
                                 };
@@ -213,14 +253,14 @@ OpenSiddurClientApp.controller(
                 }
             },
             newButton : function () {
-                if ($location.path() == "/"+$scope.resourceType.path)
+                if ($location.path() == "/"+$scope.resourceType.current.path)
                     $route.reload();
                 else 
-                    $location.path( "/"+$scope.resourceType.path );
+                    $location.path( "/"+$scope.resourceType.current.path );
             },
             compile : function () {
                 // TODO: give this a nice loading/compiling/info interface.
-                $window.open($scope.resourceType.api + "/" + $scope.editor.currentDocument + "/combined?transclude=true");
+                $window.open($scope.resourceType.current.api + "/" + $scope.editor.currentDocument + "/combined?transclude=true");
             },
             loaded : function( _editor ) {
                 console.log("editor loaded");
@@ -245,14 +285,14 @@ OpenSiddurClientApp.controller(
                 else {
                     var resourceName = selection.split("/").pop();
                     if (resourceName && resourceName != $scope.editor.currentDocument)
-                        $location.path( "/" + $scope.resourceType.path + "/" + resourceName );
+                        $location.path( "/" + $scope.resourceType.current.path + "/" + resourceName );
                 }
             }
         );
 
         $scope.helper = {
             link : {
-                selectedType : $scope.resourceType.api,
+                selectedType : $scope.resourceType.current.api,
                 types : {
                     "/api/data/notes" : "Annotations",
                     "/api/user" : "Contributor",

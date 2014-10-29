@@ -76,9 +76,11 @@ OpenSiddurClientApp.service(
         svc.addProcessor('originalBeforeSave', '/xsl/OriginalBeforeSave.xsl');
         svc.addProcessor('profileFormTemplate', '/xsl/profileformtemplate.xsl');
         svc.addProcessor('sourceFormTemplate', '/xsl/sourceformtemplate.xsl');
+        svc.addProcessor('styleBeforeSave', '/xsl/StyleBeforeSave.xsl');
         svc.addProcessor('templateNewOriginal', '/templates/original.xsl');
         svc.addProcessor('templateNewConditionals', '/templates/conditionals.xsl');
         svc.addProcessor('templateNewAnnotations', '/templates/annotations.xsl');
+        svc.addProcessor('templateNewStyle', '/templates/styles.xsl');
         svc.addProcessor('cleanupForm', '/xsl/cleanupform.xsl');
         svc.addProcessor('addXmlId', '/xsl/add-xml-id.xsl');
         svc.addProcessor('wordify', '/xsl/wordify.xsl');

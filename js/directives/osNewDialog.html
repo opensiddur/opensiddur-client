@@ -82,7 +82,7 @@
                 </div>
             </div>
             <!-- source -->
-            <div class="control-group">
+            <div class="control-group" data-ng-hide="resourceType=='styles'">
                 <label class="control-label">Source</label>
                 <os-search-list api="'/api/data/sources'" selection="model.template.source">
                 </os-search-list>

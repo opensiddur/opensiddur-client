@@ -17,14 +17,14 @@
                           data-ng-click="editor.saveDocument()"  
                           data-ng-disabled="!editor.access.write || textsForm.$invalid || textsForm.$pristine">{{saveButtonText()}}</button>
                 </div>
-                <div class="btn-group" data-ng-hide="!resourceType.supportsCompile">
+                <div class="btn-group" data-ng-hide="!resourceType.current.supportsCompile">
                       <button class="btn btn-primary" type="submit"
                           data-ng-show="editor.currentDocument"
                           data-ng-disabled="textsForm.$invalid || textsForm.$dirty"
                           data-ng-click="editor.compile()"
                           >Compile to HTML</button>
                 </div>
-                <div class="btn-group">
+                <div class="btn-group" data-ng-show="resourceType.current.editorMode == 'xml'">
                     <button data-ng-disabled="!editor.access.write || !editor.isLoaded" class="btn dropdown-toggle" data-toggle="dropdown" href="#">XML<b class="caret"></b></button>
                     <ul class="dropdown-menu" role="menu">
                         <li><a href="#" data-ng-click="DialogService.open('internalLinkDialog')">Insert internal link...</a></li>
@@ -35,7 +35,7 @@
                         <li><a href="#" data-ng-click="helper.xml.addIds()">Add required xml:id attributes</a></li>
                     </ul>
                 </div>
-                <div class="btn-group">
+                <div class="btn-group" data-ng-show="resourceType.current.supportsTranscriptionView">
                     <button class="btn btn-primary" 
                         data-ng-disabled="!editor.isLoaded" 
                         data-ng-show="!editor.transcriptionViewer"
@@ -45,7 +45,7 @@
                         data-ng-show="editor.transcriptionViewer"
                         data-ng-click="editor.transcriptionViewer = !editor.transcriptionViewer">Transcription&#x25b6;</button>
                 </div>
-                <os-sharing-status data-ng-hide="!resourceType.supportsAccess || !editor.isLoaded" access-model="editor.access" sharing-dialog="sharingDialog"></os-sharing-status>
+                <os-sharing-status data-ng-hide="!resourceType.current.supportsAccess || !editor.isLoaded" access-model="editor.access" sharing-dialog="sharingDialog"></os-sharing-status>
             </div>
         </div>
     </div>
@@ -75,17 +75,17 @@
             </div>
         </div>
     </div>
-    <os-open-dialog api="resourceType.api" selection="selection"
+    <os-open-dialog api="resourceType.current.api" selection="selection"
         title="Open Text" name="openDialog"></os-open-dialog>
     <os-sharing-dialog 
-            data-ng-hide="!resourceType.supportsAccess"
-            api="resourceType.api" 
+            data-ng-hide="!resourceType.current.supportsAccess"
+            api="resourceType.current.api" 
             access-model="editor.access" current-document="editor.currentDocument" 
             is-new="editor.isNew" name="sharingDialog" title="Sharing"></os-sharing-dialog>
     <os-new-dialog 
-            resource-type="resourceType.type" 
+            resource-type="resourceType.current.type" 
             model="editor.newTemplate"
-            title="{{resourceType.defaultTitle}}" 
+            title="{{resourceType.current.defaultTitle}}" 
             name="newDialog"
             on-ok="editor.newDocument"
             on-close="editor.newCanceled"></os-new-dialog>
