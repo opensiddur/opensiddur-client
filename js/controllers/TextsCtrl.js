@@ -178,7 +178,7 @@ OpenSiddurClientApp.controller(
                                 $scope.editor.loadedContent = XsltService.serializeToStringTEINSClean(XsltService.transformString( "originalTemplate", data ));
                                 
                                 $scope.editor.content = ($scope.resourceType.current.editorMode == "xml") ? 
-                                    loadedContent
+                                    $scope.editor.loadedContent
                                     : $("j\\:stylesheet", data).html(); 
                                 $scope.editor.title = $("tei\\:title[type=main]", data).html();
                                 $scope.editor.isNew = 0;
