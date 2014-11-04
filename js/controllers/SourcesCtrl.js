@@ -66,8 +66,8 @@ OpenSiddurClientApp.controller(
                 $scope.editor.isNew = 1;
                 $scope.editor.isAnalytic = 0;
                 $scope.editor.isSeries = 0;
-                transformed = XsltService.transformString("sourceFormTemplate", "<tei:biblStruct xmlns:tei='http://www.tei-c.org/ns/1.0'/>"); 
-                $scope.editor.content = x2js.xml2json(transformed);
+                transformed = XsltService.serializeToStringTEINSClean(XsltService.transformString("sourceFormTemplate", "<tei:biblStruct xmlns:tei='http://www.tei-c.org/ns/1.0'/>")); 
+                $scope.editor.content = x2js.xml_str2json(transformed);
                 //$scope.editor.content.biblStruct.monogr.title_asArray[0].__text = "New Bibliography Entry";
                 //$scope.sourcesForm.$setPristine();
             },
@@ -80,8 +80,8 @@ OpenSiddurClientApp.controller(
                         $http.get("/api/data/sources/" + toDocument)
                             .success(
                                 function(data) {
-                                    transformed = XsltService.transformString("sourceFormTemplate", data);
-                                    $scope.editor.content = x2js.xml2json(transformed);
+                                    transformed = XsltService.serializeToStringTEINSClean(XsltService.transformString("sourceFormTemplate", data));
+                                    $scope.editor.content = x2js.xml_str2json(transformed);
                                     $scope.editor.isAnalytic = $scope.editor.hasData($scope.editor.content.biblStruct.analytic) ? 1 : 0;
                                     $scope.editor.isSeries = $scope.editor.hasData($scope.editor.content.biblStruct.series) ? 1 : 0;
                                     $scope.editor.isNew = 0;

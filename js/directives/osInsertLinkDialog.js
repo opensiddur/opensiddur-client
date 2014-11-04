@@ -48,8 +48,14 @@ OpenSiddurClientApp.directive(
                         allowedFragment : false,    // set by a watch on selectedType
                         allowedRange : false,       // set by a watch on selectedType
                         selectFile : function () {
+                            var newSelection =  this.selection.replace(/^\/exist\/restxq\/api/, '');
+
+                            if (this.selectedFile != newSelection) { // reset the content
+                                this.content = "";
+                                this.composedFragment = "";
+                            }
                             // set the selected file
-                            this.selectedFile = this.selection.replace(/^\/exist\/restxq\/api/, '');
+                            this.selectedFile = newSelection;                            
                             // if a fragment is allowed, load the content
                             if ($scope.typesWithAllowedFragments.indexOf(this.selectedType) >= 0) {
                                 RestApi[this.selectedType].get(
@@ -88,6 +94,17 @@ OpenSiddurClientApp.directive(
                     scope.$watch("links.selectedType", function (type) {
                         scope.allowedRange = scope.typesWithAllowedRanges.indexOf(type) >= 0;
                         scope.allowedFragment = scope.typesWithAllowedFragments.indexOf(type) >= 0;
+                        if (type != scope.links.selectedType) {
+                            scope.links.selection = "";
+                        }
+                    });
+                    scope.$watch("links.selection", function (s) {
+                        if (s == "") {
+                            scope.links.content = "";
+                            scope.links.selectedFile = "";                            
+                            scope.links.composedFragment = "";
+                            scope.links.composeLink();
+                        }
                     });
                     scope.$watch("links.composedFragment", function (fragment) {
                         scope.links.composeLink();

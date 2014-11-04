@@ -37,8 +37,8 @@ OpenSiddurClientApp.service(
             serializeToStringTEINSClean : function (doc) {
                 // serialize to string, then clean up namespaces
                 return this.serializeToString(doc)
-                        .replace(/\s+xmlns:[^>\s]+/g, "")
-                        .replace(/^\<tei:TEI/, "<tei:TEI xmlns:tei=\"http://www.tei-c.org/ns/1.0\" xmlns:j=\"http://jewishliturgy.org/ns/jlptei/1.0\"")
+                        .replace(/\s+xmlns:[a-zA-Z0-9]+=["][^"]+["]/g, "")
+                        .replace(/^\<([a-zA-Z:]+)/, "<$1 xmlns:tei=\"http://www.tei-c.org/ns/1.0\" xmlns:j=\"http://jewishliturgy.org/ns/jlptei/1.0\"")
             },
             indentToString : function ( xmlDoc ) {
                 /*
@@ -63,9 +63,10 @@ OpenSiddurClientApp.service(
                 var indented = processor.transformToDocument(xmlDoc);  
                 return (new XMLSerializer().serializeToString(indented));   
                 */
-                return vkbeautify.xml(new XMLSerializer().serializeToString(xmlDoc), 4);  
+                return vkbeautify.xml(this.serializeToStringTEINSClean(xmlDoc), 4);  
             }  
         }
+        svc.addProcessor('autoSegment', '/xsl/AutoSegment.xsl');
         svc.addProcessor('extractTranscriptionLinks', '/xsl/ExtractTranscriptionLinks.xsl');
         svc.addProcessor('instance', '/xsl/instance.xsl');
         svc.addProcessor('teiToHtml', '/xsl/tei2html.xsl');
@@ -75,9 +76,11 @@ OpenSiddurClientApp.service(
         svc.addProcessor('originalBeforeSave', '/xsl/OriginalBeforeSave.xsl');
         svc.addProcessor('profileFormTemplate', '/xsl/profileformtemplate.xsl');
         svc.addProcessor('sourceFormTemplate', '/xsl/sourceformtemplate.xsl');
+        svc.addProcessor('styleBeforeSave', '/xsl/StyleBeforeSave.xsl');
         svc.addProcessor('templateNewOriginal', '/templates/original.xsl');
         svc.addProcessor('templateNewConditionals', '/templates/conditionals.xsl');
         svc.addProcessor('templateNewAnnotations', '/templates/annotations.xsl');
+        svc.addProcessor('templateNewStyle', '/templates/styles.xsl');
         svc.addProcessor('cleanupForm', '/xsl/cleanupform.xsl');
         svc.addProcessor('addXmlId', '/xsl/add-xml-id.xsl');
         svc.addProcessor('wordify', '/xsl/wordify.xsl');

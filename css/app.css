@@ -116,6 +116,10 @@ body {
 .CodeMirror {
     height : 70vh;
     width : 100%; 
+    /* until we have working @font-face, use whatever Hebrew-supporting fonts are available locally.
+    If the Open Siddur Font Pack is installed, this should be OK */
+    font-family : "Taamey Frank CLM", "Ezra SIL", "Frank Ruehl CLM", "Ezra SIL SR", monospace;
+    font-size : x-large;
 }
 
 

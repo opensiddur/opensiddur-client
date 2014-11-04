@@ -39,7 +39,8 @@ OpenSiddurClientApp.directive(
                     $scope.resourceTypes = {
                         "original" : "Original text document",
                         "conditionals" : "Conditional definition document",
-                        "annotations" : "Annotations document"
+                        "annotations" : "Annotations document",
+                        "styles" : "CSS-based styling document"
                     };
                     if (!$scope.resourceType) {
                         $scope.resourceType = "texts";

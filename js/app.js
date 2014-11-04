@@ -84,9 +84,11 @@ OpenSiddurClientApp.config(
   function($routeProvider, $locationProvider) {
     $locationProvider.html5Mode(true).hashPrefix("!");
     $routeProvider
+      .when('/changes/:userName?', {templateUrl: '/partials/RecentChanges.html', controller: "RecentChangesCtrl"})
       .when('/contributors/:userName?', {templateUrl: '/partials/profile.html', controller: "ProfileCtrl"})
       .when('/signin', {templateUrl: '/partials/signin.html', controller: "AuthenticationCtrl"})
       .when('/sources/:resource?', {templateUrl: '/partials/sources.html', controller: "SourcesCtrl"})
+      .when('/styles/:resource?', {templateUrl: '/partials/texts.html', controller: "TextsCtrl"})
       .when('/texts/:resource?', {templateUrl: '/partials/texts.html', controller: "TextsCtrl"})
       .when('/annotations/:resource?', {templateUrl: '/partials/texts.html', controller: "TextsCtrl"})
       .when('/translations/:resource?', {templateUrl: '/partials/translations.html', controller: "TranslationsCtrl"})
