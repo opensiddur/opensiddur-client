@@ -184,6 +184,7 @@ OpenSiddurClientApp.factory(
                     resource : ""
                 },
                 {
+                    'get' : getApi,
                     'query' : queryApi
                 }
             ),
@@ -193,6 +194,7 @@ OpenSiddurClientApp.factory(
                     resource : ""
                 },
                 {
+                    'get' : getApi,
                     'query' : queryApi,
                     'getAccess' : getAccessApi("/api/data/linkage\/:resource"),
                     'setAccess' : setAccessApi("/api/data/linkage\/:resource")
@@ -204,6 +206,7 @@ OpenSiddurClientApp.factory(
                     resource : ""
                 },
                 {
+                    'get' : getApi,
                     'query' : queryApi,
                     'getAccess' : getAccessApi("/api/data/notes\/:resource"),
                     'setAccess' : setAccessApi("/api/data/notes\/:resource")

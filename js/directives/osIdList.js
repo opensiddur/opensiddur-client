@@ -112,12 +112,12 @@ OpenSiddurClientApp.directive(
                  }],
                  link: function(scope, elem, attrs, ctrl) {
                     scope.parentElement = elem.find("tbody"); 
-                    var x2js_simple = new X2JS({ "arrayAccessForm" : "none", "emptyNodeForm" : "text" });   
+                    var x2js_simple = new X2JS({ "arrayAccessForm" : "property", "emptyNodeForm" : "text" });   
 
                     var loadXmlIds = function (update) {
                         if (update) {
                             var xid = XsltService.transformString("listXmlId", scope.content);
-                            scope.xmlids = x2js_simple.xml2json(xid).xmlids.xmlid.map(
+                            scope.xmlids = x2js_simple.xml2json(xid).xmlids.xmlid_asArray.map(
                                 function (xid, idx) {
                                     xid.index = idx;
                                     return xid;
