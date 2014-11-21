@@ -82,7 +82,7 @@ OpenSiddurClientApp.controller(
                     whenClosing : true,
                     whenOpening : false
                 },
-                rtlMoveVisually : true
+                rtlMoveVisually : false
             },
             content : "",
             loadedContent : "",     // this has to be saved for revert or for when non-XML editing needs to be done as a subset of the XML
