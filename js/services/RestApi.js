@@ -221,7 +221,20 @@ OpenSiddurClientApp.factory(
                     'get' : getApi,
                     'query' : queryApi,
                     'getAccess' : getAccessApi("/api/data/original\/:resource"),
-                    'setAccess' : setAccessApi("/api/data/original\/:resource")
+                    'setAccess' : setAccessApi("/api/data/original\/:resource"),
+                    'backgroundCompile' : {
+                        method : "POST",
+                        url : "/api/data/original\/:resource\/combined",
+                        params : {
+                            "format" : "html",
+                            "transclude" : "true"
+                        },
+                        transformResponse : function(data, headers) {
+                            return {
+                                "job" : headers("Location").replace("/exist/restxq/api/jobs/", ""),
+                            };
+                        }
+                    }
                 }
             ),
             "/api/data/sources" : $resource(
