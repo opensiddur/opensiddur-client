@@ -259,8 +259,7 @@ OpenSiddurClientApp.controller(
                     $location.path( "/"+$scope.resourceType.current.path );
             },
             compile : function () {
-                // TODO: give this a nice loading/compiling/info interface.
-                $window.open($scope.resourceType.current.api + "/" + $scope.editor.currentDocument + "/combined?transclude=true");
+                $window.open("/compile/" + $scope.editor.currentDocument);
             },
             loaded : function( _editor ) {
                 console.log("editor loaded");
