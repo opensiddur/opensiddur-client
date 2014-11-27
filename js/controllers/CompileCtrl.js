@@ -20,6 +20,7 @@ OpenSiddurClientApp.controller(
                 $scope.status = stat;
                 if (stat.state == "complete") {
                     console.log("Complete. Now redirect to /compiled/" + $scope.resource);
+                    $location.path("/compiled/" + $scope.resource);
                 }
                 else if (stat.state == "failed") {
                     console.log("Compile failed");

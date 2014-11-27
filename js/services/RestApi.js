@@ -306,6 +306,19 @@ OpenSiddurClientApp.factory(
                                 "job" : headers("Location").replace("/exist/restxq/api/jobs/", ""),
                             };
                         }
+                    },
+                    'getCompiled' : {
+                        method : "GET",
+                        url : "/api/data/original\/:resource\/combined",
+                        params : {
+                            "transclude" : true
+                        },
+                        headers : {
+                            "Accept" : "application/xhtml+xml"
+                        },
+                        transformResponse : function (data) {
+                            return { "xml" : data };
+                        }
                     }
                 }
             ),

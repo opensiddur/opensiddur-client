@@ -86,6 +86,7 @@ OpenSiddurClientApp.config(
     $routeProvider
       .when('/changes/:userName?', {templateUrl: '/partials/RecentChanges.html', controller: "RecentChangesCtrl"})
       .when('/compile/:resource', {templateUrl: '/partials/Compile.html', controller: "CompileCtrl"})
+      .when('/compiled/:resource', {templateUrl: '/partials/Compiled.html', controller: "CompiledCtrl"})
       .when('/contributors/:userName?', {templateUrl: '/partials/profile.html', controller: "ProfileCtrl"})
       .when('/signin', {templateUrl: '/partials/signin.html', controller: "AuthenticationCtrl"})
       .when('/sources/:resource?', {templateUrl: '/partials/sources.html', controller: "SourcesCtrl"})
