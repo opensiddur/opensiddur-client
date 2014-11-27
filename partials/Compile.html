@@ -14,7 +14,7 @@
                         <span data-ng-show="status.processing_time.days > 0">{{status.processing_time.days}}d </span>
                         <span data-ng-show="status.processing_time.hours > 0">{{status.processing_time.hours}}h </span>
                         <span data-ng-show="status.processing_time.minutes > 0">{{status.processing_time.minutes}}m </span>
-                        <span>{{status.processing_time.seconds}}s</span>
+                        <span>{{status.processing_time.seconds.toPrecision(3)}}s</span>
                     </td>
                 </tr>
                 <tr data-ng-show="status.error">
@@ -36,7 +36,7 @@
                 <tr data-ng-repeat="step in status.steps">
                     <td>
                         <span class="alert-success" data-ng-show="step.state == 'complete'">&#x2714;</span>
-                        <span class="alert-info" data-ng-show="step.state == 'working'">&#x25cb;</span>
+                        <span class="alert-info" data-ng-show="step.state == 'working'">&#x25b6;</span>
                         <span class="alert-error" data-ng-show="step.state == 'failed'">&#x2717;</span>
                     </td>
                     <td>{{step.stage}}</td>
@@ -45,7 +45,7 @@
                         <span data-ng-show="step.processing_time.days > 0">{{step.processing_time.days}}d </span>
                         <span data-ng-show="step.processing_time.hours > 0">{{step.processing_time.hours}}h </span>
                         <span data-ng-show="step.processing_time.minutes > 0">{{step.processing_time.minutes}}m </span>
-                        <span>{{step.processing_time.seconds}}s</span>
+                        <span>{{step.processing_time.seconds.toFixed(3)}}s</span>
                     </td>
                 </tr>
             </tbody>
