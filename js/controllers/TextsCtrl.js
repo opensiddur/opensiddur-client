@@ -104,7 +104,7 @@ OpenSiddurClientApp.controller(
                         this.access.group = "everyone";
                     }
                     RestApi[$scope.resourceType.current.api].setAccess({
-                            "resource" : decodeURI(this.currentDocument)
+                            "resource" : this.currentDocument
                         }, this.access, 
                         function() {}, 
                         function( data ) { 
@@ -150,7 +150,7 @@ OpenSiddurClientApp.controller(
                 );
             },
             setDocument : function( cursorLocation ) {
-                var toDocument = this.currentDocument;
+                var toDocument = encodeURIComponentRFC3986(this.currentDocument);
 
                 if (!toDocument) {
                     /* don't do this:
@@ -167,7 +167,7 @@ OpenSiddurClientApp.controller(
                             function(data) {
                                 if ($scope.resourceType.current.supportsAccess) {
                                     $scope.editor.access = RestApi[$scope.resourceType.current.api].getAccess({
-                                        "resource" : decodeURI(toDocument)
+                                        "resource" : decodeURI(toDocument)     // RestApi expects decoded URIs
                                     }, function( access ) {
                                         $scope.editor.setAccessModel();
                                         if (!access.write)
@@ -282,7 +282,7 @@ OpenSiddurClientApp.controller(
                     selectionWatchCtr++;
                 }
                 else {
-                    var resourceName = selection.split("/").pop();
+                    var resourceName = decodeURIComponent(selection.split("/").pop());  // try to prevent double-encoding
                     if (resourceName && resourceName != $scope.editor.currentDocument)
                         $location.path( "/" + $scope.resourceType.current.path + "/" + resourceName );
                 }

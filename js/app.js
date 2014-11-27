@@ -37,6 +37,15 @@ var getApiError = function(data) {
   return $($.parseXML(data)).find("message").text();
 }
 
+/* encode a URI component, as expected by the server.
+ * code is from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURIComponent
+ */
+var encodeURIComponentRFC3986 = function(str) {
+  return encodeURIComponent(str).replace(/[!'()*]/g, function(c) {
+    return '%' + c.charCodeAt(0).toString(16);
+  });
+}
+
 var OpenSiddurClientApp = 
   angular.module(
       'OpenSiddurClientApp',
