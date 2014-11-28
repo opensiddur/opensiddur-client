@@ -143,10 +143,14 @@ OpenSiddurClientApp.controller(
                         $("j\\:stylesheet", strdoc).html(); 
                 $scope.editor.title = $("tei\\:title[type=main]", strdoc).html();
                 $scope.editor.isLoaded = 1;
-                $scope.textsForm.$setDirty();
+                $location.path("/texts/" + $scope.editor.title, false);
                 // work around a bug where the editor does not refresh after load
                 setTimeout(
-                    function() { $scope.editor.codemirror.editor.refresh(); }, 250
+                    function() { 
+                        $scope.editor.codemirror.editor.refresh(); 
+                        // set the form dirty only after the location change has occurred
+                        $scope.textsForm.$setDirty();
+                    }, 250
                 );
             },
             setDocument : function( cursorLocation ) {

@@ -59,7 +59,7 @@
         </div>
         <div data-ng-show="editor.isLoaded && (editor.loggedIn || editor.currentDocument)">
             <div class="texts-editor">
-                <form name="textsForm">
+                <form name="textsForm" data-unsaved-warning-form="1">
                     <div data-ng-class="{true:'span6', false:'span12'}[editor.transcriptionViewer]">
                         <textarea  
                             data-ui-codemirror="{ onLoad : editor.loaded }"
