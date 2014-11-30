@@ -102,7 +102,7 @@ OpenSiddurClientApp.controller(
             return;
         }
         if (selection) {
-            $location.path( "/contributors/" + selection.split("/").pop() ); 
+            $location.path( "/contributors/" + decodeURIComponent(selection.split("/").pop()) ); 
         }
     });
     $scope.newProfile = function() {
