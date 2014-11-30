@@ -43,8 +43,8 @@ OpenSiddurClientApp.controller(
                             "resource" : this.currentDocument //decodeURI(this.currentDocument)
                         }, this.access, 
                         function() {}, 
-                        function( data ) { 
-                            ErrorService.addApiError(data);
+                        function( error ) { 
+                            ErrorService.addApiError(error.data);
                         }
                     );
                 }
@@ -131,7 +131,7 @@ OpenSiddurClientApp.controller(
                 $q.all(
                     $$docXml.find("parallelText").find("linkGrp").attr("domains").split(/\s+/).map(
                         function(domain, idx) {
-                            return $scope.editor.updateParallelText(idx, "/exist/restxq/api" + domain.split("#")[0]);
+                            return $scope.editor.updateParallelText(idx, domain.split("#")[0]);
                         }
                     )
                 )
@@ -226,9 +226,9 @@ OpenSiddurClientApp.controller(
                 }
                 else {
                     console.log("Load from file");
-                    $http.get("/api/data/linkage/"+encodeURI(toDocument))
-                    .success(
-                        function(data) {
+                    RestApi["/api/data/linkage"].get({"resource" : toDocument },
+                        function(data) {    // success function
+                            var data = data.xml;
                             $scope.editor.access = RestApi["/api/data/linkage"].getAccess({
                                     "resource" : toDocument //decodeURI(toDocument)
                                 }, function( access ) {
@@ -236,11 +236,9 @@ OpenSiddurClientApp.controller(
                                 });
                             $scope.editor.loadDocument(data);
                             $scope.editor.isNew = 0;
-                        }
-                    )
-                    .error(
-                        function(error) {
-                            ErrorService.addApiError(error);
+                        },
+                        function(error) {   // error function
+                            ErrorService.addApiError(error.data.xml);
                             $scope.editor.currentDocument = "";
                             console.log("error loading " + toDocument);
                         }
@@ -284,38 +282,42 @@ OpenSiddurClientApp.controller(
             },
             updateParallelText : function(n, api) {
                 $scope.editor.content.links[n] = {
-                    resource : api.replace("/exist/restxq/api", "")
+                    resource : api.replace(/^(\/exist\/restxq\/api)/, "")
                 };
                 
-
+                var restapi = "/api/data/" + api.replace(/(\/exist\/restxq\/api)?\/data\//, "").split("/")[0]
+                // the resource URI needs to be decoded because it is already encoded from the open dialog. It will become double-encoded otherwise
+                var res = decodeURI(api.split("/").pop());
                 // load the resource from the API
-                return $http.get(decodeURI(api)) 
-                .success(function(data) {
-                    var stream = $("j\\:streamText", data);
+                return res ? RestApi[restapi].get({resource : res },
+                    function(data) {
+                      var data = data.xml;
+                      var stream = $("j\\:streamText", data);
 
-                    // set the domain
-                    $scope.editor.content.links[n].domain = stream.attr("xml:id");
+                      // set the domain
+                      $scope.editor.content.links[n].domain = stream.attr("xml:id");
 
-                    // iterate through the streamText
-                    $scope.editor.content.links[n].stream = stream.children().map(
-                        function(idx, elem) {
-                            var e = $(elem);
-                            var isExternal = 
-                                (elem.localName.toLowerCase() == "tei:ptr" && e.attr("target").split("#")[0] != ""); 
+                      // iterate through the streamText
+                      $scope.editor.content.links[n].stream = stream.children().map(
+                          function(idx, elem) {
+                              var e = $(elem);
+                              var isExternal = 
+                                  (elem.localName.toLowerCase() == "tei:ptr" && e.attr("target").split("#")[0] != ""); 
 
-                            return {
-                                id : e.attr("xml:id"),
-                                name : elem.localName,
-                                external : isExternal,
-                                text : isExternal ? e.attr("target") : e.text().replace(/^\s*|\s(?=\s)|\s*$/g, "")
-                            }
-                        }
-                    ).toArray();
-                    console.log("loaded:", $scope.editor.content.links[n].stream);
-                })
-                .error(function(error) {
-                    ErrorService.addApiError(error);
-                });
+                              return {
+                                  id : e.attr("xml:id"),
+                                  name : elem.localName,
+                                  external : isExternal,
+                                  text : isExternal ? e.attr("target") : e.text().replace(/^\s*|\s(?=\s)|\s*$/g, "")
+                              }
+                          }
+                      ).toArray();
+                      console.log("loaded:", $scope.editor.content.links[n].stream);
+                    },
+                    function(error) {
+                        ErrorService.addApiError(error.data.xml);
+                    }
+                ).$promise : $q.reject("No resource loaded");
             },
             saveDocument : function() {
                 // convert scope.editor.content.linkages to XML
@@ -350,11 +352,6 @@ OpenSiddurClientApp.controller(
                 $doc.find("title[type=main]").replaceWith("<tei:title type=\"main\" xml:lang=\""+docTitle.lang+"\">"+docTitle.text+"</tei:title>");
                 // license
                 $doc.find("licence").attr("target", $scope.editor.content.license);
-                $doc.find("availability").attr("status", 
-                    ($scope.editor.content.license.match(/publicdomain/)) ?
-                    "free" : "restricted"
-                );
-
                 // idno
                 $doc.find("parallelText").find("idno").replaceWith("<tei:idno>"+$scope.editor.content.idno+"</tei:idno>");                
 
@@ -369,20 +366,14 @@ OpenSiddurClientApp.controller(
                 console.log("Saving:", newContent);
                 
                 // save operation
-                var httpOperation = (this.isNew) ? $http.post : $http.put;
-                var url = "/api/data/linkage" + ((this.isNew) ? "" : ("/" + $scope.editor.currentDocument));
-                httpOperation(url, newContent)
-                    .success(function(data, statusCode, headers) {
+                var httpOperation = (this.isNew) ? 
+                    RestApi["/api/data/linkage"].post : 
+                    RestApi["/api/data/linkage"].put;
+                var resource = (this.isNew) ? "" : $scope.editor.currentDocument;
+                httpOperation({"resource" : resource}, newContent,
+                    function(data, headers) {
                         $scope.trForm.$setPristine();
                         if ($scope.editor.isNew) {
-                            // add to the search results listing
-                            /*
-                            IndexService.search.addResult({
-                                title:  docTitle.text, 
-                                url : headers('Location'),
-                                contexts : []
-                            });
-                            */
                             $scope.editor.isNew = 0;
                             $scope.editor.currentDocument=decodeURI(headers('Location').replace("/exist/restxq/api/data/linkage/", ""));
                             // save the access model for the new document
@@ -395,11 +386,12 @@ OpenSiddurClientApp.controller(
                                 $scope.editor.setDocument(); 
                             }, 1000
                         );
-                    })
-                    .error(function(data) {
-                        ErrorService.addApiError(data);
-                        console.log("error saving", url);
-                    });
+                    },
+                    function(error) {
+                        ErrorService.addApiError(error.data.xml);
+                        console.log("error saving ", resource);
+                    }
+                );
 
             },
             newButton : function() {
