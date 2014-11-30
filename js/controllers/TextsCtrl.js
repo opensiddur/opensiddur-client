@@ -233,7 +233,7 @@ OpenSiddurClientApp.controller(
                                 if ($scope.editor.isNew) {
                                     // add to the search results listing
                                     $scope.editor.isNew = 0;
-                                    $scope.editor.currentDocument=headers('Location').replace("/exist/restxq"+$scope.resourceType.current.api+"/", "");
+                                    $scope.editor.currentDocument=decodeURI(headers('Location').replace("/exist/restxq"+$scope.resourceType.current.api+"/", ""));
                                     // save the access model for the new document
                                     if ($scope.resourceType.current.supportsAccess) {
                                         $scope.editor.saveAccessModel();
