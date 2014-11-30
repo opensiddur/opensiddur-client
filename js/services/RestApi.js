@@ -15,6 +15,38 @@ OpenSiddurClientApp.factory(
                 return { "xml" : data };
             }
             };
+        var putApi = {
+            method : 'PUT',
+            isArray : false,
+            headers : { "Content-Type" : "application/xml" },
+            transformResponse : function (data) {
+                return { "xml" : data };
+            }
+            };
+        var postApi = {
+            method : 'POST',
+            isArray : false,
+            headers : { "Content-Type" : "application/xml" },
+            transformResponse : function (data) {
+                return { "xml" : data };
+            }
+            };
+        var putPostJsonApi = function(meth) { return {
+            method : meth,
+            isArray : false,
+            headers : { "Content-Type" : "application/xml" },
+            transformResponse : function (data) {
+                return { "xml" : data };
+                },
+            transformRequest : function(data) {
+                var xmlData = x2js.json2xml(data);
+                var cleanedXmlData = XsltService.transform('cleanupForm', xmlData);
+                return cleanedXmlData;
+                }
+            };
+        };
+        var putJsonApi = putPostJsonApi("PUT");
+        var postJsonApi = putPostJsonApi("POST");
         var queryApi = {
             method : 'GET',
             params : { 
@@ -257,6 +289,8 @@ OpenSiddurClientApp.factory(
                 },
                 {
                     'get' : getApi,
+                    'post' : postApi,
+                    'put' : putApi,
                     'query' : queryApi
                 }
             ),
@@ -267,6 +301,8 @@ OpenSiddurClientApp.factory(
                 },
                 {
                     'get' : getApi,
+                    'post' : postApi,
+                    'put' : putApi,
                     'query' : queryApi,
                     'getAccess' : getAccessApi("/api/data/linkage\/:resource"),
                     'setAccess' : setAccessApi("/api/data/linkage\/:resource")
@@ -279,6 +315,8 @@ OpenSiddurClientApp.factory(
                 },
                 {
                     'get' : getApi,
+                    'post' : postApi,
+                    'put' : putApi,
                     'query' : queryApi,
                     'getAccess' : getAccessApi("/api/data/notes\/:resource"),
                     'setAccess' : setAccessApi("/api/data/notes\/:resource")
@@ -291,6 +329,8 @@ OpenSiddurClientApp.factory(
                 },
                 {
                     'get' : getApi,
+                    'post' : postApi,
+                    'put' : putApi,
                     'query' : queryApi,
                     'getAccess' : getAccessApi("/api/data/original\/:resource"),
                     'setAccess' : setAccessApi("/api/data/original\/:resource"),
@@ -329,6 +369,10 @@ OpenSiddurClientApp.factory(
                 },
                 {   
                     'get' : getApi,
+                    'post' : postApi,
+                    'put' : putApi,
+                    'putJSON' : putJsonApi,
+                    'postJSON' : postJsonApi,
                     'query' : queryApi
                 }
             ),
@@ -339,6 +383,8 @@ OpenSiddurClientApp.factory(
                 },
                 {   
                     'get' : getApi,
+                    'post' : postApi,
+                    'put' : putApi,
                     'query' : queryApi,
                     'getAccess' : getAccessApi("/api/data/styles\/:resource"),
                     'setAccess' : setAccessApi("/api/data/styles\/:resource")
