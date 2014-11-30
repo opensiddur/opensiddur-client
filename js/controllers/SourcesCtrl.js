@@ -6,9 +6,9 @@
  */
 OpenSiddurClientApp.controller(
     'SourcesCtrl',
-    ['$rootScope', '$location', '$route', '$routeParams', '$scope', '$http', 'XsltService', 
+    ['$rootScope', '$location', '$route', '$routeParams', '$scope', 'RestApi', 'XsltService', 
     'DialogService', 'AuthenticationService', 'ErrorService',
-    function ($rootScope, $location, $route, $routeParams, $scope, $http, XsltService, 
+    function ($rootScope, $location, $route, $routeParams, $scope, RestApi, XsltService, 
     DialogService, AuthenticationService, ErrorService) {
         $scope.DialogService = DialogService;
         $scope.editor = {
@@ -77,24 +77,22 @@ OpenSiddurClientApp.controller(
                     this.newDocument();
                 }
                 else {
-                        $http.get("/api/data/sources/" + toDocument)
-                            .success(
-                                function(data) {
-                                    transformed = XsltService.serializeToStringTEINSClean(XsltService.transformString("sourceFormTemplate", data));
-                                    $scope.editor.content = x2js.xml_str2json(transformed);
-                                    $scope.editor.isAnalytic = $scope.editor.hasData($scope.editor.content.biblStruct.analytic) ? 1 : 0;
-                                    $scope.editor.isSeries = $scope.editor.hasData($scope.editor.content.biblStruct.series) ? 1 : 0;
-                                    $scope.editor.isNew = 0;
-                                    //$scope.sourcesForm.$setPristine();
-                                }
-                            ) 
-                            .error(
-                                function(data) {
-                                    ErrorService.addApiError(data);
-                                    console.log("error loading", toDocument);
-                                    $scope.editor.currentDocument = "";
-                                }
-                            )
+                        RestApi["/api/data/sources"].get({ "resource" : toDocument },
+                            function(data) {    // success function
+                                var data = data.xml;
+                                var transformed = XsltService.serializeToStringTEINSClean(XsltService.transformString("sourceFormTemplate", data));
+                                $scope.editor.content = x2js.xml_str2json(transformed);
+                                $scope.editor.isAnalytic = $scope.editor.hasData($scope.editor.content.biblStruct.analytic) ? 1 : 0;
+                                $scope.editor.isSeries = $scope.editor.hasData($scope.editor.content.biblStruct.series) ? 1 : 0;
+                                $scope.editor.isNew = 0;
+                                //$scope.sourcesForm.$setPristine();
+                            },
+                            function(error) {
+                                ErrorService.addApiError(error.data.xml);
+                                console.log("error loading", toDocument);
+                                $scope.editor.currentDocument = "";
+                            }
+                        );
                 }
                 
             },
@@ -110,38 +108,29 @@ OpenSiddurClientApp.controller(
                     this.clearData(indata.biblStruct.series);
                 }
                 
-                var httpOperation = (this.isNew) ? $http.post : $http.put;
-                var url = "/api/data/sources" + ((this.isNew) ? "" : ("/" + $scope.editor.currentDocument));
-                httpOperation(url, indata, {
-                        transformRequest : function(data) {
-                            var xmlData = x2js.json2xml(data);
-                            console.log('transformed to XML:', xmlData);
-                            var cleanedXmlData = XsltService.transform('cleanupForm', xmlData);
-                            console.log('cleaned up:', cleanedXmlData);
-                            return cleanedXmlData;
-                        }
-                    })
-                    .success(function(data, statusCode, headers) {
+                var httpOperation = (this.isNew) ? 
+                    RestApi["/api/data/sources"].postJSON : 
+                    RestApi["/api/data/sources"].putJSON;
+                var resource = (this.isNew) ? "" : $scope.editor.currentDocument;
+                httpOperation({
+                        "resource" : resource 
+                    }, 
+                    indata, 
+                    function(data, headers) {   //success function
                         $scope.sourcesForm.$setPristine();
                         if ($scope.editor.isNew) {
                             // add to the search results listing
                             
                             var newDocName = decodeURI(headers("Location").split("/").pop());
-                            /*
-                            IndexService.search.addResult({
-                                title:  newDocName, 
-                                url : headers('Location'),
-                                contexts : []
-                            });
-                            */
                             $scope.editor.isNew = false;
                             $scope.editor.currentDocument = newDocName;
-                        };
-                    })
-                    .error(function(data) {
-                        ErrorService.addApiError(data);
-                        console.log("error saving", url);
-                    });
+                        }
+                    },
+                    function(error) {
+                        ErrorService.addApiError(error.data.xml);
+                        console.log("error saving ", resource);
+                    }
+                );
             }
         };            
         $scope.saveButtonText = function() {

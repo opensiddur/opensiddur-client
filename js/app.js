@@ -37,15 +37,6 @@ var getApiError = function(data) {
   return $($.parseXML(data)).find("message").text();
 }
 
-/* encode a URI component, as expected by the server.
- * code is from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURIComponent
- */
-var encodeURIComponentRFC3986 = function(str) {
-  return encodeURIComponent(str).replace(/[!'()*]/g, function(c) {
-    return '%' + c.charCodeAt(0).toString(16);
-  });
-}
-
 var OpenSiddurClientApp = 
   angular.module(
       'OpenSiddurClientApp',
@@ -111,6 +102,37 @@ OpenSiddurClientApp.config(
   }
 ]);
 
+/* this section of code from http://stackoverflow.com/questions/22944932/angularjs-resource-how-to-disable-url-entity-encoding 
+ * is intended to replace the encodeURIComponent() used in $http with one that is RFC-3986 compliant
+ * code for that function is from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURIComponent
+ */
+var realEncodeURIComponent = window.encodeURIComponent;
+window.encodeURIComponent = function(str) {
+    return realEncodeURIComponent(str).replace(/[,!'()*]/g, function(c) {
+      return '%' + c.charCodeAt(0).toString(16);
+    });
+}; 
+/*
+OpenSiddurClientApp.config(['$httpProvider', function($httpProvider) {
+  $httpProvider.interceptors.push(function($q) {
+    var realEncodeURIComponent = window.encodeURIComponent;
+    return {
+      'request': function(config) {
+         window.encodeURIComponent = function(str) {
+              return realEncodeURIComponent(str).replace(/[,!'()*]/g, function(c) {
+                return '%' + c.charCodeAt(0).toString(16);
+              });
+         }; 
+         return config || $q.when(config);
+      },
+      'response': function(config) {
+         window.encodeURIComponent = realEncodeURIComponent;
+         return config || $q.when(config);
+      }
+    };
+  });
+}]);
+*/
 /* password check 
  * code from http://blog.brunoscopelliti.com/angularjs-directive-to-check-that-passwords-match 
  */
