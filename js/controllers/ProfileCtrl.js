@@ -54,6 +54,9 @@ OpenSiddurClientApp.controller(
           {
             transformResponse: function(data, headers) {
                 console.log(data);
+                if (data.match("<error")) {
+                    return data;
+                }
                 xsltTransformed = XsltService.transformString('profileFormTemplate', data);
                 console.log(xsltTransformed);
                 jsTransformed = x2js.xml2json(xsltTransformed);
