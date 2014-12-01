@@ -32,15 +32,17 @@ OpenSiddurClientApp.controller(
             requiredExample : null,       // example of a required field
             /* determine if any text nodes in any elements in documentPart have any data in the elements. Does not check attributes */
             hasData : function(documentPart) {
-                hd = false;
+                var hd = false;
                 for (var child in documentPart) {
                     if (documentPart.hasOwnProperty(child)) {
                         if (child.match("_asArray$")) {
-                            hd = hd || this.hasData(child);
+                            hd = documentPart[child].map(
+                                function (ch) { return $scope.editor.hasData(ch); }
+                            ).reduce(function (prev, curr) { return prev || curr; } , hd);
                         }
                     }
                 }
-                return hd || documentPart.__text;
+                return hd || Boolean(documentPart.__text);
             },
             clearData : function(documentPart) {
                 for (var child in documentPart) {
