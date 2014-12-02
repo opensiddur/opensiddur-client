@@ -59,6 +59,7 @@
                 <ul class="dropdown-menu pull-right" role="menu" aria-labelledby="userDropdownLabel">
                   <li role="presentation"><a data-ng-href="/profile/{{userName}}">My profile</a></li>
                   <li role="presentation"><a data-ng-href="/changes/{{userName}}">My recent changes</a></li>
+                  <li role="presentation"><a data-ng-href="/jobs/{{userName}}">My compilation jobs</a></li>
                   <li role="presentation"><a data-ng-href="/changepassword">Change my password</a></li>
                   <li role="presentation"><a data-ng-click="signout()">Sign out</a></li>
                 </ul>
@@ -140,6 +141,8 @@
     <script src="/js/controllers/CompileCtrl.js" ></script>
     <script src="/js/controllers/CompiledCtrl.js" ></script>
     <script src="/js/controllers/IndexCtrl.js" ></script>
+    <script src="/js/controllers/JobsCtrl.js" ></script>
+    <script src="/js/controllers/JobStatusCtrl.js" ></script>
     <script src="/js/controllers/NavbarCtrl.js" ></script>
     <script src="/js/controllers/ProfileCtrl.js" ></script>
     <script src="/js/controllers/RecentChangesCtrl.js" ></script>

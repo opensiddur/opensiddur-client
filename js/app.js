@@ -89,6 +89,8 @@ OpenSiddurClientApp.config(
       .when('/compile/:resource', {templateUrl: '/partials/Compile.html', controller: "CompileCtrl"})
       .when('/compiled/:resource', {templateUrl: '/partials/Compiled.html', controller: "CompiledCtrl"})
       .when('/contributors/:userName?', {templateUrl: '/partials/profile.html', controller: "ProfileCtrl"})
+      .when('/jobs/:userName', {templateUrl: '/partials/Jobs.html', controller: "JobsCtrl"})
+      .when('/jobstatus/:jobid', {templateUrl: '/partials/Compile.html', controller: "JobStatusCtrl"})
       .when('/signin', {templateUrl: '/partials/signin.html', controller: "AuthenticationCtrl"})
       .when('/sources/:resource?', {templateUrl: '/partials/sources.html', controller: "SourcesCtrl"})
       .when('/styles/:resource?', {templateUrl: '/partials/texts.html', controller: "TextsCtrl"})

@@ -219,6 +219,33 @@ OpenSiddurClientApp.factory(
                         method : "GET",
                         transformResponse : []
                     },
+                    'listJSON' : {
+                        method : "GET",
+                        url : "/api/jobs",
+                        params : {
+                            user : "",
+                            state : "",
+                            from : "",
+                            to : "",
+                            start : 1,
+                            "max-results" : 100
+                        },
+                        transformResponse : function(data) {
+                            if (data.match("<error")) { return data; }
+                            return $("li.result", data).map( function(idx, li) {
+                                return {
+                                    "id" : $("a", li).attr("href").split("/").pop(),
+                                    "resource" : $("a", li).html().replace("/exist/restxq/api/data/original/", ""),
+                                    "title" : $("span.title", li).html(),
+                                    "user" : $("span.user", li).html(),
+                                    "state" : $("span.state", li).html(),
+                                    "started" : $("span.started", li).html(),
+                                    "completed" : $("span.completed", li).html(),
+                                    "failed" : $("span.failed", li).html()
+                                }
+                            } );
+                        }
+                    },
                     'getJSON' : {
                         method : "GET",
                         transformResponse : function(data) {
@@ -259,6 +286,7 @@ OpenSiddurClientApp.factory(
                             var completed = js.job._state == "complete";
 
                             return {
+                                "resource" : js.job._resource.replace(/(\/exist\/restxq)?\/api\/data\//, ""),
                                 "state" : js.job._state,
                                 "processing_time" : getInterval(js.job._started, js.job._completed ? js.job._completed : js.job._failed ? js.job._failed : now), 
                                 "error" : js.job.fail ? js.job.fail.__text : "",

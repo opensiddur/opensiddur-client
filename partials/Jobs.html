@@ -1,0 +1,27 @@
+<div class="container-fluid">
+    <h1>{{params.user}}'s compilation jobs</h1>
+    <div class="row-fluid">
+        <table class="table table-condensed table-striped">
+            <thead>
+                <tr>
+                    <th>Status</th>
+                    <th>Started at</th>
+                    <th>Job</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr data-ng-repeat="job in jobs">
+                    <td>
+                        <span class="alert-success" data-ng-show="job.state == 'complete'">&#x2714;</span>
+                        <span class="alert-info" data-ng-show="job.state == 'working'">&#x25b6;</span>
+                        <span class="alert-error" data-ng-show="job.state == 'failed'">&#x2717;</span>
+                    </td>
+                    <td>{{job.started}}</td>
+                    <td><a data-ng-href="/jobstatus/{{job.id}}">{{job.title}}</a></td>
+                    <td><a data-ng-show="job.state=='complete'" data-ng-href="/compiled/{{job.resource}}">Show compiled...</a></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
