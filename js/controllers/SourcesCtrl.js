@@ -11,12 +11,24 @@ OpenSiddurClientApp.controller(
     function ($rootScope, $location, $route, $routeParams, $scope, RestApi, XsltService, 
     DialogService, AuthenticationService, ErrorService) {
         $scope.DialogService = DialogService;
+
+
         $scope.editor = {
             loggedIn : AuthenticationService.loggedIn,
             access : {
                 write : AuthenticationService.loggedIn
             },
             "supportedLanguages" : supportedLanguages, 
+            supportedResponsibilities :  {
+                "ann" : "Annotated by",
+                "fac" : "Scanned by",
+                "fnd" : "Funded by",
+                "mrk" : "Markup edited by",
+                "pfr" : "Proofread by",
+                "spn" : "Sponsored by",
+                "trc" : "Transcribed by",
+                "trl" : "Translated by"
+            },
             "monographScopes" : { 
                 volume : "volume",
                 issue : "issue",
