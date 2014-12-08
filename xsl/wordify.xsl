@@ -18,7 +18,7 @@
     <xsl:template match="text()[ancestor::tei:seg][ancestor::j:streamText][not(ancestor::tei:w)][not(ancestor::tei:pc)][normalize-space(.)]">
         <xsl:variable name="context" select="."/>
 		<xsl:analyze-string select="normalize-space(.)" 
-            regex="(\s+)|([\p{{L}}\p{{M}}\p{{N}}\p{{S}}\p{{C}}]+)|(\p{{P}})">
+            regex="(\s+)|([\p{{L}}\p{{M}}\p{{N}}\p{{S}}\p{{C}}&#x05f3;&#x05f4;]+)|([\p{{P}}-[&#x05f3;&#x05f4;]])">
 			<xsl:matching-substring>
                 <xsl:variable name="space-chars" select="regex-group(1)" as="xs:string"/>
 				<xsl:variable name="word-chars" select="regex-group(2)" as="xs:string"/>

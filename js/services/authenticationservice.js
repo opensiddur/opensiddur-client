@@ -33,11 +33,15 @@ OpenSiddurClientApp.service(
                    .error(errorFunction);
            },
            login: function( userName, password, rememberMe ) {
+               var toUtf8 = function(s) {
+                    // HTTP Basic auth for funky characters only works if they're in UTF-8 encoding
+                    return unescape(encodeURIComponent(s));
+                };
                this.loggedIn = true;
                this.rememberMe = rememberMe;
                this.userName = userName;
                this.password = password;
-               $http.defaults.headers.common.Authorization = 'Basic ' + Base64.encode(this.userName + ':' + this.password);
+               $http.defaults.headers.common.Authorization = 'Basic ' + Base64.encode(toUtf8(this.userName) + ':' + toUtf8(this.password));
                $http.defaults.withCredentials = true;
                $rootScope.$broadcast( 
                        'AuthenticationService.update', 

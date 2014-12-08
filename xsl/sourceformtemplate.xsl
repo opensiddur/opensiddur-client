@@ -91,6 +91,7 @@
         <xsl:param name="max" select="10"/>
         <xsl:param name="author" select="true()"/>
         <xsl:param name="editor" select="true()"/>
+        <xsl:param name="respStmt" select="true()"/>
         <xsl:if test="$author">
             <xsl:call-template name="multi-form-template">
                 <xsl:with-param name="base" select="$base/tei:author"/>
@@ -105,9 +106,19 @@
             <xsl:call-template name="multi-form-template">
                 <xsl:with-param name="base" select="$base/tei:editor"/>
                 <xsl:with-param name="max" select="$max"/>
-                <xsl:with-param name="n" select="count(tei:editor)"/>
+                <xsl:with-param name="n" select="count($base/tei:editor)"/>
                 <xsl:with-param name="element">
                     <tei:editor><tei:name/></tei:editor>
+                </xsl:with-param>
+            </xsl:call-template>
+        </xsl:if>
+        <xsl:if test="$respStmt">
+            <xsl:call-template name="multi-form-template">
+                <xsl:with-param name="base" select="$base/tei:respStmt"/>
+                <xsl:with-param name="max" select="$max"/>
+                <xsl:with-param name="n" select="count($base/tei:respStmt)"/>
+                <xsl:with-param name="element">
+                    <tei:respStmt><tei:resp key=""/><tei:name/></tei:respStmt>
                 </xsl:with-param>
             </xsl:call-template>
         </xsl:if>

@@ -45,7 +45,8 @@ var OpenSiddurClientApp =
        'ngSanitize', 
        'LocalStorageModule',
        'infinite-scroll',
-       'ui.codemirror'
+       'ui.codemirror',
+       'unsavedChanges'
       ]);
 
 OpenSiddurClientApp.config(
@@ -85,7 +86,11 @@ OpenSiddurClientApp.config(
     $locationProvider.html5Mode(true).hashPrefix("!");
     $routeProvider
       .when('/changes/:userName?', {templateUrl: '/partials/RecentChanges.html', controller: "RecentChangesCtrl"})
+      .when('/compile/:resource', {templateUrl: '/partials/Compile.html', controller: "CompileCtrl"})
+      .when('/compiled/:resource', {templateUrl: '/partials/Compiled.html', controller: "CompiledCtrl"})
       .when('/contributors/:userName?', {templateUrl: '/partials/profile.html', controller: "ProfileCtrl"})
+      .when('/jobs/:userName', {templateUrl: '/partials/Jobs.html', controller: "JobsCtrl"})
+      .when('/jobstatus/:jobid', {templateUrl: '/partials/Compile.html', controller: "JobStatusCtrl"})
       .when('/signin', {templateUrl: '/partials/signin.html', controller: "AuthenticationCtrl"})
       .when('/sources/:resource?', {templateUrl: '/partials/sources.html', controller: "SourcesCtrl"})
       .when('/styles/:resource?', {templateUrl: '/partials/texts.html', controller: "TextsCtrl"})
@@ -100,6 +105,52 @@ OpenSiddurClientApp.config(
   }
 ]);
 
+// this is required to make $location.path() have a parameter to prevent reloading
+OpenSiddurClientApp.run(['$route', '$rootScope', '$location', function ($route, $rootScope, $location) {
+    var original = $location.path;
+    $location.path = function (path, reload) {
+        if (reload === false) {
+            var lastRoute = $route.current;
+            var un = $rootScope.$on('$locationChangeSuccess', function () {
+                $route.current = lastRoute;
+                un();
+            });
+        }
+        return original.apply($location, [path]);
+    };
+}]);
+
+/* this section of code from http://stackoverflow.com/questions/22944932/angularjs-resource-how-to-disable-url-entity-encoding 
+ * is intended to replace the encodeURIComponent() used in $http with one that is RFC-3986 compliant
+ * code for that function is from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURIComponent
+ */
+var realEncodeURIComponent = window.encodeURIComponent;
+window.encodeURIComponent = function(str) {
+    return realEncodeURIComponent(str).replace(/[,!'()*]/g, function(c) {
+      return '%' + c.charCodeAt(0).toString(16);
+    });
+}; 
+/*
+OpenSiddurClientApp.config(['$httpProvider', function($httpProvider) {
+  $httpProvider.interceptors.push(function($q) {
+    var realEncodeURIComponent = window.encodeURIComponent;
+    return {
+      'request': function(config) {
+         window.encodeURIComponent = function(str) {
+              return realEncodeURIComponent(str).replace(/[,!'()*]/g, function(c) {
+                return '%' + c.charCodeAt(0).toString(16);
+              });
+         }; 
+         return config || $q.when(config);
+      },
+      'response': function(config) {
+         window.encodeURIComponent = realEncodeURIComponent;
+         return config || $q.when(config);
+      }
+    };
+  });
+}]);
+*/
 /* password check 
  * code from http://blog.brunoscopelliti.com/angularjs-directive-to-check-that-passwords-match 
  */

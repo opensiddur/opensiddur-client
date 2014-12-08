@@ -15,6 +15,38 @@ OpenSiddurClientApp.factory(
                 return { "xml" : data };
             }
             };
+        var putApi = {
+            method : 'PUT',
+            isArray : false,
+            headers : { "Content-Type" : "application/xml" },
+            transformResponse : function (data) {
+                return { "xml" : data };
+            }
+            };
+        var postApi = {
+            method : 'POST',
+            isArray : false,
+            headers : { "Content-Type" : "application/xml" },
+            transformResponse : function (data) {
+                return { "xml" : data };
+            }
+            };
+        var putPostJsonApi = function(meth) { return {
+            method : meth,
+            isArray : false,
+            headers : { "Content-Type" : "application/xml" },
+            transformResponse : function (data) {
+                return { "xml" : data };
+                },
+            transformRequest : function(data) {
+                var xmlData = x2js.json2xml(data);
+                var cleanedXmlData = XsltService.transform('cleanupForm', xmlData);
+                return cleanedXmlData;
+                }
+            };
+        };
+        var putJsonApi = putPostJsonApi("PUT");
+        var postJsonApi = putPostJsonApi("POST");
         var queryApi = {
             method : 'GET',
             params : { 
@@ -178,12 +210,115 @@ OpenSiddurClientApp.factory(
                     }
                 }
             ),
+            "/api/jobs" : $resource(
+                '/api/jobs\/:job',
+                {
+                    job : ""
+                },{
+                    'get' : { // XML
+                        method : "GET",
+                        transformResponse : []
+                    },
+                    'listJSON' : {
+                        method : "GET",
+                        url : "/api/jobs",
+                        params : {
+                            user : "",
+                            state : "",
+                            from : "",
+                            to : "",
+                            start : 1,
+                            "max-results" : 100
+                        },
+                        transformResponse : function(data) {
+                            if (data.match("<error")) { return data; }
+                            return $("li.result", data).map( function(idx, li) {
+                                return {
+                                    "id" : $("a", li).attr("href").split("/").pop(),
+                                    "resource" : $("a", li).html().replace("/exist/restxq/api/data/original/", ""),
+                                    "title" : $("span.title", li).html(),
+                                    "user" : $("span.user", li).html(),
+                                    "state" : $("span.state", li).html(),
+                                    "started" : $("span.started", li).html(),
+                                    "completed" : $("span.completed", li).html(),
+                                    "failed" : $("span.failed", li).html()
+                                }
+                            } );
+                        }
+                    },
+                    'getJSON' : {
+                        method : "GET",
+                        transformResponse : function(data) {
+                            var js = x2js.xml_str2json(data);
+                            var getInterval = function(startTime, endTime) {
+                                var interval = new Date(endTime) - new Date(startTime);
+                                var x = interval / 1000;
+                                var seconds = (x % 60);
+                                x /= 60;
+                                var minutes = Math.round(x % 60);
+                                x /= 60;
+                                var hours = Math.round(x % 24);
+                                x /= 24;
+                                var days = Math.round(x);
+
+                                return {
+                                    "days": days,
+                                    "hours": hours,
+                                    "minutes" : minutes,
+                                    "seconds" : seconds
+                                };
+                            };
+
+                            var now = new Date().toString();
+
+                            // map resource,stage to a completion timestamp
+                            var finished = js.job.finish_asArray ? 
+                                js.job.finish_asArray.map(
+                                    function(f, i) { return [f._resource, f._stage, f._timestamp]; }
+                                ).reduce(
+                                    function(prev, current) { 
+                                        prev[[current[0], current[1]]] = current[2]; 
+                                        return prev; 
+                                    } , {}
+                                )
+                                : {};
+                            var failed = js.job._state == "failed";
+                            var completed = js.job._state == "complete";
+
+                            return {
+                                "resource" : js.job._resource.replace(/(\/exist\/restxq)?\/api\/data\//, ""),
+                                "state" : js.job._state,
+                                "processing_time" : getInterval(js.job._started, js.job._completed ? js.job._completed : js.job._failed ? js.job._failed : now), 
+                                "error" : js.job.fail ? js.job.fail.__text : "",
+                                "steps" : js.job.start_asArray ? (
+                                    js.job.start_asArray.map(function(start, i) {
+                                        var completionTime = finished[[start._resource, start._stage]];
+                                        var rs = start._resource.replace(/(\/exist\/restxq)?\/api\/data\//, "")
+                                            .split("/");
+                                        return {
+                                            "type" : rs[0],
+                                            "resource" : decodeURI(rs[1]),
+                                            "stage" : start._stage,
+                                            "processing_time" : getInterval(start._timestamp, completionTime ? 
+                                                completionTime : failed ? js.job._failed : now),
+                                            "state" : completionTime ? "complete" : failed ? "failed" : "working"
+                                        }
+                                    })
+                                ) : []
+                            };
+                        }
+                    }
+                }
+            ),
             "/api/data/conditionals" : $resource(
                 '/api/data/conditionals\/:resource',
                 { 
                     resource : ""
                 },
                 {
+                    'get' : getApi,
+                    'post' : postApi,
+                    'put' : putApi,
                     'query' : queryApi
                 }
             ),
@@ -193,6 +328,9 @@ OpenSiddurClientApp.factory(
                     resource : ""
                 },
                 {
+                    'get' : getApi,
+                    'post' : postApi,
+                    'put' : putApi,
                     'query' : queryApi,
                     'getAccess' : getAccessApi("/api/data/linkage\/:resource"),
                     'setAccess' : setAccessApi("/api/data/linkage\/:resource")
@@ -204,6 +342,9 @@ OpenSiddurClientApp.factory(
                     resource : ""
                 },
                 {
+                    'get' : getApi,
+                    'post' : postApi,
+                    'put' : putApi,
                     'query' : queryApi,
                     'getAccess' : getAccessApi("/api/data/notes\/:resource"),
                     'setAccess' : setAccessApi("/api/data/notes\/:resource")
@@ -216,9 +357,37 @@ OpenSiddurClientApp.factory(
                 },
                 {
                     'get' : getApi,
+                    'post' : postApi,
+                    'put' : putApi,
                     'query' : queryApi,
                     'getAccess' : getAccessApi("/api/data/original\/:resource"),
-                    'setAccess' : setAccessApi("/api/data/original\/:resource")
+                    'setAccess' : setAccessApi("/api/data/original\/:resource"),
+                    'backgroundCompile' : {
+                        method : "POST",
+                        url : "/api/data/original\/:resource\/combined",
+                        params : {
+                            "format" : "html",
+                            "transclude" : "true"
+                        },
+                        transformResponse : function(data, headers) {
+                            return {
+                                "job" : headers("Location").replace("/exist/restxq/api/jobs/", ""),
+                            };
+                        }
+                    },
+                    'getCompiled' : {
+                        method : "GET",
+                        url : "/api/data/original\/:resource\/combined",
+                        params : {
+                            "transclude" : true
+                        },
+                        headers : {
+                            "Accept" : "application/xhtml+xml"
+                        },
+                        transformResponse : function (data) {
+                            return { "xml" : data };
+                        }
+                    }
                 }
             ),
             "/api/data/sources" : $resource(
@@ -228,6 +397,10 @@ OpenSiddurClientApp.factory(
                 },
                 {   
                     'get' : getApi,
+                    'post' : postApi,
+                    'put' : putApi,
+                    'putJSON' : putJsonApi,
+                    'postJSON' : postJsonApi,
                     'query' : queryApi
                 }
             ),
@@ -238,6 +411,8 @@ OpenSiddurClientApp.factory(
                 },
                 {   
                     'get' : getApi,
+                    'post' : postApi,
+                    'put' : putApi,
                     'query' : queryApi,
                     'getAccess' : getAccessApi("/api/data/styles\/:resource"),
                     'setAccess' : setAccessApi("/api/data/styles\/:resource")

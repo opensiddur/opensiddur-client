@@ -59,6 +59,7 @@
                 <ul class="dropdown-menu pull-right" role="menu" aria-labelledby="userDropdownLabel">
                   <li role="presentation"><a data-ng-href="/profile/{{userName}}">My profile</a></li>
                   <li role="presentation"><a data-ng-href="/changes/{{userName}}">My recent changes</a></li>
+                  <li role="presentation"><a data-ng-href="/jobs/{{userName}}">My compilation jobs</a></li>
                   <li role="presentation"><a data-ng-href="/changepassword">Change my password</a></li>
                   <li role="presentation"><a data-ng-click="signout()">Sign out</a></li>
                 </ul>
@@ -107,6 +108,7 @@
     <script type="text/javascript" src="/js/bower_components/codemirror/mode/css/css.js"></script>
     <script type="text/javascript" src="/js/bower_components/codemirror/addon/edit/closetag.js"></script>
     <script type="text/javascript" src="/js/bower_components/angular-ui-codemirror/ui-codemirror.js"></script>
+    <script type="text/javascript" src="/js/bower_components/angular-unsavedChanges/dist/unsavedChanges.js"></script>
     <!--script src="js/ckeditor/ckeditor.js"></script-- >
     <!--script src="js/ckeditor/adapters/jquery.js"></script-->
     <script src="/js/app.js" ></script>
@@ -136,7 +138,11 @@
     <script src="/js/controllers/authenticationwidgetctrl.js" ></script>
     <script src="/js/controllers/AuthenticationCtrl.js" ></script>
     <script src="/js/controllers/ChangePasswordCtrl.js" ></script>
+    <script src="/js/controllers/CompileCtrl.js" ></script>
+    <script src="/js/controllers/CompiledCtrl.js" ></script>
     <script src="/js/controllers/IndexCtrl.js" ></script>
+    <script src="/js/controllers/JobsCtrl.js" ></script>
+    <script src="/js/controllers/JobStatusCtrl.js" ></script>
     <script src="/js/controllers/NavbarCtrl.js" ></script>
     <script src="/js/controllers/ProfileCtrl.js" ></script>
     <script src="/js/controllers/RecentChangesCtrl.js" ></script>

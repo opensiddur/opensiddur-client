@@ -19,12 +19,7 @@
             <tei:sourceDesc>
                 <tei:bibl>
                     <tei:ptr type="bibl" target="/data/sources/Born%20Digital"/>
-                <!--                                              ^^^ fill in the link to the bibliography entry -->
                     <tei:ptr type="bibl-content" target="#parallel"/>
-                    <!--                                 ^^^^ this is the content that corresponds to the bibliographic entry above -->
-                    <!-- optional: points to the page(s) where the transciption comes from
-                    <tei:biblScope unit="page" from="X" to="Y"/>
-                    -->
                 </tei:bibl>
             </tei:sourceDesc>
         </tei:fileDesc>
