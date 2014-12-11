@@ -11,6 +11,7 @@ OpenSiddurClientApp.factory(
         var getApi = {
             method : 'GET',
             isArray : false,
+            headers : { "Accept" : "application/xml" },
             transformResponse : function (data) {
                 return { "xml" : data };
             }
