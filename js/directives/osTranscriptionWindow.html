@@ -1,25 +1,35 @@
 <div class="osTranscriptionWindow" data-ng-hide="!active">
-    <div>
-        <form class="form-inline">
-            <span>Source:</span>
-            <select
-                class="span4 input-small"
-                name="source.name" 
-                data-ng-model="currentSource"
-                data-ng-options="source as source.title for source in sources"/>
-            <button class="btn btn-primary btn-small" data-ng-click="refresh()">Refresh</button>
-        </form>
-    </div>
-    <div data-ng-hide="!currentSource.scanUrl">
-        <iframe data-ng-src="{{currentSource.scanUrl}}" width="100%" height="450px" frameborder="0"><p>No source selected</p></iframe>
-    </div>
-    <div data-ng-show="!currentSource.scanUrl">
-        <p>Choose a source from the dropdown. The sources are from those 
-        <code>tei:bibl</code> elements listed in the document's
-        <code>tei:sourceDesc</code>. If the source has a "transcription source" in its 
-        <a href="/sources" target="_blank">bibliography entry</a>, this area will show the 
-        book's scanned images. If a <code>tei:biblScope</code> element references a page or
-        page range, the viewer will show the first page of the range.</p>
+    <div class="container-fluid">
+        <div class="row">
+            <form class="form-inline">
+                <div class="form-group">
+                    <label class="control-label col-md-2" for="source.name">Source:</label>
+                    <div class="col-md-4">
+                        <select
+                            class="form-control input-sm"
+                            name="source.name" 
+                            data-ng-model="currentSource"
+                            data-ng-options="source as source.title for source in sources"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-1">
+                        <button class="btn btn-primary btn-sm" data-ng-click="refresh()">Refresh</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="row" data-ng-hide="!currentSource.scanUrl">
+            <iframe data-ng-src="{{currentSource.scanUrl}}" width="100%" height="450px" frameborder="0"><p>No source selected</p></iframe>
+        </div>
+        <div class="row" data-ng-show="!currentSource.scanUrl">
+            <p>Choose a source from the dropdown. The sources are from those 
+            <code>tei:bibl</code> elements listed in the document's
+            <code>tei:sourceDesc</code>. If the source has a "transcription source" in its 
+            <a href="/sources" target="_blank">bibliography entry</a>, this area will show the 
+            book's scanned images. If a <code>tei:biblScope</code> element references a page or
+            page range, the viewer will show the first page of the range.</p>
+        </div>
     </div>
     <style type="text/css">
         .osTranscriptionWindow {

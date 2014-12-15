@@ -5,7 +5,7 @@
         <!-- put a query box here -->
         <!-- show max N results -->
         <label for="maxResults">Show up to</label>
-        <select class="input-small" name="maxResults" data-ng-model="searchParams['max-results']">
+        <select class="form-control input-sm" name="maxResults" data-ng-model="searchParams['max-results']">
             <option>20</option>
             <option>50</option>
             <option>100</option>
@@ -14,14 +14,14 @@
         </select>
         <label for="maxResults">changes</label>
         <label for="userName">that were made by</label> 
-        <input data-ng-model="searchParams.by" class="input-small" placeholder="any user"></input>
+        <input data-ng-model="searchParams.by" class="form-control input-sm" placeholder="any user"></input>
         <label for="fromDate">after</label>
         <input data-ng-model="searchParams.from" placeholder="yyyy-mm-dd" name="fromDate"
             data-ng-pattern="/\d{4,4}-[01]\d-[0-3]\d/"
-            class="input-small"></input>
+            class="form-control input-sm"></input>
         <label for="toDate">and before</label>
         <input data-ng-model="searchParams.to" placeholder="yyyy-mm-dd" name="toDate"
-            data-ng-pattern="/\d{4,4}-[01]\d-[0-3]\d/" class="input-small"></input>
+            data-ng-pattern="/\d{4,4}-[01]\d-[0-3]\d/" class="form-control input-sm"></input>
         <button class="btn btn-primary" data-ng-click="load()"
             data-ng-disabled="recentChangesForm.$invalid">Show changes</button>
     </form>

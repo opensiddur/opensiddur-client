@@ -79,7 +79,7 @@ OpenSiddurClientApp.directive(
                     }
                  }],
                  link: function(scope, elem, attrs, ctrl) {
-                    elem.find(".modal-header h3").attr("id", scope.name + "_label");
+                    elem.find(".modal-header h4").attr("id", scope.name + "_label");
                     elem.find(".osNewDialog").attr("aria-labelledBy", scope.name + "_label");
                     elem.find(".osNewDialog").attr("id", scope.name);
                  },

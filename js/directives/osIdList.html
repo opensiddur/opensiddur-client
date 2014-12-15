@@ -1,14 +1,14 @@
 <div class="osIdList">
-    <div class="row-fluid id-list">
+    <div class="row id-list">
         <form class="form-inline">
-            <span>Filters</span>
+            <label class="control-label">Filters</label>
             <input type="text" class="input-small" data-ng-model="filters.name" placeholder="Link id" name="idlist.idSearch"/>
             <input type="text" class="input-small" data-ng-model="filters.element" placeholder="Element" name="idlist.elementSearch"/>
             <label class="checkbox" for="idlist.streamOnly"><input class="input-small" type="checkbox"
                 data-ng-model="filters.stream"
                 name="idlist.streamOnly"
-                data-ng-true-value="Y"]
-                data-ng-false-value=""
+                data-ng-true-value="'Y'"]
+                data-ng-false-value="''"
                 />Stream elements</label>
         </form>
         <div class="id-list-table">
