@@ -1,143 +1,160 @@
 <div>
-    <div class="toolbar navbar navbar-inverse collapse nav-collapse">
-        <div class="navbar-inner">
-            <div class="btn-toolbar">
-                <div class="btn-group">
-                    <span class="btn btn-inverse" data-ng-disabled="1">{{ editor.content.biblStruct.monogr.title_asArray[0].__text }}</span>
-                </div>
-                <div class="btn-group">
-                    <button class="btn btn-primary" 
-                        data-ng-disabled="!editor.loggedIn"
-                        data-ng-click="editor.newButton()"
-                        >New</button>
-                    <button class="btn btn-primary" 
-                        data-ng-click="DialogService.open('openDialog')"
-                        >Open</button>
-                    <button
-                        class="btn btn-primary"
-                        data-ng-class="{'btn-success' : sourcesForm.$pristine}" type="submit" 
-                        data-ng-click="editor.saveDocument()"  
-                        data-ng-disabled="sourcesForm.$invalid || sourcesForm.$pristine">{{saveButtonText()}}</button>
-                </div>
-                <os-sharing-status access-model="editor.access" relicense-disabled="1" chmod-disabled="1"></os-sharing-status>
-            </div>
+    <div class="toolbar navbar navbar-inverse nav-collapse">
+        <div class="container-fluid">
+          <div class="btn-toolbar navbar-btn">
+              <div class="btn-group navbar-btn">
+                  <button class="form-control-static" data-ng-disabled="1">{{ editor.content.biblStruct.monogr.title_asArray[0].__text }}</btn>
+              </div>
+              <div class="btn-group navbar-btn">
+                  <button class="btn btn-primary" 
+                      data-ng-disabled="!editor.loggedIn"
+                      data-ng-click="editor.newButton()"
+                      >New</button>
+                  <button class="btn btn-primary" 
+                      data-ng-click="DialogService.open('openDialog')"
+                      >Open</button>
+                  <button
+                      class="btn btn-primary"
+                      data-ng-class="{'btn-success' : sourcesForm.$pristine}" type="submit" 
+                      data-ng-click="editor.saveDocument()"  
+                      data-ng-disabled="sourcesForm.$invalid || sourcesForm.$pristine">{{saveButtonText()}}</button>
+              </div>
+              <div class="navbar-right navbar-btn">
+                  <os-sharing-status access-model="editor.access" relicense-disabled="1" chmod-disabled="1"></os-sharing-status>
+              </div>
+          </div>
         </div>
     </div>
     
     <div class="page-container container-fluid sources-editor" data-ng-show="!editor.isNew || editor.loggedIn">
-        <div class="row-fluid">
-            <div class="span10 offset1 alert alert-info text-center">
+        <div class="row">
+            <div class="col-md-10 col-md-offset-1 alert alert-info text-center">
                 <p>For <strong>printed works</strong>, the following information is <strong>required</strong>: 
                 a main title, a publisher or distributor, and a publication date. 
                 </p>
                 <p>For <strong>online works</strong>, the following information is <strong>required</strong>: a main title, a distributor website title, a distributor URL, and an access date.</p>
                 <p>The bibliographic entry can be saved only if the minimally required highlighted fields (<input class="input-mini" readonly="true" required="true" data-ng-model="editor.requiredExample"/>) are filled in and have valid data.</p>
-                <!--<p>Required fields are highlighted .</p>-->
             </div>
-            <!--
-            <div class="span5 offset1 alert alert-warn text-center" data-ng-hide="!sourcesForm.$invalid">All fields must have valid data.</div>
-            <div class="span5 alert alert-warn text-center" data-ng-hide="!sourcesForm.$error.required">All required fields (<input class="input-mini" readonly="true" required="true" data-ng-model="editor.requiredExample"/>) must be filled in</div>-->
         </div>
-        <div class="row-fluid sources-editor">
-            <div class="span11 offset1">
-                <form name="sourcesForm" data-unsaved-warning-form="1">
-                    <div class="controls controls-row">
-                        <label class="span4" for="biblStruct._xmlLang">Primary language of this entry:</label>
-                        <select 
-                            class="span2"
-                            name="biblStruct._xmlLang"
-                            data-ng-model="editor.content.biblStruct['_xml:lang']" 
-                            required="true"
-                            data-ng-options="code as language for (code, language) in editor.supportedLanguages"/>
+        <div class="row sources-editor">
+                <form name="sourcesForm"  class="form-horizontal col-md-offset-1" data-unsaved-warning-form="1">
+                    <div class="form-group">
+                        <label class="col-md-2" for="biblStruct._xmlLang">Primary language of this entry:</label>
+                        <div class="col-md-2">
+                          <select 
+                              class="form-control"
+                              name="biblStruct._xmlLang"
+                              data-ng-model="editor.content.biblStruct['_xml:lang']" 
+                              required="true"
+                              data-ng-options="code as language for (code, language) in editor.supportedLanguages"/>
+                        </div>
                     </div>
-                    <div class="controls controls-row">
-                        <label class="span6" for="isAnalytic1">Is this entry for a <b>subset</b> of a book, such as an <b>article</b> or <b>chapter</b>, that has authors and/or editors who are different from the book or series?</label>
-                        <label class="radio inline">
-                            <input 
-                                type="radio"
-                                name="isAnalytic1"
-                                value="1"
-                                data-ng-model="editor.isAnalytic"
-                                />Yes
-                        </label>
-                        <label class="radio inline">
-                            <input 
-                                type="radio"
-                                name="isAnalytic2"
-                                value="0"
-                                data-ng-model="editor.isAnalytic"
-                                />No
-                        </label>
+                    <div class="form-group">
+                        <label class="col-md-6" for="isAnalytic1">Is this entry for a <em>subset</em> of a book, such as an <em>article</em> or <em>chapter</em>, that has authors and/or editors who are different from the book or series?</label>
+                        <div class="col-md-2">
+                          <label class="radio-inline">
+                              <input 
+                                  type="radio"
+                                  name="isAnalytic1"
+                                  value="1"
+                                  data-ng-model="editor.isAnalytic"
+                                  />Yes
+                          </label>
+                          <label class="radio-inline">
+                              <input 
+                                  type="radio"
+                                  name="isAnalytic2"
+                                  value="0"
+                                  data-ng-model="editor.isAnalytic"
+                                  />No
+                          </label>
+                        </div>
                     </div>
-                    <div class="controls controls-row">
-                        <label class="span6" for="isSeries1">Is this entry for a book in a <b>series</b>?</label>
-                        <label class="radio inline">
-                            <input 
-                                type="radio"
-                                class="controls inline"
-                                name="isSeries1"
-                                value="1"
-                                data-ng-model="editor.isSeries"
-                                />Yes
-                        </label>
-                        <label class="radio inline">
-                            <input 
-                                type="radio"
-                                class="controls inline"
-                                name="isSeries2"
-                                value="0"
-                                data-ng-model="editor.isSeries"
-                                />No
-                        </label>
+                    <div class="form-group">
+                        <label class="col-md-6" for="isSeries1">Is this entry for a book in a <em>series</em>?</label>
+                        <div class="col-md-2">
+                          <label class="radio-inline">
+                              <input 
+                                  type="radio"
+                                  name="isSeries1"
+                                  value="1"
+                                  data-ng-model="editor.isSeries"
+                                  />Yes
+                          </label>
+                          <label class="radio-inline">
+                              <input 
+                                  type="radio"
+                                  name="isSeries2"
+                                  value="0"
+                                  data-ng-model="editor.isSeries"
+                                  />No
+                          </label>
+                        </div>
                     </div>
                     <fieldset data-ng-show="editor.isAnalytic">
                         <legend>Section</legend>
-                        <div class="controls controls-row">
-                            <label class="span2" for="biblStruct.analytic.title_main">Section title:</label>
-                            <select
-                                    class="span2" 
+                        <div class="form-group">
+                            <label class="col-md-2 control-label" for="biblStruct.analytic.title_main">Section title:</label>
+                            <div class="col-md-2">
+                                <select
+                                    class="form-control" 
                                     name="biblStruct.analytic.title_main_xmlLang"
                                     data-ng-model="editor.content.biblStruct.analytic.title_asArray[0]['_xml:lang']" 
                                     data-ng-required="editor.content.biblStruct.analytic.title_asArray[0].__text"
-                                    data-ng-options="code as language for (code, language) in editor.supportedLanguages">
-                            <input class="span8" 
+                                    data-ng-options="code as language for (code, language) in editor.supportedLanguages"/>
+                            </div>
+                            <div class="col-md-6">
+                                <input class="form-control"
                                     name="biblStruct.analytic.title_main" 
                                     data-ng-model="editor.content.biblStruct.analytic.title_asArray[0].__text"
                                     data-ng-required="editor.isAnalytic"
                                     placeholder="Main section title"/>
+                            </div>
                         </div>
-                        <div class="controls controls-row">
-                            <label class="span2" for="biblStruct.analytic.title_sub">Section subtitle:</label>
-                            <select 
-                                class="span2"
-                                name="biblStruct.analytic.title_sub_xmlLang"
-                                data-ng-model="editor.content.biblStruct.analytic.title_asArray[1]['_xml:lang']" 
-                                data-ng-required="editor.content.biblStruct.analytics.title_asArray[1].__text"
-                                data-ng-options="code as language for (code, language) in editor.supportedLanguages">
-                            <input class="span8" name="biblStruct.analytic.title_sub" data-ng-model="editor.content.biblStruct.analytic.title_asArray[1].__text"
-                                placeholder="Section subtitle"/>
+                        <div class="form-group">
+                            <label class="col-md-2 control-label" for="biblStruct.analytic.title_sub">Section subtitle:</label>
+                            <div class="col-md-2">
+                                <select 
+                                    class="form-control"
+                                    name="biblStruct.analytic.title_sub_xmlLang"
+                                    data-ng-model="editor.content.biblStruct.analytic.title_asArray[1]['_xml:lang']" 
+                                    data-ng-required="editor.content.biblStruct.analytics.title_asArray[1].__text"
+                                    data-ng-options="code as language for (code, language) in editor.supportedLanguages"/>
+                            </div>
+                            <div class="col-md-6">
+                                <input class="form-control" name="biblStruct.analytic.title_sub" data-ng-model="editor.content.biblStruct.analytic.title_asArray[1].__text"
+                                    placeholder="Section subtitle"/>
+                            </div>
                         </div>
-                        <div class="controls controls-row">
-                            <label class="span2" for="biblStruct.analytic.title_alt">Alternate section title:</label>
-                            <select 
-                                class="span2"
-                                name="biblStruct.analytic.title_alt_xmlLang"
-                                data-ng-model="editor.content.biblStruct.analytic.title_asArray[2]['_xml:lang']" 
-                                data-ng-required="editor.content.biblStruct.analytics.title_asArray[2].__text"
-                                data-ng-options="code as language for (code, language) in editor.supportedLanguages">
-                            <input class="span8" name="biblStruct.analytic.title_alt" data-ng-model="editor.content.biblStruct.analytic.title_asArray[2].__text"
-                                placeholder="Alternate title (eg, translation)"/>
+                        <div class="form-group">
+                            <label class="col-md-2 control-label" for="biblStruct.analytic.title_alt">Alternate section title:</label>
+                            <div class="col-md-2">
+                                <select 
+                                    class="form-control"
+                                    name="biblStruct.analytic.title_alt_xmlLang"
+                                    data-ng-model="editor.content.biblStruct.analytic.title_asArray[2]['_xml:lang']" 
+                                    data-ng-required="editor.content.biblStruct.analytics.title_asArray[2].__text"
+                                    data-ng-options="code as language for (code, language) in editor.supportedLanguages"/>
+                            </div>
+                            <div class="col-md-6">
+                                <input class="form-control" name="biblStruct.analytic.title_alt" data-ng-model="editor.content.biblStruct.analytic.title_asArray[2].__text"
+                                    placeholder="Alternate title (eg, translation)"/>
+                            </div>
                         </div>
-                        <div class="controls controls-row">
-                            <label class="span2" for="biblStruct.analytic.title_alt_sub">Alternate section subtitle:</label>
-                            <select 
-                                class="span2"
-                                name="biblStruct.analytic.title_alt_sub_xmlLang"
-                                data-ng-model="editor.content.biblStruct.analytic.title_asArray[3]['_xml:lang']" 
-                                data-ng-required="editor.content.biblStruct.analytics.title_asArray[3].__text"
-                                data-ng-options="code as language for (code, language) in editor.supportedLanguages">
-                            <input class="span8" name="biblStruct.analytic.title_alt_sub" data-ng-model="editor.content.biblStruct.analytic.title_asArray[3].__text"
-                                placeholder="Alternate subtitle (eg, translation)"/>
+                        <div class="form-group">
+                            <label class="col-md-2 control-label" for="biblStruct.analytic.title_alt_sub">Alternate section subtitle:</label>
+                            <div class="col-md-2">
+                              <select 
+                                  class="form-control"
+                                  name="biblStruct.analytic.title_alt_sub_xmlLang"
+                                  data-ng-model="editor.content.biblStruct.analytic.title_asArray[3]['_xml:lang']" 
+                                  data-ng-required="editor.content.biblStruct.analytics.title_asArray[3].__text"
+                                  data-ng-options="code as language for (code, language) in editor.supportedLanguages"/>
+                            </div>
+                            <div class="col-md-6">
+                                <input class="form-control" name="biblStruct.analytic.title_alt_sub" data-ng-model="editor.content.biblStruct.analytic.title_asArray[3].__text"
+                                    placeholder="Alternate subtitle (eg, translation)"/>
+                            </div>
                         </div>
                         <div data-os-array-input="editor.content.biblStruct.analytic.author_asArray" 
                             data-placeholder="Section Author"
@@ -150,12 +167,14 @@
                             data-name="biblStruct.analytic.editor"
                             data-child="name"/>
                         <!-- responsibilities -->
-                        <div class="control-group">
-                            <label class="control-label" for="biblStruct.analytic.respStmt.name1">Additional Responsibilities for the section</label>
-                            <div
-                                data-ng-repeat="respStmt in editor.content.biblStruct.analytic.respStmt_asArray">
-                                <div class="controls controls-row" data-ng-show="$index == 0 || editor.content.biblStruct.analytic.respStmt_asArray[$index - 1].name.__text || respStmt.name.__text">
-                                    <select class="span2"
+                        <div class="form-group">
+                            <label class="control-label col-md-offset-1" for="biblStruct.analytic.respStmt.name1">Additional Responsibilities for the section</label>
+                        </div>
+                        <div
+                            data-ng-repeat="respStmt in editor.content.biblStruct.analytic.respStmt_asArray">
+                            <div class="form-group" data-ng-show="$index == 0 || editor.content.biblStruct.analytic.respStmt_asArray[$index - 1].name.__text || respStmt.name.__text">
+                                <div class="col-md-offset-2 col-md-2">
+                                    <select class="form-control"
                                         name="biblStruct.analytic.respStmt.resp_key{{$index}}"
                                         data-ng-model="respStmt.resp._key"
                                         data-ng-required="respStmt.name.__text"
@@ -163,7 +182,9 @@
                                         data-ng-change="respStmt.resp.__text = editor.supportedResponsibilities[respStmt.resp._key]">
                                          <option value="">-- Responsibility --</option>
                                     </select>
-                                    <input class="span10"
+                                </div>
+                                <div class="col-md-6">
+                                    <input class="form-control"
                                         name="biblStruct.analytic.respStmt.name{{$index}}"
                                         data-ng-model="respStmt.name.__text"
                                         placeholder="Name"/>
@@ -174,52 +195,68 @@
                     <!-- monograph level -->
                     <fieldset>
                         <legend>This book</legend>
-                        <div class="controls controls-row">
-                            <label class="span2" for="biblStruct.monogr.title_main">Main title:</label>
-                            <select 
-                                class="span2"
-                                name="biblStruct.monogr.title_main_xmlLang"
-                                data-ng-model="editor.content.biblStruct.monogr.title_asArray[0]['_xml:lang']" 
-                                required="true"
-                                data-ng-options="code as language for (code, language) in editor.supportedLanguages">
-                            <input class="span8" 
-                                name="biblStruct.monogr.title_main"
-                                required="true"
-                                data-ng-model="editor.content.biblStruct.monogr.title_asArray[0].__text"
-                                placeholder="Main title"/>
+                        <div class="form-group">
+                            <label class="control-label col-md-2" for="biblStruct.monogr.title_main">Main title:</label>
+                            <div class="col-md-2">
+                                <select 
+                                    class="form-control"
+                                    name="biblStruct.monogr.title_main_xmlLang"
+                                    data-ng-model="editor.content.biblStruct.monogr.title_asArray[0]['_xml:lang']" 
+                                    required="true"
+                                    data-ng-options="code as language for (code, language) in editor.supportedLanguages"/>
+                            </div>
+                            <div class="col-md-6">
+                                <input class="form-control" 
+                                    name="biblStruct.monogr.title_main"
+                                    required="true"
+                                    data-ng-model="editor.content.biblStruct.monogr.title_asArray[0].__text"
+                                    placeholder="Main title"/>
+                            </div>
                         </div>
-                        <div class="controls controls-row">
-                            <label class="span2" for="biblStruct.monogr.title_sub">Main subtitle:</label>
-                            <select 
-                                class="span2"
-                                name="biblStruct.monogr.title_sub_xmlLang"
-                                data-ng-model="editor.content.biblStruct.monogr.title_asArray[1]['_xml:lang']" 
-                                data-ng-required="editor.content.biblStruct.monogr.title_asArray[1].__text"
-                                data-ng-options="code as language for (code, language) in editor.supportedLanguages">
-                            <input class="span8" name="biblStruct.monogr.title_sub" data-ng-model="editor.content.biblStruct.monogr.title_asArray[1].__text"
-                                placeholder="subtitle"/>
+                        <div class="form-group">
+                            <label class="col-md-2 control-label" for="biblStruct.monogr.title_sub">Main subtitle:</label>
+                            <div class="col-md-2">
+                                <select 
+                                    class="form-control"
+                                    name="biblStruct.monogr.title_sub_xmlLang"
+                                    data-ng-model="editor.content.biblStruct.monogr.title_asArray[1]['_xml:lang']" 
+                                    data-ng-required="editor.content.biblStruct.monogr.title_asArray[1].__text"
+                                    data-ng-options="code as language for (code, language) in editor.supportedLanguages"/>
+                            </div>
+                            <div class="col-md-6">
+                                <input class="form-control" name="biblStruct.monogr.title_sub" data-ng-model="editor.content.biblStruct.monogr.title_asArray[1].__text"
+                                    placeholder="subtitle"/>
+                            </div>
                         </div>
-                        <div class="controls controls-row">
-                            <label class="span2" for="biblStruct.monogr.title_alt">Alternate title:</label>
-                            <select 
-                                class="span2"
-                                name="biblStruct.monogr.title_alt_xmlLang"
-                                data-ng-model="editor.content.biblStruct.monogr.title_asArray[2]['_xml:lang']" 
-                                data-ng-required="editor.content.biblStruct.monogr.title_asArray[2].__text"
-                                data-ng-options="code as language for (code, language) in editor.supportedLanguages">
-                            <input class="span8" name="biblStruct.monogr.title_alt" data-ng-model="editor.content.biblStruct.monogr.title_asArray[2].__text"
-                                placeholder="Alternate main title (eg, translation)"/>
+                        <div class="form-group">
+                            <label class="col-md-2 control-label" for="biblStruct.monogr.title_alt">Alternate title:</label>
+                            <div class="col-md-2">
+                                <select 
+                                    class="form-control"
+                                    name="biblStruct.monogr.title_alt_xmlLang"
+                                    data-ng-model="editor.content.biblStruct.monogr.title_asArray[2]['_xml:lang']" 
+                                    data-ng-required="editor.content.biblStruct.monogr.title_asArray[2].__text"
+                                    data-ng-options="code as language for (code, language) in editor.supportedLanguages"/>
+                            </div>
+                            <div class="col-md-6">
+                                <input class="form-control" name="biblStruct.monogr.title_alt" data-ng-model="editor.content.biblStruct.monogr.title_asArray[2].__text"
+                                    placeholder="Alternate main title (eg, translation)"/>
+                            </div>
                         </div>
-                        <div class="controls controls-row">
-                            <label class="span2" for="biblStruct.monogr.title_alt_sub">Alternate subtitle:</label>
-                            <select 
-                                class="span2"
-                                name="biblStruct.monogr.title_alt_sub_xmlLang"
-                                data-ng-model="editor.content.biblStruct.monogr.title_asArray[3]['_xml:lang']" 
-                                data-ng-required="editor.content.biblStruct.monogr.title_asArray[3].__title"
-                                data-ng-options="code as language for (code, language) in editor.supportedLanguages">
-                            <input class="span8" name="biblStruct.monogr.title_alt_sub" data-ng-model="editor.content.biblStruct.monogr.title_asArray[3].__text"
-                                placeholder="Alternate subtitle (eg, translation)"/>
+                        <div class="form-group">
+                            <label class="col-md-2 control-label" for="biblStruct.monogr.title_alt_sub">Alternate subtitle:</label>
+                            <div class="col-md-2">
+                                <select 
+                                    class="form-control"
+                                    name="biblStruct.monogr.title_alt_sub_xmlLang"
+                                    data-ng-model="editor.content.biblStruct.monogr.title_asArray[3]['_xml:lang']" 
+                                    data-ng-required="editor.content.biblStruct.monogr.title_asArray[3].__title"
+                                    data-ng-options="code as language for (code, language) in editor.supportedLanguages"/>
+                            </div>
+                            <div class="col-md-6">
+                                <input class="form-control" name="biblStruct.monogr.title_alt_sub" data-ng-model="editor.content.biblStruct.monogr.title_asArray[3].__text"
+                                    placeholder="Alternate subtitle (eg, translation)"/>
+                            </div>
                         </div>
                         <div data-os-array-input="editor.content.biblStruct.monogr.author_asArray" 
                             data-placeholder="Author"
@@ -232,12 +269,14 @@
                             data-name="biblStruct.monogr.editor"
                             data-child="name"/>
                         <!-- responsibilities -->
-                        <div class="control-group">
-                            <label class="control-label" for="biblStruct.monogr.respStmt.name1">Additional Responsibilities for the book</label>
-                            <div
-                                data-ng-repeat="respStmt in editor.content.biblStruct.monogr.respStmt_asArray">
-                                <div class="controls controls-row" data-ng-show="$index == 0 || editor.content.biblStruct.monogr.respStmt_asArray[$index - 1].name.__text || respStmt.name.__text">
-                                    <select class="span2"
+                        <div class="form-group">
+                            <label class="col-md-offset-1 control-label" for="biblStruct.monogr.respStmt.name1">Additional Responsibilities for the book</label>
+                        </div>
+                        <div
+                            data-ng-repeat="respStmt in editor.content.biblStruct.monogr.respStmt_asArray">
+                            <div class="form-group" data-ng-show="$index == 0 || editor.content.biblStruct.monogr.respStmt_asArray[$index - 1].name.__text || respStmt.name.__text">
+                                <div class="col-md-2">
+                                    <select class="form-control"
                                         name="biblStruct.monogr.respStmt.resp_key{{$index}}"
                                         data-ng-model="respStmt.resp._key"
                                         data-ng-required="respStmt.name.__text"
@@ -246,171 +285,217 @@
                                         >
                                          <option value="">-- Responsibility --</option>
                                     </select>
-                                    <input class="span10"
+                                </div>
+                                <div class="col-md-6">
+                                    <input class="form-control"
                                         name="biblStruct.monogr.respStmt.name{{$index}}"
                                         data-ng-model="respStmt.name.__text"
                                         placeholder="Name"/>
                                 </div>
                             </div>
                         </div>
-                        <div class="controls controls-row">
-                            <label class="span2" for="biblStruct.monogr.edition">Edition</label>
-                            <input
-                                class="span5"
-                                data-ng-model="editor.content.biblStruct.monogr.edition_asArray[0].__text"
-                                name="biblStruct.monogr.edition" 
-                                placeholder="Edition (eg, 5th)"
-                                />
+                        <div class="form-group">
+                            <label class="col-md-2 control-label" for="biblStruct.monogr.edition">Edition</label>
+                            <div class="col-md-6">
+                                <input
+                                    class="form-control"
+                                    data-ng-model="editor.content.biblStruct.monogr.edition_asArray[0].__text"
+                                    name="biblStruct.monogr.edition" 
+                                    placeholder="Edition (eg, 5th)"
+                                    />
+                            </div>
                         </div>
-                        <div class="controls controls-row">
-                            <label class="span2" for="biblStruct.monogr.biblScope1">Scope</label>
-                            <select 
-                                class="span2"
-                                name="biblStruct.monogr.biblScope_unit"
-                                data-ng-model="editor.content.biblStruct.monogr.biblScope_asArray[0]._unit" 
-                                data-ng-required="editor.content.biblStruct.monogr.biblScope_asArray[0]._from || editor.content.biblStruct.monogr.biblScope_asArray[0]._to"
-                                data-ng-options="code as scope for (code, scope) in editor.monographScopes">
-                            <span class="span1">from </span>
-                            <input class="span1"
-                                data-ng-model="editor.content.biblStruct.monogr.biblScope_asArray[0]._from"
-                                name="biblStruct.monogr.biblScope1"
-                                data-ng-required="editor.content.biblStruct.monogr.biblScope_asArray[0]._unit || editor.content.biblStruct.monogr.biblScope_asArray[0]._to"
-                                placeholder="From"/>
-                            <span class="span1"> to </span>
-                            <input class="span1"
-                                data-ng-model="editor.content.biblStruct.monogr.biblScope_asArray[0]._to"
-                                name="biblStruct.monogr.biblScope2"
-                                data-ng-required="editor.content.biblStruct.monogr.biblScope_asArray[0]._unit || editor.content.biblStruct.monogr.biblScope_asArray[0]._from"
-                                placeholder="To"/>
+                        <div class="form-group">
+                            <label class="col-md-2 control-label" for="biblStruct.monogr.biblScope1">Scope</label>
+                            <div class="col-md-2">
+                                <select 
+                                    class="form-control"
+                                    name="biblStruct.monogr.biblScope_unit"
+                                    data-ng-model="editor.content.biblStruct.monogr.biblScope_asArray[0]._unit" 
+                                    data-ng-required="editor.content.biblStruct.monogr.biblScope_asArray[0]._from || editor.content.biblStruct.monogr.biblScope_asArray[0]._to"
+                                    data-ng-options="code as scope for (code, scope) in editor.monographScopes"/>
+                            </div>
+                            <label class="control-label col-md-1" for="biblStruct.monogr.biblScope1">from</label>
+                            <div class="col-md-1">
+                                <input class="form-control"
+                                    data-ng-model="editor.content.biblStruct.monogr.biblScope_asArray[0]._from"
+                                    name="biblStruct.monogr.biblScope1"
+                                    data-ng-required="editor.content.biblStruct.monogr.biblScope_asArray[0]._unit || editor.content.biblStruct.monogr.biblScope_asArray[0]._to"
+                                    placeholder="From"/>
+                            </div>
+                            <label class="control-label col-md-1" for="biblStruct.monogr.biblScope2">to</label>
+                            <div class="col-md-1">
+                                <input class="form-control"
+                                    data-ng-model="editor.content.biblStruct.monogr.biblScope_asArray[0]._to"
+                                    name="biblStruct.monogr.biblScope2"
+                                    data-ng-required="editor.content.biblStruct.monogr.biblScope_asArray[0]._unit || editor.content.biblStruct.monogr.biblScope_asArray[0]._from"
+                                    placeholder="To"/>
+                            </div>
                         </div>
-                        <div class="controls controls-row">
-                            <label class="span2" for="biblStruct.monogr.imprint.publisher">Publisher</label>
-                            <input
-                                class="span10"
-                                data-ng-model="editor.content.biblStruct.monogr.imprint.publisher_asArray[0].__text"
-                                name="biblStruct.monogr.imprint.publisher"
-                                data-ng-required="!editor.content.biblStruct.monogr.imprint.distributor.name_asArray[0].__text &amp;&amp; !editor.content.biblStruct.monogr.imprint.distributor.ref_asArray[0]._target &amp;&amp; !editor.content.biblStruct.monogr.imprint.distributor.ref_asArray[0].__text" 
-                                placeholder="Publisher"
-                                />
+                        <div class="form-group">
+                            <label class="col-md-2 control-label" for="biblStruct.monogr.imprint.publisher">Publisher</label>
+                            <div class="col-md-6">
+                                <input
+                                    class="form-control"
+                                    data-ng-model="editor.content.biblStruct.monogr.imprint.publisher_asArray[0].__text"
+                                    name="biblStruct.monogr.imprint.publisher"
+                                    data-ng-required="!editor.content.biblStruct.monogr.imprint.distributor.name_asArray[0].__text &amp;&amp; !editor.content.biblStruct.monogr.imprint.distributor.ref_asArray[0]._target &amp;&amp; !editor.content.biblStruct.monogr.imprint.distributor.ref_asArray[0].__text" 
+                                    placeholder="Publisher"
+                                    />
+                            </div>
                         </div>
-                        <div class="controls controls-row">
-                            <label class="span2" for="biblStruct.monogr.imprint.pubPlace">Publication place</label>
-                            <input
-                                class="span5"
-                                data-ng-model="editor.content.biblStruct.monogr.imprint.pubPlace_asArray[0].__text"
-                                name="biblStruct.monogr.imprint.pubPlace" 
-                                placeholder="Publication place (eg, Jerusalem, Israel; New York, NY)"
-                                />
+                        <div class="form-group">
+                            <label class="col-md-2 control-label" for="biblStruct.monogr.imprint.pubPlace">Publication place</label>
+                            <div class="col-md-6">
+                                <input
+                                    class="form-control"
+                                    data-ng-model="editor.content.biblStruct.monogr.imprint.pubPlace_asArray[0].__text"
+                                    name="biblStruct.monogr.imprint.pubPlace" 
+                                    placeholder="Publication place (eg, Jerusalem, Israel; New York, NY)"
+                                    />
+                            </div>
                         </div>
-                        <div class="controls controls-row">
-                            <label class="span2" for="biblStruct.monogr.imprint.date">Publication date</label>
-                            <input
-                                class="span2"
-                                data-ng-model="editor.content.biblStruct.monogr.imprint.date_asArray[0].__text"
-                                name="biblStruct.monogr.imprint.date"
-                                data-ng-required="editor.content.biblStruct.monogr.imprint.publisher_asArray[0].__text"
-                                data-ng-pattern="/^(\d{4}(-[01]\d(-[0-3]\d)?)?)$/"
-                                placeholder="YYYY-MM-DD"
-                                />
+                        <div class="form-group">
+                            <label class="col-md-2 control-label" for="biblStruct.monogr.imprint.date">Publication date</label>
+                            <div class="col-md-2">
+                                <input
+                                    class="form-control"
+                                    data-ng-model="editor.content.biblStruct.monogr.imprint.date_asArray[0].__text"
+                                    name="biblStruct.monogr.imprint.date"
+                                    data-ng-required="editor.content.biblStruct.monogr.imprint.publisher_asArray[0].__text"
+                                    data-ng-pattern="/^(\d{4}(-[01]\d(-[0-3]\d)?)?)$/"
+                                    placeholder="YYYY-MM-DD"
+                                    />
+                            </div>
                         </div>
-                        <div class="controls controls-row">
-                            <label class="span2" for="biblStruct.monogr.imprint.distributor.name">Distributor</label>
-                            <input
-                                class="span8"
-                                data-ng-model="editor.content.biblStruct.monogr.imprint.distributor.name_asArray[0].__text"
-                                data-ng-required="!editor.content.biblStruct.monogr.imprint.publisher.__text &amp;&amp; !editor.content.biblStruct.monogr.imprint.distributor.ref_asArray[0].__text"
-                                name="biblStruct.monogr.imprint.distributor.name" 
-                                placeholder="Offline distributor"
-                                />
+                        <div class="form-group">
+                            <label class="col-md-2 control-label" for="biblStruct.monogr.imprint.distributor.name">Distributor</label>
+                            <div class="col-md-6">
+                                <input
+                                    class="form-control"
+                                    data-ng-model="editor.content.biblStruct.monogr.imprint.distributor.name_asArray[0].__text"
+                                    data-ng-required="!editor.content.biblStruct.monogr.imprint.publisher.__text &amp;&amp; !editor.content.biblStruct.monogr.imprint.distributor.ref_asArray[0].__text"
+                                    name="biblStruct.monogr.imprint.distributor.name" 
+                                    placeholder="Offline distributor"
+                                    />
+                            </div>
                         </div>
-                        <div class="controls controls-row">
-                            <label class="span2" for="biblStruct.monogr.imprint.distributor.ref">Distributor website</label>
-                            <input
-                                class="span4"
-                                data-ng-model="editor.content.biblStruct.monogr.imprint.distributor.ref_asArray[0].__text"
-                                name="biblStruct.monogr.imprint.distributor.ref" 
-                                data-ng-required="(!editor.content.biblStruct.monogr.imprint.distributor.name_asArray[0].__text &amp;&amp; !editor.content.biblStruct.monogr.imprint.publisher_asArray[0].__text) || editor.content.biblStruct.monogr.imprint.distributor.ref_asArray[0]._target"
-                                placeholder="Online distributor website title"
-                                />
-                            <input
-                                class="span4"
-                                data-ng-model="editor.content.biblStruct.monogr.imprint.distributor.ref_asArray[0]._target"
-                                name="biblStruct.monogr.imprint.distributor.ref._target" 
-                                data-ng-required="editor.content.biblStruct.monogr.imprint.distributor.ref_asArray[0].__text"
-                                placeholder="Distributor URL (eg, http://www.example.com/x/y/z)"
-                                />
-                            <input
-                                class="span2"
-                                data-ng-model="editor.content.biblStruct.monogr.imprint.distributor.date_asArray[0].__text"
-                                name="biblStruct.monogr.imprint.distributor.date" 
-                                data-ng-pattern="/^\d{4}-[01]\d-[0-3]\d$/"
-                                placeholder="Access date (YYYY-MM-DD)"
-                                />
+                        <div class="form-group">
+                            <label class="col-md-2 control-label" for="biblStruct.monogr.imprint.distributor.ref">Distributor website</label>
+                            <div class="col-md-6">
+                                <input
+                                    class="form-control"
+                                    data-ng-model="editor.content.biblStruct.monogr.imprint.distributor.ref_asArray[0].__text"
+                                    name="biblStruct.monogr.imprint.distributor.ref" 
+                                    data-ng-required="(!editor.content.biblStruct.monogr.imprint.distributor.name_asArray[0].__text &amp;&amp; !editor.content.biblStruct.monogr.imprint.publisher_asArray[0].__text) || editor.content.biblStruct.monogr.imprint.distributor.ref_asArray[0]._target"
+                                    placeholder="Online distributor website title"
+                                    />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-6 col-md-offset-2">
+                                <input
+                                    class="form-control"
+                                    data-ng-model="editor.content.biblStruct.monogr.imprint.distributor.ref_asArray[0]._target"
+                                    name="biblStruct.monogr.imprint.distributor.ref._target" 
+                                    data-ng-required="editor.content.biblStruct.monogr.imprint.distributor.ref_asArray[0].__text"
+                                    placeholder="Distributor URL (eg, http://www.example.com/x/y/z)"
+                                    />
+                            </div>
+                            <div class="col-md-2">
+                                <input
+                                    class="form-control"
+                                    data-ng-model="editor.content.biblStruct.monogr.imprint.distributor.date_asArray[0].__text"
+                                    name="biblStruct.monogr.imprint.distributor.date" 
+                                    data-ng-pattern="/^\d{4}-[01]\d-[0-3]\d$/"
+                                    placeholder="Access date (YYYY-MM-DD)"
+                                    />
+                            </div>
                         </div>
                     </fieldset>
                     <fieldset data-ng-show="editor.isSeries">
                         <legend>Series</legend>
-                        <div class="controls controls-row">
-                            <label class="span2" for="biblStruct.series.title_main">Series title:</label>
-                            <select 
-                                class="span2"
-                                name="biblStruct.series.title_main_xmlLang"
-                                data-ng-model="editor.content.biblStruct.series.title_asArray[0]['_xml:lang']" 
-                                data-ng-required="editor.isSeries"
-                                data-ng-options="code as language for (code, language) in editor.supportedLanguages">
-                            <input class="span8" name="biblStruct.series.title_main" data-ng-model="editor.content.biblStruct.series.title_asArray[0].__text"
-                                placeholder="Main series title" data-ng-required="editor.isSeries"/>
+                        <div class="form-group">
+                            <label class="col-md-2 control-label" for="biblStruct.series.title_main">Series title:</label>
+                            <div class="col-md-2">
+                                <select 
+                                    class="form-control"
+                                    name="biblStruct.series.title_main_xmlLang"
+                                    data-ng-model="editor.content.biblStruct.series.title_asArray[0]['_xml:lang']" 
+                                    data-ng-required="editor.isSeries"
+                                    data-ng-options="code as language for (code, language) in editor.supportedLanguages"/>
+                            </div>
+                            <div class="col-md-6">
+                                <input class="form-control" name="biblStruct.series.title_main" data-ng-model="editor.content.biblStruct.series.title_asArray[0].__text"
+                                    placeholder="Main series title" data-ng-required="editor.isSeries"/>
+                            </div>
                         </div>
-                        <div class="controls controls-row">
-                            <label class="span2" for="biblStruct.series.title_sub">Series subtitle:</label>
-                            <select 
-                                class="span2"
-                                name="biblStruct.series.title_sub_xmlLang"
-                                data-ng-model="editor.content.biblStruct.series.title_asArray[1]['_xml:lang']" 
-                                data-ng-required="editor.content.biblStruct.series.title_asArray[1].__text"
-                                data-ng-options="code as language for (code, language) in editor.supportedLanguages">
-                            <input class="span8" name="biblStruct.series.title_sub" data-ng-model="editor.content.biblStruct.series.title_asArray[1].__text"
-                                placeholder="Series subtitle"/>
+                        <div class="form-group">
+                            <label class="col-md-2 control-label" for="biblStruct.series.title_sub">Series subtitle:</label>
+                            <div class="col-md-2">
+                                <select 
+                                    class="form-control"
+                                    name="biblStruct.series.title_sub_xmlLang"
+                                    data-ng-model="editor.content.biblStruct.series.title_asArray[1]['_xml:lang']" 
+                                    data-ng-required="editor.content.biblStruct.series.title_asArray[1].__text"
+                                    data-ng-options="code as language for (code, language) in editor.supportedLanguages"/>
+                            </div>
+                            <div class="col-md-6">
+                                <input class="form-control" name="biblStruct.series.title_sub" data-ng-model="editor.content.biblStruct.series.title_asArray[1].__text"
+                                    placeholder="Series subtitle"/>
+                            </div>
                         </div>
-                        <div class="controls controls-row">
-                            <label class="span2" for="biblStruct.series.title_sub">Series alternate title:</label>
-                            <select 
-                                class="span2"
-                                name="biblStruct.series.title_alt_xmlLang"
-                                data-ng-model="editor.content.biblStruct.series.title_asArray[2]['_xml:lang']" 
-                                data-ng-required="editor.content.biblStruct.series.title_asArray[2].__text"
-                                data-ng-options="code as language for (code, language) in editor.supportedLanguages">
-                            <input class="span8" name="biblStruct.series.title_alt" data-ng-model="editor.content.biblStruct.series.title_asArray[2].__text"
-                                placeholder="Alternate series main title (eg, translation)"/>
+                        <div class="form-group">
+                            <label class="col-md-2 control-label" for="biblStruct.series.title_sub">Series alternate title:</label>
+                            <div class="col-md-2">
+                                <select 
+                                    class="form-control"
+                                    name="biblStruct.series.title_alt_xmlLang"
+                                    data-ng-model="editor.content.biblStruct.series.title_asArray[2]['_xml:lang']" 
+                                    data-ng-required="editor.content.biblStruct.series.title_asArray[2].__text"
+                                    data-ng-options="code as language for (code, language) in editor.supportedLanguages"/>
+                            </div>
+                            <div class="col-md-6">
+                                <input class="form-control" name="biblStruct.series.title_alt" data-ng-model="editor.content.biblStruct.series.title_asArray[2].__text"
+                                    placeholder="Alternate series main title (eg, translation)"/>
+                            </div>
                         </div>
-                        <div class="controls controls-row">
-                            <label class="span2" for="biblStruct.series.title_sub">Series alternate subtitle:</label>
-                            <select 
-                                class="span2"
-                                name="biblStruct.series.title_alt_sub_xmlLang"
-                                data-ng-model="editor.content.biblStruct.series.title_asArray[3]['_xml:lang']" 
-                                data-ng-required="editor.content.biblStruct.series.title_asArray[3].__text"
-                                data-ng-options="code as language for (code, language) in editor.supportedLanguages">
-                            <input class="span8" name="biblStruct.series.title_alt_sub" data-ng-model="editor.content.biblStruct.series.title_asArray[3].__text"
-                                placeholder="Alternate series subtitle (eg, translation)"/>
+                        <div class="form-group">
+                            <label class="col-md-2 control-label" for="biblStruct.series.title_sub">Series alternate subtitle:</label>
+                            <div class="col-md-2">
+                                <select 
+                                    class="form-control"
+                                    name="biblStruct.series.title_alt_sub_xmlLang"
+                                    data-ng-model="editor.content.biblStruct.series.title_asArray[3]['_xml:lang']" 
+                                    data-ng-required="editor.content.biblStruct.series.title_asArray[3].__text"
+                                    data-ng-options="code as language for (code, language) in editor.supportedLanguages"/>
+                            </div>
+                            <div class="col-md-6">
+                                <input class="form-control" name="biblStruct.series.title_alt_sub" data-ng-model="editor.content.biblStruct.series.title_asArray[3].__text"
+                                    placeholder="Alternate series subtitle (eg, translation)"/>
+                            </div>
                         </div>
+                        <!-- Do series have authors or just editors?
                         <div data-os-array-input="editor.content.biblStruct.series.author_asArray" 
                             data-placeholder="Series Author"
                             data-label="Series authors"
                             data-name="biblStruct.series.author"
                             data-child="name"/>
+                        -->
                         <div data-os-array-input="editor.content.biblStruct.series.editor_asArray" 
                             data-placeholder="Series Editor"
                             data-label="Series Editors"
                             data-name="biblStruct.series.editor"
                             data-child="name"/>
                         <!-- responsibilities -->
-                        <div class="control-group">
-                            <label class="control-label" for="biblStruct.series.respStmt.name1">Additional Responsibilities for the series</label>
-                            <div
-                                data-ng-repeat="respStmt in editor.content.biblStruct.series.respStmt_asArray">
-                                <div class="controls controls-row" data-ng-show="$index == 0 || editor.content.biblStruct.series.respStmt_asArray[$index - 1].name.__text || respStmt.name.__text">
-                                    <select class="span2"
+                        <div class="form-group">
+                            <label class="col-md-offset-1 control-label" for="biblStruct.series.respStmt.name1">Additional Responsibilities for the series</label>
+                        </div>
+                        <div
+                            data-ng-repeat="respStmt in editor.content.biblStruct.series.respStmt_asArray">
+                            <div class="form-group" data-ng-show="$index == 0 || editor.content.biblStruct.series.respStmt_asArray[$index - 1].name.__text || respStmt.name.__text">
+                                <div class="col-md-2">
+                                    <select class="form-control"
                                         name="biblStruct.series.respStmt.resp_key{{$index}}"
                                         data-ng-model="respStmt.resp._key"
                                         data-ng-required="respStmt.name.__text"
@@ -418,7 +503,9 @@
                                         data-ng-change="respStmt.resp.__text = editor.supportedResponsibilities[respStmt.resp._key]">
                                          <option value="">-- Responsibility --</option>
                                     </select>
-                                    <input class="span10"
+                                </div>
+                                <div class="col-md-6">
+                                    <input class="form-control"
                                         name="biblStruct.series.respStmt.name{{$index}}"
                                         data-ng-model="respStmt.name.__text"
                                         placeholder="Name"/>
@@ -428,32 +515,41 @@
                     </fieldset>
                     <fieldset>
                         <legend>Notes</legend>
-                        <div class="control-group">
-                            <label for="biblStruct.note">Optional descriptive comments about the source that not covered in other fields:</label>
-                            <textarea
-                                class="input-block-level" 
-                                placeholder="Note."
-                                data-ng-model="editor.content.biblStruct.note_asArray[1].__text"
-                                name="biblStruct.note"
-                                />
+                        <div class="form-group">
+                            <label class="control-label col-md-2" for="biblStruct.note">Optional descriptive comments about the source that not covered in other fields:</label>
+                            <div class="col-md-6">
+                                <textarea
+                                    class="form-control" 
+                                    placeholder="Note."
+                                    data-ng-model="editor.content.biblStruct.note_asArray[1].__text"
+                                    name="biblStruct.note"
+                                    />
+                            </div>
                         </div>
-                        <div class="control-group">
-                            <label for="biblStruct.note_copyright.note">Copyright note.</label>
-                            <textarea
-                                class="input-block-level" 
-                                placeholder="Note about licensing or copyright status, if necessary"
-                                data-ng-model="editor.content.biblStruct.note_asArray[0].note.__text"
-                                name="biblStruct.note_copyright.note"
-                                />
-                            <div class="controls control-row">
-                                <label for="biblStruct.note.ref" class="span2">License name/URL:</label>
-                                <input class="span5"
+                        <div class="form-group">
+                            <label class="control-label col-md-2" for="biblStruct.note_copyright.note">Copyright note.</label>
+                            <div class="col-md-6">
+                                <textarea
+                                    class="form-control" 
+                                    placeholder="Note about licensing or copyright status, if necessary"
+                                    data-ng-model="editor.content.biblStruct.note_asArray[0].note.__text"
+                                    name="biblStruct.note_copyright.note"
+                                    />
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="control-label col-md-2" for="biblStruct.note.ref" class="span2">License name/URL:</label>
+                            <div class="col-md-4">
+                                <input class="form-control"
                                     data-ng-model="editor.content.biblStruct.note.ref.__text"
                                     data-ng-required="editor.content.biblStruct.note.ref._target"
                                     name="biblStruct.note.ref"
                                     placeholder="Name of copyright license"
                                     />
-                                <input class="span5"
+                            </div>
+                            <div class="col-md-5">
+                                <input class="form-control"
                                     data-ng-model="editor.content.biblStruct.note.ref._target"
                                     name="biblStruct.note.ref._target"
                                     data-ng-required="editor.content.biblStruct.note.ref.__text"
@@ -464,26 +560,29 @@
                     </fieldset>
                     <fieldset>
                         <legend>Transcription source</legend>
-                        <div class="controls controls-row">
-                            <label class="span4" for="biblStruct.relatedItem._target">URL for the title page of the scanned book</label>
-                            <input class="span8"
-                                name="biblStruct.relatedItem._target"
-                                data-ng-model="editor.content.biblStruct.relatedItem._target"
-                                placeholder="eg, http://example.com/book"
-                                />
+                        <div class="form-group">
+                            <label class="control-label col-md-4" for="biblStruct.relatedItem._target">URL for the title page of the scanned book</label>
+                            <div class="col-md-6">
+                                <input class="form-control"
+                                    name="biblStruct.relatedItem._target"
+                                    data-ng-model="editor.content.biblStruct.relatedItem._target"
+                                    placeholder="eg, http://example.com/book"
+                                    />
+                            </div>
                         </div>
-                        <div class="controls controls-row">
-                            <label class="span4" for="biblStruct.relatedItem._targetPattern">URL for a scanned page image. Use <code data-ng-non-bindable="1">{page}</code> for the point where the page number appears in the URL.</label>
-                            <input class="span8"
-                                name="biblStruct.relatedItem._targetPattern"
-                                data-ng-model="editor.content.biblStruct.relatedItem._targetPattern"
-                                placeholder="eg, http://example.com/book.jpg"
-                                />
+                        <div class="form-group">
+                            <label class="control-label col-md-4" for="biblStruct.relatedItem._targetPattern">URL for a scanned page image. Use <code data-ng-non-bindable="1">{page}</code> for the point where the page number appears in the URL.</label>
+                            <div class="col-md-6">
+                                <input class="form-control"
+                                    name="biblStruct.relatedItem._targetPattern"
+                                    data-ng-model="editor.content.biblStruct.relatedItem._targetPattern"
+                                    placeholder="eg, http://example.com/book.jpg"
+                                    />
+                            </div>
                         </div>
                     </fieldset>
                 </form>
             </div>
-        </div>
     </div>
     <os-open-dialog api="'/api/data/sources'" selection="selection" 
         title="Open Source" name="openDialog"></os-open-dialog>

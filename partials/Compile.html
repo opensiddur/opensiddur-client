@@ -1,7 +1,7 @@
 <div class="container-fluid">
     <h1>Compilation of {{resource}}</h1>
 
-    <div class="row-fluid">
+    <div class="row">
         <table border="1">
             <tbody>
                 <tr>
@@ -37,7 +37,7 @@
                     <td>
                         <span class="alert-success" data-ng-show="step.state == 'complete'">&#x2714;</span>
                         <span class="alert-info" data-ng-show="step.state == 'working'">&#x25b6;</span>
-                        <span class="alert-error" data-ng-show="step.state == 'failed'">&#x2717;</span>
+                        <span class="alert-danger" data-ng-show="step.state == 'failed'">&#x2717;</span>
                     </td>
                     <td>{{step.stage}}</td>
                     <td>{{step.resource}} ({{step.type}})</td>
@@ -50,6 +50,5 @@
                 </tr>
             </tbody>
         </table>
-
     </div>
 </div>

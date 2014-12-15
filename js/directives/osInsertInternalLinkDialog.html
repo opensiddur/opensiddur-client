@@ -1,17 +1,21 @@
-<div class="osInsertInternalLinkDialog modal hide" aria-hidden="true" aria-labelledBy="insertInternalLinkDialogHeader">
-    <div class="modal-header">
-        <button type="button" class="close" data-ng-click="CloseButton()" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h3 id="insertInternalLinkDialogHeader">{{ title }}</h3>
-    </div>
-    <div class="modal-body">
-        <os-id-list content="content" allow-range="allowRange" selection="links.composed" update="updateIds"></os-id-list>
-    </div>
-    <div class="modal-footer">
-        <span data-ng-show="links.composed">Link: <b>{{links.composed}}</b></span>
-        <a href="#" class="btn" data-ng-click="CloseButton()" data-dismiss="modal">Close</a>
-        <a href="#" class="btn btn-primary" data-dismiss="modal"
-            data-ng-disabled="!links.composed" 
-            data-ng-click="OKButton()">Insert</a>
+<div class="osInsertInternalLinkDialog modal" aria-hidden="true" aria-labelledBy="insertInternalLinkDialogHeader">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-ng-click="CloseButton()" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="insertInternalLinkDialogHeader">{{ title }}</h4>
+            </div>
+            <div class="modal-body">
+                <os-id-list content="content" allow-range="allowRange" selection="links.composed" update="updateIds"></os-id-list>
+            </div>
+            <div class="modal-footer">
+                <span data-ng-show="links.composed">Link: <b>{{links.composed}}</b></span>
+                <button type="button" class="btn" data-ng-click="CloseButton()" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal"
+                    data-ng-disabled="!links.composed" 
+                    data-ng-click="OKButton()">Insert</button>
+            </div>
+        </div>
     </div>
 </div>
 
