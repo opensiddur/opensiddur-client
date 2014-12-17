@@ -17,6 +17,20 @@ OpenSiddurClientApp.service("TextService", [
             }
             return this._content;
         },
+        partialContent : function(contentElement, setContent) {
+            /* replace a single-instance element's content.
+                There must be exactly one of the contentElement in _content to use this function
+             */
+            if (setContent) {
+                var regex = new RegExp("(<"+contentElement+"[^>]*>\\s*)[\\S\\s]*(\\s*</"+contentElement+">)", "gm");
+                this._content = this._content.replace(regex, "$1" + setContent + "$2");
+                return this;
+            }
+            return (this._content) ? $(contentElement.replace(":", "\\:"), this._content).html() : "";
+        },
+        streamText : function(setContent) { return this.partialContent("j:streamText", setContent); },
+        stylesheet : function(setContent) { return this.partialContent("j:stylesheet", setContent); },
+        annotations : function(setContent) { return this.partialContent("j:annotations", setContent); },
         license : function(licenseJson) {
             // return or accept { license : "string" }
             if (licenseJson) {

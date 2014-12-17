@@ -90,6 +90,11 @@ OpenSiddurClientApp.controller(
             },
             access : AccessModelService.default(AuthenticationService.userName),
             accessModel : "public",
+            editableText : function(setContent) {
+                return ($scope.resourceType.current.editorMode == "xml") ? 
+                    TextService.content(setContent) :
+                    TextService.stylesheet(setContent);
+            },
             setAccessModel : function() {
                 this.accessModel = (this.isNew) ? "public" : (
                     (this.access.group == "everyone" && this.access.groupWrite) ? "public" : "restricted"
@@ -127,7 +132,6 @@ OpenSiddurClientApp.controller(
                 console.log("Start a new document");
                 $scope.editor.isNew = 1;
                 TextService.content("");
-                $scope.editor.loadedContent = "";
                 // default access rights for a new file
                 $scope.editor.access = AccessModelService.default(AuthenticationService.userName);
                 // load a new document template
@@ -224,11 +228,13 @@ OpenSiddurClientApp.controller(
                     RestApi[$scope.resourceType.current.api].put;
                 var resource = ((this.isNew) ? "" : $scope.editor.currentDocument);
                 var content = TextService.content(); //$scope.editor.codemirror.doc.getValue();
-                var transformed = 
+                var transformed =
+                    XsltService.transformString( "originalBeforeSave", content );
+                    /* 
                     ($scope.resourceType.current.editorMode=="xml") ?
                         XsltService.transformString( "originalBeforeSave", content ) :
                         XsltService.transformString("styleBeforeSave", $scope.editor.loadedContent, 
-                            { "style" : content});
+                            { "style" : content});*/
                 if (transformed) {
                     var indata = XsltService.serializeToStringTEINSClean(transformed);
                     jindata = $(indata);
