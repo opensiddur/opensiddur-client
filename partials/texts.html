@@ -24,8 +24,14 @@
                           data-ng-click="editor.compile()"
                           >Compile to HTML</button>
                 </div>
+                <div class="btn-group navbar-btn">
+                    <button data-ng-disabled="!editor.access.write || !editor.isLoaded" class="btn dropdown-toggle" data-toggle="dropdown">Metadata<b class="caret"></b></button>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a href="#" data-ng-click="DialogService.open('metadataLicenseDialog')">Copyright License...</a></li>
+                    </ul>
+                </div>
                 <div class="btn-group navbar-btn" data-ng-show="resourceType.current.editorMode == 'xml'">
-                    <button data-ng-disabled="!editor.access.write || !editor.isLoaded" class="btn dropdown-toggle" data-toggle="dropdown" href="#">XML<b class="caret"></b></button>
+                    <button data-ng-disabled="!editor.access.write || !editor.isLoaded" class="btn dropdown-toggle" data-toggle="dropdown">XML<b class="caret"></b></button>
                     <ul class="dropdown-menu" role="menu">
                         <li><a href="#" data-ng-click="DialogService.open('internalLinkDialog')">Insert internal link...</a></li>
                         <li><a href="#" data-ng-click="DialogService.open('linkDialog')">Insert external link...</a></li>
@@ -66,7 +72,8 @@
                         <textarea  
                             data-ui-codemirror="{ onLoad : editor.loaded }"
                             data-ui-codemirror-opts="editor.codemirrorOptions"
-                            data-ng-model="editor.content"
+                            data-ng-model="TextService.content"
+                            data-ng-model-options="{ getterSetter : true, debounce: 100 }"
                             ></textarea>
                     </div>
                     <div data-ng-class="{true:'col-md-6', false:'off'}[editor.transcriptionViewer]">
@@ -105,4 +112,8 @@
             on-ok="helper.link.insert"
             on-close="helper.link.cancel"
             ></os-insert-link-dialog>
+    <os-metadata-license-dialog
+            name="metadataLicenseDialog"
+            title="License"
+            access-model="editor.access"></os-metadata-license-dialog>
 </div>
