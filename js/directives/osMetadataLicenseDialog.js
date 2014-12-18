@@ -1,8 +1,8 @@
 /* Insert internal link dialog
  *
  * Usage:
- * <os-insert-internal-link-dialog content="" on-ok="" on-close="" title="" name="" allow-range=""/>
- * on-ok runs when the OK button is pressed, on-close runs when the dialog is canceled
+ * <os-metadata-license-dialog on-ok="" on-close="" title="" name="" accessModel="" />
+ * on-ok runs when the OK button is pressed (it can cancel the OK), on-close runs when the dialog is canceled
  * name is an id, title is the header text
  *
  * Copyright 2014 Efraim Feinstein, efraim@opensiddur.org
@@ -18,16 +18,22 @@ OpenSiddurClientApp.directive(
                 scope : {
                     name : "@",
                     title : "@",
-                    accessModel : "="
+                    accessModel : "=",
+                    onOk : "&",
+                    onClose : "&"
                 },
                 controller: ['$scope', function ($scope) {
                     console.log("In license metadata controller");
                     $scope.supportedLicenses = supportedLicenses;
                     $scope.OKButton = function () {
-                        TextService.license($scope.licenseModel);
-                        $("#"+$scope.name).modal('hide');
+                        if (!$scope.onOk() || $scope.onOk()($scope.licenseModel)) {
+                            TextService.license($scope.licenseModel);
+                        
+                            $("#"+$scope.name).modal('hide');
+                        }
                     };
                     $scope.CloseButton = function () {
+                        if ($scope.onClose()) { $scope.onClose()(); }
                         $("#"+$scope.name).modal('hide');
                     };
                     if (!$scope.title) {
