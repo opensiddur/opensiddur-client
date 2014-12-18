@@ -31,6 +31,19 @@ OpenSiddurClientApp.service("TextService", [
         streamText : function(setContent) { return this.partialContent("j:streamText", setContent); },
         stylesheet : function(setContent) { return this.partialContent("j:stylesheet", setContent); },
         annotations : function(setContent) { return this.partialContent("j:annotations", setContent); },
+        title : function(titleJson) {
+            // [ {title :, lang:, subtitle: } ]
+            var xj = new X2JS({ arrayAccessForm : "property" });   
+            
+            if (titleJson) {
+                this._content = XsltService.indentToString(
+                    XsltService.transformString("/xsl/SetTitles.xsl", this._content, { 
+                        "new-titles" : xj.json2xml(angular.fromJson(angular.toJson({titles : {title : titleJson}})))}
+                ));
+                return this;
+            }
+            return xj.xml2json(XsltService.transformString("/xsl/GetTitles.xsl", this._content)).titles.title_asArray;
+        },
         license : function(licenseJson) {
             // return or accept { license : "string" }
             if (licenseJson) {

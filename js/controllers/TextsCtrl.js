@@ -95,6 +95,10 @@ OpenSiddurClientApp.controller(
                     TextService.content(setContent) :
                     TextService.stylesheet(setContent);
             },
+            makeDirty : function(whatsChanged) {
+                $scope.textsForm.$setDirty();
+                return true;
+            },
             setAccessModel : function() {
                 this.accessModel = (this.isNew) ? "public" : (
                     (this.access.group == "everyone" && this.access.groupWrite) ? "public" : "restricted"
