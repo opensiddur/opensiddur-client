@@ -44,6 +44,21 @@ OpenSiddurClientApp.service("TextService", [
             }
             return xj.xml2json(XsltService.transformString("/xsl/GetTitles.xsl", this._content)).titles.title_asArray;
         },
+        responsibility : function(respJson) {
+            // [ {respName, respType, respText, respRef} ]
+            var xj = new X2JS({ arrayAccessForm : "property" });   
+            
+            if (respJson) {
+                this._content = XsltService.indentToString(
+                    XsltService.transformString("/xsl/SetResps.xsl", this._content, { 
+                        "new-respStmts" : xj.json2xml(angular.fromJson(angular.toJson({respStmts : {respStmt : respJson}})))}
+                ));
+                return this;
+            }
+            var js = xj.xml2json(XsltService.transformString("/xsl/GetResps.xsl", this._content))
+            
+            return ("respStmt" in js.respStmts) ? js.respStmts.respStmt_asArray : [];
+        },
         license : function(licenseJson) {
             // return or accept { license : "string" }
             if (licenseJson) {

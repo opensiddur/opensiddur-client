@@ -19,16 +19,7 @@ OpenSiddurClientApp.controller(
                 write : AuthenticationService.loggedIn
             },
             "supportedLanguages" : supportedLanguages, 
-            supportedResponsibilities :  {
-                "ann" : "Annotated by",
-                "fac" : "Scanned by",
-                "fnd" : "Funded by",
-                "mrk" : "Markup edited by",
-                "pfr" : "Proofread by",
-                "spn" : "Sponsored by",
-                "trc" : "Transcribed by",
-                "trl" : "Translated by"
-            },
+            "supportedResponsibilities" : supportedResponsibilities,
             "monographScopes" : { 
                 volume : "volume",
                 issue : "issue",

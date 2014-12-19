@@ -29,6 +29,7 @@
                     <ul class="dropdown-menu" role="menu">
                         <li><a href="#" data-ng-click="DialogService.open('metadataTitleDialog')">Set titles...</a></li>
                         <li><a href="#" data-ng-click="DialogService.open('metadataLicenseDialog')">Copyright License...</a></li>
+                        <li><a href="#" data-ng-click="DialogService.open('metadataRespDialog')">Set responsibility credits...</a></li>
                     </ul>
                 </div>
                 <div class="btn-group navbar-btn" data-ng-show="resourceType.current.editorMode == 'xml'">
@@ -122,5 +123,10 @@
             name="metadataTitleDialog"
             title="Titles"
             access-model="editor.access"
-            on-ok="editor.makeDirty"></os-metadata-license-dialog>
+            on-ok="editor.makeDirty"></os-metadata-title-dialog>
+    <os-metadata-resp-dialog
+            name="metadataRespDialog"
+            title="Responsibility Credits"
+            access-model="editor.access"
+            on-ok="editor.makeDirty"></os-metadata-resp-dialog>
 </div>
