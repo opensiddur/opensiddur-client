@@ -32,6 +32,19 @@ var supportedLicenses = {
     "http://www.creativecommons.org/licenses/by-sa/3.0" : "Creative Commons Attribution-ShareAlike 3.0 Unported"
 };
 
+// list of all responsibility types supported by the app
+var supportedResponsibilities = {
+    "ann" : "Annotated by",
+    "fac" : "Scanned by",
+    "fnd" : "Funded by",
+    "mrk" : "Markup edited by",
+    "pfr" : "Proofread by",
+    "spn" : "Sponsored by",
+    "trc" : "Transcribed by",
+    "trl" : "Translated by"
+};
+
+
 /* retrieve an API error return value and return the string */
 var getApiError = function(data) {
   return $($.parseXML(data)).find("message").text();

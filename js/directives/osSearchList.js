@@ -1,7 +1,7 @@
 /* Query box and list box directive
  *
  * Usage:
- * <os-search-list api="" selection=""/>
+ * <os-search-list api="" selection="" selection-description="" />
  *
  * Copyright 2013-2014 Efraim Feinstein, efraim@opensiddur.org
  * Licensed under the GNU Lesser General Public License, version 3 or later
@@ -15,7 +15,8 @@ OpenSiddurClientApp.directive(
                 restrict : 'AE',
                 scope : {
                     api : "=",
-                    selection : "="
+                    selection : "=",
+                    selectionDescription: "=?"
                 },
                 controller: ['$scope', function ($scope) {
                     console.log("In search list controller");
@@ -26,7 +27,8 @@ OpenSiddurClientApp.directive(
                     };
                     $scope.inProgress = false;
                     $scope.results = [];
-                    $scope.resultsEnd = true;       // force no scrolling until first load 
+                    $scope.resultsEnd = true;       // force no scrolling until first load
+                    if (!$scope.selectionDescription) $scope.selectionDescription = ""; // optional
                  }],
                  link: function(scope, elem, attrs, ctrl) {
                     var addResults =
@@ -46,6 +48,7 @@ OpenSiddurClientApp.directive(
                         if (scope.api && !scope.inProgress) {
                             scope.results = [];
                             scope.selection = "";
+                            scope.selectionDescription = "";
                             scope.query.start = 1;
                             scope.resultsEnd = true;
       

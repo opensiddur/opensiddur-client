@@ -133,3 +133,18 @@ textarea.ng-invalid {
     border:1px solid gray;
 }
 
+/* scrollable controls */
+.scrollable-200px {
+    height:200px;
+    max-height:200px;
+    overflow-y:auto;
+    overflow-x:hidden;
+}
+
+.scrollable-300px {
+    height:300px;
+    max-height:300px;
+    overflow-y:auto;
+    overflow-x:hidden;
+}
+
