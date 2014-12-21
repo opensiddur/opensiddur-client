@@ -37,6 +37,6 @@
         </xsl:copy>
     </xsl:template>
     
-    <xsl:template match="comment()|text()"><xsl:copy></xsl:template>
+    <xsl:template match="comment()|text()"><xsl:copy/></xsl:template>
 
 </xsl:stylesheet>
