@@ -8,40 +8,41 @@
             <div class="modal-body">
                 <os-search-list api="'/api/user'" selection="selectedContributor.ref" selection-description="selectedContributor.name">
                 </os-search-list>
-
-                <form class="form-horizontal">
-                    <div class="form-group" data-ng-repeat="resp in respModel track by $index">
-                        <label class="control-label col-md-1" for="respChooser{{$index}}">Credit</label>
-                        <div class="col-md-3">
-                            <select class="form-control"
-                                name="respChooser{{$index}}"
-                                data-ng-model="resp.respType"
-                                data-ng-required="resp.respName"
-                                data-ng-disabled="!accessModel.write"
-                                data-ng-options="key as definition for (key, definition) in supportedResponsibilities"
-                                data-ng-change="resp.respText = supportedResponsibilities[resp.respType]">
-                                 <option value="">-- Responsibility --</option>
-                            </select>
+                <div class="row scrollable-300px">
+                    <form class="form-horizontal">
+                        <div class="form-group" data-ng-repeat="resp in respModel track by $index">
+                            <label class="control-label col-md-1" for="respChooser{{$index}}">Credit</label>
+                            <div class="col-md-3">
+                                <select class="form-control"
+                                    name="respChooser{{$index}}"
+                                    data-ng-model="resp.respType"
+                                    data-ng-required="resp.respName"
+                                    data-ng-disabled="!accessModel.write"
+                                    data-ng-options="key as definition for (key, definition) in supportedResponsibilities"
+                                    data-ng-change="resp.respText = supportedResponsibilities[resp.respType]">
+                                     <option value="">-- Responsibility --</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <p 
+                                    class="form-control-static"
+                                    >{{resp.respName}}</p>
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn form-control"
+                                    data-ng-click="setResponsibility($index)"
+                                    data-ng-disabled="!selectedContributor.ref || !accessModel.write"
+                                    >Select</button>
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn form-control"
+                                    data-ng-click="removeResponsibility($index)"
+                                    data-ng-disabled="!accessModel.write"
+                                    >Remove</button>
+                            </div>
                         </div>
-                        <div class="col-md-4">
-                            <p 
-                                class="form-control-static"
-                                >{{resp.respName}}</p>
-                        </div>
-                        <div class="col-md-2">
-                            <button class="btn form-control"
-                                data-ng-click="setResponsibility($index)"
-                                data-ng-disabled="!selectedContributor.ref || !accessModel.write"
-                                >Select</button>
-                        </div>
-                        <div class="col-md-2">
-                            <button class="btn form-control"
-                                data-ng-click="removeResponsibility($index)"
-                                data-ng-disabled="!accessModel.write"
-                                >Remove</button>
-                        </div>
-                    </div>
-                </form>
+                    </form>
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn" data-ng-click="CloseButton()" data-dismiss="modal">Close</button>
