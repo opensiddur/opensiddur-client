@@ -30,6 +30,7 @@
                         <li><a href="#" data-ng-click="DialogService.open('metadataTitleDialog')">Set titles...</a></li>
                         <li><a href="#" data-ng-click="DialogService.open('metadataLicenseDialog')">Copyright License...</a></li>
                         <li><a href="#" data-ng-click="DialogService.open('metadataRespDialog')">Set responsibility credits...</a></li>
+                        <li><a href="#" data-ng-click="DialogService.open('metadataCommitLogDialog')">View commit log/Set commit message...</a></li>
                     </ul>
                 </div>
                 <div class="btn-group navbar-btn" data-ng-show="resourceType.current.editorMode == 'xml'">
@@ -129,4 +130,9 @@
             title="Responsibility Credits"
             access-model="editor.access"
             on-ok="editor.makeDirty"></os-metadata-resp-dialog>
+    <os-metadata-commit-log-dialog
+            name="metadataCommitLogDialog"
+            title="Commit Log"
+            access-model="editor.access"
+            on-ok="editor.makeDirty"></os-metadata-commit-log-dialog>
 </div>

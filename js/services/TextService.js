@@ -8,6 +8,7 @@
 OpenSiddurClientApp.service("TextService", [
     "XsltService",
     function(XsltService) {
+    var xj = new X2JS({ arrayAccessForm : "property" });   
     return {
         _content : "",
         content : function(setContent) {
@@ -33,7 +34,6 @@ OpenSiddurClientApp.service("TextService", [
         annotations : function(setContent) { return this.partialContent("j:annotations", setContent); },
         title : function(titleJson) {
             // [ {title :, lang:, subtitle: } ]
-            var xj = new X2JS({ arrayAccessForm : "property" });   
             
             if (titleJson) {
                 this._content = XsltService.indentToString(
@@ -46,7 +46,6 @@ OpenSiddurClientApp.service("TextService", [
         },
         responsibility : function(respJson) {
             // [ {respName, respType, respText, respRef} ]
-            var xj = new X2JS({ arrayAccessForm : "property" });   
             
             if (respJson) {
                 this._content = XsltService.indentToString(
@@ -67,6 +66,24 @@ OpenSiddurClientApp.service("TextService", [
                 return this;
             }
             return { license : $("tei\\:licence", this._content).attr("target") };
+        },
+        commitMessage : function(newMessage) {
+            // get or set current commit message 
+            // { message : "" }
+            var xjc = new X2JS({ "arrayAccessForm" : "none", "emptyNodeForm" : "text" }); 
+            if (newMessage) {
+                this._content = XsltService.indentToString(
+                    XsltService.transformString("/xsl/SetCommitMessage.xsl", this._content, {
+                        "commit-message" : newMessage.message.__text
+                    }));
+                return this;
+            }
+            return xjc.xml2json(XsltService.transformString("/xsl/GetCommitMessage.xsl", this._content));
+        },
+        commitLog : function() {
+            // return value is [{ who, when, message }...]
+            var js = xj.xml2json(XsltService.transformString("/xsl/GetCommitLog.xsl", this._content))
+            return ("change_asArray" in js.changes) ? js.changes.change_asArray : [];
         }
     };
 }]);
