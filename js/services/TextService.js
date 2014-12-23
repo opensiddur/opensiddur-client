@@ -67,6 +67,19 @@ OpenSiddurClientApp.service("TextService", [
             }
             return { license : $("tei\\:licence", this._content).attr("target") };
         },
+        sources : function(sourcesJson) {
+            // { sources : 
+            if (sourcesJson) {
+                this._content = XsltService.indentToString(
+                    XsltService.transformString("/xsl/SetSources.xsl", this._content, {
+                        "new-sources" : xj.json2xml(angular.fromJson(angular.toJson({sources : {bibl : sourcesJson}})))
+                    }));
+                return this;
+            }
+            var js = xj.xml2json(XsltService.transformString("/xsl/GetSources.xsl", this._content))
+            
+            return ("bibl_asArray" in js.sources) ? js.sources.bibl_asArray : [];
+        },
         commitMessage : function(newMessage) {
             // get or set current commit message 
             // { message : "" }
