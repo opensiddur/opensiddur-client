@@ -140,21 +140,16 @@
         </tei:biblScope>
     </xsl:template>
 
-    <xsl:template match="tei:relatedItem|tei:relateditem">
-        <tei:relatedItem>
+    <xsl:template match="tei:idno">
+        <tei:idno>
             <xsl:copy-of select="@*"/>
             <xsl:if test="not(@type)">
-                <xsl:attribute name="type">scan</xsl:attribute>
+                <xsl:attribute name="type" select="'uri'"/>
             </xsl:if>
-            <xsl:if test="not(@target)">
-                <xsl:attribute name="target"/>
-            </xsl:if>
-            <xsl:if test="not(@targetPattern)">
-                <xsl:attribute name="targetPattern"/>
-            </xsl:if>
-        </tei:relatedItem>
+            <xsl:apply-templates/>
+        </tei:idno>
     </xsl:template>
-
+    
     <!-- lowercase or uppercase -->
     <xsl:template match="tei:biblStruct|tei:biblstruct">
         <tei:biblStruct>
@@ -246,9 +241,9 @@
                 </xsl:with-param>
             </xsl:call-template>
             <xsl:call-template name="present-or-default">
-                <xsl:with-param name="present" as="node()*"><xsl:apply-templates select="tei:relatedItem|tei:relateditem"/></xsl:with-param>
+                <xsl:with-param name="present" as="node()*"><xsl:apply-templates select="tei:idno"/></xsl:with-param>
                 <xsl:with-param name="default">
-                    <tei:relatedItem type="scan" target="" targetPattern=""/>
+                    <tei:idno type="" />
                 </xsl:with-param>
             </xsl:call-template>
         </tei:biblStruct>
