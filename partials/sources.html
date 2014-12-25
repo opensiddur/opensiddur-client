@@ -561,23 +561,37 @@
                     <fieldset>
                         <legend>Transcription source</legend>
                         <div class="form-group">
-                            <label class="control-label col-md-4" for="biblStruct.relatedItem._target">URL for the title page of the scanned book</label>
+                            <label class="control-label col-md-2" for="biblStruct.idno._target">Location of scanned book</label>
+                            <div class="col-md-2">
+                                <select
+                                    class="form-control" 
+                                    data-ng-model="editor.content.biblStruct.idno._type">
+                                    <option value="">-- Select --</option>
+                                    <option value="uri">URL</option>
+                                    <option value="archive.org">Internet Archive</option>
+                                    <option value="books.google.com">Google Books</option>
+                                </select>
+                            </div>
                             <div class="col-md-6">
                                 <input class="form-control"
-                                    name="biblStruct.relatedItem._target"
-                                    data-ng-model="editor.content.biblStruct.relatedItem._target"
-                                    placeholder="eg, http://example.com/book"
+                                    name="biblStruct.idno.__text"
+                                    data-ng-model="editor.content.biblStruct.idno.__text"
+                                    placeholder="Archive id"
                                     />
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="control-label col-md-4" for="biblStruct.relatedItem._targetPattern">URL for a scanned page image. Use <code data-ng-non-bindable="1">{page}</code> for the point where the page number appears in the URL.</label>
+                            <label class="control-label col-md-5" for="biblStruct.idno.helper">Not sure where to find the archive id? Paste the web address of the book on Google Books or Internet Archive here</label>
                             <div class="col-md-6">
                                 <input class="form-control"
-                                    name="biblStruct.relatedItem._targetPattern"
-                                    data-ng-model="editor.content.biblStruct.relatedItem._targetPattern"
-                                    placeholder="eg, http://example.com/book.jpg"
+                                    name="biblStruct.idno.helper"
+                                    data-ng-model="editor.archiveIdHelper.url"
+                                    data-ng-change="editor.archiveIdHelper.setArchiveId()"
+                                    placeholder="https://books.google.com/xxxx or http://archive.org/details/..."
                                     />
+                            </div>
+                            <div class="col-md-2">
+                                <p data-ng-show="editor.archiveIdHelper.error" class="alert-danger">{{editor.archiveIdHelper.error}}</p>
                             </div>
                         </div>
                     </fieldset>
