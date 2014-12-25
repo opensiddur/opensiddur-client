@@ -77,8 +77,17 @@ OpenSiddurClientApp.service("TextService", [
                 return this;
             }
             var js = xj.xml2json(XsltService.transformString("/xsl/GetSources.xsl", this._content))
-            
-            return ("bibl_asArray" in js.sources) ? js.sources.bibl_asArray : [];
+            // the title is URL encoded. Decode it here
+            if ("bibl_asArray" in js.sources) {
+                var bibl = js.sources.bibl_asArray;
+                for (var i=0; i < bibl.length; i++) {
+                    bibl[i].title = decodeURIComponent(bibl[i].title);
+                }
+                return bibl; 
+            }
+            else {
+                return [];
+            }
         },
         commitMessage : function(newMessage) {
             // get or set current commit message 
