@@ -1,28 +1,28 @@
 <div class="osTranscriptionWindow" data-ng-hide="!active">
     <div class="container-fluid">
         <div class="row">
-            <form class="form-inline">
+            <form class="form-horizontal">
                 <div class="form-group">
-                    <label class="control-label col-md-2" for="source.name">Source:</label>
-                    <div class="col-md-4">
+                    <label class="control-label col-md-1" for="source.name">Source:</label>
+                    <div class="col-md-8">
                         <select
                             class="form-control input-sm"
                             name="source.name" 
                             data-ng-model="currentSource"
-                            data-ng-options="source as source.title for source in sources"/>
+                            data-ng-options="source as source.title for source in sources"
+                            data-ng-change="setSource()"/>
                     </div>
-                </div>
-                <div class="form-group">
                     <div class="col-md-1">
                         <button class="btn btn-primary btn-sm" data-ng-click="refresh()">Refresh</button>
                     </div>
                 </div>
             </form>
         </div>
-        <div class="row" data-ng-hide="!currentSource.scanUrl">
-            <iframe data-ng-src="{{currentSource.scanUrl}}" width="100%" height="450px" frameborder="0"><p>No source selected</p></iframe>
+        <div class="row">
+            <os-transcription-viewer source="viewer.source" page="viewer.page"></os-transcription-viewer>
         </div>
-        <div class="row" data-ng-show="!currentSource.scanUrl">
+        <!--
+        <div class="row" data-ng-show="!currentSource.">
             <p>Choose a source from the dropdown. The sources are from those 
             <code>tei:bibl</code> elements listed in the document's
             <code>tei:sourceDesc</code>. If the source has a "transcription source" in its 
@@ -30,6 +30,7 @@
             book's scanned images. If a <code>tei:biblScope</code> element references a page or
             page range, the viewer will show the first page of the range.</p>
         </div>
+        -->
     </div>
     <style type="text/css">
         .osTranscriptionWindow {

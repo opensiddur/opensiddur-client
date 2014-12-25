@@ -18,7 +18,7 @@
 
     <xsl:template match="tei:bibl">
         <bibl>
-            <xsl:variable name="source-uri" select="substring-after(tei:ptr[@type='bibl']/@target, '/data/sources/'))"/> 
+            <xsl:variable name="source-uri" select="substring-after(tei:ptr[@type='bibl']/@target, '/data/sources/')"/> 
             <!-- warning: the title may end up URI encoded -->
             <title><xsl:value-of select="(tei:title, $source-uri)[1]"/></title>
             <source><xsl:value-of select="$source-uri"/></source>
