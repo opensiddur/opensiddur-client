@@ -1,54 +1,90 @@
-<div class="osMetadataRespDialog modal" aria-hidden="true" aria-labelledBy="metadataRespDialogHeader">
+<div class="osMetadataSourcesDialog modal" aria-hidden="true" aria-labelledBy="metadataSourcesDialogHeader">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-ng-click="CloseButton()" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title" id="metadataRespDialogHeader">{{ title }}</h4>
+                <h4 class="modal-title" id="metadataSourcesDialogHeader">{{ title }}</h4>
             </div>
             <div class="modal-body">
-                <os-search-list api="'/api/user'" selection="selectedContributor.ref" selection-description="selectedContributor.name">
-                </os-search-list>
                 <div class="row scrollable-300px">
-                    <form class="form-horizontal">
-                        <div class="form-group" data-ng-repeat="resp in respModel track by $index">
-                            <label class="control-label col-md-1" for="respChooser{{$index}}">Credit</label>
-                            <div class="col-md-3">
-                                <select class="form-control"
-                                    name="respChooser{{$index}}"
-                                    data-ng-model="resp.respType"
-                                    data-ng-required="resp.respName"
-                                    data-ng-disabled="!accessModel.write"
-                                    data-ng-options="key as definition for (key, definition) in supportedResponsibilities"
-                                    data-ng-change="resp.respText = supportedResponsibilities[resp.respType]">
-                                     <option value="">-- Responsibility --</option>
-                                </select>
-                            </div>
-                            <div class="col-md-4">
-                                <p 
-                                    class="form-control-static"
-                                    >{{resp.respName}}</p>
-                            </div>
-                            <div class="col-md-2">
-                                <button class="btn form-control"
-                                    data-ng-click="setResponsibility($index)"
-                                    data-ng-disabled="!selectedContributor.ref || !accessModel.write"
-                                    >Select</button>
-                            </div>
-                            <div class="col-md-2">
-                                <button class="btn form-control"
-                                    data-ng-click="removeResponsibility($index)"
-                                    data-ng-disabled="!accessModel.write"
-                                    >Remove</button>
+                    <table class="table table-hover table-condensed table-striped table-scrollable">
+                        <thead>
+                            <tr>
+                                <th>
+                                   <form class="form-inline">
+                                        <div class="form-group">
+                                            <label class="control-label">Sources</label>
+                                            <button class="btn btn-default btn-sm" 
+                                                data-ng-disabled="!accessModel.write"
+                                                data-ng-click="addSource()">Add</button>
+                                            <button class="btn btn-default btn-sm" 
+                                                data-ng-disabled="!accessModel.write || !sourcesModel[selectedSource]"
+                                                data-ng-click="removeSource()">Remove</button>
+                                        </div>
+                                    </form>
+                                </th>
+                                <th>From page</th>
+                                <th>To</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr data-ng-repeat="source in sourcesModel track by $index" 
+                                data-ng-click="select($index)"
+                                data-ng-class="{info : $index == selectedSource}">
+                                <td>{{source.title}}</td>
+                                <td><input data-ng-hide="source.source == 'Born%20Digital'"
+                                    data-ng-change="fromPageChange()" 
+                                    type="number" data-ng-model="source.scope.fromPage"/></td>
+                                <td><input 
+                                    data-ng-hide="source.source == 'Born%20Digital'"
+                                    data-ng-change="toPageChange()"
+                                    type="number" data-ng-model="source.scope.toPage"/></td>   
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div data-ng-show="sourcesModel[selectedSource].source == ''">
+                    <!-- list of sources, add/remove buttons -->
+                    <os-search-list api="'/api/data/sources'" selection="sourcesModel[selectedSource].source" selection-description="sourcesModel[selectedSource].title">
+                    </os-search-list>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6"
+                     data-ng-show="sourcesModel[selectedSource].source != 'Born%20Digital'">
+                    <os-transcription-viewer 
+                        source="sourcesModel[selectedSource].source" 
+                        page="viewer.page"
+                        name="sources-dialog"
+                        height="300px"></os-transcription-viewer>
+                </div>
+                <div class="col-md-6">
+                    <fieldset>
+                        <p>What parts of the document are derived from this source?</p>
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" 
+                                    data-ng-model="sourcesModel[selectedSource].contents.stream.streamChecked"
+                                    data-ng-change="streamContentChanged()"/>Entire document
+                            </label>
+                        </div>
+                        <div class="col-md-offset-1">
+                            <div class="checkbox" data-ng-repeat="id in sourcesModel[selectedSource].contents.stream.id_asArray">
+                                <input type="checkbox"
+                                    data-ng-model="id.checked"
+                                    data-ng-disabled="sourcesModel[selectedSource].contents.stream.streamChecked"/>
+                                <span data-ng-show="!id.context.context">({{id.context.element}}:{{id.context.name}})</span>
+                                {{id.context.context}}
                             </div>
                         </div>
-                    </form>
+                    </fieldset>
                 </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn" data-ng-click="CloseButton()" data-dismiss="modal">Close</button>
                 <button type="button" class="btn btn-primary" data-dismiss="modal"
                     data-ng-disabled="!accessModel.write" 
-                    data-ng-click="OKButton()">Set Credits</button>
+                    data-ng-click="OKButton()">Set Sources</button>
             </div>
         </div>
     </div>

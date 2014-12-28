@@ -142,7 +142,8 @@ textarea.ng-invalid {
 }
 
 .scrollable-300px {
-    height:300px;
+    /*height:300px;*/
+    min-height:50px;
     max-height:300px;
     overflow-y:auto;
     overflow-x:hidden;

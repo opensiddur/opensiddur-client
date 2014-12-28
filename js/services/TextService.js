@@ -82,6 +82,14 @@ OpenSiddurClientApp.service("TextService", [
                 var bibl = js.sources.bibl_asArray;
                 for (var i=0; i < bibl.length; i++) {
                     bibl[i].title = decodeURIComponent(bibl[i].title);
+                    bibl[i].scope.fromPage = parseInt(bibl[i].scope.fromPage);
+                    bibl[i].scope.toPage = parseInt(bibl[i].scope.toPage);
+                    bibl[i].contents.stream.streamChecked = 
+                        (bibl[i].contents.stream.streamChecked == "false") ? false : true; 
+                    for (var j=0; j < bibl[i].contents.stream.id_asArray.length; j++) {
+                        bibl[i].contents.stream.id_asArray[j].checked =
+                            (bibl[i].contents.stream.id_asArray[j].checked == "false") ? false : true;
+                    }
                 }
                 return bibl; 
             }
@@ -104,8 +112,14 @@ OpenSiddurClientApp.service("TextService", [
         },
         commitLog : function() {
             // return value is [{ who, when, message }...]
-            var js = xj.xml2json(XsltService.transformString("/xsl/GetCommitLog.xsl", this._content))
+            var js = xj.xml2json(XsltService.transformString("/xsl/GetCommitLog.xsl", this._content));
             return ("change_asArray" in js.changes) ? js.changes.change_asArray : [];
+        },
+        listXmlIds : function(contextCharacters, streamOnly) {
+            var js = xj.xml2json(XsltService.transformString("/xsl/ListXmlId.xsl", this._content, {
+                "context-chars" : contextCharacters || 30
+            })).xmlids.xmlid_asArray;
+            return js.filter(function(x) { return !(streamOnly && x.stream == 'N') });
         }
     };
 }]);
