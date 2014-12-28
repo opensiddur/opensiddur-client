@@ -21,7 +21,7 @@ OpenSiddurClientApp.directive(
                     toPage : 1
                 },
                 contents: {
-                    content_asArray : []
+                    stream : { id_asArray : [] }
                 }
             };
             return {
@@ -81,11 +81,12 @@ OpenSiddurClientApp.directive(
                         }
                     }; 
                     $scope.sourcesModel = [];
-                    
-                    $scope.$watch("sourcesModel[selectedSource].source", function(s) {
+                    $scope.newSource = { source : "", title : "" }; 
+                    $scope.$watch("newSource.source", function(s) {
                         if (s) {
                             // remove /exist/restxq/api/...
-                            $scope.sourcesModel[$scope.selectedSource].source = $scope.sourcesModel[$scope.selectedSource].source.split("/").pop();
+                            $scope.sourcesModel[$scope.selectedSource].source = $scope.newSource.source.split("/").pop();
+                            $scope.sourcesModel[$scope.selectedSource].title = $scope.newSource.title;
                         }
                     });
                     
@@ -124,6 +125,11 @@ OpenSiddurClientApp.directive(
                             for (var j= 0; j < idContexts.length; j++) {
                                 scope.sourcesModel[i].contents.stream.id_asArray[j].context = idContexts[j];
                             }
+                        }
+                        template.contents.stream = angular.copy(scope.sourcesModel[0].contents.stream);
+                        template.contents.stream.streamChecked = true;
+                        for (var i = 0; i < template.contents.stream.id_asArray.length; i++) {
+                            template.contents.stream.id_asArray[i].checked = true;
                         }
                         //scope.modelChanged(scope.respModel.length - 1);
                         scope.select(0); 

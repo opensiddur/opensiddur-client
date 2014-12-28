@@ -45,11 +45,11 @@
                 </div>
                 <div data-ng-show="sourcesModel[selectedSource].source == ''">
                     <!-- list of sources, add/remove buttons -->
-                    <os-search-list api="'/api/data/sources'" selection="sourcesModel[selectedSource].source" selection-description="sourcesModel[selectedSource].title">
+                    <os-search-list api="'/api/data/sources'" selection="newSource.source" selection-description="newSource.title">
                     </os-search-list>
                 </div>
             </div>
-            <div class="row">
+            <div class="row" data-ng-hide="sourcesModel[selectedSource].source == ''">
                 <div class="col-md-6"
                      data-ng-show="sourcesModel[selectedSource].source != 'Born%20Digital'">
                     <os-transcription-viewer 
