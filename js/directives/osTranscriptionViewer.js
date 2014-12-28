@@ -1,7 +1,7 @@
 /* Zoomable transcription viewer
  *
  * Usage:
- * <os-transcription-viewer source="" page="" />
+ * <os-transcription-viewer source="" page="" name="" height=""/>
  * source is the name of the bibliographic source (resource)
  * page is the page (index) number
  *
@@ -17,7 +17,9 @@ OpenSiddurClientApp.directive(
                 restrict : 'AE',
                 scope : {
                     source : "=",
-                    page : "="
+                    page : "=",
+                    name : "@",
+                    height : "@"
                 },
                 controller: ['$scope', function ($scope) {
                     console.log("In transcription viewer controller");
