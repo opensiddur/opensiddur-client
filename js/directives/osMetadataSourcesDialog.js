@@ -79,7 +79,34 @@ OpenSiddurClientApp.directive(
                                 s.id_asArray[i].checked = true;
                             }
                         }
-                    }; 
+                    };
+                    var setSelections = function(selectionValue) {
+                        var s = $scope.sourcesModel[$scope.selectedSource].contents.stream;
+                        var idArray = s.id_asArray;
+                        var nTrue = 0;
+                        for (var i=0; i < idArray.length; i++) {
+                            idArray[i].checked = selectionValue;
+                            nTrue += (selectionValue == true) ? 1 : 0;
+                        }
+                        s.streamChecked = nTrue == idArray.length;
+                    };
+                    $scope.selectAll = function() {
+                        setSelections(true);
+                    };
+                    $scope.clearAll = function() {
+                        setSelections(false);
+                    };
+                    $scope.invertAll = function() {
+                        var s = $scope.sourcesModel[$scope.selectedSource].contents.stream;
+                        var idArray = s.id_asArray;
+                        var nTrue = 0;
+                        for (var i=0; i < idArray.length; i++) {
+                            idArray[i].checked = !idArray[i].checked;    
+                            nTrue += (idArray[i].checked) ? 1 : 0;
+                        }
+                        s.streamChecked = nTrue == idArray.length;
+                    };
+ 
                     $scope.sourcesModel = [];
                     $scope.newSource = { source : "", title : "" }; 
                     $scope.$watch("newSource.source", function(s) {
@@ -126,12 +153,13 @@ OpenSiddurClientApp.directive(
                                 scope.sourcesModel[i].contents.stream.id_asArray[j].context = idContexts[j];
                             }
                         }
+                        // set up the template for new sources
                         template.contents.stream = angular.copy(scope.sourcesModel[0].contents.stream);
                         template.contents.stream.streamChecked = true;
                         for (var i = 0; i < template.contents.stream.id_asArray.length; i++) {
                             template.contents.stream.id_asArray[i].checked = true;
                         }
-                        //scope.modelChanged(scope.respModel.length - 1);
+
                         scope.select(0); 
                     });
                  },

@@ -61,14 +61,21 @@
                 <div class="col-md-6">
                     <fieldset>
                         <p>What parts of the document are derived from this source?</p>
-                        <div class="checkbox">
-                            <label>
-                                <input type="checkbox" 
-                                    data-ng-model="sourcesModel[selectedSource].contents.stream.streamChecked"
-                                    data-ng-change="streamContentChanged()"/>Entire document
-                            </label>
+                        <div class="form-horizontal col-md-offset-1">
+                            <div class="form-group">
+                                <div class="checkbox-inline">
+                                    <label>
+                                        <input type="checkbox" 
+                                            data-ng-model="sourcesModel[selectedSource].contents.stream.streamChecked"
+                                            data-ng-change="streamContentChanged()"/>Entire document
+                                    </label>
+                                </div>
+                                <button class="btn btn-default btn-sm" data-ng-click="selectAll()">Select All</button>
+                                <button class="btn btn-default btn-sm" data-ng-click="clearAll()">Clear All</button>
+                                <button class="btn btn-default btn-sm" data-ng-click="invertAll()">Invert</button>
+                            </div>
                         </div>
-                        <div class="col-md-offset-1">
+                        <div class="col-md-offset-2">
                             <div class="checkbox" data-ng-repeat="id in sourcesModel[selectedSource].contents.stream.id_asArray">
                                 <input type="checkbox"
                                     data-ng-model="id.checked"
