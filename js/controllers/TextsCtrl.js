@@ -143,6 +143,7 @@ OpenSiddurClientApp.controller(
                 if (!$scope.editor.newTemplate.template.source) {
                     // default the source (this should happen in new dialog, but isn't because of a bug with defaulting
                     $scope.editor.newTemplate.template.source = "/exist/restxq/api/data/sources/Born%20Digital";
+                    $scope.editor.newTemplate.template.sourceTitle = "An Original Work of the Open Siddur Project";
                 }
                 var templateParameters = x2js.json2xml($scope.editor.newTemplate);
                 var strdoc = XsltService.indentToString(XsltService.transform(documentTemplate, templateParameters));

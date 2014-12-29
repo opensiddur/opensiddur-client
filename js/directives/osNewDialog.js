@@ -21,8 +21,7 @@
 OpenSiddurClientApp.directive(
         'osNewDialog',
         [
-        'XsltService',
-        function( XsltService ) {
+        function() {
             return {
                 restrict : 'AE',
                 scope : {
@@ -58,7 +57,8 @@ OpenSiddurClientApp.directive(
                                 idno : ""
                             },
                             license : "http://www.creativecommons.org/publicdomain/zero/1.0",
-                            source : "/exist/restxq/api/data/sources/Born%20Digital"
+                            source : "/exist/restxq/api/data/sources/Born%20Digital",
+                            sourceTitle : "An Original Work of the Open Siddur Project"
                         }
                     };
                     $scope.OKButton = function() {
@@ -79,7 +79,7 @@ OpenSiddurClientApp.directive(
                     }
                  }],
                  link: function(scope, elem, attrs, ctrl) {
-                    elem.find(".modal-header h4").attr("id", scope.name + "_label");
+                    elem.find(".modal-title").attr("id", scope.name + "_label");
                     elem.find(".osNewDialog").attr("aria-labelledBy", scope.name + "_label");
                     elem.find(".osNewDialog").attr("id", scope.name);
                  },
