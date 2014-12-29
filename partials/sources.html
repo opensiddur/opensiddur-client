@@ -1,10 +1,8 @@
 <div>
     <div class="toolbar navbar navbar-inverse nav-collapse">
         <div class="container-fluid">
+          <p class="navbar-text">{{ editor.content.biblStruct.monogr.title_asArray[0].__text | truncate:30 }}</p>
           <div class="btn-toolbar navbar-btn">
-              <div class="btn-group navbar-btn">
-                  <button class="form-control-static" data-ng-disabled="1">{{ editor.content.biblStruct.monogr.title_asArray[0].__text }}</btn>
-              </div>
               <div class="btn-group navbar-btn">
                   <button class="btn btn-primary" 
                       data-ng-disabled="!editor.loggedIn"

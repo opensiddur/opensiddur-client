@@ -53,7 +53,8 @@ var getApiError = function(data) {
 var OpenSiddurClientApp = 
   angular.module(
       'OpenSiddurClientApp',
-      ['ngRoute',
+      ['filters',
+       'ngRoute',
        'ngResource',
        'ngSanitize',
        'panzoom', 

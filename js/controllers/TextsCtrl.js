@@ -147,15 +147,7 @@ OpenSiddurClientApp.controller(
                 var templateParameters = x2js.json2xml($scope.editor.newTemplate);
                 var strdoc = XsltService.indentToString(XsltService.transform(documentTemplate, templateParameters));
                 TextService.content(strdoc);    
-                // TODO: the model of the codemirror textarea needs to be j:stylesheet for css mode!
-/*
-                $scope.editor.loadedContent = strdoc;
-                $scope.editor.content = 
-                    ($scope.resourceType.current.editorMode == "xml") ? strdoc : 
-                        // at the moment, the only other option is css
-                        $("j\\:stylesheet", strdoc).html(); 
-*/
-                $scope.editor.title = $("tei\\:title[type=main]", strdoc).html();
+                $scope.editor.title = TextService.title()[0].text;
                 $scope.editor.isLoaded = 1;
                 $location.path("/texts/" + $scope.editor.title, false);
                 // work around a bug where the editor does not refresh after load
@@ -197,13 +189,7 @@ OpenSiddurClientApp.controller(
                             TextService.content( 
                                 XsltService.serializeToStringTEINSClean(
                                     XsltService.transformString( "originalTemplate", data )));
-                            /* TODO: CSS mode */
-                            /*
-                            $scope.editor.content = ($scope.resourceType.current.editorMode == "xml") ? 
-                                $scope.editor.loadedContent
-                                : $("j\\:stylesheet", data).html(); 
-                            */
-                            $scope.editor.title = $("tei\\:title[type=main]", data).html();
+                            $scope.editor.title = TextService.title()[0].text;
                             $scope.editor.isNew = 0;
                             $scope.editor.isLoaded = 1;
                             $scope.textsForm.$setPristine();

@@ -2,11 +2,11 @@
     <div class="toolbar navbar navbar-inverse nav-collapse">
         <div class="container-fluid">
             <div class="btn-toolbar">
-                <div class="btn-group navbar-btn" data-ng-show="mode == 'thirdparty'">
-                    <button class="form-control-static" data-ng-disabled="1"
-                        data-ng-show="!isNew">{{ profile.contributor.name.__text }}{{ profile.contributor.orgName.__text }}</button>
-                    <button class="form-control-static" data-ng-disabled="1"
-                        data-ng-show="isNew">New profile</button>
+                <div data-ng-show="mode == 'thirdparty'">
+                    <p class="navbar-text"
+                        data-ng-show="!isNew">{{ profile.contributor.name.__text | truncate:30 }}{{ profile.contributor.orgName.__text | truncate:30 }}</p>
+                    <p class="navbar-text" 
+                        data-ng-show="isNew">New profile</p>
                 </div>
                 <div class="btn-group navbar-btn">
                     <button class="btn btn-primary" type="submit"
