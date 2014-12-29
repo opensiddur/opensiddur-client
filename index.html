@@ -17,6 +17,7 @@
     <link href="/js/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet"/>
     <link href="/js/bower_components/bootstrap/dist/css/bootstrap-theme.min.css" rel="stylesheet"/>
     <link href="/js/bower_components/codemirror/lib/codemirror.css" rel="stylesheet"/> 
+    <link href="/js/bower_components/angular-pan-zoom/bin/panzoomwidget.css" rel="stylesheet"/> 
     <link href="/css/app.css" rel="stylesheet"/>
     <!-- icons -->
     <!-- EDF: not sure what all these icon types are:
@@ -91,6 +92,9 @@
     <script src="/js/bower_components/angular-route/angular-route.min.js"></script>
     <script src="/js/bower_components/angular-sanitize/angular-sanitize.min.js"></script>
     <script src="/js/bower_components/bootstrap/dist/js/bootstrap.min.js" ></script>
+    <script src="/js/bower_components/hamsterjs/hamster.js"></script>
+    <script src="/js/bower_components/angular-mousewheel/mousewheel.js"></script>
+    <script src="/js/bower_components/angular-pan-zoom/bin/panzoom.min.js"></script>
     <script src="/js/saxon-ce/Saxonce/Saxonce.nocache.js"></script>
     <script src="/js/infinite-scroll/ng-infinite-scroll.min.js" ></script>
     <script src="/js/base64.js" ></script>
@@ -119,6 +123,7 @@
     <script src="/js/directives/osMetadataCommitLogDialog.js"></script>
     <script src="/js/directives/osMetadataLicenseDialog.js"></script>
     <script src="/js/directives/osMetadataRespDialog.js"></script>
+    <script src="/js/directives/osMetadataSourcesDialog.js"></script>
     <script src="/js/directives/osMetadataTitleDialog.js"></script>
     <script src="/js/directives/osNewDialog.js"></script>
     <script src="/js/directives/osOpenDialog.js"></script>
@@ -127,6 +132,7 @@
     <script src="/js/directives/osSearchList.js"></script>
     <script src="/js/directives/osSharingDialog.js"></script>
     <script src="/js/directives/osSharingStatus.js"></script>
+    <script src="/js/directives/osTranscriptionViewer.js"></script>
     <script src="/js/directives/osTranscriptionWindow.js"></script>
     <script src="/js/directives/osTranslationSegment.js"></script>
     <script src="/js/directives/osinstance.js"></script>
@@ -135,7 +141,9 @@
     <script src="/js/services/DialogService.js" ></script>
     <script src="/js/services/ErrorService.js" ></script>
     <!--script src="/js/services/IndexService.js" ></script-->
+    <script src="/js/services/PageImageUrlService.js" ></script>
     <script src="/js/services/RestApi.js" ></script>
+    <script src="/js/services/SourceService.js" ></script>
     <script src="/js/services/TextService.js" ></script>
     <script src="/js/services/XsltService.js" ></script>
     <script src="/js/controllers/AboutCtrl.js" ></script>
