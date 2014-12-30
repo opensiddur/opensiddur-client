@@ -51,17 +51,17 @@
               <li data-ng-class="{active : isActive('/styles')}"><a data-ng-href="/styles" class="navbar-link">Styles</a></li>
               <li data-ng-class="{active : isActive('/changes')}"><a data-ng-href="/changes" class="navbar-link">Recent changes</a></li>
             </ul>
-            <ul id="authentication-widget" class="nav navbar-nav navbar-right" data-ng-controller="AuthenticationWidgetCtrl" data-ng-switch="loggedIn">
+            <ul id="authentication-widget" class="nav navbar-nav navbar-right" data-ng-controller="AuthenticationWidgetCtrl" data-ng-switch="AuthenticationService.loggedIn">
               <li data-ng-switch-when="false"><a data-ng-href="/signin" class="navbar-link">Sign in/Register</a></li>
               <li class="dropdown" data-ng-switch-when="true">
                 <a class="dropdown-toggle" id="userDropdownLabel" role="button" data-toggle="dropdown" data-target="#" href="javascript:void()">
-                  {{userName}}
+                  {{AuthenticationService.userName}}
                   <b class="caret"></b>
                 </a>
                 <ul class="dropdown-menu navbar-right" role="menu" aria-labelledby="userDropdownLabel">
-                  <li role="presentation"><a data-ng-href="/profile/{{userName}}">My profile</a></li>
-                  <li role="presentation"><a data-ng-href="/changes/{{userName}}">My recent changes</a></li>
-                  <li role="presentation"><a data-ng-href="/jobs/{{userName}}">My compilation jobs</a></li>
+                  <li role="presentation"><a data-ng-href="/profile/{{AuthenticationService.userName}}">My profile</a></li>
+                  <li role="presentation"><a data-ng-href="/changes/{{AuthenticationService.userName}}">My recent changes</a></li>
+                  <li role="presentation"><a data-ng-href="/jobs/{{AuthenticationService.userName}}">My compilation jobs</a></li>
                   <li role="presentation"><a data-ng-href="/changepassword">Change my password</a></li>
                   <li role="presentation"><a data-ng-click="signout()">Sign out</a></li>
                 </ul>
