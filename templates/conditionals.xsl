@@ -36,6 +36,7 @@
                     </tei:publicationStmt>
                     <tei:sourceDesc>
                         <tei:bibl>
+                            <tei:title><xsl:value-of select="sourceTitle"/></tei:title>
                             <tei:ptr type="bibl" target="{replace(source, '^((/exist/restxq)?/api)?/', '/')}"/>
                             <tei:ptr type="bibl-content" target="#cond"/>
                         </tei:bibl>

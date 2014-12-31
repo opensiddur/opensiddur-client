@@ -7,70 +7,44 @@
 
 OpenSiddurClientApp.controller(
   'AuthenticationCtrl', 
-  ['$scope', '$http', '$location', 'AuthenticationService', 'ErrorService',
-  function ($scope, $http, $location, AuthenticationService, ErrorService){
-    $http.defaults.useXDomain = true;
-    
-    who = AuthenticationService.whoami();
-    $scope.loggedIn = Boolean(who.userName);
+  ['$scope', '$location', 'AuthenticationService', 'ErrorService',
+  function ($scope, $location, AuthenticationService, ErrorService){
+    //$http.defaults.useXDomain = true;
     
     $scope.signin = {
-            userName : who.userName,
-            password : who.password,
-            rememberMe : $scope.loggedIn,
+            userName : AuthenticationService.userName,
+            password : AuthenticationService.password,
+            rememberMe : AuthenticationService.loggedIn
     };
-    $scope.register = $scope.signin;
+    $scope.register = angular.copy($scope.signin);
     $scope.register.repeatPassword = "";
     
     $scope.signin = function() {
         console.log("login")
 
-        AuthenticationService.authenticate(
-                $scope.signin.userName, $scope.signin.password,
-                function(data, status, headers, config) {
-                    AuthenticationService.login($scope.signin.userName, $scope.signin.password, $scope.signin.rememberMe);
-                    $location.path("/about");
-                },
-                function(data, status, headers, config) {
-                    ErrorService.addApiError(data);
-                }
-        );
-      
+        AuthenticationService.authenticate($scope.signin.userName, $scope.signin.password)
+        .success(function() {
+            AuthenticationService.login($scope.signin.userName, $scope.signin.password, $scope.signin.rememberMe);
+            $location.path("/about");
+        })
+        .error(function(data) {
+            ErrorService.addApiError(data);
+        });
     };
     $scope.register = function() {
-
-        console.log("register")
-        $http.post(
-            host + "/api/user",  
-            "<register><user>"+ $scope.register.userName + 
-            "</user><password>"+$scope.register.password+
-            "</password></register>")
-            .success(
-                    function(data, status, headers, config) {
-                        AuthenticationService.login($scope.register.userName, $scope.register.password, $scope.register.rememberMe);
-                        $scope.loggedIn = true;
-                        $location.path("/profile/" + $scope.register.userName)
-                    }
-            )
-            .error(
-                    function(data, status, headers, config) {
-                        ErrorService.addApiError(data);
-                    }
-            );
-    
+        console.log("register");
+        AuthenticationService.register($scope.register.userName, $scope.register.password, $scope.register.rememberMe)
+        .success(
+            function() {
+                $location.path("/profile/" + $scope.register.userName)
+            })
+        .error(function(data) {
+            ErrorService.addApiError(data);
+        });
     };
     $scope.signout = function() {
         console.log("sign out");
         AuthenticationService.logout();
-    };
-    $scope.$on('AuthenticationService.update', 
-        function( event, loggedIn, userName, password ) {
-            $scope.loggedIn = loggedIn;
-            $scope.signin.userName = userName;
-            $scope.signin.password = password;
-        }
-    );
-    
-  }
-  ]
+    }; 
+  }]
 );

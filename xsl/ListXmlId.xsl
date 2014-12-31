@@ -11,8 +11,10 @@
     xmlns:tei="http://www.tei-c.org/ns/1.0"
     xmlns:j="http://jewishliturgy.org/ns/jlptei/1.0"
     xmlns:jf="http://jewishliturgy.org/ns/jlptei/flat/1.0"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
     >
     <xsl:output method="xml"/>
+    <xsl:param name="context-chars" as="xs:double" select="30"/>
 
     <xsl:template match="*[@xml:id]">
         <xmlid>
@@ -25,9 +27,9 @@
             <context>
                 <xsl:variable name="text" select="normalize-space(.)"/>
                 <xsl:value-of select="
-                    if (string-length($text) > 31)
+                    if (string-length($text) > ($context-chars + 1))
                     then 
-                        concat(substring($text, 1, 15), '...', substring($text, string-length($text) - 14, 15))
+                        concat(substring($text, 1, ($context-chars idiv 2)), '...', substring($text, string-length($text) - ($context-chars idiv 2 - 1), ($context-chars idiv 2)))
                     else $text"/></context>
         </xmlid>
         <xsl:apply-templates/>

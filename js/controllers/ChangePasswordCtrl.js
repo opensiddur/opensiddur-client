@@ -7,39 +7,20 @@
 /* controller for signin and registration page */
 OpenSiddurClientApp.controller(
   'ChangePasswordCtrl', 
-  ['$scope', '$http', '$location', 'AuthenticationService', 'ErrorService', 
-  function ($scope, $http, $location, AuthenticationService, ErrorService){
-      who = AuthenticationService.whoami();
-      $scope.userName = who.userName; 
-      $scope.realCurrentPassword = who.password;
+  ['$scope', 'AuthenticationService', 'ErrorService', 
+  function ($scope, AuthenticationService, ErrorService){
       $scope.currentPassword = "";
       $scope.newPassword = "";
       $scope.repeatPassword = "";
     
       $scope.changePassword = function() {
-          AuthenticationService.authenticate(
-                $scope.userName, $scope.currentPassword,
-                function(data, status, headers, config) {
-                    $http.post(
-                            host + "/api/user",  
-                            "<change-password><user>"+ $scope.userName + 
-                            "</user><password>"+$scope.newPassword+
-                            "</password></change-password>")
-                            .success(
-                                    function(data, status, headers, config) {
-                                        ErrorService.addAlert("Password changed", "success");
-                                    }
-                            )
-                            .error(
-                                    function(data, status, headers, config) {
-                                        ErrorService.addApiError(data);
-                                    }
-                            );    
-                },
-                function(data, status, headers, config) {
-                    ErrorService.addApiError(data);
-                }
-          );
-      };
+            AuthenticationService.changePassword($scope.currentPassword, $scope.newPassword)
+            .success(function() {
+                ErrorService.addAlert("Password changed", "success");
+            })
+            .error(function(data) {
+                ErrorService.addApiError(data);
+            });    
+        };
   }]
 );

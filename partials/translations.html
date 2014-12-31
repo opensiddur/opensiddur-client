@@ -1,11 +1,9 @@
 <div>
-    <div class="toolbar navbar navbar-inverse nav-collapse collapse">
-        <div class="navbar-inner">
+    <div class="toolbar navbar navbar-inverse nav-collapse">
+        <div class="container-fluid">
+            <p class="navbar-text">{{ editor.content.title.text | truncate:30 }}</p>
             <div class="btn-toolbar">
-                <div class="btn-group">
-                    <span class="btn btn-inverse" data-ng-disabled="1">{{ editor.content.title.text }}</span>
-                </div>
-                <div class="btn-group">
+                <div class="btn-group navbar-btn">
                       <button class="btn btn-primary" type="submit"
                           data-ng-disabled="!editor.loggedIn" 
                           data-ng-click="editor.newButton()"  
@@ -17,7 +15,9 @@
                           data-ng-click="editor.saveDocument()"  
                           data-ng-disabled="!editor.access.write || trForm.$invalid || trForm.$pristine">{{saveButtonText()}}</button>
                 </div>
-                <os-sharing-status access-model="editor.access" sharing-dialog="sharingDialog"></os-sharing-status>
+                <div class="navbar-right navbar-btn">
+                    <os-sharing-status access-model="editor.access" sharing-dialog="sharingDialog"></os-sharing-status>
+                </div>
             </div>
         </div>
     </div>
@@ -27,68 +27,81 @@
             Log in to be able to edit a new document, or open a document to view it.
         </div>
         <div data-ng-show="editor.loggedIn || editor.currentDocument">
-            <div class="row-fluid translations-editor">
+            <div class="row translations-editor">
                 <div>
-                    <form name="trForm" data-unsaved-warning-form="1">
-                        <div class="controls controls-row">
-                            <label class="span1" for="title_lang">Title</label>
-                            <select 
-                                class="span2"
-                                name="title_lang"
-                                data-ng-model="editor.content.title.lang" 
-                                required="true"
-                                data-ng-options="code as language for (code, language) in editor.supportedLanguages"/>
-                            <input class="span8" name="title" data-ng-model="editor.content.title.text"
-                                placeholder="Main title"/>
+                    <form name="trForm" class="form-horizontal" data-unsaved-warning-form="1">
+                        <div class="form-group">
+                            <label class="col-md-2 control-label" for="title_lang">Title</label>
+                            <div class="col-md-2">
+                                <select 
+                                    class="form-control"
+                                    name="title_lang"
+                                    data-ng-model="editor.content.title.lang" 
+                                    required="true"
+                                    data-ng-options="code as language for (code, language) in editor.supportedLanguages"/>
+                            </div>
+                            <div class="col-md-6">
+                                <input class="form-control" name="title" data-ng-model="editor.content.title.text"
+                                    placeholder="Main title"/>
+                            </div>
                         </div>
 
-                        <div class="controls controls-row">
-                            <label class="span3" for="transtitle">Translation Title</label>
-                
-                            <input class="span8" name="transtitle" data-ng-model="editor.content.idno"
-                                placeholder="Title of translation"/>
+                        <div class="form-group">
+                            <label class="col-md-2 control-label" for="transtitle">Translation Title</label>
+                            <div class="col-md-6">
+                                <input class="form-control" name="transtitle" data-ng-model="editor.content.idno"
+                                    placeholder="Title of translation"/>
+                            </div>
                         </div>
 
-                        <div class="controls controls-row">
-                            <label class="span3" for="license">Licensed under</label>
-                
-                            <select class="span8" name="license" 
-                                data-ng-disabled="!editor.access.relicense"
-                                data-ng-model="editor.content.license"
-                                required="true"
-                                data-ng-options="target as license for (target, license) in editor.supportedLicenses"/>
+                        <div class="form-group">
+                            <label class="col-md-2 control-label" for="license">Licensed under</label>
+                            <div class="col-md-6">
+                                <select class="form-control" name="license" 
+                                    data-ng-disabled="!editor.access.relicense"
+                                    data-ng-model="editor.content.license"
+                                    required="true"
+                                    data-ng-options="target as license for (target, license) in editor.supportedLicenses"/>
+                            </div>
                         </div>
 
-                        <div class="controls controls-row">
-                            <label class="span2" for="link-1-resource">Link</label>
-                            <input class="span3" name="link-1-resource"
-                                data-ng-model="editor.content.links[0].resource"
-                                readonly="true"/> 
-                            <button class="span1 btn btn-primary"
-                                data-ng-click="DialogService.open('openDialogLeft')"
-                                role="button"
-                                data-toggle="modal"
-                                >Set</button>
-
-                            <label class="span1" for="link-2-resource">to</label>
-                            <input class="span3" name="link-2-resource"
-                                data-ng-model="editor.content.links[1].resource"
-                                readonly="true"/> 
-                            <button class="span1 btn btn-primary"
-                                data-ng-click="DialogService.open('openDialogRight')"
-                                role="button"
-                                data-toggle="modal"
-                                >Set</button>
+                        <div class="form-group">
+                            <label class="col-md-1 control-label" for="link-1-resource">Link</label>
+                            <div class="col-md-3">
+                                <input class="form-control" name="link-1-resource"
+                                    data-ng-model="editor.content.links[0].resource"
+                                    readonly="true"/> 
+                            </div>
+                            <div class="col-md-1">
+                                <button class="form-control btn btn-primary"
+                                    data-ng-click="DialogService.open('openDialogLeft')"
+                                    role="button"
+                                    data-toggle="modal"
+                                    >Set</button>
+                            </div>
+                            <label class="col-md-1 control-label" for="link-2-resource">to</label>
+                            <div class="col-md-3">
+                                <input class="form-control" name="link-2-resource"
+                                    data-ng-model="editor.content.links[1].resource"
+                                    readonly="true"/> 
+                            </div>
+                            <div class="col-md-1">
+                                <button class="form-control btn btn-primary"
+                                    data-ng-click="DialogService.open('openDialogRight')"
+                                    role="button"
+                                    data-toggle="modal"
+                                    >Set</button>
+                            </div>
                         </div>
                         <hr/>
-                        <div data-ng-repeat="linkage in editor.content.linkages" class="translation-linkage span12">
-                            <div class="translation-left span6">
+                        <div data-ng-repeat="linkage in editor.content.linkages" class="translation-linkage">
+                            <div class="translation-left col-md-6">
                                 <os-translation-segment model="editor.content.linkages" block="linkage" side="left"></os-translation-segment>
                             </div>
-                            <div class="translation-right span6">
+                            <div class="translation-right col-md-6">
                                 <os-translation-segment model="editor.content.linkages" block="linkage" side="right"></os-translation-segment>
                             </div>
-                            <div class="span12">
+                            <div class="col-md-12">
                                 <hr/>
                             </div>
                         </div> 

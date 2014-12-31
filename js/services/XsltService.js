@@ -15,7 +15,7 @@ OpenSiddurClientApp.service(
             },
             transform : function ( processorName, domDoc, parameters ) {
                 var transformed = Saxon.run({
-                    stylesheet : this.xsltProcessors[processorName],
+                    stylesheet : (processorName.indexOf("/xsl") == 0) ? processorName : this.xsltProcessors[processorName],
                     source : domDoc,
                     parameters : parameters,
                     method : "transformToDocument",
@@ -41,28 +41,6 @@ OpenSiddurClientApp.service(
                         .replace(/^\<([a-zA-Z:]+)/, "<$1 xmlns:tei=\"http://www.tei-c.org/ns/1.0\" xmlns:j=\"http://jewishliturgy.org/ns/jlptei/1.0\"")
             },
             indentToString : function ( xmlDoc ) {
-                /*
-                // create an instance of XSLTProcessor for XSLT 1.0  
-                var processor = new XSLTProcessor();  
-  
-                var xslDoc = Sarissa.getDomDocument();  
-                var xslStr = "<?xml version='1.0' encoding='UTF-8'?>"+  
-                "<xsl:stylesheet version='1.0' xmlns:xsl='http://www.w3.org/1999/XSL/Transform' >"+  
-                "<xsl:output method='xml' version='1.0' encoding='UTF-8' indent='yes'/>"+  
-                "<xsl:template match='*|comment()'>"+  
-                    "<xsl:copy>"+
-                        "<xsl:copy-of select='@*'/>"+
-                        "<xsl:apply-templates/>"+
-                    "</xsl:copy>"+
-                "</xsl:template>"+  
-                "</xsl:stylesheet>";  
-                xslDoc = (new DOMParser()).parseFromString(xslStr, "text/xml");  
-  
-                processor.importStylesheet(xslDoc);  
-  
-                var indented = processor.transformToDocument(xmlDoc);  
-                return (new XMLSerializer().serializeToString(indented));   
-                */
                 return vkbeautify.xml(this.serializeToStringTEINSClean(xmlDoc), 4);  
             }  
         }

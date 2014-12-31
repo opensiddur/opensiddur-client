@@ -43,10 +43,10 @@ OpenSiddurClientApp.directive(
                     }
                  }],
                  link: function(scope, elem, attrs, ctrl) {
-                    elem.find(".modal-header h3").attr("id", scope.name + "_label");
+                    elem.find(".modal-header h4").attr("id", scope.name + "_label");
                     elem.find(".osInsertInternalLinkDialog").attr("aria-labelledBy", scope.name + "_label");
                     elem.find(".osInsertInternalLinkDialog").attr("id", scope.name);
-                    elem.on("shown", function() { scope.updateIds += 1; });
+                    elem.on("show.bs.modal", function() { scope.updateIds += 1; });
                  },
                  transclude : false,
                  templateUrl : "/js/directives/osInsertInternalLinkDialog.html"

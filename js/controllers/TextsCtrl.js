@@ -8,8 +8,10 @@ OpenSiddurClientApp.controller(
     'TextsCtrl',
     ['$scope', '$location', '$route', '$routeParams', '$timeout', '$window', 'XsltService', 
     'AccessModelService', 'AuthenticationService', 'DialogService', 'ErrorService', 'RestApi',
+    'TextService',
     function ($scope, $location, $route, $routeParams, $timeout, $window, XsltService, 
-        AccessModelService, AuthenticationService, DialogService, ErrorService, RestApi) {
+        AccessModelService, AuthenticationService, DialogService, ErrorService, RestApi,
+        TextService) {
         console.log("Texts controller.");
         $scope.selection = "";
         $scope.DialogService = DialogService;
@@ -67,6 +69,8 @@ OpenSiddurClientApp.controller(
         };
         $scope.resourceType.initAs($location.path().split("/")[1]);
 
+        $scope.TextService = TextService;
+
         $scope.editor = {
             loggedIn : AuthenticationService.loggedIn,
             currentDocument : $routeParams.resource,
@@ -84,10 +88,17 @@ OpenSiddurClientApp.controller(
                 },
                 rtlMoveVisually : false
             },
-            content : "",
-            loadedContent : "",     // this has to be saved for revert or for when non-XML editing needs to be done as a subset of the XML
             access : AccessModelService.default(AuthenticationService.userName),
             accessModel : "public",
+            editableText : function(setContent) {
+                return ($scope.resourceType.current.editorMode == "xml") ? 
+                    TextService.content(setContent) :
+                    TextService.stylesheet(setContent);
+            },
+            makeDirty : function(whatsChanged) {
+                $scope.textsForm.$setDirty();
+                return true;
+            },
             setAccessModel : function() {
                 this.accessModel = (this.isNew) ? "public" : (
                     (this.access.group == "everyone" && this.access.groupWrite) ? "public" : "restricted"
@@ -124,8 +135,7 @@ OpenSiddurClientApp.controller(
                 // $scope.newTemplate contains a JS object that has to be passed to the template function
                 console.log("Start a new document");
                 $scope.editor.isNew = 1;
-                $scope.editor.content = "";
-                $scope.editor.loadedContent = "";
+                TextService.content("");
                 // default access rights for a new file
                 $scope.editor.access = AccessModelService.default(AuthenticationService.userName);
                 // load a new document template
@@ -133,15 +143,12 @@ OpenSiddurClientApp.controller(
                 if (!$scope.editor.newTemplate.template.source) {
                     // default the source (this should happen in new dialog, but isn't because of a bug with defaulting
                     $scope.editor.newTemplate.template.source = "/exist/restxq/api/data/sources/Born%20Digital";
+                    $scope.editor.newTemplate.template.sourceTitle = "An Original Work of the Open Siddur Project";
                 }
                 var templateParameters = x2js.json2xml($scope.editor.newTemplate);
                 var strdoc = XsltService.indentToString(XsltService.transform(documentTemplate, templateParameters));
-                $scope.editor.loadedContent = strdoc;
-                $scope.editor.content = 
-                    ($scope.resourceType.current.editorMode == "xml") ? strdoc : 
-                        // at the moment, the only other option is css
-                        $("j\\:stylesheet", strdoc).html(); 
-                $scope.editor.title = $("tei\\:title[type=main]", strdoc).html();
+                TextService.content(strdoc);    
+                $scope.editor.title = TextService.title()[0].text;
                 $scope.editor.isLoaded = 1;
                 $location.path("/texts/" + $scope.editor.title, false);
                 // work around a bug where the editor does not refresh after load
@@ -180,13 +187,10 @@ OpenSiddurClientApp.controller(
                                     ErrorService.addApiError(error.data);
                                 });
                             };
-                            
-                            $scope.editor.loadedContent = XsltService.serializeToStringTEINSClean(XsltService.transformString( "originalTemplate", data ));
-                            
-                            $scope.editor.content = ($scope.resourceType.current.editorMode == "xml") ? 
-                                $scope.editor.loadedContent
-                                : $("j\\:stylesheet", data).html(); 
-                            $scope.editor.title = $("tei\\:title[type=main]", data).html();
+                            TextService.content( 
+                                XsltService.serializeToStringTEINSClean(
+                                    XsltService.transformString( "originalTemplate", data )));
+                            $scope.editor.title = TextService.title()[0].text;
                             $scope.editor.isNew = 0;
                             $scope.editor.isLoaded = 1;
                             $scope.textsForm.$setPristine();
@@ -214,12 +218,14 @@ OpenSiddurClientApp.controller(
                     RestApi[$scope.resourceType.current.api].save : 
                     RestApi[$scope.resourceType.current.api].put;
                 var resource = ((this.isNew) ? "" : $scope.editor.currentDocument);
-                var content = $scope.editor.codemirror.doc.getValue();
-                var transformed = 
+                var content = TextService.content(); //$scope.editor.codemirror.doc.getValue();
+                var transformed =
+                    XsltService.transformString( "originalBeforeSave", content );
+                    /* 
                     ($scope.resourceType.current.editorMode=="xml") ?
                         XsltService.transformString( "originalBeforeSave", content ) :
                         XsltService.transformString("styleBeforeSave", $scope.editor.loadedContent, 
-                            { "style" : content});
+                            { "style" : content});*/
                 if (transformed) {
                     var indata = XsltService.serializeToStringTEINSClean(transformed);
                     jindata = $(indata);
@@ -328,7 +334,7 @@ OpenSiddurClientApp.controller(
                 },
                 applyXslt : function ( xslt ) {
                     var position = $scope.editor.codemirror.doc.getCursor();
-                    var content = $scope.editor.codemirror.doc.getValue();
+                    var content = TextService.content(); //$scope.editor.codemirror.doc.getValue();
                     var transformed = XsltService.transformString( xslt, content );
                     if (transformed) {
                         var str = XsltService.indentToString(transformed);
@@ -337,7 +343,7 @@ OpenSiddurClientApp.controller(
                             ErrorService.addAlert("Unable to run the transform because the document could not be parsed. It probably contains some invalid XML.", "error");    
                         }
                         else {
-                            $scope.editor.content = str;
+                            TextService.content(str);
                         //$scope.$apply(); 
                         }
                         setTimeout(

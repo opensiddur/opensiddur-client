@@ -1,103 +1,117 @@
-<div class="osNewDialog modal hide" aria-hidden="true" aria-labelledBy="newDialogHeader">
-    <div class="modal-header">
-        <button type="button" class="close" data-ng-click="CloseButton()" aria-hidden="true">&times;</button>
-        <h3 id="newDialogHeader">{{title}}</h3>
+<div class="osNewDialog modal" aria-hidden="true" aria-labelledBy="newDialogHeader">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-ng-click="CloseButton()" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="newDialogHeader">{{title}}</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" name="newDialogForm">
+                    <!-- type of document -->
+                    <div data-ng-show="!resourceType" class="form-group">
+                        <label for="resourceType" class="control-label col-md-3">Start a new...</label>
+                        <div class="col-md-4">
+                            <select
+                                class="form-control"
+                                required="true"
+                                name="resourceType"
+                                data-ng-model="resourceType"
+                                data-ng-options="type as description for (type, description) in resourceTypes">
+                            </select>
+                        </div>
+                    </div>
+                    <!-- primary language -->
+                    <div class="form-group">
+                        <label for="lang" class="control-label col-md-3">Primary language</label>
+                        <div class="col-md-4">
+                            <select
+                                class="form-control"
+                                required="true"
+                                name="lang"
+                                data-ng-model="model.template.lang"
+                                data-ng-options="code as language for (code, language) in supportedLanguages">
+                            </select>
+                        </div>
+                    </div>
+                    <!-- main title -->
+                    <div class="form-group">
+                        <label for="titleMain" class="control-label col-md-3">Document title</label>
+                        <div class="col-md-4">
+                            <input
+                                class="form-control"
+                                required="true"
+                                name="titleMain"
+                                placeholder="Main title"
+                                data-ng-model="model.template.title.main"/>
+                        </div>
+                    </div>
+                    <!-- alt title -->
+                    <div class="form-group">
+                        <label for="titleAlt" class="control-label col-md-3">Alternate title</label>
+                        <div class="col-md-2">
+                            <select
+                                class="form-control"
+                                name="altLang"
+                                data-ng-model="model.template.title.altLang"
+                                data-ng-options="code as language for (code, language) in supportedLanguages">
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <input
+                                class="form-control"
+                                name="titleAlt"
+                                placeholder="Alt title (eg, translated)"
+                                data-ng-model="model.template.title.alt"/>
+                        </div>
+                    </div>
+                    <!-- idno (for annotations) -->
+                    <div data-ng-show="resourceType=='annotations'" class="form-group">
+                        <label for="idno" class="control-label col-md-3">Annotations id</label>
+                        <div class="col-md-4">
+                            <input
+                                class="form-control"
+                                name="idno"
+                                data-ng-required="resourceType=='annotations'"
+                                placeholder="Belongs to this collection of annotations"
+                                data-ng-model="model.template.title.idno"/>
+                        </div>
+                    </div>
+                    <!-- license -->
+                    <div class="form-group">
+                        <label for="license" class="control-label col-md-3">License</label>
+                        <div class="col-md-4">
+                            <select
+                                class="form-control"
+                                required="true"
+                                name="license"
+                                data-ng-model="model.template.license"
+                                data-ng-options="url as license for (url, license) in supportedLicenses">
+                            </select>
+                        </div>
+                    </div>
+                    <!-- source -->
+                    <div class="form-group" data-ng-hide="resourceType=='styles'">
+                        <label class="control-label col-md-offset-2">Source</label>
+                    </div>
+                    <fieldset class="form-group">
+                        <div class="col-md-offset-1 col-md-10">
+                            <os-search-list api="'/api/data/sources'" selection="model.template.source" 
+                                selection-description="model.template.sourceTitle">
+                            </os-search-list>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" data-dismiss="modal"
+                    data-ng-click="CloseButton()">Close</button>
+                <button class="btn btn-primary"
+                    data-dismiss="modal"
+                    data-ng-disabled="newDialogForm.$invalid"
+                    data-ng-click="OKButton()">New</button>
+            </div>
+        </div>
     </div>
-    <div class="modal-body">
-        <form class="form-horizontal" name="newDialogForm">
-            <!-- type of document -->
-            <div data-ng-show="!resourceType" class="control-group">
-                <label for="resourceType" class="control-label">Start a new...</label>
-                <div class="controls">
-                    <select
-                        required="true"
-                        name="resourceType"
-                        data-ng-model="resourceType"
-                        data-ng-options="type as description for (type, description) in resourceTypes">
-                    </select>
-                </div>
-
-            </div>
-            <!-- primary language -->
-            <div class="control-group">
-                <label for="lang" class="control-label">Primary language</label>
-                <div class="controls">
-                    <select
-                        required="true"
-                        name="lang"
-                        data-ng-model="model.template.lang"
-                        data-ng-options="code as language for (code, language) in supportedLanguages">
-                    </select>
-                </div>
-            </div>
-            <!-- main title -->
-            <div class="control-group">
-                <label for="titleMain" class="control-label">Document title</label>
-                <div class="controls">
-                    <input
-                        required="true"
-                        name="titleMain"
-                        placeholder="Main title"
-                        data-ng-model="model.template.title.main">
-                    </select>
-                </div>
-            </div>
-            <!-- alt title -->
-            <div class="control-group">
-                <label for="titleAlt" class="control-label">Alternate title</label>
-                <div class="controls">
-                    <select
-                        name="altLang"
-                        data-ng-model="model.template.title.altLang"
-                        data-ng-options="code as language for (code, language) in supportedLanguages">
-                    </select>
-                    <input
-                        name="titleAlt"
-                        placeholder="Alt title (eg, translated)"
-                        data-ng-model="model.template.title.alt">
-                    </select>
-                </div>
-            </div>
-            <!-- idno (for annotations) -->
-            <div data-ng-show="resourceType=='annotations'" class="control-group">
-                <label for="idno" class="control-label">Annotations id</label>
-                <div class="controls">
-                    <input
-                        name="idno"
-                        data-ng-required="resourceType=='annotations'"
-                        placeholder="Belongs to this collection of annotations"
-                        data-ng-model="model.template.title.idno"/>
-                </div>
-            </div>
-            <!-- license -->
-            <div class="control-group">
-                <label for="license" class="control-label">License</label>
-                <div class="controls">
-                    <select
-                        required="true"
-                        name="license"
-                        data-ng-model="model.template.license"
-                        data-ng-options="url as license for (url, license) in supportedLicenses">
-                    </select>
-                </div>
-            </div>
-            <!-- source -->
-            <div class="control-group" data-ng-hide="resourceType=='styles'">
-                <label class="control-label">Source</label>
-                <os-search-list api="'/api/data/sources'" selection="model.template.source">
-                </os-search-list>
-            </div>
-        </form>
-    </div>
-    <div class="modal-footer">
-        <button class="btn" data-dismiss="modal"
-            data-ng-click="CloseButton()">Close</button>
-        <button class="btn btn-primary"
-            data-dismiss="modal"
-            data-ng-disabled="newDialogForm.$invalid"
-            data-ng-click="OKButton()">New</button>
-    </div>
-
 </div>
 
 

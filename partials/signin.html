@@ -1,21 +1,19 @@
 <div class="container-fluid">
-  <div class="row-fluid">
-    <div class="span12">
-      <div class="row-fluid">
-        <div class="span2"></div>
-        <div class="span4">
+      <div class="row">
+        <div class="col-md-2"></div>
+        <div class="col-md-4">
           <h2>Sign in</h2>
           <p>If you have already registered, sign in here.</p>
           <form name="signinForm" class="form">
-            <input id="signin-username" type="text" required="" class="input-block-level" placeholder="Username" data-ng-model="signin.userName"/>
-            <input type="password" required="" class="input-block-level" placeholder="Password" data-ng-model="signin.password"/>
+            <input id="signin-username" type="text" required="" placeholder="Username" data-ng-model="signin.userName"/>
+            <input type="password" required="" placeholder="Password" data-ng-model="signin.password"/>
             <label class="checkbox">
               <input type="checkbox" value="false" data-ng-model="signin.rememberMe"/>Remember me
             </label>
             <button id="signin-button" class="btn btn-large btn-primary" type="submit" data-ng-click="signin()"  data-ng-disabled="signinForm.$invalid">Sign in</button>
           </form>
         </div>
-        <div class="span4">
+        <div class="col-md-4">
           <h2>Register for a new account</h2>
           <p>If you are registering for a new account. Be aware that:</p>
           <ul>
@@ -23,12 +21,12 @@
             <li>Passwords are sent over the Internet insecurely in clear text. Do not use a super-secret password</li>
           </ul>
           <form name="registrationForm" class="form" novalidate="">
-            <input type="text" name="username" required="" class="input-block-level" placeholder="Username" data-ng-model="register.userName" data-ng-pattern="/^[^(),;:=\s]+$/"/>
+            <input type="text" name="username" required="" placeholder="Username" data-ng-model="register.userName" data-ng-pattern="/^[^(),;:=\s]+$/"/>
             <span data-ng-show="registrationForm.username.$error.pattern">Disallowed characters: whitespace or any of: [(),;:=]</span>
-            <input id="inputPassword1" name="inputPassword1" type="password" required="" class="input-block-level" placeholder="Password" data-ng-model="register.password"/>
+            <input id="inputPassword1" name="inputPassword1" type="password" required="" placeholder="Password" data-ng-model="register.password"/>
             <div class="control-group" data-ng-class="{error : registrationForm.inputPassword2.$error.pwmatch}">
-              <input id="inputPassword2" name="inputPassword2" type="password" required="" class="input-block-level" placeholder="Repeat password" data-ng-model="register.repeatPassword" data-os-pw-check="inputPassword1"/>
-              <span class="help-inline error" data-ng-hide="!registrationForm.inputPassword2.$dirty || !registrationForm.inputPassword2.$error.pwmatch">Password and repeat password must be the same!</span>
+              <input id="inputPassword2" name="inputPassword2" type="password" required="" placeholder="Repeat password" data-ng-model="register.repeatPassword" data-os-pw-check="inputPassword1"/>
+              <span class="help-block alert-danger" data-ng-hide="!registrationForm.inputPassword2.$dirty || !registrationForm.inputPassword2.$error.pwmatch">Password and repeat password must be the same!</span>
             </div>
             <label class="checkbox">
               <input type="checkbox" value="false" data-ng-model="register.rememberMe"/>Remember me
@@ -36,8 +34,6 @@
             <button id="register-button" class="btn btn-large btn-primary" type="submit" data-ng-click="register()" data-ng-disabled="registrationForm.$invalid">Register</button>
           </form>
         </div><!--/span-->
-        <div class="span2"></div>
+        <div class="col-md-2"></div>
       </div><!--/row-->
-    </div><!--/span-->
-  </div><!--/row-->
 </div>

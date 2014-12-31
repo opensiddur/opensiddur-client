@@ -1,0 +1,64 @@
+<div class="osMetadataTitleDialog modal" aria-hidden="true" aria-labelledBy="metadataTitleDialogHeader">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-ng-click="CloseButton()" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="metadataTitleDialogHeader">{{ title }}</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row scrollable-300px">
+                    <form class="form-horizontal">
+                        <div class="form-group" data-ng-repeat="title in titleModel track by $index">
+                            <label class="control-label col-md-2" for="titleChooser">
+                                <span data-ng-show="$index == 0">Main</span><span data-ng-show="$index > 0">Alternate</span> Title
+                            </label>
+                            <div class="col-md-2">
+                                <select
+                                    class="form-control"
+                                    data-ng-model="title.lang" 
+                                    data-ng-disabled="!accessModel.write"
+                                    data-ng-required="title.text"
+                                    data-ng-options="code as lang for (code, lang) in supportedLanguages"
+                                    placeholder="Language"/>
+                            </div>
+                            <div class="col-md-3">
+                                <input
+                                    class="form-control"
+                                    data-ng-model="title.text" 
+                                    data-ng-disabled="!accessModel.write"
+                                    data-ng-required="$index == 0"
+                                    data-ng-change="modelChanged($index)"
+                                    placeholder="Title"/>
+                            </div>
+                            <div class="col-md-2">
+                                <select
+                                    class="form-control"
+                                    data-ng-model="title.subLang" 
+                                    data-ng-disabled="!accessModel.write"
+                                    data-ng-required="title.subText"
+                                    data-ng-options="code as lang for (code, lang) in supportedLanguages"
+                                    placeholder="Subtitle Language"/>
+                            </div>
+                            <div class="col-md-3">
+                                <input
+                                    class="form-control"
+                                    data-ng-model="title.subText" 
+                                    data-ng-disabled="!accessModel.write"
+                                    data-ng-change="modelChanged($index)"
+                                    placeholder="Subtitle"
+                                    />
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn" data-ng-click="CloseButton()" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal"
+                    data-ng-disabled="!accessModel.write" 
+                    data-ng-click="OKButton()">Set Titles</button>
+            </div>
+        </div>
+    </div>
+</div>
+

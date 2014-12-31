@@ -5,6 +5,7 @@
  * <div data-os-results-box=""
         results="" 
         selection=""
+        selection-description=""
         end="" />
  * 
  * end : Boolean => end of the scroll has been reached. Set this to false when you add more search results.
@@ -34,6 +35,7 @@ OpenSiddurClientApp.directive(
                 scope : {
                     results : "=",
                     selection : "=",
+                    selectionDescription : "=?",
                     end : "="
                 },
                 link: function(scope, elem, attrs) {
@@ -41,13 +43,14 @@ OpenSiddurClientApp.directive(
                 },
                 controller: ['$scope', function ($scope) {
                     console.log("In results box controller");
+                    if (!$scope.selectionDescription) $scope.selectionDescription = "";
                     $scope.endReached = function() {
                         console.log("endReached() called");
                         if (!$scope.end) { 
                             $scope.end = true;
                         }
                     };
-                    $scope.select = function(what, index) {
+                    $scope.select = function(what, title, index) {
                         console.log("Selected:", what);
                         // clear existing selections
                         $scope.parentElement.find("tr").removeClass("info");
@@ -55,6 +58,7 @@ OpenSiddurClientApp.directive(
                         $scope.parentElement.find("tr").eq(index).addClass("info"); 
 
                         $scope.selection = what;
+                        $scope.selectionDescription = title;
                     };
                  }],
                  transclude : false,

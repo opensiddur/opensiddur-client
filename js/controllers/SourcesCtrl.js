@@ -19,16 +19,7 @@ OpenSiddurClientApp.controller(
                 write : AuthenticationService.loggedIn
             },
             "supportedLanguages" : supportedLanguages, 
-            supportedResponsibilities :  {
-                "ann" : "Annotated by",
-                "fac" : "Scanned by",
-                "fnd" : "Funded by",
-                "mrk" : "Markup edited by",
-                "pfr" : "Proofread by",
-                "spn" : "Sponsored by",
-                "trc" : "Transcribed by",
-                "trl" : "Translated by"
-            },
+            "supportedResponsibilities" : supportedResponsibilities,
             "monographScopes" : { 
                 volume : "volume",
                 issue : "issue",
@@ -145,6 +136,30 @@ OpenSiddurClientApp.controller(
                         console.log("error saving ", resource);
                     }
                 );
+            },
+            archiveIdHelper: {
+                url: "",
+                error : "",
+                setArchiveId : function() {
+                    this.error = "";
+                    if (this.url.match("books.google.com")) {
+                        var m = this.url.match(/id=([A-Za-z0-9_]+)/);
+                        if (m) { 
+                            $scope.editor.content.biblStruct.idno._type = "books.google.com"; 
+                            $scope.editor.content.biblStruct.idno.__text = m[1]; 
+                        }
+                    }   
+                    else if (this.url.match("archive.org")) {
+                        var m = this.url.match(/\/(details|stream)\/([A-Za-z0-9_]+)/);
+                        if (m) { 
+                            $scope.editor.content.biblStruct.idno._type = "archive.org"; 
+                            $scope.editor.content.biblStruct.idno.__text = m[2]; 
+                        }
+                    }
+                    else {
+                        this.error = "Unrecognized archive URL";
+                    }
+                }
             }
         };            
         $scope.saveButtonText = function() {
