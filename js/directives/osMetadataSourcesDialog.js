@@ -39,8 +39,8 @@ OpenSiddurClientApp.directive(
                         page : 1
                     };
                     $scope.select = function(idx) {
-                        $scope.selectedSource = idx; 
-                        $scope.viewer.page = $scope.sourcesModel[idx].scope.fromPage;
+                        $scope.selectedSource = idx;
+                        $scope.viewer.page = (idx >= 0) ? $scope.sourcesModel[idx].scope.fromPage : 1;
                     };
                     $scope.addSource = function() {
                         $scope.sourcesModel.push(angular.copy(template));
