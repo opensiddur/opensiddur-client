@@ -38,7 +38,8 @@ OpenSiddurClientApp.service(
                 // serialize to string, then clean up namespaces
                 return this.serializeToString(doc)
                         .replace(/\s+xmlns:[a-zA-Z0-9]+=["][^"]+["]/g, "")
-                        .replace(/^\<([a-zA-Z:]+)/, "<$1 xmlns:tei=\"http://www.tei-c.org/ns/1.0\" xmlns:j=\"http://jewishliturgy.org/ns/jlptei/1.0\"")
+                        // replace first instance of an element 
+                        .replace(/\<([a-zA-Z:]+)/, "<$1 xmlns:tei=\"http://www.tei-c.org/ns/1.0\" xmlns:j=\"http://jewishliturgy.org/ns/jlptei/1.0\"")
             },
             indentToString : function ( xmlDoc ) {
                 return vkbeautify.xml(this.serializeToStringTEINSClean(xmlDoc), 4);  
