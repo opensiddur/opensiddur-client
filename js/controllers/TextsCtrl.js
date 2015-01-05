@@ -7,10 +7,10 @@
 OpenSiddurClientApp.controller(
     'TextsCtrl',
     ['$scope', '$location', '$route', '$routeParams', '$timeout', '$window', 'XsltService', 
-    'AccessModelService', 'AuthenticationService', 'DialogService', 'ErrorService', 'RestApi',
+    'AccessService', 'AuthenticationService', 'DialogService', 'ErrorService', 'RestApi',
     'TextService',
     function ($scope, $location, $route, $routeParams, $timeout, $window, XsltService, 
-        AccessModelService, AuthenticationService, DialogService, ErrorService, RestApi,
+        AccessService, AuthenticationService, DialogService, ErrorService, RestApi,
         TextService) {
         console.log("Texts controller.");
         $scope.selection = "";
@@ -70,6 +70,7 @@ OpenSiddurClientApp.controller(
         $scope.resourceType.initAs($location.path().split("/")[1]);
 
         $scope.TextService = TextService;
+        $scope.AccessService = AccessService;
 
         $scope.editor = {
             loggedIn : AuthenticationService.loggedIn,
@@ -88,8 +89,6 @@ OpenSiddurClientApp.controller(
                 },
                 rtlMoveVisually : false
             },
-            access : AccessModelService.default(AuthenticationService.userName),
-            accessModel : "public",
             editableText : function(setContent) {
                 return ($scope.resourceType.current.editorMode == "xml") ? 
                     TextService.content(setContent) :
@@ -98,31 +97,6 @@ OpenSiddurClientApp.controller(
             makeDirty : function(whatsChanged) {
                 $scope.textsForm.$setDirty();
                 return true;
-            },
-            setAccessModel : function() {
-                this.accessModel = (this.isNew) ? "public" : (
-                    (this.access.group == "everyone" && this.access.groupWrite) ? "public" : "restricted"
-                );
-            },
-            saveAccessModel : function() {
-                if (this.access.chmod && !this.isNew) {
-                    if (this.accessModel == "public") {
-                        this.access.groupWrite = true;
-                        this.access.group = "everyone";
-                    }
-                    else {  // restricted
-                        this.access.groupWrite = false;
-                        this.access.group = "everyone";
-                    }
-                    RestApi[$scope.resourceType.current.api].setAccess({
-                            "resource" : this.currentDocument
-                        }, this.access, 
-                        function() {}, 
-                        function( error ) { 
-                            ErrorService.addApiError(error.data);
-                        }
-                    );
-                }
             },
             title : "",
             isNew : 1,  // isNew=1 indicates that the document has not yet been saved
@@ -137,7 +111,7 @@ OpenSiddurClientApp.controller(
                 $scope.editor.isNew = 1;
                 TextService.content("");
                 // default access rights for a new file
-                $scope.editor.access = AccessModelService.default(AuthenticationService.userName);
+                AccessService.reset();
                 // load a new document template
                 var documentTemplate = $scope.resourceType.current.documentTemplate;
                 if (!$scope.editor.newTemplate.template.source) {
@@ -163,28 +137,18 @@ OpenSiddurClientApp.controller(
             setDocument : function( cursorLocation ) {
                 var toDocument = this.currentDocument;
 
-                if (!toDocument) {
-                    /* don't do this:
-                    setTimeout(
-                        function() { DialogService.open('newDialog'); }, 500
-                    );
-                    */
-                    // nothing to do here...
-                }
-                else {
+                if (toDocument) {
                     RestApi[$scope.resourceType.current.api].get(
                         { resource : toDocument },
                         function(data) {        // success function
                             var data = data.xml;
                             if ($scope.resourceType.current.supportsAccess) {
-                                $scope.editor.access = RestApi[$scope.resourceType.current.api].getAccess({
-                                    "resource" : toDocument     // RestApi expects decoded URIs
-                                }, function( access ) {
-                                    $scope.editor.setAccessModel();
-                                    if (!access.write)
-                                        $scope.editor.codemirror.readOnly = true; 
-                                }, function (error) {
-                                    ErrorService.addApiError(error.data);
+                                AccessService.load($scope.resourceType.current.api, toDocument)
+                                .success(function() {
+                                    $scope.editor.codemirror.readOnly = !AccessService.access.write; 
+                                })
+                                .error(function (error) {
+                                    ErrorService.addApiError(error);
                                 });
                             };
                             TextService.content( 
@@ -246,7 +210,11 @@ OpenSiddurClientApp.controller(
                                     $scope.editor.currentDocument=decodeURI(headers('Location').replace("/exist/restxq"+$scope.resourceType.current.api+"/", ""));
                                     // save the access model for the new document
                                     if ($scope.resourceType.current.supportsAccess) {
-                                        $scope.editor.saveAccessModel();
+                                        AccessService.setResource($scope.resourceType.current.api, $scope.editor.currentDocument)
+                                        .save()
+                                        .error(function(error) {
+                                            ErrorService.addApiError(error);
+                                        });
                                     }
                                 };
                                 // reload the document to get the change log in there correctly

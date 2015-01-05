@@ -17,7 +17,7 @@
                                     name="respChooser{{$index}}"
                                     data-ng-model="resp.respType"
                                     data-ng-required="resp.respName"
-                                    data-ng-disabled="!accessModel.write"
+                                    data-ng-disabled="!AccessService.access.write"
                                     data-ng-options="key as definition for (key, definition) in supportedResponsibilities"
                                     data-ng-change="resp.respText = supportedResponsibilities[resp.respType]">
                                      <option value="">-- Responsibility --</option>
@@ -31,13 +31,13 @@
                             <div class="col-md-2">
                                 <button class="btn form-control"
                                     data-ng-click="setResponsibility($index)"
-                                    data-ng-disabled="!selectedContributor.ref || !accessModel.write"
+                                    data-ng-disabled="!selectedContributor.ref || !AccessService.access.write"
                                     >Select</button>
                             </div>
                             <div class="col-md-2">
                                 <button class="btn form-control"
                                     data-ng-click="removeResponsibility($index)"
-                                    data-ng-disabled="!accessModel.write"
+                                    data-ng-disabled="!AccessService.access.write"
                                     >Remove</button>
                             </div>
                         </div>
@@ -47,7 +47,7 @@
             <div class="modal-footer">
                 <button type="button" class="btn" data-ng-click="CloseButton()" data-dismiss="modal">Close</button>
                 <button type="button" class="btn btn-primary" data-dismiss="modal"
-                    data-ng-disabled="!accessModel.write" 
+                    data-ng-disabled="!AccessService.access.write" 
                     data-ng-click="OKButton()">Set Credits</button>
             </div>
         </div>

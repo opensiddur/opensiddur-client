@@ -15,10 +15,10 @@
                                         <div class="form-group">
                                             <label class="control-label">Sources</label>
                                             <button class="btn btn-default btn-sm" 
-                                                data-ng-disabled="!accessModel.write"
+                                                data-ng-disabled="!AccessService.access.write"
                                                 data-ng-click="addSource()">Add</button>
                                             <button class="btn btn-default btn-sm" 
-                                                data-ng-disabled="!accessModel.write || !sourcesModel[selectedSource]"
+                                                data-ng-disabled="!AccessService.access.write || !sourcesModel[selectedSource]"
                                                 data-ng-click="removeSource()">Remove</button>
                                         </div>
                                     </form>
@@ -90,7 +90,7 @@
             <div class="modal-footer">
                 <button type="button" class="btn" data-ng-click="CloseButton()" data-dismiss="modal">Close</button>
                 <button type="button" class="btn btn-primary" data-dismiss="modal"
-                    data-ng-disabled="!accessModel.write" 
+                    data-ng-disabled="!AccessService.access.write" 
                     data-ng-click="OKButton()">Set Sources</button>
             </div>
         </div>

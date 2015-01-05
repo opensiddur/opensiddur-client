@@ -6,18 +6,18 @@
                 <h4 class="modal-title" id="sharingDialogHeader">{{ title }}</h4>
             </div>
             <div class="modal-body">
-                <p>This document is owned by: {{ accessModel.owner }}</p>
-                <p data-ng-show="accessModel.read || accessModel.write || accessModel.chmod || accessModel.relicense">You can: <strong>
-                    <span data-ng-show="accessModel.read">read<span data-ng-show="accessModel.write">,</span></span>
-                    <span data-ng-show="accessModel.write">write<span data-ng-show="accessModel.chmod">,</span></span>                
-                    <span data-ng-show="accessModel.chmod">change sharing properties<span data-ng-show="accessModel.relicense">,</span></span>
-                    <span data-ng-show="accessModel.relicense">relicense</span> 
+                <p>This document is owned by: {{ AccessService.access.owner }}</p>
+                <p data-ng-show="AccessService.access.read || AccessService.access.write || AccessService.access.chmod || AccessService.access.relicense">You can: <strong>
+                    <span data-ng-show="AccessService.access.read">read<span data-ng-show="AccessService.access.write">,</span></span>
+                    <span data-ng-show="AccessService.access.write">write<span data-ng-show="AccessService.access.chmod">,</span></span>                
+                    <span data-ng-show="AccessService.access.chmod">change sharing properties<span data-ng-show="AccessService.access.relicense">,</span></span>
+                    <span data-ng-show="AccessService.access.relicense">relicense</span> 
                     </strong> this document</p>
-                <p data-ng-show="!accessModel.read || !accessModel.write || !accessModel.chmod || !accessModel.relicense">You can not: <strong>
-                    <span data-ng-show="!accessModel.read">read<span data-ng-show="!accessModel.write">,</span></span> 
-                    <span data-ng-show="!accessModel.write">write<span data-ng-show="!accessModel.chmod">,</span></span> 
-                    <span data-ng-show="!accessModel.chmod">change sharing properties<span data-ng-show="!accessModel.relicense">,</span></span>
-                    <span data-ng-show="!accessModel.relicense">relicense</span> 
+                <p data-ng-show="!AccessService.access.read || !AccessService.access.write || !AccessService.access.chmod || !AccessService.access.relicense">You can not: <strong>
+                    <span data-ng-show="!AccessService.access.read">read<span data-ng-show="!AccessService.access.write">,</span></span> 
+                    <span data-ng-show="!AccessService.access.write">write<span data-ng-show="!AccessService.access.chmod">,</span></span> 
+                    <span data-ng-show="!AccessService.access.chmod">change sharing properties<span data-ng-show="!AccessService.access.relicense">,</span></span>
+                    <span data-ng-show="!AccessService.access.relicense">relicense</span> 
                     </strong> this document</p>
                 <form name="sharingForm" class="form-horizontal">
                     <div class="col-md-offset-1">
@@ -25,7 +25,7 @@
                         <div class="form-group">
                             <div class="radio">
                                 <label>
-                                    <input type="radio" data-ng-disabled="!accessModel.chmod" 
+                                    <input type="radio" data-ng-disabled="!AccessService.access.chmod" 
                                         data-ng-model="accessType" value="public"/><b>Public:</b> 
                                     Everyone can read and edit the document.
                                 </label>
@@ -33,7 +33,7 @@
                             <div class="radio">
                                 <label>
                                     <input 
-                                        type="radio" data-ng-disabled="!accessModel.chmod" 
+                                        type="radio" data-ng-disabled="!AccessService.access.chmod" 
                                         data-ng-model="accessType" value="restricted"/><b>Restricted:</b> 
                                     Everyone can read the document, only the owner can edit it.
                                 </label>
@@ -44,7 +44,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" data-ng-disabled="!accessModel.chmod" data-dismiss="modal" 
+                <button type="button" class="btn btn-primary" data-ng-disabled="!AccessService.access.chmod" data-dismiss="modal" 
                     data-ng-click="saveAccessModel()">Set sharing properties</button>
             </div>
         </div>

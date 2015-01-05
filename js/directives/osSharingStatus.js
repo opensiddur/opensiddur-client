@@ -2,33 +2,26 @@
  * sharing status directive
  *
  * Usage:
- * <os-sharing-status access-model="" sharing-dialog="" 
- *  chmod-disabled="true|false" relicense-disabled="true|false"/>
+ * <os-sharing-status sharing-dialog="" />
  *
  * Open Siddur Project
- * Copyright 2014 Efraim Feinstein, efraim@opensiddur.org
+ * Copyright 2014-2015 Efraim Feinstein, efraim@opensiddur.org
  * Licensed under the GNU Lesser General Public License, version 3 or above
  */
 OpenSiddurClientApp.directive(
         'osSharingStatus',
-        [
-         function() {
+        ["AccessService",
+         function(AccessService) {
              return {
                 restrict : 'AE',
                 scope : {
-                    accessModel : "=",
+                    sharingDialog : "@",
                     chmodDisabled : "@",
-                    relicenseDisabled : "@",
-                    sharingDialog : "@"
+                    relicenseDisabled : "@"
                 },
                  controller: ['$scope', 'DialogService', function ($scope, DialogService) {
                     $scope.DialogService = DialogService;
-                    if ($scope.chmodDisabled == undefined) {
-                        $scope.chmodDisabled = false; 
-                    };
-                    if ($scope.relicenseDisabled == undefined) {
-                        $scope.relicenseDisable = false;
-                    };
+                    $scope.AccessService = AccessService;
                  }],
                  transclude : false,
                  templateUrl : "/js/directives/osSharingStatus.html"

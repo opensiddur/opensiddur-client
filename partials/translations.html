@@ -13,10 +13,10 @@
                           >Open</button>
                       <button data-ng-class="{'btn' : true, 'btn-primary' : true, 'btn-success' : trForm.$pristine}" type="submit" 
                           data-ng-click="editor.saveDocument()"  
-                          data-ng-disabled="!editor.access.write || trForm.$invalid || trForm.$pristine">{{saveButtonText()}}</button>
+                          data-ng-disabled="!AccessService.access.write || trForm.$invalid || trForm.$pristine">{{saveButtonText()}}</button>
                 </div>
                 <div class="navbar-right navbar-btn">
-                    <os-sharing-status access-model="editor.access" sharing-dialog="sharingDialog"></os-sharing-status>
+                    <os-sharing-status sharing-dialog="sharingDialog"></os-sharing-status>
                 </div>
             </div>
         </div>
@@ -58,7 +58,7 @@
                             <label class="col-md-2 control-label" for="license">Licensed under</label>
                             <div class="col-md-6">
                                 <select class="form-control" name="license" 
-                                    data-ng-disabled="!editor.access.relicense"
+                                    data-ng-disabled="!AccessService.access.relicense"
                                     data-ng-model="editor.content.license"
                                     required="true"
                                     data-ng-options="target as license for (target, license) in editor.supportedLicenses"/>
@@ -113,7 +113,6 @@
     <os-open-dialog api="'/api/data/linkage'" selection="selection" name="openDialog" title="Open Translation Linkage"></os-open-dialog> 
     <os-open-dialog api="'/api/data/original'" selection="temporary.link1" name="openDialogLeft" title="Set parallel text 1"></os-open-dialog> 
     <os-open-dialog api="'/api/data/original'" selection="temporary.link2" name="openDialogRight" title="Set parallel text 2"></os-open-dialog> 
-    <os-sharing-dialog api="'/api/data/linkage'" access-model="editor.access" current-document="editor.currentDocument" 
-            is-new="editor.isNew" name="sharingDialog" title="Sharing"></os-sharing-dialog> 
+    <os-sharing-dialog is-new="editor.isNew" name="sharingDialog" title="Sharing"></os-sharing-dialog> 
 </div>
 

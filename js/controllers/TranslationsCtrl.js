@@ -1,18 +1,19 @@
 /* 
  * controller for translations page 
  * Open Siddur Project
- * Copyright 2014 Efraim Feinstein <efraim@opensiddur.org>
+ * Copyright 2014-2015 Efraim Feinstein <efraim@opensiddur.org>
  * Licensed under the GNU Lesser General Public License, version 3 or later
  */
 OpenSiddurClientApp.controller(
     'TranslationsCtrl',
-    ['$scope', '$http', '$location', '$route', '$routeParams', '$q', 'AccessModelService', 'AuthenticationService', 'DialogService', 'ErrorService', 'RestApi',
+    ['$scope', '$http', '$location', '$route', '$routeParams', '$q', 'AccessService', 'AuthenticationService', 'DialogService', 'ErrorService', 'RestApi',
      'XsltService', 
-    function($scope, $http, $location, $route, $routeParams, $q, AccessModelService, AuthenticationService, DialogService, ErrorService, RestApi, XsltService) {
+    function($scope, $http, $location, $route, $routeParams, $q, AccessService, AuthenticationService, DialogService, ErrorService, RestApi, XsltService) {
         console.log("translations controller");
         
         $scope.selection = "";
         $scope.DialogService = DialogService;
+        $scope.AccessService = AccessService;
 
         $scope.temporary = {
             link1 : "",
@@ -22,33 +23,6 @@ OpenSiddurClientApp.controller(
             loggedIn : AuthenticationService.loggedIn,
             currentDocument : $routeParams.resource,
             // TODO: this is copied verbatim from TextsCtrl... need some serious refactoring
-            access : AccessModelService.default(AuthenticationService.userName),
-            accessModel : "public",
-            setAccessModel : function() {
-                this.accessModel = (this.isNew) ? "public" : (
-                    (this.access.group == "everyone" && this.access.groupWrite) ? "public" : "restricted"
-                );
-            },
-            saveAccessModel : function() {
-                if (this.access.chmod && !this.isNew) {
-                    if (this.accessModel == "public") {
-                        this.access.groupWrite = true;
-                        this.access.group = "everyone";
-                    }
-                    else {  // restricted
-                        this.access.groupWrite = false;
-                        this.access.group = "everyone";
-                    }
-                    RestApi["/api/data/linkage"].setAccess({
-                            "resource" : this.currentDocument //decodeURI(this.currentDocument)
-                        }, this.access, 
-                        function() {}, 
-                        function( error ) { 
-                            ErrorService.addApiError(error.data);
-                        }
-                    );
-                }
-            },
             isNew : 1,
             supportedLanguages : supportedLanguages,
             supportedLicenses : supportedLicenses,
@@ -201,7 +175,7 @@ OpenSiddurClientApp.controller(
                 console.log("New document");
 
                 // default access rights for a new file
-                $scope.editor.access = AccessModelService.default(AuthenticationService.userName);
+                AccessService.reset();
                 // load a new document template
                 documentTemplate = "/templates/linkage.xml";
                 $http.get(documentTemplate) 
@@ -229,11 +203,10 @@ OpenSiddurClientApp.controller(
                     RestApi["/api/data/linkage"].get({"resource" : toDocument },
                         function(data) {    // success function
                             var data = data.xml;
-                            $scope.editor.access = RestApi["/api/data/linkage"].getAccess({
-                                    "resource" : toDocument //decodeURI(toDocument)
-                                }, function( access ) {
-                                    $scope.editor.setAccessModel();
-                                });
+                            AccessService.load("/api/data/linkage", toDocument)
+                            .error(function(err) {
+                                ErrorService.addApiError(err);
+                            });
                             $scope.editor.loadDocument(data);
                             $scope.editor.isNew = 0;
                         },
@@ -377,7 +350,11 @@ OpenSiddurClientApp.controller(
                             $scope.editor.isNew = 0;
                             $scope.editor.currentDocument=decodeURI(headers('Location').replace("/exist/restxq/api/data/linkage/", ""));
                             // save the access model for the new document
-                            $scope.editor.saveAccessModel();
+                            AccessService.setResource("/api/data/linkage", $scope.editor.currentDocument)
+                            .save()
+                            .error(function(err) {
+                                ErrorService.addApiError(err);
+                            });
                         };
                         // reload the document to get the change log in there correctly
                         // add a 1s delay to allow the server some processing time before reload
