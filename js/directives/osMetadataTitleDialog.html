@@ -16,7 +16,7 @@
                                 <select
                                     class="form-control"
                                     data-ng-model="title.lang" 
-                                    data-ng-disabled="!accessModel.write"
+                                    data-ng-disabled="!AccessService.access.write"
                                     data-ng-required="title.text"
                                     data-ng-options="code as lang for (code, lang) in supportedLanguages"
                                     placeholder="Language"/>
@@ -25,7 +25,7 @@
                                 <input
                                     class="form-control"
                                     data-ng-model="title.text" 
-                                    data-ng-disabled="!accessModel.write"
+                                    data-ng-disabled="!AccessService.access.write"
                                     data-ng-required="$index == 0"
                                     data-ng-change="modelChanged($index)"
                                     placeholder="Title"/>
@@ -34,7 +34,7 @@
                                 <select
                                     class="form-control"
                                     data-ng-model="title.subLang" 
-                                    data-ng-disabled="!accessModel.write"
+                                    data-ng-disabled="!AccessService.access.write"
                                     data-ng-required="title.subText"
                                     data-ng-options="code as lang for (code, lang) in supportedLanguages"
                                     placeholder="Subtitle Language"/>
@@ -43,7 +43,7 @@
                                 <input
                                     class="form-control"
                                     data-ng-model="title.subText" 
-                                    data-ng-disabled="!accessModel.write"
+                                    data-ng-disabled="!AccessService.access.write"
                                     data-ng-change="modelChanged($index)"
                                     placeholder="Subtitle"
                                     />
@@ -55,7 +55,7 @@
             <div class="modal-footer">
                 <button type="button" class="btn" data-ng-click="CloseButton()" data-dismiss="modal">Close</button>
                 <button type="button" class="btn btn-primary" data-dismiss="modal"
-                    data-ng-disabled="!accessModel.write" 
+                    data-ng-disabled="!AccessService.access.write" 
                     data-ng-click="OKButton()">Set Titles</button>
             </div>
         </div>

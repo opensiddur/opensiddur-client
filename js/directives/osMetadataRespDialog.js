@@ -1,18 +1,18 @@
 /* Set responsibility credits 
  *
  * Usage:
- * <os-metadata-resp-dialog on-ok="" on-close="" title="" name="" accessModel="" />
+ * <os-metadata-resp-dialog on-ok="" on-close="" title="" name=""  />
  * on-ok runs when the OK button is pressed (it can cancel the OK), on-close runs when the dialog is canceled
  * name is an id, title is the header text
  *
- * Copyright 2014 Efraim Feinstein, efraim@opensiddur.org
+ * Copyright 2014-2015 Efraim Feinstein, efraim@opensiddur.org
  * Licensed under the GNU Lesser General Public License, version 3 or later
  */
 OpenSiddurClientApp.directive(
         'osMetadataRespDialog',
         [
-        'TextService',
-        function( TextService ) {
+        'AccessService', 'TextService',
+        function( AccessService, TextService ) {
             var template = {
                 respText : "",
                 respType : "",
@@ -25,13 +25,13 @@ OpenSiddurClientApp.directive(
                 scope : {
                     name : "@",
                     title : "@",
-                    accessModel : "=",
                     onOk : "&",
                     onClose : "&"
                 },
                 controller: ['$scope', function ($scope) {
                     console.log("In resp metadata controller");
                     $scope.supportedResponsibilities = supportedResponsibilities;
+                    $scope.AccessService = AccessService;
                     $scope.selectedContributor = { name : "", ref : "" };
                     $scope.OKButton = function () {
                         if (!$scope.onOk() || $scope.onOk()($scope.respModel)) {

@@ -22,7 +22,6 @@ OpenSiddurClientApp.directive(
                 controller: ['$scope', function ($scope) {
                     console.log("In sharing dialog controller");
                     $scope.AccessService = AccessService;
-                    $scope.accessType = AccessService.simpleAccessModel(); 
                     $scope.saveAccessModel = function() {
                         var am = AccessService.simpleAccessModel($scope.accessType);
                         if (!$scope.isNew) {
@@ -41,6 +40,9 @@ OpenSiddurClientApp.directive(
                     elem.find(".modal-title").attr("id", scope.name + "_label");
                     elem.find(".osSharingDialog").attr("aria-labelledBy", scope.name + "_label");
                     elem.find(".osSharingDialog").attr("id", scope.name);
+                    elem.on("shown.bs.modal", function() {
+                        scope.accessType = AccessService.simpleAccessModel();
+                    });
                  },
                  transclude : false,
                  templateUrl : "/js/directives/osSharingDialog.html"
