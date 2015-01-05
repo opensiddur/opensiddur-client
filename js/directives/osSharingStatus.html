@@ -1,28 +1,28 @@
 <div class="osSharingStatus btn-group">
     <button 
         class="btn btn-small btn-primary"
-        data-ng-hide="chmodDisabled"
+        data-ng-show="!chmodDisabled && AccessService.access.chmod"
         data-ng-click="DialogService.open(sharingDialog)"
         >Sharing</button>
     <button 
         class="btn btn-small btn-success" 
         data-ng-disabled="1"
-        data-ng-show="!relicenseDisabled && accessModel.relicense"
+        data-ng-show="!relicenseDisabled && AccessService.access.relicense"
         title="Relicensing allowed">RL</button>
     <button 
         class="btn btn-small btn-warning" 
         data-ng-disabled="1"
-        data-ng-show="!relicenseDisabled && !accessModel.relicense"
+        data-ng-show="!relicenseDisabled && !AccessService.access.relicense"
         title="Relicensing not allowed: You must be logged in, own the document, and be its only editor in order to relicense a text">R/L</button>
     <button 
         class="btn btn-small btn-success" 
         data-ng-disabled="1"
-        data-ng-show="accessModel.write"
+        data-ng-show="AccessService.access.write"
         title="Editing allowed">R/W</button>
     <button 
         class="btn btn-small btn-warning" 
         data-ng-disabled="1"
-        data-ng-show="!accessModel.write"
+        data-ng-show="!AccessService.access.write"
         title="Editing not allowed: You must be logged in and have sufficient privileges to edit this text">R/O</button>
 </div>
 

@@ -7,17 +7,14 @@
 OpenSiddurClientApp.controller(
     'SourcesCtrl',
     ['$rootScope', '$location', '$route', '$routeParams', '$scope', 'RestApi', 'XsltService', 
-    'DialogService', 'AuthenticationService', 'ErrorService',
+    "AccessService", 'DialogService', 'AuthenticationService', 'ErrorService',
     function ($rootScope, $location, $route, $routeParams, $scope, RestApi, XsltService, 
-    DialogService, AuthenticationService, ErrorService) {
+    AccessService, DialogService, AuthenticationService, ErrorService) {
         $scope.DialogService = DialogService;
-
+        AccessService.reset();
 
         $scope.editor = {
             loggedIn : AuthenticationService.loggedIn,
-            access : {
-                write : AuthenticationService.loggedIn
-            },
             "supportedLanguages" : supportedLanguages, 
             "supportedResponsibilities" : supportedResponsibilities,
             "monographScopes" : { 
@@ -75,6 +72,7 @@ OpenSiddurClientApp.controller(
                 $scope.editor.content = x2js.xml_str2json(transformed);
                 //$scope.editor.content.biblStruct.monogr.title_asArray[0].__text = "New Bibliography Entry";
                 //$scope.sourcesForm.$setPristine();
+                AccessService.reset();
             },
             setDocument : function( ) {
                 var toDocument = $scope.editor.currentDocument;

@@ -34,12 +34,12 @@ OpenSiddurClientApp.service(
                 return ((new window.XMLSerializer()).serializeToString(doc))
                     .replace(/\s+xmlns:xml="http:\/\/www.w3.org\/XML\/1998\/namespace"/g, "");
             },
-            serializeToStringTEINSClean : function (doc) {
+            serializeToStringTEINSClean : function (doc, includeFlat) {
                 // serialize to string, then clean up namespaces
                 return this.serializeToString(doc)
                         .replace(/\s+xmlns:[a-zA-Z0-9]+=["][^"]+["]/g, "")
                         // replace first instance of an element 
-                        .replace(/\<([a-zA-Z:]+)/, "<$1 xmlns:tei=\"http://www.tei-c.org/ns/1.0\" xmlns:j=\"http://jewishliturgy.org/ns/jlptei/1.0\"")
+                        .replace(/\<([a-zA-Z:]+)/, "<$1 xmlns:tei=\"http://www.tei-c.org/ns/1.0\" xmlns:j=\"http://jewishliturgy.org/ns/jlptei/1.0\"" + (includeFlat ? " xmlns:jf=\"http://jewishliturgy.org/ns/jlptei/1.0/flat\"" : ""))
             },
             indentToString : function ( xmlDoc ) {
                 return vkbeautify.xml(this.serializeToStringTEINSClean(xmlDoc), 4);  

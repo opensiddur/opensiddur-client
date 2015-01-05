@@ -2,15 +2,44 @@
  * TODO: move all load() and save() activity to this service
  * 
  * Open Siddur Project
- * Copyright 2014 Efraim Feinstein, efraim@opensiddur.org
+ * Copyright 2014-2015 Efraim Feinstein, efraim@opensiddur.org
  * Licensed under the GNU Lesser General Public License, version 3 or later
  */
 OpenSiddurClientApp.service("TextService", [
-    "XsltService",
-    function(XsltService) {
+    "$http", "XsltService",
+    function($http, XsltService) {
     var xj = new X2JS({ arrayAccessForm : "property" });   
     return {
         _content : "",
+        _isFlat : false,
+        _resource : "",
+        loadFlat : function(resource) {
+            // load the content from the given resource (without path!) as a flat document
+            // only original documents can be loaded flat
+            // return the result of a $http call. errors are catchable through .error
+            var thiz = this;
+            return $http.get("/api/data/original/" + encodeURIComponent(resource) + "/flat",
+                {
+                    headers : { 
+                        "Accept" : "application/xml"
+                    },
+                    transformResponse : function(data, headersGetter, httpStatus) {
+                        if (httpStatus < 300) {
+                            return XsltService.serializeToStringTEINSClean(
+                                XsltService.transformString("/xsl/originaltemplate.xsl", data), 
+                                true    // include flat namespace
+                            );
+                        }
+                        else return data;
+                    }
+                })
+                .success(function(data) {
+                    thiz._resource = resource;
+                    thiz._content = data;
+                    thiz._isFlat = true;
+                    return thiz;
+                });
+        },
         content : function(setContent) {
             if (setContent) {
                 this._content = setContent;

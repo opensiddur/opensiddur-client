@@ -21,10 +21,10 @@
                         class="btn btn-primary"
                         data-ng-class="{'btn-success' : profileForm.$pristine}" type="submit" 
                         data-ng-click="save()"  
-                        data-ng-disabled="!access.write || profileForm.$invalid || profileForm.$pristine">{{saveButtonText()}}</button>
+                        data-ng-disabled="!AccessService.access.write || profileForm.$invalid || profileForm.$pristine">{{saveButtonText()}}</button>
                 </div>
                 <div class="navbar-right navbar-btn">
-                    <os-sharing-status access-model="access" relicense-disabled="1" chmod-disabled="1"></os-sharing-status>
+                    <os-sharing-status relicense-disabled="1" chmod-disabled="1"></os-sharing-status>
                 </div>
             </div>
         </div>
