@@ -17,7 +17,7 @@
                 </div>
                 <div class="btn-group navbar-btn" data-ng-hide="!resourceType.current.supportsCompile">
                       <button class="btn btn-primary" type="submit"
-                          data-ng-show="editor.currentDocument"
+                          data-ng-show="TextService._resource"
                           data-ng-disabled="textsForm.$invalid || textsForm.$dirty"
                           data-ng-click="editor.compile()"
                           >Compile to HTML</button>
@@ -61,13 +61,13 @@
     </div>
     <!-- page content -->
     <div class="page-container container-fluid">
-        <div class="full-window-message" data-ng-show="!editor.loggedIn && !editor.currentDocument">
+        <div class="full-window-message" data-ng-show="!editor.loggedIn && !TextService._resource">
             Log in to be able to edit a new document, or open a document to view it.
         </div>
         <div class="full-window-message" data-ng-show="editor.loggedIn && !editor.isLoaded">
             To begin editing, open an existing document or start a new document using the toolbar above.
         </div>
-        <div data-ng-show="editor.isLoaded && (editor.loggedIn || editor.currentDocument)">
+        <div data-ng-show="editor.isLoaded && (editor.loggedIn || TextService._resource)">
             <div class="texts-editor row">
                 <form name="textsForm" data-unsaved-warning-form="1">
                     <div data-ng-class="{true:'col-md-6', false:'col-md-12'}[editor.transcriptionViewer]">

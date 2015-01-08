@@ -25,6 +25,7 @@ OpenSiddurClientApp.controller(
                 supportsAccess : true,
                 supportsCompile : true,
                 supportsTranscriptionView : true,
+                loadFlat : true,
                 defaultTitle : "New text",
                 documentTemplate : "templateNewOriginal",
                 editorMode : "xml"
@@ -36,6 +37,7 @@ OpenSiddurClientApp.controller(
                 supportsAccess : false,
                 supportsCompile : false,
                 supportsTranscriptionView : true,
+                loadFlat : false,
                 defaultTitle : "New conditional",
                 documentTemplate : "templateNewConditionals",
                 editorMode : "xml"
@@ -47,6 +49,7 @@ OpenSiddurClientApp.controller(
                 supportsAccess : true,
                 supportsCompile : false,
                 supportsTranscriptionView : true,
+                loadFlat : false,
                 defaultTitle : "New annotations",
                 documentTemplate : "templateNewAnnotations",
                 editorMode : "xml"
@@ -58,6 +61,7 @@ OpenSiddurClientApp.controller(
                 supportsAccess : true,
                 supportsCompile : false,
                 supportsTranscriptionView : false,
+                loadFlat : false,
                 defaultTitle : "New style",
                 documentTemplate : "templateNewStyle",
                 editorMode : "css"
@@ -74,7 +78,6 @@ OpenSiddurClientApp.controller(
 
         $scope.editor = {
             loggedIn : AuthenticationService.loggedIn,
-            currentDocument : $routeParams.resource,
             codemirrorOptions : {
                 lineWrapping : true,
                 lineNumbers : true,
@@ -90,9 +93,9 @@ OpenSiddurClientApp.controller(
                 rtlMoveVisually : false
             },
             editableText : function(setContent) {
-                return ($scope.resourceType.current.editorMode == "xml") ? 
-                    TextService.content(setContent) :
-                    TextService.stylesheet(setContent);
+                if ($scope.resourceType.current.loadFlat) return TextService.flatContent(setContent);
+                else if ($scope.resourceType.current.editorMode == "css") return TextService.stylesheet(setContent);
+                else return TextService.content(setContent);
             },
             makeDirty : function(whatsChanged) {
                 $scope.textsForm.$setDirty();
@@ -134,46 +137,38 @@ OpenSiddurClientApp.controller(
                     }, 250
                 );
             },
-            setDocument : function( cursorLocation ) {
-                var toDocument = this.currentDocument;
-
+            setDocument : function( toDocument, cursorLocation ) {
                 if (toDocument) {
-                    RestApi[$scope.resourceType.current.api].get(
-                        { resource : toDocument },
-                        function(data) {        // success function
-                            var data = data.xml;
-                            if ($scope.resourceType.current.supportsAccess) {
-                                AccessService.load($scope.resourceType.current.api, toDocument)
-                                .success(function() {
-                                    $scope.editor.codemirror.readOnly = !AccessService.access.write; 
-                                })
-                                .error(function (error) {
-                                    ErrorService.addApiError(error);
-                                });
-                            };
-                            TextService.content( 
-                                XsltService.serializeToStringTEINSClean(
-                                    XsltService.transformString( "originalTemplate", data )));
-                            $scope.editor.title = TextService.title()[0].text;
-                            $scope.editor.isNew = 0;
-                            $scope.editor.isLoaded = 1;
-                            $scope.textsForm.$setPristine();
-                            setTimeout(
-                                function() { 
-                                    $scope.editor.codemirror.editor.refresh(); 
-                                    if (cursorLocation) {
-                                        $scope.editor.codemirror.doc.setCursor(cursorLocation);
-                                    }
-                                }, 250
-                            );
+                    TextService.load($scope.resourceType.current.api, toDocument, $scope.resourceType.current.loadFlat)
+                    .success(function(ts) {
+                        if ($scope.resourceType.current.supportsAccess) {
+                            AccessService.load($scope.resourceType.current.api, toDocument)
+                            .success(function() {
+                                $scope.editor.codemirror.readOnly = !AccessService.access.write; 
+                            })
+                            .error(function (error) {
+                                ErrorService.addApiError(error);
+                            });
+                        };
+                        $scope.editor.title = TextService.title()[0].text;
+                        $scope.editor.isNew = 0;
+                        $scope.editor.isLoaded = 1;
+                        $scope.textsForm.$setPristine();
+                        setTimeout(
+                            function() { 
+                                $scope.editor.codemirror.editor.refresh(); 
+                                if (cursorLocation) {
+                                    $scope.editor.codemirror.doc.setCursor(cursorLocation);
+                                }
+                            }, 250
+                        );
 
-                        },
-                        function(error) {    // error function
-                            ErrorService.addApiError(error.data.xml);
-                            console.log("error loading", toDocument);
-                            $scope.editor.currentDocument = "";
-                        }
-                    );
+                    })
+                    .error(function(error) {    // error function
+                        ErrorService.addApiError(error);
+                        console.log("error loading", toDocument);
+                        TextService.setResource("", "");
+                    });
                 }
             },
             saveDocument : function () {
@@ -181,7 +176,7 @@ OpenSiddurClientApp.controller(
                 var httpOperation = (this.isNew) ? 
                     RestApi[$scope.resourceType.current.api].save : 
                     RestApi[$scope.resourceType.current.api].put;
-                var resource = ((this.isNew) ? "" : $scope.editor.currentDocument);
+                var resource = ((this.isNew) ? "" : TextService._resource);
                 var content = TextService.content(); //$scope.editor.codemirror.doc.getValue();
                 var transformed =
                     XsltService.transformString( "originalBeforeSave", content );
@@ -207,10 +202,11 @@ OpenSiddurClientApp.controller(
                                 if ($scope.editor.isNew) {
                                     // add to the search results listing
                                     $scope.editor.isNew = 0;
-                                    $scope.editor.currentDocument=decodeURI(headers('Location').replace("/exist/restxq"+$scope.resourceType.current.api+"/", ""));
+                                    var currentDocument=decodeURI(headers('Location').replace("/exist/restxq"+$scope.resourceType.current.api+"/", ""));
+                                    TextService.setResource($scope.resourceType.current.api, currentDocument, $scope.resourceType.current.loadFlat);
                                     // save the access model for the new document
                                     if ($scope.resourceType.current.supportsAccess) {
-                                        AccessService.setResource($scope.resourceType.current.api, $scope.editor.currentDocument)
+                                        AccessService.setResource($scope.resourceType.current.api, currentDocument)
                                         .save()
                                         .error(function(error) {
                                             ErrorService.addApiError(error);
@@ -221,7 +217,7 @@ OpenSiddurClientApp.controller(
                                 // add a 1s delay to allow the server some processing time before reload
                                 setTimeout(
                                     function() { 
-                                        $scope.editor.setDocument($scope.editor.codemirror.doc.getCursor()); 
+                                        $scope.editor.setDocument(TextService._resource, $scope.editor.codemirror.doc.getCursor()); 
                                     }, 1000
                                 );
                             },
@@ -240,7 +236,7 @@ OpenSiddurClientApp.controller(
                     $location.path( "/"+$scope.resourceType.current.path );
             },
             compile : function () {
-                $window.open("/compile/" + $scope.editor.currentDocument);
+                $window.open("/compile/" + TextService._resource);
             },
             loaded : function( _editor ) {
                 console.log("editor loaded");
@@ -264,7 +260,7 @@ OpenSiddurClientApp.controller(
                 }
                 else {
                     var resourceName = decodeURIComponent(selection.split("/").pop());  // try to prevent double-encoding
-                    if (resourceName && resourceName != $scope.editor.currentDocument)
+                    if (resourceName && resourceName != TextService._resource)
                         $location.path( "/" + $scope.resourceType.current.path + "/" + resourceName );
                 }
             }
@@ -335,7 +331,7 @@ OpenSiddurClientApp.controller(
             $scope.helper.link.insertable = newSelection.replace(/^\/exist\/restxq\/api/, "")
         });
 
-        $scope.editor.setDocument();
+        $scope.editor.setDocument($routeParams.resource);
 
     }]
 );

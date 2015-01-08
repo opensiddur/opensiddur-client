@@ -13,32 +13,53 @@ OpenSiddurClientApp.service("TextService", [
         _content : "",
         _isFlat : false,
         _resource : "",
+        _resourceApi : "",
         loadFlat : function(resource) {
             // load the content from the given resource (without path!) as a flat document
             // only original documents can be loaded flat
             // return the result of a $http call. errors are catchable through .error
+            return this.load("/api/data/original", resource, true);
+        },
+        load : function(resourceApi, resource, flat) {
+            // load the content from the given resourceApi/resource (without path!) 
+            // return the result of a $http call. errors are catchable through .error
+            // load flat (for original only) if flat=true
             var thiz = this;
-            return $http.get("/api/data/original/" + encodeURIComponent(resource) + "/flat",
+            return $http.get(resourceApi + "/" + encodeURIComponent(resource) + (flat ? "/flat" : ""),
                 {
                     headers : { 
                         "Accept" : "application/xml"
                     },
                     transformResponse : function(data, headersGetter, httpStatus) {
-                        if (httpStatus < 300) {
-                            return XsltService.serializeToStringTEINSClean(
-                                XsltService.transformString("/xsl/originaltemplate.xsl", data), 
-                                true    // include flat namespace
+                        if (!data.match(/^\<error/) && data.match(/^\</)) {
+                            var templated = XsltService.serializeToStringTEINSClean(
+                                XsltService.transformString("/xsl/originaltemplate.xsl", data),
+                                flat
                             );
+                            var flattened = flat ? 
+                                XsltService.indentToString(
+                                    XsltService.transformString("/xsl/FlatToEditingHtml.xsl", templated)
+                                ) 
+                                : templated;
+                            return flattened;
+                            
                         }
                         else return data;
                     }
                 })
                 .success(function(data) {
                     thiz._resource = resource;
+                    thiz._resourceApi = resourceApi;
                     thiz._content = data;
-                    thiz._isFlat = true;
+                    thiz._isFlat = flat || false;
                     return thiz;
                 });
+        },
+        setResource : function(resourceApi, resource, flat) {
+            // set the resource path and whether it is flat (used for new documents, for example)
+            this._resource = resource;
+            this._resourceApi = resourceApi;
+            this._isFlat = flat || false;
         },
         content : function(setContent) {
             if (setContent) {
@@ -61,6 +82,7 @@ OpenSiddurClientApp.service("TextService", [
         streamText : function(setContent) { return this.partialContent("j:streamText", setContent); },
         stylesheet : function(setContent) { return this.partialContent("j:stylesheet", setContent); },
         annotations : function(setContent) { return this.partialContent("j:annotations", setContent); },
+        flatContent : function(setContent) { return this.partialContent("tei:text", setContent); },
         title : function(titleJson) {
             // [ {title :, lang:, subtitle: } ]
             
