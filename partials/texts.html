@@ -71,12 +71,20 @@
             <div class="texts-editor row">
                 <form name="textsForm" data-unsaved-warning-form="1">
                     <div data-ng-class="{true:'col-md-6', false:'col-md-12'}[editor.transcriptionViewer]">
-                        <textarea  
-                            data-ui-codemirror="{ onLoad : editor.loaded }"
-                            data-ui-codemirror-opts="editor.codemirrorOptions"
-                            data-ng-model="editor.editableText"
-                            data-ng-model-options="{ getterSetter : true, debounce: 100 }"
-                            ></textarea>
+                        <div data-ng-show="!resourceType.current.loadFlat">
+                            <textarea  
+                                data-ui-codemirror="{ onLoad : editor.loaded }"
+                                data-ui-codemirror-opts="editor.codemirrorOptions"
+                                data-ng-model="editor.editableText"
+                                data-ng-model-options="{ getterSetter : true, debounce: 100 }"
+                                ></textarea>
+                        </div>
+                        <div data-ng-show="resourceType.current.loadFlat">
+                            <textarea
+                                data-ckeditor="editor.ckeditorOptions"
+                                data-ng-model="TextService._flatContent"
+                                ></textarea>
+                        </div>
                     </div>
                     <div data-ng-class="{true:'col-md-6', false:'off'}[editor.transcriptionViewer]">
                         <os-transcription-window model="editor.content" active="editor.transcriptionViewer">

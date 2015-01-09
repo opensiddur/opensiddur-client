@@ -1,7 +1,7 @@
 /* 
  * AngularJS app
  * Open Siddur Project
- * Copyright 2013-2014 Efraim Feinstein <efraim@opensiddur.org>
+ * Copyright 2013-2015 Efraim Feinstein <efraim@opensiddur.org>
  * Licensed under the GNU Lesser General Public License, version 3 or later
  */
 var host = "";
@@ -54,6 +54,7 @@ var OpenSiddurClientApp =
   angular.module(
       'OpenSiddurClientApp',
       ['filters',
+       'ngCkeditor',
        'ngRoute',
        'ngResource',
        'ngSanitize',

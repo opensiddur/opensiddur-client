@@ -92,6 +92,9 @@ OpenSiddurClientApp.controller(
                 },
                 rtlMoveVisually : false
             },
+            ckeditorOptions : {
+                language : "en"
+            },
             editableText : function(setContent) {
                 if ($scope.resourceType.current.loadFlat) return TextService.flatContent(setContent);
                 else if ($scope.resourceType.current.editorMode == "css") return TextService.stylesheet(setContent);
