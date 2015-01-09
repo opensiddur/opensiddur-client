@@ -1,5 +1,5 @@
 /* Represents the data model of a JLPTEI text and isolates its components
- * TODO: move all load() and save() activity to this service
+ * TODO: move all save() activity to this service
  * 
  * Open Siddur Project
  * Copyright 2014-2015 Efraim Feinstein, efraim@opensiddur.org
@@ -11,6 +11,7 @@ OpenSiddurClientApp.service("TextService", [
     var xj = new X2JS({ arrayAccessForm : "property" });   
     return {
         _content : "",
+        _flatContent : "",  // the flat part of the content has to be cached because the editors can't handle using ngModelOptions
         _isFlat : false,
         _resource : "",
         _resourceApi : "",
@@ -52,6 +53,8 @@ OpenSiddurClientApp.service("TextService", [
                     thiz._resourceApi = resourceApi;
                     thiz._content = data;
                     thiz._isFlat = flat || false;
+                    thiz._flatContent = flat ? thiz.flatContent() : "";
+                    
                     return thiz;
                 });
         },
@@ -82,7 +85,12 @@ OpenSiddurClientApp.service("TextService", [
         streamText : function(setContent) { return this.partialContent("j:streamText", setContent); },
         stylesheet : function(setContent) { return this.partialContent("j:stylesheet", setContent); },
         annotations : function(setContent) { return this.partialContent("j:annotations", setContent); },
-        flatContent : function(setContent) { return this.partialContent("tei:text", setContent); },
+        flatContent : function(setContent) { 
+            if (setContent) {
+                this._flatContent = setContent;
+            }
+            return this.partialContent("tei:text", setContent); 
+        },
         title : function(titleJson) {
             // [ {title :, lang:, subtitle: } ]
             
