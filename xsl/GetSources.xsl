@@ -8,6 +8,8 @@
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:tei="http://www.tei-c.org/ns/1.0"
     xmlns:j="http://jewishliturgy.org/ns/jlptei/1.0"
+    xmlns:jf="http://jewishliturgy.org/ns/jlptei/flat/1.0"
+    xmlns:html="http://www.w3.org/1999/xhtml"
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
     version="2.0"
     >
@@ -41,7 +43,7 @@
                 if yes=1, then the stream or id is included in this source
             -->
             <contents>
-                <xsl:apply-templates select="//j:streamText">
+                <xsl:apply-templates select="//j:streamText|//tei:text/html:div">
                     <xsl:with-param name="content-ids" as="xs:string*">
                         <xsl:apply-templates select="tei:ptr[@type='bibl-content']"/>
                     </xsl:with-param>
@@ -71,17 +73,17 @@
         </xsl:for-each>
     </xsl:template>
 
-    <xsl:template match="j:streamText">
+    <xsl:template match="j:streamText|tei:text/html:div">
         <xsl:param name="content-ids" as="xs:string*"/>
 
-        <xsl:variable name="stream-checked" select="(@xml:id=$content-ids, false())[1]"/>
+        <xsl:variable name="stream-checked" select="((@id,@xml:id)=$content-ids, false())[1]"/>
         <stream>
-            <streamXmlid><xsl:sequence select="@xml:id/string()"/></streamXmlid>
+            <streamXmlid><xsl:sequence select="(@id,@xml:id)/string()"/></streamXmlid>
             <streamChecked><xsl:sequence select="$stream-checked"/></streamChecked>
-            <xsl:for-each select="*">
+            <xsl:for-each select="*[@id|@xml:id]">
                 <id>
-                    <xmlid><xsl:sequence select="@xml:id/string()"/></xmlid>
-                    <checked><xsl:sequence select="$stream-checked or @xml:id=$content-ids"/></checked>
+                    <xmlid><xsl:sequence select="(@id,@xml:id)/string()"/></xmlid>
+                    <checked><xsl:sequence select="$stream-checked or (@id,@xml:id)=$content-ids"/></checked>
                 </id>
             </xsl:for-each>
         </stream>
