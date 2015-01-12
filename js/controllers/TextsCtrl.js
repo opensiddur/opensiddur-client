@@ -76,6 +76,36 @@ OpenSiddurClientApp.controller(
         $scope.TextService = TextService;
         $scope.AccessService = AccessService;
 
+        // this should be in $scope.editor, but ng-ckeditor will not allow it to be (see line 73)
+        $scope.ckeditorOptions = {
+            entities : false,   // need XML entities, but not HTML entities...
+            fillEmptyBlocks : false,
+            language : "en",
+            readOnly : !AccessService.access.write,
+            toolbar : "basic",
+            toolbar_full : [],
+            toolbarGroups : [
+                { name: 'clipboard',   groups: [ 'clipboard', 'undo' ] },
+                { name: 'document',    groups: [ 'mode', 'document', 'doctools' ] }
+/*
+                { name: 'editing',     groups: [ 'find', 'selection' ] },
+                { name: 'insert' },
+                { name: 'forms' },
+                { name: 'tools' },
+                { name: 'document',    groups: [ 'mode', 'document', 'doctools' ] },
+                { name: 'others' },
+                '/',
+                { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
+                { name: 'paragraph',   groups: [ 'list', 'indent', 'blocks', 'align' ] },
+                { name: 'styles' },
+                { name: 'colors' },
+                { name: 'about' }
+*/
+            ],
+            removeButtons : 'Paste,PasteFromWord',
+            allowedContent : "div(tei-seg)"
+        };
+
         $scope.editor = {
             loggedIn : AuthenticationService.loggedIn,
             codemirrorOptions : {
@@ -91,9 +121,6 @@ OpenSiddurClientApp.controller(
                     whenOpening : false
                 },
                 rtlMoveVisually : false
-            },
-            ckeditorOptions : {
-                language : "en"
             },
             editableText : function(setContent) {
                 if ($scope.resourceType.current.loadFlat) return TextService.flatContent(setContent);
