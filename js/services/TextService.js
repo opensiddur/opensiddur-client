@@ -89,7 +89,7 @@ OpenSiddurClientApp.service("TextService", [
             if (setContent) {
                 this._flatContent = setContent;
             }
-            return this.partialContent("tei:text", setContent); 
+            return this.partialContent("jf:merged", setContent); 
         },
         title : function(titleJson) {
             // [ {title :, lang:, subtitle: } ]

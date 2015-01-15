@@ -58,7 +58,7 @@
     </xsl:template>
 
     <xsl:template match="*[@jf:end]">
-        <a data-end-id="{@jf:end}">
+        <a id="_end_{@jf:end}">
             <xsl:apply-templates select="@* except @jf:end"/>
             <xsl:call-template name="class-attribute"/>
         </a>
@@ -116,7 +116,7 @@
     </xsl:template>
 
     <!-- these will become inconsistent if allowed to coexist with the merged section -->
-    <xsl:template match="jf:concurrent|j:links"/>
+    <xsl:template match="j:links"/>
 
     <!-- resource-level parts that will not become inconsistent -->
     <xsl:template match="tei:teiHeader|j:conditions|j:settings">
@@ -124,11 +124,10 @@
     </xsl:template>
 
     <!-- pass-through -->
-    <xsl:template match="tei:TEI|tei:text">
+    <xsl:template match="tei:TEI|tei:text|jf:merged|jf:concurrent">
         <xsl:copy copy-namespaces="no">
             <xsl:sequence select="@*"/>
             <xsl:apply-templates />
-            <xsl:sequence select="//jf:concurrent"/>    <!-- need this to store the xml:id's of the concurrent hierarchies -->
         </xsl:copy>
     </xsl:template>
 

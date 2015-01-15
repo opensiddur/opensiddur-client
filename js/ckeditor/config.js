@@ -8,28 +8,5 @@
  */
 
 // insert plugin names here...
-//CKEDITOR.resourceManager.addExternal("", "/js/ckeditor/plugins/");
+CKEDITOR.plugins.addExternal("tei-seg", "/js/ckeditor/plugins/tei-seg/");
 
-CKEDITOR.editorConfig = function (config) {
-    config.toolbar = "basic";
-    config.toolbar_full = [];
-    config.toolbarGroups = [
-        { name: 'clipboard',   groups: [ 'clipboard', 'undo' ] }
-/*
-                { name: 'editing',     groups: [ 'find', 'selection' ] },
-                { name: 'insert' },
-                { name: 'forms' },
-                { name: 'tools' },
-                { name: 'document',    groups: [ 'mode', 'document', 'doctools' ] },
-                { name: 'others' },
-                '/',
-                { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
-                { name: 'paragraph',   groups: [ 'list', 'indent', 'blocks', 'align' ] },
-                { name: 'styles' },
-                { name: 'colors' },
-                { name: 'about' }
-*/
-    ];
-    config.removeButtons = 'Paste,PasteFromWord';
-    
-};

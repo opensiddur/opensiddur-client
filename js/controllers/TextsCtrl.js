@@ -78,7 +78,9 @@ OpenSiddurClientApp.controller(
 
         // this should be in $scope.editor, but ng-ckeditor will not allow it to be (see line 73)
         $scope.ckeditorOptions = {
+            customConfig : "/js/ckeditor/config.js",    // points to the plugin directories
             entities : false,   // need XML entities, but not HTML entities...
+            extraPlugins : "tei-seg",
             fillEmptyBlocks : false,
             language : "en",
             readOnly : !AccessService.access.write,
@@ -86,7 +88,8 @@ OpenSiddurClientApp.controller(
             toolbar_full : [],
             toolbarGroups : [
                 { name: 'clipboard',   groups: [ 'clipboard', 'undo' ] },
-                { name: 'document',    groups: [ 'mode', 'document', 'doctools' ] }
+                { name: 'document',    groups: [ 'mode', 'document', 'doctools' ] },
+                { name: 'opensiddur', groups : [ 'opensiddur' ] }
 /*
                 { name: 'editing',     groups: [ 'find', 'selection' ] },
                 { name: 'insert' },
@@ -103,7 +106,7 @@ OpenSiddurClientApp.controller(
 */
             ],
             removeButtons : 'Paste,PasteFromWord',
-            allowedContent : "div(tei-seg)"
+            allowedContent : "div[id](tei-seg);*[id,data-*]"
         };
 
         $scope.editor = {
