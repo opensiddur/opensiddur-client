@@ -46,8 +46,8 @@ OpenSiddurClientApp.service(
                 // serialize to string, then clean up namespaces
                 return this.TEINSClean(this.serializeToString(doc), includeFlat);
             },
-            indentToString : function ( xmlDoc ) {
-                return vkbeautify.xml(this.serializeToStringTEINSClean(xmlDoc), 4);  
+            indentToString : function ( xmlDoc, includeFlat ) {
+                return vkbeautify.xml(this.serializeToStringTEINSClean(xmlDoc, includeFlat), 4);  
             }  
         }
         svc.addProcessor('autoSegment', '/xsl/AutoSegment.xsl');

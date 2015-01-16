@@ -18,14 +18,14 @@
     <xsl:output method="xml"/>
     <xsl:param name="context-chars" as="xs:double" select="30"/>
 
-    <xsl:template match="*[@xml:id|@id]">
+    <xsl:template match="*[@xml:id|@jf:id|@id]">
         <xmlid>
-            <name><xsl:value-of select="(@xml:id, @id)[1]"/></name>
+            <name><xsl:value-of select="(@xml:id, @jf:id, @id)[1]"/></name>
             <element><xsl:value-of select="
                 string-join((name(),
                     if (@type or @data-type) then ('[', (@type, @data-type)[1], ']') else ()
                     ), '')"/></element>
-            <stream><xsl:value-of select="if (parent::j:streamText | parent::html:div/parent::tei:text) then 'Y' else 'N'"/></stream>
+            <stream><xsl:value-of select="if (parent::j:streamText | parent::jf:merged) then 'Y' else 'N'"/></stream>
             <context>
                 <xsl:variable name="text" select="normalize-space(.)"/>
                 <xsl:value-of select="

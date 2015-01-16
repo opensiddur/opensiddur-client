@@ -28,7 +28,7 @@ OpenSiddurClientApp.service("TextService", [
             this._isFlat = flat;   
  
             var templateParameters = x2js.json2xml(newDocumentTemplate);
-            var strdoc = XsltService.indentToString(XsltService.transform(documentTemplates[resourceApi], templateParameters));
+            var strdoc = XsltService.indentToString(XsltService.transform(documentTemplates[resourceApi], templateParameters, flat));
             this.content(strdoc);
             this._flatContent = flat ? this.flatContent() : "";
         }, 
@@ -56,7 +56,8 @@ OpenSiddurClientApp.service("TextService", [
                             );
                             var flattened = flat ? 
                                 XsltService.indentToString(
-                                    XsltService.transformString("/xsl/FlatToEditingHtml.xsl", templated)
+                                    XsltService.transformString("/xsl/FlatToEditingHtml.xsl", templated),
+                                    flat
                                 ) 
                                 : templated;
                             return flattened;

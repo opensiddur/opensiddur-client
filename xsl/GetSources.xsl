@@ -1,7 +1,7 @@
 <!-- Isolate sourceDesc and return a JSON-friendly version
 
     Open Siddur Project
-    Copyright 2014 Efraim Feinstein, efraim@opensiddur.org
+    Copyright 2014-2015 Efraim Feinstein, efraim@opensiddur.org
     Licensed under the GNU Lesser General Public License, version 3 or later
 -->
 <xsl:stylesheet
@@ -43,7 +43,7 @@
                 if yes=1, then the stream or id is included in this source
             -->
             <contents>
-                <xsl:apply-templates select="//j:streamText|//tei:text/html:div">
+                <xsl:apply-templates select="//j:streamText|//tei:text/jf:merged">
                     <xsl:with-param name="content-ids" as="xs:string*">
                         <xsl:apply-templates select="tei:ptr[@type='bibl-content']"/>
                     </xsl:with-param>
@@ -73,17 +73,17 @@
         </xsl:for-each>
     </xsl:template>
 
-    <xsl:template match="j:streamText|tei:text/html:div">
+    <xsl:template match="j:streamText|tei:text/jf:merged">
         <xsl:param name="content-ids" as="xs:string*"/>
 
-        <xsl:variable name="stream-checked" select="((@id,@xml:id)=$content-ids, false())[1]"/>
+        <xsl:variable name="stream-checked" select="((@id,@jf:id,@xml:id)=$content-ids, false())[1]"/>
         <stream>
-            <streamXmlid><xsl:sequence select="(@id,@xml:id)/string()"/></streamXmlid>
+            <streamXmlid><xsl:sequence select="(@id,@jf:id,@xml:id)/string()"/></streamXmlid>
             <streamChecked><xsl:sequence select="$stream-checked"/></streamChecked>
-            <xsl:for-each select="*[@id|@xml:id]">
+            <xsl:for-each select="*[@id|@jf:id|@xml:id]">
                 <id>
-                    <xmlid><xsl:sequence select="(@id,@xml:id)/string()"/></xmlid>
-                    <checked><xsl:sequence select="$stream-checked or (@id,@xml:id)=$content-ids"/></checked>
+                    <xmlid><xsl:sequence select="(@id,@jf:id,@xml:id)/string()"/></xmlid>
+                    <checked><xsl:sequence select="$stream-checked or (@id,@jf:id,@xml:id)=$content-ids"/></checked>
                 </id>
             </xsl:for-each>
         </stream>
