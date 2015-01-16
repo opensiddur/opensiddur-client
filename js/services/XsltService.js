@@ -15,7 +15,7 @@ OpenSiddurClientApp.service(
             },
             transform : function ( processorName, domDoc, parameters ) {
                 var transformed = Saxon.run({
-                    stylesheet : (processorName.indexOf("/xsl") == 0) ? processorName : this.xsltProcessors[processorName],
+                    stylesheet : (processorName.indexOf("/") == 0) ? processorName : this.xsltProcessors[processorName],
                     source : domDoc,
                     parameters : parameters,
                     method : "transformToDocument",

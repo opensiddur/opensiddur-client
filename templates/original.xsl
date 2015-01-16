@@ -1,8 +1,8 @@
 <!--
-    Template for original documents
+    Template for (flat) original documents
 
     Open Siddur Project
-    Copyright 2014 Efraim Feinstein, efraim@opensiddur.org
+    Copyright 2014-2015 Efraim Feinstein, efraim@opensiddur.org
     Licensed under the GNU Lesser General Public License, version 3 or later
 -->
 <xsl:stylesheet 
@@ -11,6 +11,7 @@
     version="2.0"
     xmlns:tei="http://www.tei-c.org/ns/1.0" 
     xmlns:j="http://jewishliturgy.org/ns/jlptei/1.0"
+    xmlns:jf="http://jewishliturgy.org/ns/jlptei/flat/1.0"
     >
     <xsl:output method="xml" indent="yes"/>
     <xsl:template match="/*">
@@ -48,9 +49,9 @@
                 </tei:revisionDesc>
             </tei:teiHeader>
             <tei:text>
-                <j:streamText xml:id="stream">
-                    <tei:seg xml:id="seg1">This is a segment of text. Edit or delete me.</tei:seg>
-                </j:streamText>
+                <jf:merged id="stream" xmlns="http://www.w3.org/1999/xhtml">
+                    <div class="tei-seg" id="seg1">This is a segment of text. Edit or delete me.</div>
+                </jf:merged>
            </tei:text>
         </tei:TEI>
 

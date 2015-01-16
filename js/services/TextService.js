@@ -9,12 +9,29 @@ OpenSiddurClientApp.service("TextService", [
     "$http", "XsltService",
     function($http, XsltService) {
     var xj = new X2JS({ arrayAccessForm : "property" });   
+    var documentTemplates = {
+        "/api/data/original" : "/templates/original.xsl",
+        "/api/data/conditionals" : "/templates/conditionals.xsl",
+        "/api/data/notes" : "/templates/annotations.xsl",
+        "/api/data/styles" : "/templates/styles.xsl"
+    };
     return {
         _content : "",
         _flatContent : "",  // the flat part of the content has to be cached because the editors can't handle using ngModelOptions
         _isFlat : false,
         _resource : "",
         _resourceApi : "",
+        newDocument : function(resourceApi, newDocumentTemplate, flat) {
+            this.content("");
+            this._resource = "";
+            this._resourceApi = resourceApi;
+            this._isFlat = flat;   
+ 
+            var templateParameters = x2js.json2xml(newDocumentTemplate);
+            var strdoc = XsltService.indentToString(XsltService.transform(documentTemplates[resourceApi], templateParameters));
+            this.content(strdoc);
+            this._flatContent = flat ? this.flatContent() : "";
+        }, 
         loadFlat : function(resource) {
             // load the content from the given resource (without path!) as a flat document
             // only original documents can be loaded flat

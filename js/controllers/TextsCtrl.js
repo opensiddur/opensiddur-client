@@ -27,7 +27,6 @@ OpenSiddurClientApp.controller(
                 supportsTranscriptionView : true,
                 loadFlat : true,
                 defaultTitle : "New text",
-                documentTemplate : "templateNewOriginal",
                 editorMode : "xml"
             },
             "conditionals" : {
@@ -39,7 +38,6 @@ OpenSiddurClientApp.controller(
                 supportsTranscriptionView : true,
                 loadFlat : false,
                 defaultTitle : "New conditional",
-                documentTemplate : "templateNewConditionals",
                 editorMode : "xml"
             },
             "annotations" : { 
@@ -51,7 +49,6 @@ OpenSiddurClientApp.controller(
                 supportsTranscriptionView : true,
                 loadFlat : false,
                 defaultTitle : "New annotations",
-                documentTemplate : "templateNewAnnotations",
                 editorMode : "xml"
             },
             "styles" : { 
@@ -63,7 +60,6 @@ OpenSiddurClientApp.controller(
                 supportsTranscriptionView : false,
                 loadFlat : false,
                 defaultTitle : "New style",
-                documentTemplate : "templateNewStyle",
                 editorMode : "css"
             },
             current : null,
@@ -145,19 +141,15 @@ OpenSiddurClientApp.controller(
                 // $scope.newTemplate contains a JS object that has to be passed to the template function
                 console.log("Start a new document");
                 $scope.editor.isNew = 1;
-                TextService.content("");
                 // default access rights for a new file
                 AccessService.reset();
                 // load a new document template
-                var documentTemplate = $scope.resourceType.current.documentTemplate;
                 if (!$scope.editor.newTemplate.template.source) {
                     // default the source (this should happen in new dialog, but isn't because of a bug with defaulting
                     $scope.editor.newTemplate.template.source = "/exist/restxq/api/data/sources/Born%20Digital";
                     $scope.editor.newTemplate.template.sourceTitle = "An Original Work of the Open Siddur Project";
                 }
-                var templateParameters = x2js.json2xml($scope.editor.newTemplate);
-                var strdoc = XsltService.indentToString(XsltService.transform(documentTemplate, templateParameters));
-                TextService.content(strdoc);    
+                TextService.newDocument($scope.resourceType.current.api, $scope.editor.newTemplate, $scope.resourceType.current.loadFlat); 
                 $scope.editor.title = TextService.title()[0].text;
                 $scope.editor.isLoaded = 1;
                 $location.path("/texts/" + $scope.editor.title, false);
