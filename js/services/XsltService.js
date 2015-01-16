@@ -35,9 +35,11 @@ OpenSiddurClientApp.service(
                     .replace(/\s+xmlns:xml="http:\/\/www.w3.org\/XML\/1998\/namespace"/g, "");
             },
             TEINSClean : function(strdoc, includeFlat) {
-                return strdoc.replace(/\s+xmlns:[a-zA-Z0-9]+=["][^"]+["]/g, "")
+                return strdoc.replace(/\s+xmlns(:[a-zA-Z0-9]+)?=["][^"]+["]/g, "")
                     // replace first instance of an element 
-                    .replace(/\<([a-zA-Z:]+)/, "<$1 xmlns:tei=\"http://www.tei-c.org/ns/1.0\" xmlns:j=\"http://jewishliturgy.org/ns/jlptei/1.0\"" + (includeFlat ? " xmlns:jf=\"http://jewishliturgy.org/ns/jlptei/flat/1.0\"" : ""));
+                    .replace(/\<([a-zA-Z:]+)/, "<$1 xmlns:tei=\"http://www.tei-c.org/ns/1.0\" xmlns:j=\"http://jewishliturgy.org/ns/jlptei/1.0\"" + (includeFlat ? " xmlns:jf=\"http://jewishliturgy.org/ns/jlptei/flat/1.0\"" : ""))
+                    // jf:merged in flat documents has to have default html ns
+                    .replace(/\<jf:merged/, "<jf:merged xmlns=\"http://www.w3.org/1999/xhtml\"");
 
             },
             serializeToStringTEINSClean : function (doc, includeFlat) {
