@@ -4,13 +4,44 @@
             <p class="navbar-text">{{ editor.title | truncate:30 }}</p>
             <div class="btn-toolbar">
                 <div class="btn-group navbar-btn">
+                    <div class="btn-group">
                       <button class="btn btn-primary" type="submit"
                           data-ng-disabled="!editor.loggedIn" 
                           data-ng-click="DialogService.open('newDialog')"  
                           >New</button>
+                      <button data-ng-show="resourceType.current.api == '/api/data/original'" 
+                          data-ng-disabled="!editor.loggedIn" 
+                          class="btn btn-primary dropdown-toggle" 
+                          data-toggle="dropdown" expanded="false">
+                          <span class="caret"></span>
+                      </button>
+                      <ul class="dropdown-menu">
+                          <li><a href="#"
+                              data-ng-click="DialogService.open('newDialog')"  
+                          >New using XML interface</a></li>
+                          <li><a href="#"
+                              data-ng-click="DialogService.open('newDialogSimple')"  
+                          >New using simple interface</a></li>
+                      </ul>
+                    </div>
+                    <div class="btn-group">
                       <button class="btn btn-primary" type="submit"
                           data-ng-click="DialogService.open('openDialog')"  
                           >Open</button>
+                      <button data-ng-show="resourceType.current.api == '/api/data/original'" 
+                          class="btn btn-primary dropdown-toggle" 
+                          data-toggle="dropdown" expanded="false">
+                          <span class="caret"></span>
+                      </button>
+                      <ul class="dropdown-menu">
+                          <li><a href="#"
+                              data-ng-click="DialogService.open('openDialog')"  
+                          >Open using XML interface</a></li>
+                          <li><a href="#"
+                              data-ng-click="DialogService.open('openDialogSimple')"  
+                          >Open using simple interface</a></li>
+                      </ul>
+                    </div>
                       <button data-ng-class="{'btn' : true, 'btn-primary' : true, 'btn-success' : textsForm.$pristine}" type="submit" 
                           data-ng-click="editor.saveDocument()"  
                           data-ng-disabled="!AccessService.access.write || textsForm.$invalid || textsForm.$pristine">{{saveButtonText()}}</button>
@@ -71,7 +102,7 @@
             <div class="texts-editor row">
                 <form name="textsForm" data-unsaved-warning-form="1">
                     <div data-ng-class="{true:'col-md-6', false:'col-md-12'}[editor.transcriptionViewer]">
-                        <div data-ng-show="!resourceType.current.loadFlat">
+                        <div data-ng-show="!TextService._isFlat">
                             <textarea  
                                 data-ui-codemirror="{ onLoad : editor.loaded }"
                                 data-ui-codemirror-opts="editor.codemirrorOptions"
@@ -79,7 +110,7 @@
                                 data-ng-model-options="{ getterSetter : true, debounce: 100 }"
                                 ></textarea>
                         </div>
-                        <div data-ng-show="resourceType.current.loadFlat">
+                        <div data-ng-show="TextService._isFlat">
                             <textarea
                                 ckeditor="ckeditorOptions"
                                 data-ng-model="TextService._flatContent"
@@ -94,8 +125,12 @@
             </div>
         </div>
     </div>
+    <os-open-dialog api="resourceType.current.api" 
+        title="Open Text" name="openDialog"
+        on-ok="editor.openDocument" on-close="editor.dialogCanceled"></os-open-dialog>
     <os-open-dialog api="resourceType.current.api" selection="selection"
-        title="Open Text" name="openDialog"></os-open-dialog>
+        title="Open Text (Simple interface)" name="openDialogSimple"
+        on-ok="editor.openDocumentSimple" on-close="editor.dialogCanceled"></os-open-dialog>
     <os-sharing-dialog 
             data-ng-hide="!resourceType.current.supportsAccess"
             is-new="editor.isNew" name="sharingDialog" title="Sharing"></os-sharing-dialog>
@@ -105,7 +140,14 @@
             title="{{resourceType.current.defaultTitle}}" 
             name="newDialog"
             on-ok="editor.newDocument"
-            on-close="editor.newCanceled"></os-new-dialog>
+            on-close="editor.dialogCanceled"></os-new-dialog>
+    <os-new-dialog 
+            resource-type="resourceType.current.type" 
+            model="editor.newTemplate"
+            title="{{resourceType.current.defaultTitle}} (Simple interface)" 
+            name="newDialogSimple"
+            on-ok="editor.newDocumentSimple"
+            on-close="editor.dialogCanceled"></os-new-dialog>
     <os-insert-internal-link-dialog
             content="editor.content"
             name="internalLinkDialog"

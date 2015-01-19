@@ -173,6 +173,7 @@
         </div>
       </div>
     </div>
-    <os-open-dialog api="'/api/user'" selection="selection" 
-        title="Open Profile" name="openDialog"></os-open-dialog>
+    <os-open-dialog api="'/api/user'"
+        title="Open Profile" name="openDialog"
+        on-ok="openDocument" on-close="dialogCancel"></os-open-dialog>
 </div>

@@ -86,18 +86,12 @@ OpenSiddurClientApp.controller(
           );
         
     };
-    $scope.selection = "/exist/restxq/api/user" + ((this.isNew) ? "" : ("/" + $scope.userName));
-    var selectionWatchCtr = 0;
+
+    $scope.dialogCancel = function() {};
     // load a profile or start a new one
-    $scope.$watch("selection", function ( selection ) {
-        if (!selectionWatchCtr) {
-            selectionWatchCtr++;
-            return;
-        }
-        if (selection) {
-            $location.path( "/contributors/" + decodeURIComponent(selection.split("/").pop()) ); 
-        }
-    });
+    $scope.openDocument = function(selection) {
+        $location.path( "/contributors/" + decodeURIComponent(selection.split("/").pop()) ); 
+    };
     $scope.newProfile = function() {
         $location.path( "/contributors" );    
     };

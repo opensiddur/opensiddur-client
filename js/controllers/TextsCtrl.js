@@ -13,7 +13,6 @@ OpenSiddurClientApp.controller(
         AccessService, AuthenticationService, DialogService, ErrorService, RestApi,
         TextService) {
         console.log("Texts controller.");
-        $scope.selection = "";
         $scope.DialogService = DialogService;
 
         // state associated with the resource type
@@ -25,7 +24,6 @@ OpenSiddurClientApp.controller(
                 supportsAccess : true,
                 supportsCompile : true,
                 supportsTranscriptionView : true,
-                loadFlat : true,
                 defaultTitle : "New text",
                 editorMode : "xml"
             },
@@ -36,7 +34,6 @@ OpenSiddurClientApp.controller(
                 supportsAccess : false,
                 supportsCompile : false,
                 supportsTranscriptionView : true,
-                loadFlat : false,
                 defaultTitle : "New conditional",
                 editorMode : "xml"
             },
@@ -47,7 +44,6 @@ OpenSiddurClientApp.controller(
                 supportsAccess : true,
                 supportsCompile : false,
                 supportsTranscriptionView : true,
-                loadFlat : false,
                 defaultTitle : "New annotations",
                 editorMode : "xml"
             },
@@ -58,7 +54,6 @@ OpenSiddurClientApp.controller(
                 supportsAccess : true,
                 supportsCompile : false,
                 supportsTranscriptionView : false,
-                loadFlat : false,
                 defaultTitle : "New style",
                 editorMode : "css"
             },
@@ -122,7 +117,7 @@ OpenSiddurClientApp.controller(
                 rtlMoveVisually : false
             },
             editableText : function(setContent) {
-                if ($scope.resourceType.current.loadFlat) return TextService.flatContent(setContent);
+                if (TextService._isFlat) return TextService.flatContent(setContent);
                 else if ($scope.resourceType.current.editorMode == "css") return TextService.stylesheet(setContent);
                 else return TextService.content(setContent);
             },
@@ -134,9 +129,12 @@ OpenSiddurClientApp.controller(
             isNew : 1,  // isNew=1 indicates that the document has not yet been saved
             isLoaded : 0,    // isLoaded=1 indicates that a document is loaded and ready to edit 
             newTemplate : null, // this is filled in by the new function
-            newCanceled : function() {
+            dialogCanceled : function() {
             },
-            newDocument : function() {
+            newDocumentSimple : function () {
+                $scope.editor.newDocument(true);
+            },
+            newDocument : function(flat) {
                 // this function is called when the OK button is pressed from the new dialog
                 // $scope.newTemplate contains a JS object that has to be passed to the template function
                 console.log("Start a new document");
@@ -149,7 +147,7 @@ OpenSiddurClientApp.controller(
                     $scope.editor.newTemplate.template.source = "/exist/restxq/api/data/sources/Born%20Digital";
                     $scope.editor.newTemplate.template.sourceTitle = "An Original Work of the Open Siddur Project";
                 }
-                TextService.newDocument($scope.resourceType.current.api, $scope.editor.newTemplate, $scope.resourceType.current.loadFlat); 
+                TextService.newDocument($scope.resourceType.current.api, $scope.editor.newTemplate, flat || false); 
                 $scope.editor.title = TextService.title()[0].text;
                 $scope.editor.isLoaded = 1;
                 $location.path("/texts/" + $scope.editor.title, false);
@@ -162,9 +160,19 @@ OpenSiddurClientApp.controller(
                     }, 250
                 );
             },
-            setDocument : function( toDocument, cursorLocation ) {
+            openDocument : function( selection, useFlat ) {
+                var resourceName = decodeURIComponent(selection.split("/").pop());  // try to prevent double-encoding
+                if (resourceName && resourceName != TextService._resource) {
+                    $location.path( "/" + $scope.resourceType.current.path + "/" + resourceName, false);
+                    $scope.editor.setDocument(resourceName, false, useFlat || false);
+                }
+            },
+            openDocumentSimple : function ( selection ) {
+                $scope.editor.openDocument(selection, true);
+            },
+            setDocument : function( toDocument, cursorLocation, useFlat ) {
                 if (toDocument) {
-                    TextService.load($scope.resourceType.current.api, toDocument, $scope.resourceType.current.loadFlat)
+                    TextService.load($scope.resourceType.current.api, toDocument, useFlat || false)
                     .success(function(ts) {
                         if ($scope.resourceType.current.supportsAccess) {
                             AccessService.load($scope.resourceType.current.api, toDocument)
@@ -277,19 +285,6 @@ OpenSiddurClientApp.controller(
             return this.textsForm.$pristine ? (($scope.editor.isNew) ? "Unsaved, No changes" : "Saved" ) : "Save";
         };
 
-        var selectionWatchCtr = 0;
-        $scope.$watch("selection",
-            function( selection ) { 
-                if (!selectionWatchCtr) {
-                    selectionWatchCtr++;
-                }
-                else {
-                    var resourceName = decodeURIComponent(selection.split("/").pop());  // try to prevent double-encoding
-                    if (resourceName && resourceName != TextService._resource)
-                        $location.path( "/" + $scope.resourceType.current.path + "/" + resourceName );
-                }
-            }
-        );
 
         $scope.helper = {
             link : {
@@ -356,7 +351,7 @@ OpenSiddurClientApp.controller(
             $scope.helper.link.insertable = newSelection.replace(/^\/exist\/restxq\/api/, "")
         });
 
-        $scope.editor.setDocument($routeParams.resource);
+        $scope.editor.setDocument($routeParams.resource, false, false);
 
     }]
 );

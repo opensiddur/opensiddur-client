@@ -15,10 +15,6 @@ OpenSiddurClientApp.controller(
         $scope.DialogService = DialogService;
         $scope.AccessService = AccessService;
 
-        $scope.temporary = {
-            link1 : "",
-            link2 : ""
-        };
         $scope.editor = {
             loggedIn : AuthenticationService.loggedIn,
             currentDocument : $routeParams.resource,
@@ -70,6 +66,7 @@ OpenSiddurClientApp.controller(
                     }
                 );
             },
+            dialogCancel : function () {},
             loadDocument : function(docXml) {
                 // expects an XML string
                 var $docXml = $.parseXML(docXml)
@@ -376,48 +373,30 @@ OpenSiddurClientApp.controller(
                     $route.reload();
                 else 
                     $location.path("/translations");
+            },
+            openDocument : function(selection) {
+                var resourceName = decodeURIComponent(selection.split("/").pop());
+                if (resourceName && resourceName != $scope.editor.currentDocument) {
+                    $location.path( "/translations/" + resourceName );
+                }
+            },
+            setLinkLeft : function(selection) {
+                $scope.editor.updateParallelText(0, selection)
+                .then( function () {
+                    $scope.editor.resetLinkageBlocks(); 
+                } );
+            },
+            setLinkRight : function(selection) { 
+                $scope.editor.updateParallelText(1, selection)
+                .then( function () {
+                    $scope.editor.resetLinkageBlocks();
+                } ); 
             }
         };
 
         $scope.saveButtonText = function() {
             return this.trForm.$pristine ? (($scope.editor.isNew) ? "Unsaved, No changes" : "Saved" ) : "Save";
         };
-
-        var selectionWatchCtr = 0;
-        $scope.$watch("selection",
-            function(selection) { 
-                if (!selectionWatchCtr) {
-                    selectionWatchCtr++;
-                }
-                else {
-                    var resourceName = decodeURIComponent(selection.split("/").pop());
-                    if (resourceName && resourceName != $scope.editor.currentDocument)
-                        $location.path( "/translations/" + resourceName );
-                }
-            }
-        );
-        
-
-        $scope.$watch("temporary.link1", 
-            function(t) {
-                if (t != "") {
-                    $scope.editor.updateParallelText(0, t)
-                    .then( function () {
-                        $scope.editor.resetLinkageBlocks(); 
-                    } );
-                }
-            }
-        );
-        $scope.$watch("temporary.link2", 
-            function(t) {
-                if (t != "") {
-                    $scope.editor.updateParallelText(1, t)
-                    .then( function () {
-                        $scope.editor.resetLinkageBlocks();
-                    } ); 
-                }
-            }
-        );
 
         $scope.$watch("editor.content.linkages", function(newVal, oldVal) {
             if (newVal == oldVal || oldVal.length == 0) {  
