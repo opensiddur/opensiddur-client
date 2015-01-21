@@ -206,61 +206,25 @@ OpenSiddurClientApp.controller(
             },
             saveDocument : function () {
                 console.log("Save:", this);
-                var httpOperation = (this.isNew) ? 
-                    RestApi[$scope.resourceType.current.api].save : 
-                    RestApi[$scope.resourceType.current.api].put;
-                var resource = ((this.isNew) ? "" : TextService._resource);
-                var content = TextService.content(); //$scope.editor.codemirror.doc.getValue();
-                var transformed =
-                    XsltService.transformString( "originalBeforeSave", content );
-                    /* 
-                    ($scope.resourceType.current.editorMode=="xml") ?
-                        XsltService.transformString( "originalBeforeSave", content ) :
-                        XsltService.transformString("styleBeforeSave", $scope.editor.loadedContent, 
-                            { "style" : content});*/
-                if (transformed) {
-                    var indata = XsltService.serializeToStringTEINSClean(transformed);
-                    jindata = $(indata);
-                    if (jindata.prop("tagName") == "PARSERERROR") {
-                        ErrorService.addAlert("Unable to save because the document could not be parsed. It probably contains some invalid XML.", "error");    
-                    }
-                    else if ($("tei\\:title[type=main]", jindata).text().length == 0 && 
-                            $("tei\\:title[type=main]", jindata).children().length == 0) {
-                        ErrorService.addAlert("A main title is required!", "error");
-                    }
-                    else {
-                        httpOperation({"resource": resource}, indata,
-                            function(data, headers) {   // success
-                                $scope.textsForm.$setPristine();
-                                if ($scope.editor.isNew) {
-                                    // add to the search results listing
-                                    $scope.editor.isNew = 0;
-                                    var currentDocument=decodeURI(headers('Location').replace("/exist/restxq"+$scope.resourceType.current.api+"/", ""));
-                                    TextService.setResource($scope.resourceType.current.api, currentDocument, $scope.resourceType.current.loadFlat);
-                                    // save the access model for the new document
-                                    if ($scope.resourceType.current.supportsAccess) {
-                                        AccessService.setResource($scope.resourceType.current.api, currentDocument)
-                                        .save()
-                                        .error(function(error) {
-                                            ErrorService.addApiError(error);
-                                        });
-                                    }
-                                };
-                                // reload the document to get the change log in there correctly
-                                // add a 1s delay to allow the server some processing time before reload
-                                setTimeout(
-                                    function() { 
-                                        $scope.editor.setDocument(TextService._resource, $scope.editor.codemirror.doc.getCursor()); 
-                                    }, 1000
-                                );
-                            },
-                            function(error) {
-                                ErrorService.addApiError(error.data.xml);
-                                console.log("error saving ", resource);
-                            }
-                        );
-                    }
-                }
+                TextService.save()
+                    .success(function(data, statusCode, headers) {   // success
+                        $scope.textsForm.$setPristine();
+                        if ($scope.editor.isNew) {
+                            $scope.editor.isNew = 0;
+                            // save the access model for the new document
+                            if ($scope.resourceType.current.supportsAccess) {
+                                AccessService.setResource(TextService._resourceApi, TextService._resource)
+                                .save()
+                                .error(function(error) {
+                                    ErrorService.addApiError(error);
+                                });
+                             }
+                        }
+                    })
+                    .error(function(error) {
+                        ErrorService.addApiError(error);
+                        console.log("error saving ", TextService._resource);
+                    });
             },
             newButton : function () {
                 if ($location.path() == "/"+$scope.resourceType.current.path)
