@@ -1,19 +1,21 @@
 /* Represents the data model of a JLPTEI text and isolates its components
- * TODO: move all save() activity to this service
  * 
  * Open Siddur Project
  * Copyright 2014-2015 Efraim Feinstein, efraim@opensiddur.org
  * Licensed under the GNU Lesser General Public License, version 3 or later
  */
 OpenSiddurClientApp.service("TextService", [
-    "$http", "XsltService",
-    function($http, XsltService) {
+    "$http", "$q", "$timeout", "ErrorService", "XsltService",
+    function($http, $q, $timeout, ErrorService, XsltService) {
     var xj = new X2JS({ arrayAccessForm : "property" });   
     var documentTemplates = {
         "/api/data/original" : "/templates/original.xsl",
         "/api/data/conditionals" : "/templates/conditionals.xsl",
         "/api/data/notes" : "/templates/annotations.xsl",
         "/api/data/styles" : "/templates/styles.xsl"
+    };
+    var flatDocumentTemplates = {
+        "/api/data/original" : "/templates/flatoriginal.xsl"
     };
     return {
         _content : "",
@@ -28,7 +30,7 @@ OpenSiddurClientApp.service("TextService", [
             this._isFlat = flat;   
  
             var templateParameters = x2js.json2xml(newDocumentTemplate);
-            var strdoc = XsltService.indentToString(XsltService.transform(documentTemplates[resourceApi], templateParameters, flat));
+            var strdoc = XsltService.indentToString(XsltService.transform((flat ? flatDocumentTemplates : documentTemplates)[resourceApi], templateParameters), flat);
             this.content(strdoc);
             this._flatContent = flat ? this.flatContent() : "";
         }, 
@@ -75,6 +77,65 @@ OpenSiddurClientApp.service("TextService", [
                     
                     return thiz;
                 });
+        },
+        save : function() {
+            // TODO: continue from here
+            var httpOperation = this._resource ? $http.put : $http.post;
+            var deferred = $q.defer();  // for errors
+            var extendPromise = function(promise) {
+                // extend a promise to make it behave like $http
+                promise.success = function(fn) {  
+                    promise.then(function(response) {
+                        fn(response.data, response.status, response.headers, config);
+                    });
+                    return promise;
+                  };
+
+                promise.error = function(fn) {  
+                    promise.then(null, function(response) {
+                        fn(response.data, response.status, response.headers, config);
+                    });
+                    return promise;
+                };
+                return promise;
+            };
+            if (this._isFlat) {
+                // rejoin flatContent to content
+                this.flatContent(this._flatContent); 
+                // convert content back to XML
+                this._content = XsltService.indentToString(
+                        XsltService.transformString("/xsl/EditingHtmlToXml.xsl", this._content)
+                    );
+            }
+            var thiz = this;
+            var content = this._content;
+            var transformed =
+                XsltService.transformString( "/xsl/OriginalBeforeSave.xsl", content );
+            if (transformed) {
+                var indata = XsltService.serializeToStringTEINSClean(transformed);
+                jindata = $(indata);
+                if (jindata.prop("tagName") == "PARSERERROR") {
+                    deferred.reject("Parser error: invalid XML: " + jindata.html());
+                    return extendPromise(deferred.promise);
+                }
+                else if ($("tei\\:title[type=main]", jindata).text().length == 0 && 
+                        $("tei\\:title[type=main]", jindata).children().length == 0) {
+                    deferred.reject("A main title is required");
+                    return extendPromise(deferred.promise);
+                }
+                else {
+                    return httpOperation(this._resourceApi + (this._resource ? ("/" + this._resource) : ""), 
+                        indata)
+                        .success(function (data, statusCode, headers) {   // success
+                            if (statusCode == 201) {
+                                // created
+                                thiz._resource = decodeURI(headers('Location').replace("/exist/restxq"+thiz._resourceApi+"/", ""));
+                            }
+                            return extendPromise($timeout(function() { return thiz.load(thiz._resourceApi, thiz._resource, thiz._isFlat); }, 500));
+                            
+                        })
+                }
+            }
         },
         setResource : function(resourceApi, resource, flat) {
             // set the resource path and whether it is flat (used for new documents, for example)
