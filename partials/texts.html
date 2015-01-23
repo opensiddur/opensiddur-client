@@ -64,7 +64,7 @@
                     </ul>
                 </div>
                 <div class="btn-group navbar-btn" data-ng-show="resourceType.current.editorMode == 'xml'">
-                    <button data-ng-disabled="!AccessService.access.write || !editor.isLoaded" class="btn dropdown-toggle" data-toggle="dropdown">XML<b class="caret"></b></button>
+                    <button data-ng-disabled="!AccessService.access.write || !editor.isLoaded || TextService._isFlat" class="btn dropdown-toggle" data-toggle="dropdown">XML<b class="caret"></b></button>
                     <ul class="dropdown-menu" role="menu">
                         <li><a href="#" data-ng-click="DialogService.open('internalLinkDialog')">Insert internal link...</a></li>
                         <li><a href="#" data-ng-click="DialogService.open('linkDialog')">Insert external link...</a></li>
