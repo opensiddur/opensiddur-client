@@ -1,4 +1,10 @@
 <div>
+    <script>
+        CKEDITOR.on('instanceReady', function(event) {
+            var editor = event.editor;
+            console.log(editor.filter.allowedContent);
+        });
+    </script>
     <div class="toolbar navbar navbar-inverse nav-collapse">
         <div class="container-fluid">
             <p class="navbar-text">{{ editor.title | truncate:30 }}</p>
@@ -182,4 +188,8 @@
             name="metadataCommitLogDialog"
             title="Commit Log"
             on-ok="editor.makeDirty"></os-metadata-commit-log-dialog>
+    <os-edit-link-dialog-simple on-ok="editor.makeDirty"
+        on-close="editor.dialogCanceled"
+        name="editLinkDialogSimple"
+        ></os-edit-link-dialog-simple>
 </div>

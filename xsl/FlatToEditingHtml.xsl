@@ -86,6 +86,14 @@
         </xsl:element>
     </xsl:template>
 
+    <xsl:template match="tei:ptr" mode="#default in-a-process">
+        <a class="tei-ptr">
+            <xsl:apply-templates select="@*"/>
+            <xsl:apply-templates/>
+            <xsl:sequence select="concat('Loading ', @target/string(), '...')"/>
+        </a>
+    </xsl:template>
+
     <!-- attributes -->
     <xsl:template match="@target">
         <xsl:variable name="target-base" select="

@@ -9,4 +9,5 @@
 
 // insert plugin names here...
 CKEDITOR.plugins.addExternal("tei-seg", "/js/ckeditor/plugins/tei-seg/");
+CKEDITOR.plugins.addExternal("tei-ptr", "/js/ckeditor/plugins/tei-ptr/");
 

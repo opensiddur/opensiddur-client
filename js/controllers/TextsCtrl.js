@@ -71,7 +71,7 @@ OpenSiddurClientApp.controller(
         $scope.ckeditorOptions = {
             customConfig : "/js/ckeditor/config.js",    // points to the plugin directories
             entities : false,   // need XML entities, but not HTML entities...
-            extraPlugins : "tei-seg",
+            extraPlugins : "tei-ptr,tei-seg",
             fillEmptyBlocks : false,
             language : "en",
             readOnly : !AccessService.access.write,
@@ -80,24 +80,26 @@ OpenSiddurClientApp.controller(
             toolbarGroups : [
                 { name: 'clipboard',   groups: [ 'clipboard', 'undo' ] },
                 { name: 'document',    groups: [ 'mode', 'document', 'doctools' ] },
-                { name: 'opensiddur', groups : [ 'opensiddur' ] }
-/*
+                { name: 'opensiddur', groups : [ 'opensiddur' ] },
                 { name: 'editing',     groups: [ 'find', 'selection' ] },
                 { name: 'insert' },
-                { name: 'forms' },
-                { name: 'tools' },
+                //{ name: 'forms' },
+                //{ name: 'tools' },
                 { name: 'document',    groups: [ 'mode', 'document', 'doctools' ] },
-                { name: 'others' },
-                '/',
-                { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
-                { name: 'paragraph',   groups: [ 'list', 'indent', 'blocks', 'align' ] },
-                { name: 'styles' },
-                { name: 'colors' },
-                { name: 'about' }
-*/
+                //{ name: 'others' },
+                //'/',
+                //{ name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
+                //{ name: 'paragraph',   groups: [ 'list', 'indent', 'blocks', 'align' ] },
+                //{ name: 'styles' },
+                //{ name: 'colors' },
+                //{ name: 'about' }
             ],
-            removeButtons : 'Paste,PasteFromWord',
-            allowedContent : "div[id](tei-seg);*[id,data-*]"
+            removeButtons : 'Paste,PasteFromWord',  
+            allowedContent :
+                "a[href,data-target-base,data-target-fragment,target](tei-ptr);"+
+                "div(tei-seg);" +
+                "*[id,data-*]",
+            disallowedContent : "p"     // gets inserted automatically all over the place otherwise
         };
 
         $scope.editor = {
