@@ -6,9 +6,15 @@
  */
 OpenSiddurClientApp.factory("EditorDataService", [ 
     function() {
-        var data = {
-            editLinkDialog : {}
+        return {
+            editLinkDialog : {},
+            get : function (name) {
+                return this[name];
+            },
+            set : function (name, value) {
+                this[name] = value;
+                return this;
+            }
         };
-        return data;
     }
 ]);

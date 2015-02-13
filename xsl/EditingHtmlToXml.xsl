@@ -18,7 +18,7 @@
     version="2.0"
     exclude-result-prefixes="#all"
     >
-    <xsl:template match="@id|@*:id" as="attribute()">
+    <xsl:template match="@id|@*:id" as="attribute()" mode="#default generic">
         <xsl:attribute name="xml:id" select="."/>
     </xsl:template>
 
@@ -29,6 +29,9 @@
     </xsl:template>
 
     <xsl:template match="@*"/>
+    <xsl:template match="@*" mode="generic">
+        <xsl:sequence select="."/>
+    </xsl:template>
 
     <xsl:template match="jf:merged">
         <j:streamText>
@@ -41,16 +44,18 @@
         <xsl:variable name="classes" select="tokenize(@class, '\s+')"/>
         <xsl:variable name="element-class" select="
             $classes[substring-before(., '-')=('tei','j')]"/>
-        <xsl:element name="{replace($element-class, '-', ':')}">
-            <xsl:apply-templates select="@*" />
-            <xsl:apply-templates mode="streamText"/>
-        </xsl:element>
+        <xsl:if test="$element-class"> <!-- CKEditor sometimes adds spurious p tags -->
+            <xsl:element name="{replace($element-class, '-', ':')}">
+                <xsl:apply-templates select="@*" />
+                <xsl:apply-templates mode="streamText"/>
+            </xsl:element>
+        </xsl:if>
     </xsl:template>
 
     <!-- html:a[@href] -> tei:ptr -->
     <xsl:template match="html:a[@href]" mode="streamText">
         <tei:ptr>
-            <xsl:apply-templates select="@* except (@data-target-base, @data-target-fragment)"/>
+            <xsl:apply-templates select="@*[not(name(.)=('data-target-base', 'data-target-fragment'))]"/>
             <!-- @href contains /texts/[name], @data-target-base/@data-target-fragment contain the pointer -->
             <xsl:attribute name="target" 
                 select="concat('/data/original/', @data-target-base, if (@data-target-fragment/string()) then '#' else '', @data-target-fragment)"/> 
@@ -90,7 +95,7 @@
 
     <xsl:template match="tei:*|j:*">
         <xsl:copy copy-namespaces="no">
-            <xsl:sequence select="@*"/>
+            <xsl:apply-templates select="@*" mode="generic"/>
             <xsl:apply-templates/>
         </xsl:copy>
     </xsl:template>

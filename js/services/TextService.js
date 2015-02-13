@@ -40,11 +40,8 @@ OpenSiddurClientApp.service("TextService", [
             // return the result of a $http call. errors are catchable through .error
             return this.load("/api/data/original", resource, true);
         },
-        load : function(resourceApi, resource, flat) {
-            // load the content from the given resourceApi/resource (without path!) 
-            // return the result of a $http call. errors are catchable through .error
-            // load flat (for original only) if flat=true
-            var thiz = this;
+        get : function(resourceApi, resource, flat) {
+            // get the content of the resource without loading it.
             return $http.get(resourceApi + "/" + encodeURIComponent(resource) + (flat ? "/flat" : ""),
                 {
                     headers : { 
@@ -68,6 +65,14 @@ OpenSiddurClientApp.service("TextService", [
                         else return data;
                     }
                 })
+
+        },
+        load : function(resourceApi, resource, flat) {
+            // load the content from the given resourceApi/resource (without path!) 
+            // return the result of a $http call. errors are catchable through .error
+            // load flat (for original only) if flat=true
+            var thiz = this;
+            return this.get(resourceApi, resource, flat)
                 .success(function(data) {
                     thiz._resource = resource;
                     thiz._resourceApi = resourceApi;
@@ -78,8 +83,18 @@ OpenSiddurClientApp.service("TextService", [
                     return thiz;
                 });
         },
+        syncFlat : function () {
+            // one way synchronize the _flat content with the XML content. Return the synchronized content.
+
+            // rejoin flatContent to content
+            this.flatContent(this._flatContent); 
+            // convert content back to XML
+            this._content = XsltService.indentToString(
+                    XsltService.transformString("/xsl/EditingHtmlToXml.xsl", this._content)
+                );
+            return this._content;
+        },
         save : function() {
-            // TODO: continue from here
             var httpOperation = this._resource ? $http.put : $http.post;
             var deferred = $q.defer();  // for errors
             var extendPromise = function(promise) {
@@ -100,12 +115,7 @@ OpenSiddurClientApp.service("TextService", [
                 return promise;
             };
             if (this._isFlat) {
-                // rejoin flatContent to content
-                this.flatContent(this._flatContent); 
-                // convert content back to XML
-                this._content = XsltService.indentToString(
-                        XsltService.transformString("/xsl/EditingHtmlToXml.xsl", this._content)
-                    );
+                this.syncFlat();
             }
             var thiz = this;
             var content = this._content;

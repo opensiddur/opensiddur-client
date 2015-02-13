@@ -12,8 +12,8 @@
 OpenSiddurClientApp.directive(
         'osEditLinkDialogSimple',
         [
-        'EditorDataService', 'ListingService', 'ErrorService',
-        function( EditorDataService, ListingService, ErrorService ) {
+        'EditorDataService', 'ListingService', 'TextService', 'ErrorService',
+        function( EditorDataService, ListingService, TextService, ErrorService ) {
             return {
                 restrict : 'AE',
                 scope : {
@@ -24,55 +24,23 @@ OpenSiddurClientApp.directive(
                 },
                 controller: ['$scope', 'ListingService', function ($scope, ListingService) {
                     console.log("In edit link dialog (simple) controller");
-/*
-                    $scope.typesWithAllowedRanges = ["/api/data/original"];
-                    $scope.typesWithAllowedFragments = [
-                            "/api/data/notes",
-                            "/api/data/original",
-                            "/api/data/conditionals"
-                    ];
-
-
-                    $scope.links = {
-                        selectedType : "/api/data/original",
-                        types : {
-                            "/api/data/notes" : "Annotations",
-                            "/api/user" : "Contributor",
-                            "/api/data/original" : "Original text",
-                            "/api/data/sources" : "Source",
-                            "/api/data/conditionals" : "Conditional"
-                        },
-                        content : "",
-                        selection : "",
-                        selectedFile : "",
-                        composedFragment : "",
-                        allowedFragment : false,    // set by a watch on selectedType
-                        allowedRange : false,       // set by a watch on selectedType
-                        selectFile : function () {
-                            var newSelection =  this.selection.replace(/^\/exist\/restxq\/api/, '');
-
-                            if (this.selectedFile != newSelection) { // reset the content
-                                this.content = "";
-                                this.composedFragment = "";
-                            }
-                            // set the selected file
-                            this.selectedFile = newSelection;                            
-                            // if a fragment is allowed, load the content
-                            if ($scope.typesWithAllowedFragments.indexOf(this.selectedType) >= 0) {
-                                RestApi[this.selectedType].get(
-                                    { resource : decodeURI(this.selection.replace("\/exist\/restxq" + this.selectedType + "/", "")) },  // TODO: need to standardize when URIs are encoded!
-                                    function(content) {
-                                        $scope.links.content = content.xml;
-                                    } );
-                            } 
-                            this.composeLink();
-                        },
-                        composeLink : function() {
-                            this.composedLink = this.selectedFile + (this.composedFragment || "");
-                            return this.composedLink;
+                    $scope.selectLinkType = function(linkType) {
+                        if (linkType == "internal") {
+                            $scope.link.dataTargetBase = "";
+                            $scope.external.content = TextService.syncFlat();
                         }
-                    };                    
-*/
+                    }
+                    $scope.selectFile = function(fileSelection) {
+                        console.log("Selected: " + fileSelection);
+                        $scope.link.dataTargetBase = fileSelection.replace("/exist/restxq/api/data/original/", "");
+                        TextService.get("/api/data/original", decodeURIComponent($scope.link.dataTargetBase))
+                        .success(function(data) {
+                            $scope.external.content = data;
+                        })
+                        .error(function (err) {
+                            ErrorService.addApiError(err);
+                        });
+                    };
                     $scope.OKButton = function () {
                         $scope.link.callback();
                         $scope.onOk()();
@@ -113,6 +81,11 @@ OpenSiddurClientApp.directive(
 */
                     elem.on("shown.bs.modal", function () {
                         scope.link = EditorDataService.editLinkDialog;
+                        scope.external = {
+                            selection : "/api/data/original/" + encodeURIComponent(scope.link.dataFragmentBase),
+                            content : TextService._flatContent
+                        };
+                        scope.$apply();
                     });
                  },
                  transclude : false,

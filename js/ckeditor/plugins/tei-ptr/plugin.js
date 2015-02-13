@@ -36,20 +36,21 @@ CKEDITOR.plugins.add( 'tei-ptr', {
                 var EditorDataService = injector.get("EditorDataService");
                 var el = this.element;
                 
-                EditorDataService.editLinkDialog = {
+                EditorDataService.set("editLinkDialog", {
     				dataTargetBase : el.getAttribute("data-target-base") || "",
 				    dataTargetFragment : el.getAttribute("data-target-fragment") || "",
-				    isExternal : Boolean(el.getAttribute("data-target-base")) || false ,
 				    id : el.getAttribute("id") || "" ,
 				    linkType : (el.getAttribute("data-target-base") || "") == "" ? "internal" : "external",
                     callback : function() {
                         el.setAttribute("id", this.id);
 				        el.setAttribute("data-target-base",  this.dataTargetBase );
 				        el.setAttribute("data-target-fragment",  this.dataTargetFragment );
-				        el.setAttribute("target",  this.dataTargetBase + "#" + this.dataTargetFragment );
+				        el.setAttribute("href", this.dataTargetBase ? ("/texts/" + this.dataTargetBase) : "#" );
+                        el.setAttribute("target", "_blank");
                     }
-                };
+                });
                 DialogService.open("editLinkDialogSimple");
+                
             },
             // any tei:ptr should be treated as a transclusion according to this widget
 			upcast: function( element ) {

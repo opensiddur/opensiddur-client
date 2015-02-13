@@ -7,14 +7,14 @@
  * selection returns the selected id
  * update triggers the list to update when changed
  *
- * Copyright 2014 Efraim Feinstein, efraim@opensiddur.org
+ * Copyright 2014-2015 Efraim Feinstein, efraim@opensiddur.org
  * Licensed under the GNU Lesser General Public License, version 3 or later
  */
 OpenSiddurClientApp.directive(
         'osIdList',
         [
-        'RestApi', 'XsltService',
-        function( RestApi, XsltService ) {
+        'XsltService',
+        function( XsltService ) {
             return {
                 restrict : 'AE',
                 scope : {
