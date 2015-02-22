@@ -40,16 +40,39 @@
         </j:streamText>
     </xsl:template>
 
+    <xsl:template name="add-xmlid" as="attribute()?">
+        <xsl:param name="element-name" as="xs:string"/>
+        <!-- add a randomly generated xml:id -->
+        <xsl:if test="not(@id)">
+            <xsl:attribute name="xml:id" select="concat(substring-after($element-name, ':'), '_', generate-id(.))"/>
+        </xsl:if>
+    </xsl:template>
+
     <xsl:template match="*" mode="streamText">
         <xsl:variable name="classes" select="tokenize(@class, '\s+')"/>
         <xsl:variable name="element-class" select="
             $classes[substring-before(., '-')=('tei','j')]"/>
+        <xsl:variable name="element-name" select="replace($element-class, '-', ':')"/>
         <xsl:if test="$element-class"> <!-- CKEditor sometimes adds spurious p tags -->
-            <xsl:element name="{replace($element-class, '-', ':')}">
+            <xsl:element name="{$element-name}">
                 <xsl:apply-templates select="@*" />
+                <xsl:call-template name="add-xmlid">
+                    <xsl:with-param name="element-name" select="$element-name"/>
+                </xsl:call-template>
                 <xsl:apply-templates mode="streamText"/>
             </xsl:element>
         </xsl:if>
+    </xsl:template>
+
+    <!-- p -> tei:seg -->
+    <xsl:template match="html:p[normalize-space(.)]" mode="streamText">
+        <tei:seg>
+            <xsl:apply-templates select="@*" />
+            <xsl:call-template name="add-xmlid">
+                <xsl:with-param name="element-name" select="'tei:seg'"/>
+            </xsl:call-template>
+            <xsl:apply-templates mode="streamText"/>
+        </tei:seg>
     </xsl:template>
 
     <!-- html:a[@href] -> tei:ptr -->
@@ -58,7 +81,10 @@
             <xsl:apply-templates select="@*[not(name(.)=('data-target-base', 'data-target-fragment'))]"/>
             <!-- @href contains /texts/[name], @data-target-base/@data-target-fragment contain the pointer -->
             <xsl:attribute name="target" 
-                select="concat('/data/original/', @data-target-base, @data-target-fragment)"/> 
+                select="concat('/data/original/', @data-target-base, @data-target-fragment)"/>
+            <xsl:call-template name="add-xmlid"> 
+                <xsl:with-param name="element-name" select="'tei:ptr'"/>
+            </xsl:call-template>
         </tei:ptr>
     </xsl:template>
 
