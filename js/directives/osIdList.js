@@ -113,8 +113,7 @@ OpenSiddurClientApp.directive(
                  link: function(scope, elem, attrs, ctrl) {
                     scope.parentElement = elem.find("tbody"); 
                     var x2js_simple = new X2JS({ "arrayAccessForm" : "property", "emptyNodeForm" : "text" });   
-
-                    var loadXmlIds = function (update) {
+                    var loadXmlIds = function (update, oldVal) {
                         if (update) {
                             var xid = XsltService.transformString("listXmlId", scope.content);
                             scope.xmlids = x2js_simple.xml2json(xid).xmlids.xmlid_asArray.map(
@@ -124,10 +123,14 @@ OpenSiddurClientApp.directive(
                                 }
                             );
                         }
-                        scope.links.clear();
+                        if (!scope.links.composed) {    // if the composed link is empty, clear everything
+                            scope.links.clear();
+                        }
                     };
 
-                    scope.$watch("update", loadXmlIds);
+                    scope.$watch("update", function(newVal, oldVal) {
+                        loadXmlIds(newVal, oldVal);
+                    });
                  },
                  transclude : false,
                  templateUrl : "/js/directives/osIdList.html"

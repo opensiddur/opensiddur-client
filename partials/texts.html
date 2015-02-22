@@ -124,7 +124,7 @@
                         </div>
                     </div>
                     <div data-ng-class="{true:'col-md-6', false:'off'}[editor.transcriptionViewer]">
-                        <os-transcription-window model="editor.content" active="editor.transcriptionViewer">
+                        <os-transcription-window model="TextService._content" active="editor.transcriptionViewer">
                         </os-transcription-window>
                     </div>
                 </form>
@@ -155,12 +155,12 @@
             on-ok="editor.newDocumentSimple"
             on-close="editor.dialogCanceled"></os-new-dialog>
     <os-insert-internal-link-dialog
-            content="editor.content"
+            content="TextService._content"
             name="internalLinkDialog"
             title="Insert Internal Link"
             on-ok="helper.link.insert"
             on-close="helper.link.cancel"
-            allow-range="editor.content"
+            allow-range="TextService._content"
             ></os-insert-internal-link-dialog>
     <os-insert-link-dialog
             name="linkDialog"
