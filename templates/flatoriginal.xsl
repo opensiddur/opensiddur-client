@@ -50,7 +50,7 @@
             </tei:teiHeader>
             <tei:text>
                 <jf:merged id="stream" xmlns="http://www.w3.org/1999/xhtml">
-                    <div class="tei-seg" id="seg1">This is a segment of text. Edit or delete me.</div>
+                    <p class="tei-seg" id="seg1">This is a segment of text. Edit or delete me.</p>
                 </jf:merged>
            </tei:text>
         </tei:TEI>

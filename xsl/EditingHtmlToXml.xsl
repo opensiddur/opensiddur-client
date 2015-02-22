@@ -58,7 +58,7 @@
             <xsl:apply-templates select="@*[not(name(.)=('data-target-base', 'data-target-fragment'))]"/>
             <!-- @href contains /texts/[name], @data-target-base/@data-target-fragment contain the pointer -->
             <xsl:attribute name="target" 
-                select="concat('/data/original/', @data-target-base, if (@data-target-fragment/string()) then '#' else '', @data-target-fragment)"/> 
+                select="concat('/data/original/', @data-target-base, @data-target-fragment)"/> 
         </tei:ptr>
     </xsl:template>
 

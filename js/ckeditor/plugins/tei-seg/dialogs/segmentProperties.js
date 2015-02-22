@@ -29,7 +29,7 @@ CKEDITOR.dialog.add( 'segmentPropertiesDialog', function( editor ) {
 						id: 'id',
 						label: 'Unique identifier',
 
-						requiredContent: 'div(tei-seg)[id]',
+						requiredContent: 'p(tei-seg)',
 						validate: CKEDITOR.dialog.validate.notEmpty( "Unique identifier cannot be empty." ),
 
 						setup: function( element ) {
@@ -37,7 +37,9 @@ CKEDITOR.dialog.add( 'segmentPropertiesDialog', function( editor ) {
 						},
 
 						commit: function( element ) {
-							element.setAttribute( "id", this.getValue() );
+                            //element.removeClass("tei-seg");
+							element.setAttribute( "id", this.getValue() );  
+                            element.addClass("tei-seg");
 						}
 					}
 				]
@@ -50,7 +52,7 @@ CKEDITOR.dialog.add( 'segmentPropertiesDialog', function( editor ) {
 			var selection = editor.getSelection();
 			var element = selection.getStartElement();
 			if ( element )
-				element = element.getAscendant( function(el) { return el.getName() == "div" && el.hasClass("tei-seg"); } , true );
+				element = element.getAscendant( function(el) { return el.hasClass("tei-seg"); } , true );
             else {
                 alert("You need to be in a segment!");
                 return;

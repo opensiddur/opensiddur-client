@@ -26,7 +26,9 @@
         <xsl:param name="context" as="element()"/>
 
         <xsl:sequence select="
-            if ($context/name()='tei:ptr')
+            if ($context/name()='tei:seg')
+            then 'p'
+            else if ($context/name()='tei:ptr')
             then 'a'
             else if ($context/name()='tei:head')
             then 'h1'
@@ -101,7 +103,7 @@
             return 
                 if (contains($s, '#')) then substring-before($s, '#')
                 else $s"/>
-        <xsl:variable name="target-fragment" select="substring-after(.,'#')"/>
+        <xsl:variable name="target-fragment" select="concat('#', substring-after(.,'#'))"/>
         <xsl:attribute name="href" select="if ($target-base) then concat('/texts/', $target-base) else '#'"/>
         <xsl:attribute name="target" select="'_blank'"/>
         <!-- not sure if this is the right way to do it... -->

@@ -70,6 +70,7 @@ OpenSiddurClientApp.controller(
         // this should be in $scope.editor, but ng-ckeditor will not allow it to be (see line 73)
         $scope.ckeditorOptions = {
             customConfig : "/js/ckeditor/config.js",    // points to the plugin directories
+            enterMode : CKEDITOR.ENTER_P,
             entities : false,   // need XML entities, but not HTML entities...
             extraPlugins : "tei-ptr,tei-seg",
             fillEmptyBlocks : false,
@@ -97,9 +98,8 @@ OpenSiddurClientApp.controller(
             removeButtons : 'Paste,PasteFromWord',  
             allowedContent :
                 "a[href,data-target-base,data-target-fragment,target](tei-ptr);"+
-                "div(tei-seg);" +
-                "*[id,data-*]",
-            disallowedContent : "p"     // gets inserted automatically all over the place otherwise
+                "p[!id](tei-seg);" +
+                "*[id,data-*]"
         };
 
         $scope.editor = {

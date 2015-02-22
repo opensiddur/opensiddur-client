@@ -16,8 +16,8 @@ CKEDITOR.plugins.add( 'tei-seg', {
 	init: function( editor ) {
         var thiz = this;
 		editor.addCommand( 'segmentProperties', new CKEDITOR.dialogCommand( 'segmentPropertiesDialog', {
-			allowedContent: 'div(tei-seg)[id]',
-			requiredContent: 'div(tei-seg)',
+			allowedContent: 'p[id](tei-seg)',
+			requiredContent: 'p',
             contextSensitive: true,
             startDisabled : true,
             refresh: function (editor, path) {
@@ -58,6 +58,6 @@ CKEDITOR.plugins.add( 'tei-seg', {
 		CKEDITOR.dialog.add( 'segmentPropertiesDialog', this.path + 'dialogs/segmentProperties.js' );
 	},
     isSeg : function(element) {
-        return element && element.type == CKEDITOR.NODE_ELEMENT && element.getName() == "div" && element.hasClass("tei-seg");
+        return element && element.type == CKEDITOR.NODE_ELEMENT && (element.getName() == "p" || element.hasClass("tei-seg"));
     }
 });
