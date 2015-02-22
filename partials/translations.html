@@ -110,9 +110,12 @@
             </div>
         </div>
     </div>
-    <os-open-dialog api="'/api/data/linkage'" selection="selection" name="openDialog" title="Open Translation Linkage"></os-open-dialog> 
-    <os-open-dialog api="'/api/data/original'" selection="temporary.link1" name="openDialogLeft" title="Set parallel text 1"></os-open-dialog> 
-    <os-open-dialog api="'/api/data/original'" selection="temporary.link2" name="openDialogRight" title="Set parallel text 2"></os-open-dialog> 
+    <os-open-dialog api="'/api/data/linkage'" name="openDialog" title="Open Translation Linkage"
+        on-ok="editor.openDocument" on-close="editor.dialogCancel"></os-open-dialog> 
+    <os-open-dialog api="'/api/data/original'" name="openDialogLeft" title="Set parallel text 1"
+        on-ok="editor.setLinkLeft" on-close="editor.dialogCancel"></os-open-dialog> 
+    <os-open-dialog api="'/api/data/original'" name="openDialogRight" title="Set parallel text 2"
+        on-ok="editor.setLinkRight" on-close="editor.dialogCancel"></os-open-dialog> 
     <os-sharing-dialog is-new="editor.isNew" name="sharingDialog" title="Sharing"></os-sharing-dialog> 
 </div>
 

@@ -2,7 +2,7 @@
     Template for original documents
 
     Open Siddur Project
-    Copyright 2014 Efraim Feinstein, efraim@opensiddur.org
+    Copyright 2014-2015 Efraim Feinstein, efraim@opensiddur.org
     Licensed under the GNU Lesser General Public License, version 3 or later
 -->
 <xsl:stylesheet 

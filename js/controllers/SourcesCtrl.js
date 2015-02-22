@@ -1,7 +1,7 @@
 /* 
  * controller for sources page 
  * Open Siddur Project
- * Copyright 2013-2014 Efraim Feinstein <efraim@opensiddur.org>
+ * Copyright 2013-2015 Efraim Feinstein <efraim@opensiddur.org>
  * Licensed under the GNU Lesser General Public License, version 3 or later
  */
 OpenSiddurClientApp.controller(
@@ -74,6 +74,10 @@ OpenSiddurClientApp.controller(
                 //$scope.sourcesForm.$setPristine();
                 AccessService.reset();
             },
+            openDocument : function (selection) {
+                $location.path( "/sources/" + decodeURIComponent(selection.split("/").pop()) );
+            },
+            dialogCancel : function () {},
             setDocument : function( ) {
                 var toDocument = $scope.editor.currentDocument;
                 if (!toDocument) {
@@ -163,20 +167,6 @@ OpenSiddurClientApp.controller(
         $scope.saveButtonText = function() {
             return this.sourcesForm.$pristine ? (($scope.editor.isNew) ? "Unsaved, No changes" : "Saved" ) : "Save";
         };
-
-        $scope.selection = "/exist/restxq/api" + ($scope.editor.isNew ? "" : ("/" + $routeParams.resource));
-        
-        var selectionWatchCtr = 0;
-        $scope.$watch("selection", 
-            function( selection ) {
-                if (!selectionWatchCtr) {
-                    selectionWatchCtr++;
-                }
-                else if (selection) {
-                    $location.path( "/sources/" + decodeURIComponent(selection.split("/").pop()) );
-                }
-            }
-        ); 
 
         $scope.editor.setDocument();
     }]

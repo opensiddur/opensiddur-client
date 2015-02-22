@@ -90,6 +90,9 @@ OpenSiddurClientApp.directive(
                     elem.find(".osInsertLinkDialog").attr("aria-labelledBy", scope.name + "_label");
                     elem.find(".osInsertLinkDialog").attr("id", scope.name);
 
+                    elem.on("shown.bs.modal", function() {
+                        scope.links.selection = "";
+                    });
 
                     scope.$watch("links.selectedType", function (type) {
                         scope.allowedRange = scope.typesWithAllowedRanges.indexOf(type) >= 0;

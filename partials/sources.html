@@ -596,6 +596,7 @@
                 </form>
             </div>
     </div>
-    <os-open-dialog api="'/api/data/sources'" selection="selection" 
-        title="Open Source" name="openDialog"></os-open-dialog>
+    <os-open-dialog api="'/api/data/sources'" 
+        title="Open Source" name="openDialog"
+        on-ok="editor.openDocument" on-close="editor.dialogCancel"></os-open-dialog>
 </div>
