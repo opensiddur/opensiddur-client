@@ -52,7 +52,7 @@ CKEDITOR.dialog.add( 'segmentPropertiesDialog', function( editor ) {
 			var selection = editor.getSelection();
 			var element = selection.getStartElement();
 			if ( element )
-				element = element.getAscendant( function(el) { return el.hasClass("tei-seg"); } , true );
+				element = element.getAscendant( function(el) { return el.getName() == "p" || el.hasClass("tei-seg"); } , true );
             else {
                 alert("You need to be in a segment!");
                 return;
