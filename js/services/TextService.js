@@ -88,10 +88,6 @@ OpenSiddurClientApp.service("TextService", [
 
             // rejoin flatContent to content
             this.flatContent(this._flatContent); 
-            // convert content back to XML
-            this._content = XsltService.indentToString(
-                    XsltService.transformString("/xsl/EditingHtmlToXml.xsl", this._content)
-                );
             return this._content;
         },
         save : function() {
@@ -116,6 +112,11 @@ OpenSiddurClientApp.service("TextService", [
             };
             if (this._isFlat) {
                 this.syncFlat();
+                // convert content back to XML
+                var backupContent = this._content;      // this needs to be saved so if the save fails, we can go back easily
+                this._content = XsltService.indentToString(
+                        XsltService.transformString("/xsl/EditingHtmlToXml.xsl", this._content)
+                    );
             }
             var thiz = this;
             var content = this._content;
@@ -144,6 +145,13 @@ OpenSiddurClientApp.service("TextService", [
                             return extendPromise($timeout(function() { return thiz.load(thiz._resourceApi, thiz._resource, thiz._isFlat); }, 500));
                             
                         })
+                        .error(function(err) {
+                            if (thiz._isFlat) {
+                                thiz._content = backupContent;
+                            }
+
+                            return err;
+                        });
                 }
             }
         },

@@ -38,12 +38,13 @@
                         <button
                             data-ng-disabled="!external.selection"
                             class="btn btn-primary" 
-                            data-ng-click="selectFile(external.selection)">Select</button>
+                            data-ng-click="selectFile(external.selection, true)">Select</button>
                     </div>
                     <div>
                         <os-id-list data-ng-show="external.content" 
                             content="external.content" allow-range="1" 
-                            selection="link.dataTargetFragment" update="external.content">
+                            selection="link.dataTargetFragment" update="external.content"
+                            >
                         </os-id-list>
                     </div>
                 </form>

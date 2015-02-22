@@ -29,24 +29,35 @@ OpenSiddurClientApp.directive(
                             $scope.link.dataTargetBase = "";
                             $scope.external.content = TextService.syncFlat();
                         }
-                    }
-                    $scope.selectFile = function(fileSelection) {
+                    };
+                    $scope.resetExternal = function() {
+                        $scope.external = {
+                            selection : "/api/data/original/" + $scope.link.dataTargetBase,
+                            content : TextService.syncFlat()
+                        };
+                    };
+                    $scope.selectFile = function(fileSelection, clearIds) {
                         console.log("Selected: " + fileSelection);
                         $scope.link.dataTargetBase = fileSelection.replace("/exist/restxq/api/data/original/", "");
                         TextService.get("/api/data/original", decodeURIComponent($scope.link.dataTargetBase))
                         .success(function(data) {
                             $scope.external.content = data;
+                            if (clearIds) {
+                                $scope.link.dataTargetFragment = "";
+                            }
                         })
                         .error(function (err) {
                             ErrorService.addApiError(err);
                         });
                     };
                     $scope.OKButton = function () {
-                        $scope.link.callback();
+                        $scope.link.callback(true);
                         $scope.onOk()();
+                        $scope.resetExternal();
                         $("#"+$scope.name).modal('hide');
                     };
                     $scope.CloseButton = function () {
+                        $scope.link.callback(false);
                         $scope.onClose()();
                         $("#"+$scope.name).modal('hide');
                     };
@@ -59,32 +70,12 @@ OpenSiddurClientApp.directive(
                     elem.find(".osEditLinkDialogSimple").attr("aria-labelledBy", scope.name + "_label");
                     elem.find(".osEditLinkDialogSimple").attr("id", scope.name);
 
-/*
-                    scope.$watch("links.selectedType", function (type) {
-                        scope.allowedRange = scope.typesWithAllowedRanges.indexOf(type) >= 0;
-                        scope.allowedFragment = scope.typesWithAllowedFragments.indexOf(type) >= 0;
-                        if (type != scope.links.selectedType) {
-                            scope.links.selection = "";
-                        }
-                    });
-                    scope.$watch("links.selection", function (s) {
-                        if (s == "") {
-                            scope.links.content = "";
-                            scope.links.selectedFile = "";                            
-                            scope.links.composedFragment = "";
-                            scope.links.composeLink();
-                        }
-                    });
-                    scope.$watch("links.composedFragment", function (fragment) {
-                        scope.links.composeLink();
-                    });
-*/
                     elem.on("shown.bs.modal", function () {
                         scope.link = EditorDataService.editLinkDialog;
-                        scope.external = {
-                            selection : "/api/data/original/" + encodeURIComponent(scope.link.dataFragmentBase),
-                            content : TextService._flatContent
-                        };
+                        scope.resetExternal();
+                        if (scope.link.dataTargetBase) {
+                            scope.selectFile(scope.link.dataTargetBase, false);
+                        }
                         scope.$apply();
                     });
                  },

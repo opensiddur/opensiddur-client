@@ -25,7 +25,7 @@ CKEDITOR.plugins.add( 'tei-ptr', {
 			requiredContent: 'a(tei-ptr)',
 
 			template:
-				'<a class="tei-ptr" target="_blank" id="" href="#" data-target-base="" data-target-fragment="">Loading...</a>',
+				'<a class="tei-ptr" target="_blank" id="" href="#" data-new="1" data-target-base="" data-target-fragment="">Loading...</a>',
 
 			button: 'Create or edit a transclusion link',
 
@@ -35,18 +35,29 @@ CKEDITOR.plugins.add( 'tei-ptr', {
                 var DialogService = injector.get("DialogService");
                 var EditorDataService = injector.get("EditorDataService");
                 var el = this.element;
+                var isNew = el.getAttribute("data-new");
                 
                 EditorDataService.set("editLinkDialog", {
     				dataTargetBase : el.getAttribute("data-target-base") || "",
 				    dataTargetFragment : el.getAttribute("data-target-fragment") || "",
 				    id : el.getAttribute("id") || "" ,
 				    linkType : (el.getAttribute("data-target-base") || "") == "" ? "internal" : "external",
-                    callback : function() {
-                        el.setAttribute("id", this.id);
-				        el.setAttribute("data-target-base",  this.dataTargetBase );
-				        el.setAttribute("data-target-fragment",  this.dataTargetFragment );
-				        el.setAttribute("href", this.dataTargetBase ? ("/texts/" + this.dataTargetBase) : "#" );
-                        el.setAttribute("target", "_blank");
+                    callback : function(ok) {
+                        if (ok) {
+                            el.setAttribute("id", this.id);
+                            el.setAttribute("data-target-base",  this.dataTargetBase );
+                            el.setAttribute("data-target-fragment",  this.dataTargetFragment );
+                            el.setAttribute("href", this.dataTargetBase ? ("/texts/" + this.dataTargetBase) : "#" );
+                            el.setAttribute("target", "_blank");
+                            el.removeAttribute("data-new");
+                        }
+                        else {
+                            // cancel
+                            if (isNew) {
+                                // remove the element
+                                el.remove(false);
+                            }   
+                        }
                     }
                 });
                 DialogService.open("editLinkDialogSimple");
