@@ -16,13 +16,6 @@ var onSaxonLoad = function() {
 };
 
 
-// list of all languages supported by the app
-var supportedLanguages = {
-    "en" : "English",
-    "he" : "עברית (Hebrew)",
-    "arc" : "ארמית (Aramaic)"
-};
-
 // list of licenses supported by the app
 var supportedLicenses = {
     "http://www.creativecommons.org/publicdomain/zero/1.0" : "Creative Commons Zero 1.0",

@@ -18,7 +18,7 @@
                                     data-ng-model="title.lang" 
                                     data-ng-disabled="!AccessService.access.write"
                                     data-ng-required="title.text"
-                                    data-ng-options="code as lang for (code, lang) in supportedLanguages"
+                                    data-ng-options="code as lang.toString() for (code, lang) in LanguageService.supportedLanguages"
                                     placeholder="Language"/>
                             </div>
                             <div class="col-md-3">
@@ -36,7 +36,7 @@
                                     data-ng-model="title.subLang" 
                                     data-ng-disabled="!AccessService.access.write"
                                     data-ng-required="title.subText"
-                                    data-ng-options="code as lang for (code, lang) in supportedLanguages"
+                                    data-ng-options="code as lang.toString() for (code, lang) in LanguageService.supportedLanguages"
                                     placeholder="Subtitle Language"/>
                             </div>
                             <div class="col-md-3">

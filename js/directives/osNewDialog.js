@@ -15,13 +15,13 @@
  * on-ok runs after OK is pressed
  * on-close is a function to run when the close button is pressed
  *
- * Copyright 2014 Efraim Feinstein, efraim@opensiddur.org
+ * Copyright 2014-2015 Efraim Feinstein, efraim@opensiddur.org
  * Licensed under the GNU Lesser General Public License, version 3 or later
  */
 OpenSiddurClientApp.directive(
         'osNewDialog',
-        [
-        function() {
+        ["LanguageService",
+        function(LanguageService) {
             return {
                 restrict : 'AE',
                 scope : {
@@ -34,7 +34,7 @@ OpenSiddurClientApp.directive(
                 },
                 controller: ['$scope', function ($scope) {
                     console.log("In new dialog controller");
-
+                    $scope.LanguageService = LanguageService;
                     $scope.resourceTypes = {
                         "original" : "Original text document",
                         "conditionals" : "Conditional definition document",
@@ -44,7 +44,6 @@ OpenSiddurClientApp.directive(
                     if (!$scope.resourceType) {
                         $scope.resourceType = "texts";
                     }
-                    $scope.supportedLanguages = supportedLanguages;
                     $scope.supportedLicenses = supportedLicenses;
 
                     $scope.model = $scope.model || {

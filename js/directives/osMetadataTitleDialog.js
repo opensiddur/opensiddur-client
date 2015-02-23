@@ -11,8 +11,8 @@
 OpenSiddurClientApp.directive(
         'osMetadataTitleDialog',
         [
-        'AccessService', 'TextService',
-        function( AccessService, TextService ) {
+        'AccessService', 'LanguageService', 'TextService',
+        function( AccessService, LanguageService, TextService ) {
             var template = {
                 text : "",
                 lang : "",
@@ -31,7 +31,7 @@ OpenSiddurClientApp.directive(
                 controller: ['$scope', function ($scope) {
                     console.log("In title metadata controller");
                     $scope.AccessService = AccessService;
-                    $scope.supportedLanguages = supportedLanguages;
+                    $scope.LanguageService = LanguageService;
                     $scope.OKButton = function () {
                         if (!$scope.onOk() || $scope.onOk()($scope.titleModel)) {
                             TextService.title($scope.titleModel);

@@ -29,7 +29,7 @@
                                 required="true"
                                 name="lang"
                                 data-ng-model="model.template.lang"
-                                data-ng-options="code as language for (code, language) in supportedLanguages">
+                                data-ng-options="code as language.toString() for (code, language) in LanguageService.supportedLanguages">
                             </select>
                         </div>
                     </div>
@@ -53,7 +53,7 @@
                                 class="form-control"
                                 name="altLang"
                                 data-ng-model="model.template.title.altLang"
-                                data-ng-options="code as language for (code, language) in supportedLanguages">
+                                data-ng-options="code as language.toString() for (code, language) in LanguageService.supportedLanguages">
                             </select>
                         </div>
                         <div class="col-md-4">

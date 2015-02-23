@@ -6,21 +6,21 @@
  */
 OpenSiddurClientApp.controller(
     'TranslationsCtrl',
-    ['$scope', '$http', '$location', '$route', '$routeParams', '$q', 'AccessService', 'AuthenticationService', 'DialogService', 'ErrorService', 'RestApi',
+    ['$scope', '$http', '$location', '$route', '$routeParams', '$q', 'AccessService', 'AuthenticationService', 'DialogService', 'ErrorService', 'LanguageService', 'RestApi',
      'XsltService', 
-    function($scope, $http, $location, $route, $routeParams, $q, AccessService, AuthenticationService, DialogService, ErrorService, RestApi, XsltService) {
+    function($scope, $http, $location, $route, $routeParams, $q, AccessService, AuthenticationService, DialogService, ErrorService, LangaugeService, RestApi, XsltService) {
         console.log("translations controller");
         
         $scope.selection = "";
         $scope.DialogService = DialogService;
         $scope.AccessService = AccessService;
+        $scope.LanguageService = LanguageService;
 
         $scope.editor = {
             loggedIn : AuthenticationService.loggedIn,
             currentDocument : $routeParams.resource,
             // TODO: this is copied verbatim from TextsCtrl... need some serious refactoring
             isNew : 1,
-            supportedLanguages : supportedLanguages,
             supportedLicenses : supportedLicenses,
             // template for the content structure
             content : {
