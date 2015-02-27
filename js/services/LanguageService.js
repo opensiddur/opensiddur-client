@@ -20,6 +20,18 @@ OpenSiddurClientApp.service("LanguageService", function() {
             "en" : Language("English", "", "ltr"),
             "he" : Language("עברית",  "Hebrew", "rtl"),
             "arc" : Language("ארמית", "Aramaic", "rtl")
+        },
+        getDirection : function(lang) {
+            return lang ? this.supportedLanguages[lang].dir : "ltr";
+        },
+        getCkeditorList : function() {
+            // supportedLanguages as a CKEditor compatible language list
+            return $.map(
+                this.supportedLanguages, 
+                function(desc, code) { 
+                    return code + ":" + desc.toString() + ":" + desc.dir;
+                }
+            );
         }
     };
 });

@@ -188,6 +188,18 @@ OpenSiddurClientApp.service("TextService", [
             }
             return this.partialContent("jf:merged", setContent); 
         },
+        language : function(setLanguage) {
+            // primary language
+            if (setLanguage) {
+                this._content = XsltService.indentToString(
+                    XsltService.transformString("/xsl/SetLanguage.xsl", this._content, { 
+                        "language" : setLanguage.language}));
+                return this;
+            }
+            var l =  this._content.match(/xml:lang="([^"]+)"/);
+
+            return { language : l ? l[1] : "" }; // this relies on xml:lang being required
+        },
         title : function(titleJson) {
             // [ {title :, lang:, subtitle: } ]
             
