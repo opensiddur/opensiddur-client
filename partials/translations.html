@@ -38,7 +38,7 @@
                                     name="title_lang"
                                     data-ng-model="editor.content.title.lang" 
                                     required="true"
-                                    data-ng-options="code as language for (code, language) in editor.supportedLanguages"/>
+                                    data-ng-options="code as language.toString() for (code, language) in LanguageService.supportedLanguages"/>
                             </div>
                             <div class="col-md-6">
                                 <input class="form-control" name="title" data-ng-model="editor.content.title.text"

@@ -21,6 +21,9 @@
     <xsl:template match="@id|@*:id" as="attribute()" mode="#default generic">
         <xsl:attribute name="xml:id" select="."/>
     </xsl:template>
+    <xsl:template match="@lang|@*:lang" as="attribute()" mode="#default generic">
+        <xsl:attribute name="xml:lang" select="."/>
+    </xsl:template>
 
     <xsl:template match="@*[starts-with(name(.), 'data-')]" as="attribute()">
         <xsl:attribute 

@@ -1,19 +1,20 @@
 /* 
  * controller for texts page, which is the generic XML editor 
  * Open Siddur Project
- * Copyright 2013-2014 Efraim Feinstein <efraim@opensiddur.org>
+ * Copyright 2013-2015 Efraim Feinstein <efraim@opensiddur.org>
  * Licensed under the GNU Lesser General Public License, version 3 or later
  */
 OpenSiddurClientApp.controller(
     'TextsCtrl',
     ['$scope', '$location', '$route', '$routeParams', '$timeout', '$window', 'XsltService', 
     'AccessService', 'AuthenticationService', 'DialogService', 'ErrorService', 'RestApi',
-    'TextService',
+    'LanguageService', 'TextService',
     function ($scope, $location, $route, $routeParams, $timeout, $window, XsltService, 
         AccessService, AuthenticationService, DialogService, ErrorService, RestApi,
-        TextService) {
+        LanguageService, TextService) {
         console.log("Texts controller.");
         $scope.DialogService = DialogService;
+        $scope.LanguageService = LanguageService;
 
         // state associated with the resource type
         $scope.resourceType = {
@@ -69,12 +70,14 @@ OpenSiddurClientApp.controller(
 
         // this should be in $scope.editor, but ng-ckeditor will not allow it to be (see line 73)
         $scope.ckeditorOptions = {
+            contentsCss : "/css/simple-editor.css",
             customConfig : "/js/ckeditor/config.js",    // points to the plugin directories
             enterMode : CKEDITOR.ENTER_P,
             entities : false,   // need XML entities, but not HTML entities...
-            extraPlugins : "tei-ptr,tei-seg",
+            extraPlugins : "language,tei-ptr,tei-seg",
             fillEmptyBlocks : false,
             language : "en",
+            language_list : LanguageService.getCkeditorList(),
             readOnly : !AccessService.access.write,
             toolbar : "basic",
             toolbar_full : [],
@@ -99,11 +102,17 @@ OpenSiddurClientApp.controller(
             allowedContent :
                 "a[href,data-target-base,data-target-fragment,target](tei-ptr);"+
                 "p[!id](tei-seg);" +
-                "*[id,data-*]"
+                "*[id,lang,dir,data-*]"
         };
-
         $scope.editor = {
             loggedIn : AuthenticationService.loggedIn,
+            ckeditorChanged : function() {
+                var lang = TextService.language().language;
+                var dir = LanguageService.getDirection(lang);
+                var htmlElement = CKEDITOR.instances.editor1.document.getDocumentElement().$;
+                htmlElement.setAttribute("lang", lang);
+                htmlElement.setAttribute("dir", dir);
+            }, 
             codemirrorOptions : {
                 lineWrapping : true,
                 lineNumbers : true,

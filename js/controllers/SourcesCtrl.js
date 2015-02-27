@@ -7,15 +7,15 @@
 OpenSiddurClientApp.controller(
     'SourcesCtrl',
     ['$rootScope', '$location', '$route', '$routeParams', '$scope', 'RestApi', 'XsltService', 
-    "AccessService", 'DialogService', 'AuthenticationService', 'ErrorService',
+    "AccessService", 'DialogService', "LanguageService", 'AuthenticationService', 'ErrorService',
     function ($rootScope, $location, $route, $routeParams, $scope, RestApi, XsltService, 
-    AccessService, DialogService, AuthenticationService, ErrorService) {
+    AccessService, DialogService, LanguageService, AuthenticationService, ErrorService) {
         $scope.DialogService = DialogService;
+        $scope.LanguageService = LanguageService;
         AccessService.reset();
 
         $scope.editor = {
             loggedIn : AuthenticationService.loggedIn,
-            "supportedLanguages" : supportedLanguages, 
             "supportedResponsibilities" : supportedResponsibilities,
             "monographScopes" : { 
                 volume : "volume",

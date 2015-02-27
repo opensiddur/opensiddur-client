@@ -119,6 +119,10 @@
         <xsl:attribute name="id" select="."/>
     </xsl:template>
 
+    <xsl:template match="@*:lang">
+        <xsl:attribute name="lang" select="."/>
+    </xsl:template>
+
     <xsl:template match="@*:stream|@*:layer-id"/>
 
     <xsl:template match="@*">
