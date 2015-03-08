@@ -15,8 +15,8 @@ CKEDITOR.plugins.add( 'tei-seg', {
 	icons: 'segment',
 	init: function( editor ) {
         var thiz = this;
-		editor.addCommand( 'segmentProperties', new CKEDITOR.dialogCommand( 'segmentPropertiesDialog', {
-			allowedContent: 'p[id](tei-seg)',
+		editor.addCommand( 'segmentProperties', {
+			allowedContent: 'p[id,lang](tei-seg)',
 			requiredContent: 'p',
             contextSensitive: true,
             startDisabled : true,
@@ -28,9 +28,30 @@ CKEDITOR.plugins.add( 'tei-seg', {
 		        else
 			        this.setState( CKEDITOR.TRISTATE_DISABLED );
 
+            },
+            exec : function (editor) {
+                var injector = angular.element('*[data-ng-app]').injector();
+                var DialogService = injector.get("DialogService");
+                var TextService = injector.get("TextService");
+                var EditorDataService = injector.get("EditorDataService");
+                var el = editor.getSelection().getStartElement();
+                var defaultLanguage = TextService.language().language;
+                EditorDataService.set("editSegmentDialog", {
+                    id : el.getAttribute("id") || "",
+                    lang : el.getAttribute("lang") || defaultLanguage, 
+                    callback : function(ok) {
+                        if (ok) {
+                            el.setAttribute("id", this.id);
+                            if (this.lang != defaultLanguage) {
+                                el.setAttribute("lang", this.lang);    
+                            }
+                        }
+                    }
+                });
+                DialogService.open("editSegmentDialogSimple");
             }
 
-		} ) );
+		});
 
 		editor.ui.addButton( 'Segment', {
 			label: 'Segment properties',
