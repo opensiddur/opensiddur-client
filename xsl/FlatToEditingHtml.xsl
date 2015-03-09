@@ -92,7 +92,7 @@
         <a class="tei-ptr">
             <xsl:apply-templates select="@*"/>
             <xsl:apply-templates/>
-            <xsl:sequence select="concat('Include: ', @target/string())"/>
+            <xsl:sequence select="concat('Include: ', tokenize(@target, '/')[last()])"/>
         </a>
     </xsl:template>
 
