@@ -50,6 +50,7 @@ CKEDITOR.plugins.add( 'tei-ptr', {
                             el.setAttribute("href", this.dataTargetBase ? ("/texts/" + this.dataTargetBase) : "#" );
                             el.setAttribute("target", "_blank");
                             el.removeAttribute("data-new");
+                            el.setText("Include: " + this.dataTargetBase + this.dataTargetFragment);
                         }
                         else {
                             // cancel
