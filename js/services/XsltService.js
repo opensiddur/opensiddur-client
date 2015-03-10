@@ -15,7 +15,7 @@ OpenSiddurClientApp.service(
             },
             transform : function ( processorName, domDoc, parameters ) {
                 var transformed = Saxon.run({
-                    stylesheet : (processorName.indexOf("/xsl") == 0) ? processorName : this.xsltProcessors[processorName],
+                    stylesheet : (processorName.indexOf("/") == 0) ? processorName : this.xsltProcessors[processorName],
                     source : domDoc,
                     parameters : parameters,
                     method : "transformToDocument",
@@ -34,14 +34,20 @@ OpenSiddurClientApp.service(
                 return ((new window.XMLSerializer()).serializeToString(doc))
                     .replace(/\s+xmlns:xml="http:\/\/www.w3.org\/XML\/1998\/namespace"/g, "");
             },
-            serializeToStringTEINSClean : function (doc) {
-                // serialize to string, then clean up namespaces
-                return this.serializeToString(doc)
-                        .replace(/\s+xmlns:[a-zA-Z0-9]+=["][^"]+["]/g, "")
-                        .replace(/^\<([a-zA-Z:]+)/, "<$1 xmlns:tei=\"http://www.tei-c.org/ns/1.0\" xmlns:j=\"http://jewishliturgy.org/ns/jlptei/1.0\"")
+            TEINSClean : function(strdoc, includeFlat) {
+                return strdoc.replace(/\s+xmlns(:[a-zA-Z0-9]+)?=["][^"]+["]/g, "")
+                    // replace first instance of an element 
+                    .replace(/\<([a-zA-Z:]+)/, "<$1 xmlns:tei=\"http://www.tei-c.org/ns/1.0\" xmlns:j=\"http://jewishliturgy.org/ns/jlptei/1.0\"" + (includeFlat ? " xmlns:jf=\"http://jewishliturgy.org/ns/jlptei/flat/1.0\"" : ""))
+                    // jf:merged in flat documents has to have default html ns
+                    .replace(/\<jf:merged/, "<jf:merged xmlns=\"http://www.w3.org/1999/xhtml\"");
+
             },
-            indentToString : function ( xmlDoc ) {
-                return vkbeautify.xml(this.serializeToStringTEINSClean(xmlDoc), 4);  
+            serializeToStringTEINSClean : function (doc, includeFlat) {
+                // serialize to string, then clean up namespaces
+                return this.TEINSClean(this.serializeToString(doc), includeFlat);
+            },
+            indentToString : function ( xmlDoc, includeFlat ) {
+                return vkbeautify.xml(this.serializeToStringTEINSClean(xmlDoc, includeFlat), 4);  
             }  
         }
         svc.addProcessor('autoSegment', '/xsl/AutoSegment.xsl');

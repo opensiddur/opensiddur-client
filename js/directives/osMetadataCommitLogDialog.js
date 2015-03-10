@@ -1,29 +1,29 @@
 /* View commit log or enter the next commit message 
  *
  * Usage:
- * <os-metadata-commit-log-dialog on-ok="" on-close="" title="" name="" accessModel="" />
+ * <os-metadata-commit-log-dialog on-ok="" on-close="" title="" name="" />
  * on-ok runs when the OK button is pressed (it can cancel the OK), on-close runs when the dialog is canceled
  * name is an id, title is the header text
  *
- * Copyright 2014 Efraim Feinstein, efraim@opensiddur.org
+ * Copyright 2014-2015 Efraim Feinstein, efraim@opensiddur.org
  * Licensed under the GNU Lesser General Public License, version 3 or later
  */
 OpenSiddurClientApp.directive(
         'osMetadataCommitLogDialog',
         [
-        'TextService',
-        function( TextService ) {
+        'AccessService', 'TextService',
+        function( AccessService, TextService ) {
             return {
                 restrict : 'AE',
                 scope : {
                     name : "@",
                     title : "@",
-                    accessModel : "=",
                     onOk : "&",
                     onClose : "&"
                 },
                 controller: ['$scope', function ($scope) {
                     console.log("In commit log metadata dialog controller");
+                    $scope.AccessService = AccessService;
                     $scope.commitMessage = { message : "" };
                     $scope.commitLog = [];
                     $scope.OKButton = function () {

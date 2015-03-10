@@ -1,18 +1,18 @@
 /* Show/set sources
  *
  * Usage:
- * <os-metadata-sources-dialog on-ok="" on-close="" title="" name="" accessModel="" />
+ * <os-metadata-sources-dialog on-ok="" on-close="" title="" name="" />
  * on-ok runs when the OK button is pressed (it can cancel the OK), on-close runs when the dialog is canceled
  * name is an id, title is the header text
  *
- * Copyright 2014 Efraim Feinstein, efraim@opensiddur.org
+ * Copyright 2014-2015 Efraim Feinstein, efraim@opensiddur.org
  * Licensed under the GNU Lesser General Public License, version 3 or later
  */
 OpenSiddurClientApp.directive(
         'osMetadataSourcesDialog',
         [
-        'SourceService', 'TextService',
-        function( SourceService, TextService ) {
+        'AccessService', 'SourceService', 'TextService',
+        function( AccessService, SourceService, TextService ) {
             var template = {
                 title : "New source",
                 source : "",
@@ -29,12 +29,12 @@ OpenSiddurClientApp.directive(
                 scope : {
                     name : "@",
                     title : "@",
-                    accessModel : "=",
                     onOk : "&",
                     onClose : "&"
                 },
                 controller: ['$scope', function ($scope) {
                     console.log("In source metadata dialog controller");
+                    $scope.AccessService = AccessService;
                     $scope.viewer = {
                         page : 1
                     };

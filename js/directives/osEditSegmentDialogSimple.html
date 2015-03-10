@@ -1,0 +1,41 @@
+<div class="osEditSegmentDialogSimple modal" aria-hidden="true" aria-labelledBy="editSegmentDialogSimpleHeader">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-ng-click="CloseButton()" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="editSegmentDialogSimpleHeader">{{ title }}</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <label class="control-label col-md-2" for="seg.id">Unique identifier</label>
+                        <div class="col-md-9">
+                            <input class="form-control" 
+                                required="true" 
+                                type="text" 
+                                data-ng-model="seg.id" 
+                                id="seg.id"></input>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-2" for="seg.lang">Language</label>
+                        <div class="col-md-5">
+                            <select
+                                class="form-control"
+                                data-ng-model="seg.lang" 
+                                data-ng-required="1"
+                                data-ng-options="code as lang.toString() for (code, lang) in LanguageService.supportedLanguages"
+                                placeholder="Language"/>
+                       </div> 
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn" data-ng-click="CloseButton()" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal"
+                    data-ng-click="OKButton()">Edit</button>
+            </div>
+        </div>
+    </div>
+</div>
+

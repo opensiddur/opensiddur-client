@@ -1,29 +1,66 @@
 <div>
+    <script>
+        CKEDITOR.on('instanceReady', function(event) {
+            var editor = event.editor;
+            console.log(editor.filter.allowedContent);
+        });
+    </script>
     <div class="toolbar navbar navbar-inverse nav-collapse">
         <div class="container-fluid">
             <p class="navbar-text">{{ editor.title | truncate:30 }}</p>
             <div class="btn-toolbar">
                 <div class="btn-group navbar-btn">
+                    <div class="btn-group">
                       <button class="btn btn-primary" type="submit"
                           data-ng-disabled="!editor.loggedIn" 
                           data-ng-click="DialogService.open('newDialog')"  
                           >New</button>
+                      <button data-ng-show="resourceType.current.api == '/api/data/original'" 
+                          data-ng-disabled="!editor.loggedIn" 
+                          class="btn btn-primary dropdown-toggle" 
+                          data-toggle="dropdown" expanded="false">
+                          <span class="caret"></span>
+                      </button>
+                      <ul class="dropdown-menu">
+                          <li><a href="#"
+                              data-ng-click="DialogService.open('newDialog')"  
+                          >New using XML interface</a></li>
+                          <li><a href="#"
+                              data-ng-click="DialogService.open('newDialogSimple')"  
+                          >New using simple interface</a></li>
+                      </ul>
+                    </div>
+                    <div class="btn-group">
                       <button class="btn btn-primary" type="submit"
                           data-ng-click="DialogService.open('openDialog')"  
                           >Open</button>
+                      <button data-ng-show="resourceType.current.api == '/api/data/original'" 
+                          class="btn btn-primary dropdown-toggle" 
+                          data-toggle="dropdown" expanded="false">
+                          <span class="caret"></span>
+                      </button>
+                      <ul class="dropdown-menu">
+                          <li><a href="#"
+                              data-ng-click="DialogService.open('openDialog')"  
+                          >Open using XML interface</a></li>
+                          <li><a href="#"
+                              data-ng-click="DialogService.open('openDialogSimple')"  
+                          >Open using simple interface</a></li>
+                      </ul>
+                    </div>
                       <button data-ng-class="{'btn' : true, 'btn-primary' : true, 'btn-success' : textsForm.$pristine}" type="submit" 
                           data-ng-click="editor.saveDocument()"  
-                          data-ng-disabled="!editor.access.write || textsForm.$invalid || textsForm.$pristine">{{saveButtonText()}}</button>
+                          data-ng-disabled="!AccessService.access.write || textsForm.$invalid || textsForm.$pristine">{{saveButtonText()}}</button>
                 </div>
                 <div class="btn-group navbar-btn" data-ng-hide="!resourceType.current.supportsCompile">
                       <button class="btn btn-primary" type="submit"
-                          data-ng-show="editor.currentDocument"
+                          data-ng-show="TextService._resource"
                           data-ng-disabled="textsForm.$invalid || textsForm.$dirty"
                           data-ng-click="editor.compile()"
                           >Compile to HTML</button>
                 </div>
                 <div class="btn-group navbar-btn">
-                    <button data-ng-disabled="!editor.access.write || !editor.isLoaded" class="btn dropdown-toggle" data-toggle="dropdown">Metadata<b class="caret"></b></button>
+                    <button data-ng-disabled="!editor.isLoaded" class="btn dropdown-toggle" data-toggle="dropdown">Metadata<b class="caret"></b></button>
                     <ul class="dropdown-menu" role="menu">
                         <li><a href="#" data-ng-click="DialogService.open('metadataTitleDialog')">Set titles...</a></li>
                         <li><a href="#" data-ng-click="DialogService.open('metadataLicenseDialog')">Copyright License...</a></li>
@@ -33,7 +70,7 @@
                     </ul>
                 </div>
                 <div class="btn-group navbar-btn" data-ng-show="resourceType.current.editorMode == 'xml'">
-                    <button data-ng-disabled="!editor.access.write || !editor.isLoaded" class="btn dropdown-toggle" data-toggle="dropdown">XML<b class="caret"></b></button>
+                    <button data-ng-disabled="!AccessService.access.write || !editor.isLoaded || TextService._isFlat" class="btn dropdown-toggle" data-toggle="dropdown">XML<b class="caret"></b></button>
                     <ul class="dropdown-menu" role="menu">
                         <li><a href="#" data-ng-click="DialogService.open('internalLinkDialog')">Insert internal link...</a></li>
                         <li><a href="#" data-ng-click="DialogService.open('linkDialog')">Insert external link...</a></li>
@@ -54,44 +91,55 @@
                         data-ng-click="editor.transcriptionViewer = !editor.transcriptionViewer">Transcription&#x25b6;</button>
                 </div>
                 <div class="navbar-right navbar-btn">
-                    <os-sharing-status data-ng-hide="!resourceType.current.supportsAccess || !editor.isLoaded" access-model="editor.access" sharing-dialog="sharingDialog"></os-sharing-status>
+                    <os-sharing-status data-ng-hide="!resourceType.current.supportsAccess || !editor.isLoaded" sharing-dialog="sharingDialog"></os-sharing-status>
                 </div>
             </div>
         </div>
     </div>
     <!-- page content -->
     <div class="page-container container-fluid">
-        <div class="full-window-message" data-ng-show="!editor.loggedIn && !editor.currentDocument">
+        <div class="full-window-message" data-ng-show="!editor.loggedIn && !TextService._resource">
             Log in to be able to edit a new document, or open a document to view it.
         </div>
         <div class="full-window-message" data-ng-show="editor.loggedIn && !editor.isLoaded">
             To begin editing, open an existing document or start a new document using the toolbar above.
         </div>
-        <div data-ng-show="editor.isLoaded && (editor.loggedIn || editor.currentDocument)">
+        <div data-ng-show="editor.isLoaded && (editor.loggedIn || TextService._resource)">
             <div class="texts-editor row">
                 <form name="textsForm" data-unsaved-warning-form="1">
                     <div data-ng-class="{true:'col-md-6', false:'col-md-12'}[editor.transcriptionViewer]">
-                        <textarea  
-                            data-ui-codemirror="{ onLoad : editor.loaded }"
-                            data-ui-codemirror-opts="editor.codemirrorOptions"
-                            data-ng-model="editor.editableText"
-                            data-ng-model-options="{ getterSetter : true, debounce: 100 }"
-                            ></textarea>
+                        <div data-ng-show="!TextService._isFlat">
+                            <textarea  
+                                data-ui-codemirror="{ onLoad : editor.loaded }"
+                                data-ui-codemirror-opts="editor.codemirrorOptions"
+                                data-ng-model="editor.editableText"
+                                data-ng-model-options="{ getterSetter : true, debounce: 100 }"
+                                ></textarea>
+                        </div>
+                        <div data-ng-show="TextService._isFlat">
+                            <textarea
+                                ckeditor="ckeditorOptions"
+                                data-ng-model="TextService._flatContent"
+                                data-ng-change="editor.ckeditorChanged()"
+                                ></textarea>
+                        </div>
                     </div>
                     <div data-ng-class="{true:'col-md-6', false:'off'}[editor.transcriptionViewer]">
-                        <os-transcription-window model="editor.content" active="editor.transcriptionViewer">
+                        <os-transcription-window model="TextService._content" active="editor.transcriptionViewer">
                         </os-transcription-window>
                     </div>
                 </form>
             </div>
         </div>
     </div>
+    <os-open-dialog api="resourceType.current.api" 
+        title="Open Text" name="openDialog"
+        on-ok="editor.openDocument" on-close="editor.dialogCanceled"></os-open-dialog>
     <os-open-dialog api="resourceType.current.api" selection="selection"
-        title="Open Text" name="openDialog"></os-open-dialog>
+        title="Open Text (Simple interface)" name="openDialogSimple"
+        on-ok="editor.openDocumentSimple" on-close="editor.dialogCanceled"></os-open-dialog>
     <os-sharing-dialog 
             data-ng-hide="!resourceType.current.supportsAccess"
-            api="resourceType.current.api" 
-            access-model="editor.access" current-document="editor.currentDocument" 
             is-new="editor.isNew" name="sharingDialog" title="Sharing"></os-sharing-dialog>
     <os-new-dialog 
             resource-type="resourceType.current.type" 
@@ -99,14 +147,21 @@
             title="{{resourceType.current.defaultTitle}}" 
             name="newDialog"
             on-ok="editor.newDocument"
-            on-close="editor.newCanceled"></os-new-dialog>
+            on-close="editor.dialogCanceled"></os-new-dialog>
+    <os-new-dialog 
+            resource-type="resourceType.current.type" 
+            model="editor.newTemplate"
+            title="{{resourceType.current.defaultTitle}} (Simple interface)" 
+            name="newDialogSimple"
+            on-ok="editor.newDocumentSimple"
+            on-close="editor.dialogCanceled"></os-new-dialog>
     <os-insert-internal-link-dialog
-            content="editor.content"
+            content="TextService._content"
             name="internalLinkDialog"
             title="Insert Internal Link"
             on-ok="helper.link.insert"
             on-close="helper.link.cancel"
-            allow-range="editor.content"
+            allow-range="TextService._content"
             ></os-insert-internal-link-dialog>
     <os-insert-link-dialog
             name="linkDialog"
@@ -117,26 +172,29 @@
     <os-metadata-license-dialog
             name="metadataLicenseDialog"
             title="License"
-            access-model="editor.access"
             on-ok="editor.makeDirty"></os-metadata-license-dialog>
     <os-metadata-title-dialog
             name="metadataTitleDialog"
             title="Titles"
-            access-model="editor.access"
             on-ok="editor.makeDirty"></os-metadata-title-dialog>
     <os-metadata-resp-dialog
             name="metadataRespDialog"
             title="Responsibility Credits"
-            access-model="editor.access"
             on-ok="editor.makeDirty"></os-metadata-resp-dialog>
     <os-metadata-sources-dialog
             name="metadataSourcesDialog"
             title="Sources"
-            access-model="editor.access"
             on-ok="editor.makeDirty"></os-metadata-sources-dialog>
     <os-metadata-commit-log-dialog
             name="metadataCommitLogDialog"
             title="Commit Log"
-            access-model="editor.access"
             on-ok="editor.makeDirty"></os-metadata-commit-log-dialog>
+    <os-edit-link-dialog-simple on-ok="editor.makeDirty"
+        on-close="editor.dialogCanceled"
+        name="editLinkDialogSimple"
+        ></os-edit-link-dialog-simple>
+    <os-edit-segment-dialog-simple on-ok="editor.makeDirty"
+        on-close="editor.dialogCanceled"
+        name="editSegmentDialogSimple"
+        ></os-edit-segment-dialog-simple>
 </div>

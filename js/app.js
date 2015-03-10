@@ -1,7 +1,7 @@
 /* 
  * AngularJS app
  * Open Siddur Project
- * Copyright 2013-2014 Efraim Feinstein <efraim@opensiddur.org>
+ * Copyright 2013-2015 Efraim Feinstein <efraim@opensiddur.org>
  * Licensed under the GNU Lesser General Public License, version 3 or later
  */
 var host = "";
@@ -15,13 +15,6 @@ var onSaxonLoad = function() {
     angular.resumeBootstrap();
 };
 
-
-// list of all languages supported by the app
-var supportedLanguages = {
-    "en" : "English",
-    "he" : "עברית (Hebrew)",
-    "arc" : "ארמית (Aramaic)"
-};
 
 // list of licenses supported by the app
 var supportedLicenses = {
@@ -54,6 +47,7 @@ var OpenSiddurClientApp =
   angular.module(
       'OpenSiddurClientApp',
       ['filters',
+       'ngCkeditor',
        'ngRoute',
        'ngResource',
        'ngSanitize',

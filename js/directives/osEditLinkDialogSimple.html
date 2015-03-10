@@ -1,0 +1,61 @@
+<div class="osEditLinkDialogSimple modal" aria-hidden="true" aria-labelledBy="editLinkDialogSimpleHeader">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-ng-click="CloseButton()" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="editLinkDialogSimpleHeader">{{ title }}</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <label class="control-label col-md-2" for="link.id">Unique identifier</label>
+                        <div class="col-md-9">
+                            <input class="form-control" 
+                                required="true" 
+                                type="text" 
+                                data-ng-model="link.id" 
+                                id="link.id"></input>
+                        </div>
+                    </div>
+                    <div class="col-md-offset-1">
+                        <div class="form-group form-inline">
+                            <label class="control-label">Link to: </label>
+                            <label class="radio-inline">
+                                <input type="radio" data-ng-model="link.linkType" 
+                                    value="internal"
+                                    data-ng-change="selectLinkType(link.linkType)"/><b>This document</b>
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" data-ng-model="link.linkType" 
+                                    value="external"
+                                    data-ng-change="selectLinkType(link.linkType)"/><b>Another document</b>
+                            </label>
+                        </div>
+                    </div>
+                    <div data-ng-show="link.linkType == 'external'">
+                        <os-search-list api="'/api/data/original'" selection="external.selection">
+                        </os-search-list>
+                        <button
+                            data-ng-disabled="!external.selection"
+                            class="btn btn-primary" 
+                            data-ng-click="selectFile(external.selection, true)">Select</button>
+                    </div>
+                    <div>
+                        <os-id-list data-ng-show="external.content" 
+                            content="external.content" allow-range="1" 
+                            selection="link.dataTargetFragment" update="external.content"
+                            >
+                        </os-id-list>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <span data-ng-show="link.dataTargetFragment || link.dataTargetBase">Link: <b>{{link.dataTargetBase}}{{link.dataTargetFragment}}</b></span>
+                <button type="button" class="btn" data-ng-click="CloseButton()" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal"
+                    data-ng-click="OKButton()">Edit</button>
+            </div>
+        </div>
+    </div>
+</div>
+

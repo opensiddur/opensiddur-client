@@ -13,7 +13,7 @@
                             <select
                                 class="form-control"
                                 data-ng-model="licenseModel.license" 
-                                data-ng-disabled="!accessModel.relicense"
+                                data-ng-disabled="!AccessService.access.relicense"
                                 required="true"
                                 data-ng-options="uri as lic for (uri, lic) in supportedLicenses"/>
                         </div>
@@ -23,7 +23,7 @@
             <div class="modal-footer">
                 <button type="button" class="btn" data-ng-click="CloseButton()" data-dismiss="modal">Close</button>
                 <button type="button" class="btn btn-primary" data-dismiss="modal"
-                    data-ng-disabled="!accessModel.relicense" 
+                    data-ng-disabled="!AccessService.access.relicense" 
                     data-ng-click="OKButton()">Set License</button>
             </div>
         </div>

@@ -12,7 +12,7 @@
  * If they are different and there is write access, profile ownership is thirdparty
  *
  * Open Siddur Project
- * Copyright 2013-2014 Efraim Feinstein <efraim@opensiddur.org>
+ * Copyright 2013-2015 Efraim Feinstein <efraim@opensiddur.org>
  * Licensed under the GNU Lesser General Public License, version 3 or later
  */
 
@@ -20,12 +20,13 @@
 OpenSiddurClientApp.controller(
   'ProfileCtrl',
   ['$scope', '$location', '$rootScope', '$routeParams', '$http', 
-   'AccessModelService', 'AuthenticationService', 'DialogService', 'ErrorService', 'RestApi', 'XsltService',
-  function ($scope, $location, $rootScope, $routeParams, $http, AccessModelService, AuthenticationService, DialogService, ErrorService, RestApi, XsltService) {
+   'AccessService', 'AuthenticationService', 'DialogService', 'ErrorService', 'RestApi', 'XsltService',
+  function ($scope, $location, $rootScope, $routeParams, $http, AccessService, AuthenticationService, DialogService, ErrorService, RestApi, XsltService) {
     console.log("Profile controller.");
     
     $scope.DialogService = DialogService;
-
+    $scope.AccessService = AccessService;
+    AccessService.reset();
     $scope.userName = $routeParams.userName;    
     $scope.loggedIn = AuthenticationService.loggedIn;
     $scope.loggedInUser = AuthenticationService.userName;
@@ -33,19 +34,6 @@ OpenSiddurClientApp.controller(
     $scope.mode = ($location.path().indexOf("/contributors")==0 ? "thirdparty" : "self");
     $scope.isNew = !$scope.userName; 
 
-    $scope.access = AccessModelService.default($scope.loggedInUser)
-    /*
-    // set up the index service
-    if ($scope.mode == "thirdparty") {
-        IndexService.search.enable( "/api/user" );
-    }
-    else {
-        IndexService.search.disable();
-    }
-    if ($scope.userName) {
-        IndexService.search.collapse();
-    }
-    */
     $scope.get = function ( ) {  
         // HTTP interaction with the API
         // TODO: use a RestApi service 
@@ -71,14 +59,16 @@ OpenSiddurClientApp.controller(
                   $scope.profileType = ($scope.profile.contributor.orgName.__text) ? 'organization' : 'individual';
                   
                   if ($scope.userName) {
-                    $scope.access = RestApi["/api/user"].getAccess({
-                        resource : $scope.userName
-                    }, function ( acc ) {
+                    AccessService.load("/api/user", $scope.userName)
+                    .success(function(acc) {
                         $scope.ownership =  
                             ($scope.loggedIn && $scope.userName == $scope.loggedInUser) ?
                                 'self' : 
                                 ((acc.owner == $scope.profile.contributor.idno.__text) ? 'other' : 'thirdparty');
     
+                    })
+                    .error(function (err) {
+                        ErrorService.addApiError(err);
                     });
 
                     $scope.isNew = 0;
@@ -96,18 +86,12 @@ OpenSiddurClientApp.controller(
           );
         
     };
-    $scope.selection = "/exist/restxq/api/user" + ((this.isNew) ? "" : ("/" + $scope.userName));
-    var selectionWatchCtr = 0;
+
+    $scope.dialogCancel = function() {};
     // load a profile or start a new one
-    $scope.$watch("selection", function ( selection ) {
-        if (!selectionWatchCtr) {
-            selectionWatchCtr++;
-            return;
-        }
-        if (selection) {
-            $location.path( "/contributors/" + decodeURIComponent(selection.split("/").pop()) ); 
-        }
-    });
+    $scope.openDocument = function(selection) {
+        $location.path( "/contributors/" + decodeURIComponent(selection.split("/").pop()) ); 
+    };
     $scope.newProfile = function() {
         $location.path( "/contributors" );    
     };
@@ -131,6 +115,7 @@ OpenSiddurClientApp.controller(
                     $scope.userName = decodeURI(headers("Location").split("/").pop());
                 }
                 $scope.isNew = 0;
+                $location.path("/contributors/" + encodeURIComponent($scope.userName), false);
             }
         )
         .error(
@@ -141,7 +126,7 @@ OpenSiddurClientApp.controller(
         
     };
     $scope.saveButtonText = function() {
-        return ($scope.access.write) ? (
+        return (AccessService.access.write) ? (
                     this.profileForm.$pristine ? ((this.isNew) ? "Unsaved" : "Saved") : "Save")
                     : "Read-only";
     };

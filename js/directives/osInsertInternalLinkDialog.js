@@ -46,7 +46,10 @@ OpenSiddurClientApp.directive(
                     elem.find(".modal-header h4").attr("id", scope.name + "_label");
                     elem.find(".osInsertInternalLinkDialog").attr("aria-labelledBy", scope.name + "_label");
                     elem.find(".osInsertInternalLinkDialog").attr("id", scope.name);
-                    elem.on("show.bs.modal", function() { scope.updateIds += 1; });
+                    elem.on("show.bs.modal", function() { 
+                        scope.updateIds += 1; 
+                        scope.links.composed = "";  // clear any existing link
+                    });
                  },
                  transclude : false,
                  templateUrl : "/js/directives/osInsertInternalLinkDialog.html"

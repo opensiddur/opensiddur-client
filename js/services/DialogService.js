@@ -10,7 +10,9 @@ OpenSiddurClientApp.service(
     function( ) {
         return {
             open : function(dialog) {
-                $("#"+dialog).modal();
+                $("#"+dialog).modal({
+                    backdrop: "static"  // prevent dialog from closing when click outside the area
+                });
             }
         };
     }

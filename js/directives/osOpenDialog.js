@@ -1,10 +1,11 @@
 /* Open dialog
  *
  * Usage:
- * <os-open-dialog api="" selection="" title="" name=""/>
+ * <os-open-dialog api="" title="" name=""
+ *      on-ok="" on-close="" />
  * name is an id, title is the header text
  *
- * Copyright 2013-2014 Efraim Feinstein, efraim@opensiddur.org
+ * Copyright 2013-2015 Efraim Feinstein, efraim@opensiddur.org
  * Licensed under the GNU Lesser General Public License, version 3 or later
  */
 OpenSiddurClientApp.directive(
@@ -16,7 +17,8 @@ OpenSiddurClientApp.directive(
                 restrict : 'AE',
                 scope : {
                     api : "=",
-                    selection : "=",
+                    onOk : "&",
+                    onClose : "&", 
                     name : "@",
                     title : "@"
                 },
@@ -28,10 +30,12 @@ OpenSiddurClientApp.directive(
                         'max-results' : 100 
                     };
                     $scope.OKButton = function() {
-                        $scope.selection = $scope.lastSelected;
-                        $("#"+$scope.name).modal('hide');
+                        if ($scope.onOk()($scope.lastSelected)) {
+                            $("#"+$scope.name).modal('hide');
+                        }
                     }; 
                     $scope.CloseButton = function() {
+                        $scope.onClose()();
                         $("#"+$scope.name).modal('hide');
                     };
                     $scope.lastSelected = "";

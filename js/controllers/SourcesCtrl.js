@@ -1,24 +1,21 @@
 /* 
  * controller for sources page 
  * Open Siddur Project
- * Copyright 2013-2014 Efraim Feinstein <efraim@opensiddur.org>
+ * Copyright 2013-2015 Efraim Feinstein <efraim@opensiddur.org>
  * Licensed under the GNU Lesser General Public License, version 3 or later
  */
 OpenSiddurClientApp.controller(
     'SourcesCtrl',
     ['$rootScope', '$location', '$route', '$routeParams', '$scope', 'RestApi', 'XsltService', 
-    'DialogService', 'AuthenticationService', 'ErrorService',
+    "AccessService", 'DialogService', "LanguageService", 'AuthenticationService', 'ErrorService',
     function ($rootScope, $location, $route, $routeParams, $scope, RestApi, XsltService, 
-    DialogService, AuthenticationService, ErrorService) {
+    AccessService, DialogService, LanguageService, AuthenticationService, ErrorService) {
         $scope.DialogService = DialogService;
-
+        $scope.LanguageService = LanguageService;
+        AccessService.reset();
 
         $scope.editor = {
             loggedIn : AuthenticationService.loggedIn,
-            access : {
-                write : AuthenticationService.loggedIn
-            },
-            "supportedLanguages" : supportedLanguages, 
             "supportedResponsibilities" : supportedResponsibilities,
             "monographScopes" : { 
                 volume : "volume",
@@ -75,7 +72,12 @@ OpenSiddurClientApp.controller(
                 $scope.editor.content = x2js.xml_str2json(transformed);
                 //$scope.editor.content.biblStruct.monogr.title_asArray[0].__text = "New Bibliography Entry";
                 //$scope.sourcesForm.$setPristine();
+                AccessService.reset();
             },
+            openDocument : function (selection) {
+                $location.path( "/sources/" + decodeURIComponent(selection.split("/").pop()) );
+            },
+            dialogCancel : function () {},
             setDocument : function( ) {
                 var toDocument = $scope.editor.currentDocument;
                 if (!toDocument) {
@@ -165,20 +167,6 @@ OpenSiddurClientApp.controller(
         $scope.saveButtonText = function() {
             return this.sourcesForm.$pristine ? (($scope.editor.isNew) ? "Unsaved, No changes" : "Saved" ) : "Save";
         };
-
-        $scope.selection = "/exist/restxq/api" + ($scope.editor.isNew ? "" : ("/" + $routeParams.resource));
-        
-        var selectionWatchCtr = 0;
-        $scope.$watch("selection", 
-            function( selection ) {
-                if (!selectionWatchCtr) {
-                    selectionWatchCtr++;
-                }
-                else if (selection) {
-                    $location.path( "/sources/" + decodeURIComponent(selection.split("/").pop()) );
-                }
-            }
-        ); 
 
         $scope.editor.setDocument();
     }]

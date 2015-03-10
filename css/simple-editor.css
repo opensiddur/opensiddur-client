@@ -1,0 +1,15 @@
+/* CSS for CKEditor
+ *
+ * Open Siddur Project
+ * Copyright 2015 Efraim Feinstein
+ * Licensed under the GNU Lesser General Public License, version 3 or later
+ */
+* {
+    font-size:x-large;
+}
+
+:lang(he) {
+    font-family:"Ezra SIL";
+    text-direction:rtl;
+}
+

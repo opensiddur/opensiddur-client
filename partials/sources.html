@@ -18,7 +18,7 @@
                       data-ng-disabled="sourcesForm.$invalid || sourcesForm.$pristine">{{saveButtonText()}}</button>
               </div>
               <div class="navbar-right navbar-btn">
-                  <os-sharing-status access-model="editor.access" relicense-disabled="1" chmod-disabled="1"></os-sharing-status>
+                  <os-sharing-status relicense-disabled="1" chmod-disabled="1"></os-sharing-status>
               </div>
           </div>
         </div>
@@ -44,7 +44,7 @@
                               name="biblStruct._xmlLang"
                               data-ng-model="editor.content.biblStruct['_xml:lang']" 
                               required="true"
-                              data-ng-options="code as language for (code, language) in editor.supportedLanguages"/>
+                              data-ng-options="code as language.toString() for (code, language) in LanguageService.supportedLanguages"/>
                         </div>
                     </div>
                     <div class="form-group">
@@ -99,7 +99,7 @@
                                     name="biblStruct.analytic.title_main_xmlLang"
                                     data-ng-model="editor.content.biblStruct.analytic.title_asArray[0]['_xml:lang']" 
                                     data-ng-required="editor.content.biblStruct.analytic.title_asArray[0].__text"
-                                    data-ng-options="code as language for (code, language) in editor.supportedLanguages"/>
+                                    data-ng-options="code as language.toString() for (code, language) in LanguageService.supportedLanguages"/>
                             </div>
                             <div class="col-md-6">
                                 <input class="form-control"
@@ -117,7 +117,7 @@
                                     name="biblStruct.analytic.title_sub_xmlLang"
                                     data-ng-model="editor.content.biblStruct.analytic.title_asArray[1]['_xml:lang']" 
                                     data-ng-required="editor.content.biblStruct.analytics.title_asArray[1].__text"
-                                    data-ng-options="code as language for (code, language) in editor.supportedLanguages"/>
+                                    data-ng-options="code as language.toString() for (code, language) in LanguageService.supportedLanguages"/>
                             </div>
                             <div class="col-md-6">
                                 <input class="form-control" name="biblStruct.analytic.title_sub" data-ng-model="editor.content.biblStruct.analytic.title_asArray[1].__text"
@@ -132,7 +132,7 @@
                                     name="biblStruct.analytic.title_alt_xmlLang"
                                     data-ng-model="editor.content.biblStruct.analytic.title_asArray[2]['_xml:lang']" 
                                     data-ng-required="editor.content.biblStruct.analytics.title_asArray[2].__text"
-                                    data-ng-options="code as language for (code, language) in editor.supportedLanguages"/>
+                                    data-ng-options="code as language.toString() for (code, language) in LanguageService.supportedLanguages"/>
                             </div>
                             <div class="col-md-6">
                                 <input class="form-control" name="biblStruct.analytic.title_alt" data-ng-model="editor.content.biblStruct.analytic.title_asArray[2].__text"
@@ -147,7 +147,7 @@
                                   name="biblStruct.analytic.title_alt_sub_xmlLang"
                                   data-ng-model="editor.content.biblStruct.analytic.title_asArray[3]['_xml:lang']" 
                                   data-ng-required="editor.content.biblStruct.analytics.title_asArray[3].__text"
-                                  data-ng-options="code as language for (code, language) in editor.supportedLanguages"/>
+                                  data-ng-options="code as language.toString() for (code, language) in LanguageService.supportedLanguages"/>
                             </div>
                             <div class="col-md-6">
                                 <input class="form-control" name="biblStruct.analytic.title_alt_sub" data-ng-model="editor.content.biblStruct.analytic.title_asArray[3].__text"
@@ -201,7 +201,7 @@
                                     name="biblStruct.monogr.title_main_xmlLang"
                                     data-ng-model="editor.content.biblStruct.monogr.title_asArray[0]['_xml:lang']" 
                                     required="true"
-                                    data-ng-options="code as language for (code, language) in editor.supportedLanguages"/>
+                                    data-ng-options="code as language.toString() for (code, language) in LanguageService.supportedLanguages"/>
                             </div>
                             <div class="col-md-6">
                                 <input class="form-control" 
@@ -219,7 +219,7 @@
                                     name="biblStruct.monogr.title_sub_xmlLang"
                                     data-ng-model="editor.content.biblStruct.monogr.title_asArray[1]['_xml:lang']" 
                                     data-ng-required="editor.content.biblStruct.monogr.title_asArray[1].__text"
-                                    data-ng-options="code as language for (code, language) in editor.supportedLanguages"/>
+                                    data-ng-options="code as language.toString() for (code, language) in LanguageService.supportedLanguages"/>
                             </div>
                             <div class="col-md-6">
                                 <input class="form-control" name="biblStruct.monogr.title_sub" data-ng-model="editor.content.biblStruct.monogr.title_asArray[1].__text"
@@ -234,7 +234,7 @@
                                     name="biblStruct.monogr.title_alt_xmlLang"
                                     data-ng-model="editor.content.biblStruct.monogr.title_asArray[2]['_xml:lang']" 
                                     data-ng-required="editor.content.biblStruct.monogr.title_asArray[2].__text"
-                                    data-ng-options="code as language for (code, language) in editor.supportedLanguages"/>
+                                    data-ng-options="code as language.toString() for (code, language) in LanguageService.supportedLanguages"/>
                             </div>
                             <div class="col-md-6">
                                 <input class="form-control" name="biblStruct.monogr.title_alt" data-ng-model="editor.content.biblStruct.monogr.title_asArray[2].__text"
@@ -249,7 +249,7 @@
                                     name="biblStruct.monogr.title_alt_sub_xmlLang"
                                     data-ng-model="editor.content.biblStruct.monogr.title_asArray[3]['_xml:lang']" 
                                     data-ng-required="editor.content.biblStruct.monogr.title_asArray[3].__title"
-                                    data-ng-options="code as language for (code, language) in editor.supportedLanguages"/>
+                                    data-ng-options="code as language.toString() for (code, language) in LanguageService.supportedLanguages"/>
                             </div>
                             <div class="col-md-6">
                                 <input class="form-control" name="biblStruct.monogr.title_alt_sub" data-ng-model="editor.content.biblStruct.monogr.title_asArray[3].__text"
@@ -421,7 +421,7 @@
                                     name="biblStruct.series.title_main_xmlLang"
                                     data-ng-model="editor.content.biblStruct.series.title_asArray[0]['_xml:lang']" 
                                     data-ng-required="editor.isSeries"
-                                    data-ng-options="code as language for (code, language) in editor.supportedLanguages"/>
+                                    data-ng-options="code as language.toString() for (code, language) in LanguageService.supportedLanguages"/>
                             </div>
                             <div class="col-md-6">
                                 <input class="form-control" name="biblStruct.series.title_main" data-ng-model="editor.content.biblStruct.series.title_asArray[0].__text"
@@ -436,7 +436,7 @@
                                     name="biblStruct.series.title_sub_xmlLang"
                                     data-ng-model="editor.content.biblStruct.series.title_asArray[1]['_xml:lang']" 
                                     data-ng-required="editor.content.biblStruct.series.title_asArray[1].__text"
-                                    data-ng-options="code as language for (code, language) in editor.supportedLanguages"/>
+                                    data-ng-options="code as language.toString() for (code, language) in LanguageService.supportedLanguages"/>
                             </div>
                             <div class="col-md-6">
                                 <input class="form-control" name="biblStruct.series.title_sub" data-ng-model="editor.content.biblStruct.series.title_asArray[1].__text"
@@ -451,7 +451,7 @@
                                     name="biblStruct.series.title_alt_xmlLang"
                                     data-ng-model="editor.content.biblStruct.series.title_asArray[2]['_xml:lang']" 
                                     data-ng-required="editor.content.biblStruct.series.title_asArray[2].__text"
-                                    data-ng-options="code as language for (code, language) in editor.supportedLanguages"/>
+                                    data-ng-options="code as language.toString() for (code, language) in LanguageService.supportedLanguages"/>
                             </div>
                             <div class="col-md-6">
                                 <input class="form-control" name="biblStruct.series.title_alt" data-ng-model="editor.content.biblStruct.series.title_asArray[2].__text"
@@ -466,7 +466,7 @@
                                     name="biblStruct.series.title_alt_sub_xmlLang"
                                     data-ng-model="editor.content.biblStruct.series.title_asArray[3]['_xml:lang']" 
                                     data-ng-required="editor.content.biblStruct.series.title_asArray[3].__text"
-                                    data-ng-options="code as language for (code, language) in editor.supportedLanguages"/>
+                                    data-ng-options="code as language.toString() for (code, language) in LanguageService.supportedLanguages"/>
                             </div>
                             <div class="col-md-6">
                                 <input class="form-control" name="biblStruct.series.title_alt_sub" data-ng-model="editor.content.biblStruct.series.title_asArray[3].__text"
@@ -596,6 +596,7 @@
                 </form>
             </div>
     </div>
-    <os-open-dialog api="'/api/data/sources'" selection="selection" 
-        title="Open Source" name="openDialog"></os-open-dialog>
+    <os-open-dialog api="'/api/data/sources'" 
+        title="Open Source" name="openDialog"
+        on-ok="editor.openDocument" on-close="editor.dialogCancel"></os-open-dialog>
 </div>
