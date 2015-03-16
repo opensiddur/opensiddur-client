@@ -74,7 +74,7 @@ OpenSiddurClientApp.controller(
             customConfig : "/js/ckeditor/config.js",    // points to the plugin directories
             enterMode : CKEDITOR.ENTER_P,
             entities : false,   // need XML entities, but not HTML entities...
-            extraPlugins : "language,tei-ptr,tei-seg",
+            extraPlugins : "language,tei-p,tei-ptr,tei-seg",
             fillEmptyBlocks : false,
             language : "en",
             language_list : LanguageService.getCkeditorList(),
@@ -100,7 +100,7 @@ OpenSiddurClientApp.controller(
             ],
             removeButtons : 'Paste,PasteFromWord',  
             allowedContent :
-                "a[href,data-target-base,data-target-fragment,target](tei-ptr);"+
+                "a[href,data-target-base,data-target-fragment,target](tei-ptr,tei-p,layer-p,layer,start,end);"+
                 "p[!id](tei-seg);" +
                 "*[id,lang,dir,data-*]"
         };

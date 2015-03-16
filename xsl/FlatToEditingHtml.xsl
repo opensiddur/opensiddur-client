@@ -56,6 +56,7 @@
             <xsl:call-template name="class-attribute"/>
             <xsl:apply-templates select="following-sibling::*[1][not(@jf:start|@jf:end)][@jf:layer-id=current()/@jf:layer-id]"
                 mode="in-a"/>
+            <xsl:apply-templates select="." mode="filler"/>
         </a>
     </xsl:template>
 
@@ -63,6 +64,7 @@
         <a id="_end_{@jf:end}">
             <xsl:apply-templates select="@* except @jf:end"/>
             <xsl:call-template name="class-attribute"/>
+            <xsl:apply-templates select="." mode="filler"/>
         </a>
     </xsl:template>
 
@@ -94,6 +96,14 @@
             <xsl:apply-templates/>
             <xsl:sequence select="concat('Include: ', tokenize(@target, '/')[last()])"/>
         </a>
+    </xsl:template>
+
+    <!-- filler text so widgets will show up -->
+    <xsl:template match="tei:p[@jf:start]" mode="filler">
+        <xsl:text>&#182;&#x21d3;</xsl:text>
+    </xsl:template>
+    <xsl:template match="tei:p[@jf:end]" mode="filler">
+        <xsl:text>&#x21d1;&#182;</xsl:text>
     </xsl:template>
 
     <!-- attributes -->
