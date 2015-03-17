@@ -68,7 +68,7 @@ In your markup:
   <script src="bower_components/hamsterjs/hamster.js"></script>
   <script src="bower_components/angular/angular.min.js"></script>
   <script src="bower_components/angular-mousewheel/mousewheel.js"></script>
-  <script src="bin/panzoom.js"></script>
+  <script src="release/panzoom.js"></script>
 </body>
 ```
 
@@ -77,7 +77,7 @@ This will provide zoom and pan functionality using default settings. It will, ho
 ### Using the provided zoom pan widget
 
 To use the bundled `<panzoomwidget>`, you need to
-- include bin/panzoomwidget.css on your page
+- include release/panzoomwidget.css on your page
 - make your AngularJS module depend upon the panzoomwidget module
 - declare an `id` attribute on your `<panzoom>` tag
 - use a `<panzoomwidget>` directive in the markup, specifying its `panzoom-id` attribute to be the same value as the `id` of the `<panzoom>` tag
@@ -135,17 +135,5 @@ Contributing to the project:
 ----------------------------
 Any code contributions to the project will be appreciated. A few guidelines follow.
 
-Bower is used for obtaining 3rd party libraries. The libraries in bower_components are
-also committed along with the project. A 1:1 correspondence between bower.json and the
-contents of bower_components is expected at all times.
-
-Gulp is used for building the minified files and for running jshint. The gulpfile.js contains
-instructions for installing npm dependencies. Please commit an up-to-date minified file along with your code,
-and please make sure that the code passes jshint. The rules are not overly Nazi.
-
-Oh, and the unit tests. You can run gulp test to see if they pass. [TBD: More tests]
-
-
-
-
-
+Npm is used for building stuff. Use `npm install` to fetch dependencies (including the bower ones). Use `npm start` to launch a development server using browsersync. Use 'npm run build' to perform a build as verified by uni tests and lint.
+For the complete list of npm scripts, see package.json.

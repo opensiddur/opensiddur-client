@@ -6,11 +6,11 @@
     "codemirror": "~4.8"
   },
   "homepage": "https://github.com/angular-ui/ui-codemirror",
-  "_release": "7b4200d29e",
+  "_release": "c72f45e551",
   "_resolution": {
     "type": "branch",
     "branch": "bower",
-    "commit": "7b4200d29e3324fcba63baa4ad679c95fe13c3d2"
+    "commit": "c72f45e551fb13450db9f4d9927f3f8880a9b7ed"
   },
   "_source": "git://github.com/angular-ui/ui-codemirror.git",
   "_target": "bower",
