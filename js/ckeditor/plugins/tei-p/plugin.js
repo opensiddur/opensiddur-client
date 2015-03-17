@@ -20,13 +20,12 @@ CKEDITOR.plugins.add( 'tei-p', {
             inline : false, 
 			allowedContent:
 				'a[id](tei-p,layer,layer-p,start,end);',
-			requiredContent: 'a(tei-p,layer,layer-p)',
+			requiredContent: 'a(tei-p)',
 
 			template:
 				'<a id="" data-new="1" class="tei-p layer layer-p start">&#182;</a>',
 
-			button: 'Edit or Insert Paragraph',
-
+			button: 'Create or edit a paragraph',
             edit : function ( evt) {
                 var injector = angular.element('*[data-ng-app]').injector();
                 var DialogService = injector.get("DialogService");
@@ -55,11 +54,11 @@ CKEDITOR.plugins.add( 'tei-p', {
 				return element.name == 'a' && element.hasClass( 'tei-p' );
 			},
 			init: function() {
-                var injector = angular.element('*[data-ng-app]').injector();
 			},
 
 			data: function() {
 			}
+
 		} );
 	}
 } );
