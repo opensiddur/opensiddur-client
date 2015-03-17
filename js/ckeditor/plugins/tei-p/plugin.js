@@ -25,7 +25,7 @@ CKEDITOR.plugins.add( 'tei-p', {
 			template:
 				'<a id="" data-new="1" class="tei-p layer layer-p start">&#182;</a>',
 
-			button: 'Paragraph',
+			button: 'Edit or Insert Paragraph',
 
             edit : function ( evt) {
                 var injector = angular.element('*[data-ng-app]').injector();
