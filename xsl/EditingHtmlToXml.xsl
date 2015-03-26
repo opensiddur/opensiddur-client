@@ -43,6 +43,10 @@
         </j:streamText>
     </xsl:template>
 
+    <xsl:template match="html:div[@class='wrapper']" mode="streamText">
+        <xsl:apply-templates mode="#current"/>
+    <xsl:template>
+
     <xsl:template name="add-xmlid" as="attribute()?">
         <xsl:param name="element-name" as="xs:string"/>
         <!-- add a randomly generated xml:id -->

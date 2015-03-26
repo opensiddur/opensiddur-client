@@ -70,6 +70,7 @@ OpenSiddurClientApp.controller(
 
         // this should be in $scope.editor, but ng-ckeditor will not allow it to be (see line 73)
         $scope.ckeditorOptions = {
+            autoParagraph : false,
             contentsCss : "/css/simple-editor.css",
             customConfig : "/js/ckeditor/config.js",    // points to the plugin directories
             enterMode : CKEDITOR.ENTER_P,
@@ -100,8 +101,9 @@ OpenSiddurClientApp.controller(
             ],
             removeButtons : 'Paste,PasteFromWord',  
             allowedContent :
-                "a[href,data-target-base,data-target-fragment,target](tei-ptr,tei-p,layer-p,layer,start,end);"+
-                "p[!id](tei-seg);" +
+                "div(wrapper);"+
+                "a[href,data-target-base,data-target-fragment,target](tei-ptr);"+
+                "p[!id](tei-seg,tei-p,layer-p,layer,start,end);" +
                 "*[id,lang,dir,data-*]"
         };
         $scope.editor = {
@@ -109,9 +111,14 @@ OpenSiddurClientApp.controller(
             ckeditorChanged : function() {
                 var lang = TextService.language().language;
                 var dir = LanguageService.getDirection(lang);
-                var htmlElement = CKEDITOR.instances.editor1.document.getDocumentElement().$;
-                htmlElement.setAttribute("lang", lang);
-                htmlElement.setAttribute("dir", dir);
+                try {
+                    var htmlElement = CKEDITOR.instances.editor1.document.getDocumentElement().$;
+                    htmlElement.setAttribute("lang", lang);
+                    htmlElement.setAttribute("dir", dir);
+                }
+                catch (err) {
+                    console.log("CKEDITOR instance does not exist. Could be an issue.");
+                }
             }, 
             codemirrorOptions : {
                 lineWrapping : true,

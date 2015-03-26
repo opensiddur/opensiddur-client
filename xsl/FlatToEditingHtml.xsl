@@ -51,21 +51,21 @@
 
     <!-- elements -->
     <xsl:template match="*[@jf:start]">
-        <a id="{@jf:start}">
+        <p id="{@jf:start}">
             <xsl:apply-templates select="@* except @jf:start"/>
             <xsl:call-template name="class-attribute"/>
             <xsl:apply-templates select="following-sibling::*[1][not(@jf:start|@jf:end)][@jf:layer-id=current()/@jf:layer-id]"
                 mode="in-a"/>
             <xsl:apply-templates select="." mode="filler"/>
-        </a>
+        </p>
     </xsl:template>
 
     <xsl:template match="*[@jf:end]">
-        <a id="_end_{@jf:end}">
+        <p id="_end_{@jf:end}">
             <xsl:apply-templates select="@* except @jf:end"/>
             <xsl:call-template name="class-attribute"/>
             <xsl:apply-templates select="." mode="filler"/>
-        </a>
+        </p>
     </xsl:template>
 
     <xsl:template match="*[@jf:layer-id][not(@jf:start|@jf:end)]"/>
@@ -148,10 +148,19 @@
     </xsl:template>
 
     <!-- pass-through -->
-    <xsl:template match="tei:TEI|tei:text|jf:merged|jf:concurrent">
+    <xsl:template match="tei:TEI|tei:text|jf:concurrent">
         <xsl:copy copy-namespaces="no">
             <xsl:sequence select="@*"/>
             <xsl:apply-templates />
+        </xsl:copy>
+    </xsl:template>
+
+    <xsl:template match="jf:merged">
+        <xsl:copy copy-namespaces="no">
+            <div class="wrapper">
+                <xsl:sequence select="@*"/>
+                <xsl:apply-templates/>
+            </div>
         </xsl:copy>
     </xsl:template>
 
