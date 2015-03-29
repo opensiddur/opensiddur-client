@@ -59,9 +59,13 @@ CKEDITOR.plugins.add( 'tei-p', {
                 5. if the same type of block begins before the start position and does not end, place an end for that block before starting this one
                 6. if the same type of block ends after the start position and does not begin after it, place a begin for that block after this one
                 7. if any blocks have been terminated, delete them if they are empty (contain no segments).
+                8. if any blocks have been split in both directions (unterminated and unstarted) rename the ids for the unstarted portion of the block.
                 */
                 TextService.addLayer("p");
-                var thisId = "p_p_" + Math.floor(Math.random()*100000000).toString();
+                var getRandomId = function(blockType, elementType) {
+                    return blockType + "_" + elementType + "_" + Math.floor(Math.random()*100000000).toString();
+                }
+                var thisId = getRandomId("p", "p");
 			    var beginTemplate = function(id) { 
                     return '<p id="start_'+id+'" data-new="1" class="tei-p layer layer-p start">&#182;&#x21d3;</p>'; 
                 };
@@ -140,13 +144,31 @@ CKEDITOR.plugins.add( 'tei-p', {
                         var fol = node;
                         var started = false;
                         while (!started && fol != end && (fol = fol.getNext())) {
-                            started = isBlockBoundary(prev, blockType, end.getId().replace(/^end_/, ""), "start");
+                            started = isBlockBoundary(fol, blockType, end.getId().replace(/^end_/, ""), "start");
                         }
                         if (!started) { 
                             unstartedEnds.push(end);
                         }
                     }
                     return unstartedEnds;
+                };
+                var blockIdRename = function(unterminatedStarts, unstartedEnds, blockType) {
+                    // if a block consists of both an unterminated start and unstarted end, then
+                    // the block is completely enclosing the new block. 
+                    // in such a case, the unstartedEnd should be renamed
+                    var startIds = unterminatedStarts.map(function(s) {
+                        return s.getId().replace(/^start_/, "");
+                    });
+                    return unstartedEnds.map(function(e) {
+                        var eid = e.getId().replace(/^end_/, "");
+                        if (startIds.indexOf(eid) != -1) {
+                            var elayer = blockType.split("-")[1];
+                            var ename = e.getName();
+                            e.setAttribute("id", "end_" + getRandomId(elayer, ename));
+                        }
+                        else return e; 
+                    });
+                    
                 };
                 var removeEmptyBlocks = function(segmentNode, blockType) {
                     // remove blocks of the given type that contain no segments
@@ -197,6 +219,7 @@ CKEDITOR.plugins.add( 'tei-p', {
                 removeInternalBlocks(startElement, endElement, "tei-p");
                 var unterminatedStarts = getAllPrecedingUnterminatedBlockStarts(startElement, "tei-p");
                 var unstartedEnds = getAllFollowingUnstartedBlockEnds(endElement, "tei-p");
+                blockIdRename(unterminatedStarts, unstartedEnds, "tei-p");
                 for (var i = 0; i < unterminatedStarts.length; i++) {
                     // insert end tags
                     var endTag = new CKEDITOR.dom.element.createFromHtml(endTemplate(unterminatedStarts[i].getId().replace(/^start_/, "")));
