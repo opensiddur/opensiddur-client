@@ -243,6 +243,36 @@ CKEDITOR.plugins.add( 'tei-p', {
 				return element.name == 'p' && element.hasClass( 'tei-p' );
 			},
 			init: function() {
+                this.on('destroy', function (evt) {
+                    // deletion: remove the start and end
+                    var idtokens = this.element.getId().match(/^(start|end)_(.+)/);
+                    var bound = idtokens[1];
+                    var thisId = idtokens[2];
+                    var otherBound = bound == "start" ? "end" : "start";
+                    var otherBoundId = otherBound + "_" + thisId;
+                    var body = this.wrapper.getParent();    // null if already deleted
+                    if (body) {
+                        var otherBoundElement = body.findOne("*[id="+otherBoundId.replace(/[.]/g, "\\.")+"]").getParent();
+                        if (otherBoundElement) {
+                            otherBoundElement.remove();
+                        }
+                    }
+                });
+                this.on( 'doubleclick', function (evt) {
+                    // select: select the content of the block
+                    var idtokens = this.element.getId().match(/^(start|end)_(.+)/);
+                    var bound = idtokens[1];
+                    var thisId = idtokens[2];
+                    var otherBound = bound == "start" ? "end" : "start";
+                    var otherBoundId = otherBound + "_" + thisId;
+                    var otherBoundElement = this.wrapper.getParent().findOne("*[id="+otherBoundId.replace(/[.]/g, "\\.")+"]");
+                    var otherWrapper = otherBoundElement.getParent().hasClass("cke_widget_block") ? otherBoundElement.getParent() : otherBoundElement;
+                    var rng = new CKEDITOR.dom.range(editor.document);
+                    rng.setStart((bound == "start") ? this.wrapper : otherWrapper,0);
+                    rng.setEnd((bound == "end") ? this.wrapper : otherWrapper, 1);
+                    editor.getSelection().selectRanges([rng]);
+                });
+
 			},
 
 			data: function() {
