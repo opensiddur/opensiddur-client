@@ -51,19 +51,21 @@
 
     <!-- elements -->
     <xsl:template match="*[@jf:start]">
-        <a id="{@jf:start}">
+        <p id="start_{@jf:start}">  <!-- id has to conform to the client expectations -->
             <xsl:apply-templates select="@* except @jf:start"/>
             <xsl:call-template name="class-attribute"/>
             <xsl:apply-templates select="following-sibling::*[1][not(@jf:start|@jf:end)][@jf:layer-id=current()/@jf:layer-id]"
                 mode="in-a"/>
-        </a>
+            <xsl:apply-templates select="." mode="filler"/>
+        </p>
     </xsl:template>
 
     <xsl:template match="*[@jf:end]">
-        <a id="_end_{@jf:end}">
+        <p id="end_{@jf:end}">
             <xsl:apply-templates select="@* except @jf:end"/>
             <xsl:call-template name="class-attribute"/>
-        </a>
+            <xsl:apply-templates select="." mode="filler"/>
+        </p>
     </xsl:template>
 
     <xsl:template match="*[@jf:layer-id][not(@jf:start|@jf:end)]"/>
@@ -80,6 +82,9 @@
         </a>
     </xsl:template>
 
+    <!-- special anchors from layers formed by the client. These are not needed -->
+    <xsl:template match="tei:anchor[starts-with(@jf:id,'start_') or starts-with(@jf:id,'end_')]"/>
+
     <xsl:template match="*" mode="#default in-a-process">
         <xsl:element name="{local:element-name(.)}">
             <xsl:apply-templates select="@*"/>
@@ -94,6 +99,14 @@
             <xsl:apply-templates/>
             <xsl:sequence select="concat('Include: ', tokenize(@target, '/')[last()])"/>
         </a>
+    </xsl:template>
+
+    <!-- filler text so widgets will show up -->
+    <xsl:template match="tei:p[@jf:start]" mode="filler">
+        <xsl:text>&#182;&#x21d3;</xsl:text>
+    </xsl:template>
+    <xsl:template match="tei:p[@jf:end]" mode="filler">
+        <xsl:text>&#x21d1;&#182;</xsl:text>
     </xsl:template>
 
     <!-- attributes -->
@@ -138,7 +151,7 @@
     </xsl:template>
 
     <!-- pass-through -->
-    <xsl:template match="tei:TEI|tei:text|jf:merged|jf:concurrent">
+    <xsl:template match="tei:TEI|tei:text|jf:concurrent/descendant-or-self::*|jf:merged">
         <xsl:copy copy-namespaces="no">
             <xsl:sequence select="@*"/>
             <xsl:apply-templates />
