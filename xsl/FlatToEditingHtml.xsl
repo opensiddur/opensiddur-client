@@ -151,7 +151,7 @@
     </xsl:template>
 
     <!-- pass-through -->
-    <xsl:template match="tei:TEI|tei:text|jf:concurrent|jf:merged">
+    <xsl:template match="tei:TEI|tei:text|jf:concurrent/descendant-or-self::*|jf:merged">
         <xsl:copy copy-namespaces="no">
             <xsl:sequence select="@*"/>
             <xsl:apply-templates />
