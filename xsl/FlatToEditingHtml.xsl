@@ -51,7 +51,7 @@
 
     <!-- elements -->
     <xsl:template match="*[@jf:start]">
-        <p id="{@jf:start}">
+        <p id="start_{@jf:start}">  <!-- id has to conform to the client expectations -->
             <xsl:apply-templates select="@* except @jf:start"/>
             <xsl:call-template name="class-attribute"/>
             <xsl:apply-templates select="following-sibling::*[1][not(@jf:start|@jf:end)][@jf:layer-id=current()/@jf:layer-id]"
@@ -61,7 +61,7 @@
     </xsl:template>
 
     <xsl:template match="*[@jf:end]">
-        <p id="_end_{@jf:end}">
+        <p id="end_{@jf:end}">
             <xsl:apply-templates select="@* except @jf:end"/>
             <xsl:call-template name="class-attribute"/>
             <xsl:apply-templates select="." mode="filler"/>
@@ -81,6 +81,9 @@
             <xsl:attribute name="class" select="replace(name(), ':', '-')"/>
         </a>
     </xsl:template>
+
+    <!-- special anchors from layers formed by the client. These are not needed -->
+    <xsl:template match="tei:anchor[starts-with(@jf:id,'start_') or starts-with(@jf:id,'end_')]"/>
 
     <xsl:template match="*" mode="#default in-a-process">
         <xsl:element name="{local:element-name(.)}">
@@ -148,19 +151,10 @@
     </xsl:template>
 
     <!-- pass-through -->
-    <xsl:template match="tei:TEI|tei:text|jf:concurrent">
+    <xsl:template match="tei:TEI|tei:text|jf:concurrent|jf:merged">
         <xsl:copy copy-namespaces="no">
             <xsl:sequence select="@*"/>
             <xsl:apply-templates />
-        </xsl:copy>
-    </xsl:template>
-
-    <xsl:template match="jf:merged">
-        <xsl:copy copy-namespaces="no">
-            <div class="wrapper">
-                <xsl:sequence select="@*"/>
-                <xsl:apply-templates/>
-            </div>
         </xsl:copy>
     </xsl:template>
 

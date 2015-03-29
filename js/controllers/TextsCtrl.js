@@ -101,7 +101,6 @@ OpenSiddurClientApp.controller(
             ],
             removeButtons : 'Paste,PasteFromWord',  
             allowedContent :
-                "div(wrapper);"+
                 "a[href,data-target-base,data-target-fragment,target](tei-ptr);"+
                 "p[!id](tei-seg,tei-p,layer-p,layer,start,end);" +
                 "*[id,lang,dir,data-*]"

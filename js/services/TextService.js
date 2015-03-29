@@ -289,6 +289,15 @@ OpenSiddurClientApp.service("TextService", [
                 "context-chars" : contextCharacters || 30
             })).xmlids.xmlid_asArray;
             return js.filter(function(x) { return !(streamOnly && x.stream == 'N') });
+        },
+        addLayer : function(layerType) {
+            // add a concurrent hierarchy of a particular type if one does not exist
+            this._content = XsltService.indentToString(
+                XsltService.transformString("/xsl/AddLayer.xsl", this._content, {
+                    "resource" : this._resourceApi + "/" + encodeURIComponent(this._resource),
+                    "layer-type" : layerType
+                }), this._isFlat);
+            return this;
         }
     };
 }]);
