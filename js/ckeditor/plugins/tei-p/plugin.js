@@ -267,7 +267,7 @@ CKEDITOR.plugins.add( 'tei-p', {
 
 			},
             destroy : function(evt) {
-                // deletion: remove the start and end (TODO: this event fires at the wrong time...)
+                // deletion: remove the start and end
                 var idtokens = this.element.getId().match(/^(start|end)_(.+)/);
                 var bound = idtokens[1];
                 var thisId = idtokens[2];
@@ -277,7 +277,6 @@ CKEDITOR.plugins.add( 'tei-p', {
                 if (body) {
                     var otherBoundElement = body.findOne("*[id="+otherBoundId.replace(/[.]/g, "\\.")+"]");
                     if (otherBoundElement) {
-                        console.log("Destroy:", this.element.$, " other bound element:", otherBoundElement.$);
                         var otherBoundWrapper = otherBoundElement.getParent();
                         otherBoundWrapper.remove();
                     }
