@@ -67,8 +67,10 @@
         </xsl:if>
     </xsl:template>
 
-    <!-- p -> tei:seg -->
-    <xsl:template match="html:p[contains(@class, 'tei-seg')][normalize-space(.)]" mode="streamText">
+    <!-- p -> tei:seg 
+    when p lacks a class, it is considered a segment because magicline inserts p[not(@class)]
+    -->
+    <xsl:template match="html:p[contains(@class, 'tei-seg') or not(@class)][normalize-space(.)]" mode="streamText">
         <tei:seg>
             <xsl:apply-templates select="@*" />
             <xsl:call-template name="add-xmlid">

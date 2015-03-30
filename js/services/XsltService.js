@@ -29,7 +29,7 @@ OpenSiddurClientApp.service(
             clearEntities : function(str) {
                 // clear all [known] entities that show up in this._content and replace them with numerics.
                 // use it before save
-                return str.replace("&nbsp;", "&#160;");
+                return str.replace(/&nbsp;/g, "&#160;");
             },
             transformString : function ( processorName, data, parameters ) {
                 var dataDomDoc = Saxon.parseXML(this.clearEntities(data));

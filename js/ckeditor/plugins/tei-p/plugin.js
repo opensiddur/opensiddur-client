@@ -192,7 +192,7 @@ CKEDITOR.plugins.add( 'tei-p', {
                         var nsegs = 0; 
                         var maybe = null;
                         while (maybe = iter.getNextParagraph("p")) { 
-                            if (maybe.hasClass("tei-seg")) nsegs++; 
+                            if (maybe.hasClass("tei-seg") || (maybe.getName() == "p" && maybe.getAttribute("class") == null)) nsegs++; 
                         }; 
                         if (nsegs == 0) {
                             start.remove();
@@ -209,7 +209,7 @@ CKEDITOR.plugins.add( 'tei-p', {
                         return getAscendantSegment(node.getParent(), originalNode);
                     }
                     else { // element node
-                        if (node.hasClass("tei-seg")) { // it's a segment, return it
+                        if (node.hasClass("tei-seg") || (node.getName() == "p" && node.getAttribute("class") == null)) { // it's a segment, return it
                             return node;
                         }
                         else {
