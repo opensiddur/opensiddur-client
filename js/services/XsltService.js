@@ -26,8 +26,13 @@ OpenSiddurClientApp.service(
                 });
                 return transformed.getResultDocument();
             },
+            clearEntities : function(str) {
+                // clear all [known] entities that show up in this._content and replace them with numerics.
+                // use it before save
+                return str.replace("&nbsp;", "&#160;");
+            },
             transformString : function ( processorName, data, parameters ) {
-                var dataDomDoc = Saxon.parseXML(data);
+                var dataDomDoc = Saxon.parseXML(this.clearEntities(data));
                 return this.transform(processorName, dataDomDoc, parameters);
             },
             serializeToString : function ( doc ) {
