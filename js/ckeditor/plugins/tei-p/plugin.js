@@ -15,7 +15,14 @@ CKEDITOR.plugins.add( 'tei-p', {
 	icons: 'tei-p',
 
 	init: function( editor ) {
-        var TextService = angular.element('*[data-ng-app]').injector().get("TextService");
+        var injector = angular.element('*[data-ng-app]').injector();
+        var TextService = injector.get("TextService");
+        var $interval = injector.get("$interval");
+        // block plugins require check widgets every short interval
+        var thiz = this;
+        var interval = $interval(function (evt) {
+            editor.widgets.checkWidgets();
+        }, 1000);
 
 		editor.widgets.add( 'tei-p', {
             draggable : false,
@@ -243,8 +250,40 @@ CKEDITOR.plugins.add( 'tei-p', {
 				return element.name == 'p' && element.hasClass( 'tei-p' );
 			},
 			init: function() {
-			},
+                this.on( 'doubleclick', function (evt) {
+                    // select: select the content of the block
+                    var idtokens = this.element.getId().match(/^(start|end)_(.+)/);
+                    var bound = idtokens[1];
+                    var thisId = idtokens[2];
+                    var otherBound = bound == "start" ? "end" : "start";
+                    var otherBoundId = otherBound + "_" + thisId;
+                    var otherBoundElement = this.wrapper.getParent().findOne("*[id="+otherBoundId.replace(/[.]/g, "\\.")+"]");
+                    var otherWrapper = otherBoundElement.getParent().hasClass("cke_widget_block") ? otherBoundElement.getParent() : otherBoundElement;
+                    var rng = new CKEDITOR.dom.range(editor.document);
+                    rng.setStart((bound == "start") ? this.wrapper : otherWrapper,0);
+                    rng.setEnd((bound == "end") ? this.wrapper : otherWrapper, 1);
+                    editor.getSelection().selectRanges([rng]);
+                });
 
+			},
+            destroy : function(evt) {
+                // deletion: remove the start and end (TODO: this event fires at the wrong time...)
+                var idtokens = this.element.getId().match(/^(start|end)_(.+)/);
+                var bound = idtokens[1];
+                var thisId = idtokens[2];
+                var otherBound = bound == "start" ? "end" : "start";
+                var otherBoundId = otherBound + "_" + thisId;
+                var body = editor.document;   
+                if (body) {
+                    var otherBoundElement = body.findOne("*[id="+otherBoundId.replace(/[.]/g, "\\.")+"]");
+                    if (otherBoundElement) {
+                        console.log("Destroy:", this.element.$, " other bound element:", otherBoundElement.$);
+                        var otherBoundWrapper = otherBoundElement.getParent();
+                        otherBoundWrapper.remove();
+                    }
+                }
+
+            },
 			data: function() {
 			}
 
