@@ -37,7 +37,6 @@ CKEDITOR.plugins.add( 'tei-p', {
                 var DialogService = injector.get("DialogService");
                 var EditorDataService = injector.get("EditorDataService");
                 var el = this.element;
-                var isNew = el.getAttribute("data-new");
                 
                 EditorDataService.set("editParagraphDialog", {
 				    id : el.getAttribute("id") || "" ,
@@ -74,10 +73,10 @@ CKEDITOR.plugins.add( 'tei-p', {
                 }
                 var thisId = getRandomId("p", "p");
 			    var beginTemplate = function(id) { 
-                    return '<p id="start_'+id+'" data-new="1" class="tei-p layer layer-p start">&#182;&#x21d3;</p>'; 
+                    return '<p id="start_'+id+'" class="tei-p layer layer-p start">&#182;&#x21d3;</p>'; 
                 };
                 var endTemplate = function(id) { 
-                    return '<p id="end_'+id+'" data-new="1" class="tei-p layer layer-p end">&#x21d1;&#182;</p>';
+                    return '<p id="end_'+id+'" class="tei-p layer layer-p end">&#x21d1;&#182;</p>';
                 };
                 var isBlockBoundary = function(node, blockType, id, boundary) {
                     // returns true if the given node is a node/widget representing the given id's boundary
