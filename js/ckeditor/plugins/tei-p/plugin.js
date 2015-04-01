@@ -102,7 +102,7 @@ CKEDITOR.plugins.add( 'tei-p', {
                     var iter = rng.createIterator();
                     var internalBlocks = [];
                     while (nxt = iter.getNextParagraph("p")) {
-                        if (isAnyBlockBoundary(nxt, blockType) && !isBlockBoundary(nxt, blockType, thisId, "end")) {
+                        if (nxt.type == 1 && isAnyBlockBoundary(nxt, blockType) && !isBlockBoundary(nxt, blockType, thisId, "end")) {
                             internalBlocks.push(nxt);
                         } 
                     } 
