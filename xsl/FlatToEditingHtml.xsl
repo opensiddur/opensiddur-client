@@ -74,14 +74,20 @@
         <xsl:apply-templates select="." mode="in-a-process"/>
         <xsl:apply-templates select="following-sibling::*[1][not(@jf:start|@jf:end)][@jf:layer-id=current()/@jf:layer-id]" mode="#current"/>
     </xsl:template>
+    
+    <!-- the presence of internal anchors are causing some issue with the widget system;
+    removing all anchors for now; when they are supported, this bug will have to be fixed    
+     -->
+    <xsl:template match="tei:anchor"/>
 
+<!--
     <xsl:template match="tei:anchor">
         <a>
             <xsl:apply-templates select="@*"/>
             <xsl:attribute name="class" select="replace(name(), ':', '-')"/>
         </a>
     </xsl:template>
-
+-->
     <!-- special anchors from layers formed by the client. These are not needed -->
     <xsl:template match="tei:anchor[starts-with(@jf:id,'start_') or starts-with(@jf:id,'end_')]"/>
 
