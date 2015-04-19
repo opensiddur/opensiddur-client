@@ -56,7 +56,11 @@ var OpenSiddurClientApp =
        'LocalStorageModule',
        'infinite-scroll',
        'ui.codemirror',
-       'unsavedChanges'
+       'unsavedChanges',
+       // Open Siddur specific modules
+       'osError',
+       'osCompiler',
+       'osJobs'
       ]);
 
 OpenSiddurClientApp.config(
@@ -91,15 +95,15 @@ OpenSiddurClientApp.config(
 );
 
 OpenSiddurClientApp.config(
-  ['$routeProvider', '$locationProvider',
-  function($routeProvider, $locationProvider) {
+  ['$routeProvider', '$locationProvider', 'osJobsConst', 'osCompilerConst',
+  function($routeProvider, $locationProvider, osJobsConst, osCompilerConst) {
     $locationProvider.html5Mode(true).hashPrefix("!");
     $routeProvider
       .when('/changes/:userName?', {templateUrl: '/partials/RecentChanges.html', controller: "RecentChangesCtrl"})
-      .when('/compile/:resource', {templateUrl: '/partials/Compile.html', controller: "CompileCtrl"})
+      .when('/compile/:resource', {templateUrl: osCompilerConst.partial, controller: "CompileCtrl"})
       .when('/compiled/:resource', {templateUrl: '/partials/Compiled.html', controller: "CompiledCtrl"})
       .when('/contributors/:userName?', {templateUrl: '/partials/profile.html', controller: "ProfileCtrl"})
-      .when('/jobs/:userName', {templateUrl: '/partials/Jobs.html', controller: "JobsCtrl"})
+      .when('/jobs/:userName', {templateUrl: osJobsConst.partial, controller: "JobsCtrl"})
       .when('/jobstatus/:jobid', {templateUrl: '/partials/Compile.html', controller: "JobStatusCtrl"})
       .when('/signin', {templateUrl: '/partials/signin.html', controller: "AuthenticationCtrl"})
       .when('/sources/:resource?', {templateUrl: '/partials/sources.html', controller: "SourcesCtrl"})

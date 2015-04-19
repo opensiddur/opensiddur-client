@@ -43,12 +43,13 @@ App parts:
 -changes
     ./js/controllers/RecentChangesCtrl.js
     ./partials/RecentChanges.html
+-jobs
+X    ./js/controllers/JobStatusCtrl.js
+X    ./js/controllers/JobsCtrl.js
+X    ./partials/Jobs.html
 -compiler
-    ./js/controllers/JobStatusCtrl.js
-    ./js/controllers/JobsCtrl.js
-    ./partials/Jobs.html
-    ./js/controllers/CompileCtrl.js
-    ./partials/Compile.html
+X    ./js/controllers/CompileCtrl.js
+X    ./partials/Compile.html
 - compiled viewer
     ./js/controllers/CompiledCtrl.js
     ./partials/Compiled.html
@@ -96,9 +97,9 @@ App parts:
         ./js/directives/osMetadataTitleDialog.html
         ./js/directives/osMetadataRespDialog.html
     -error reporting
-        ./js/services/ErrorService.js
-        ./js/directives/osErrorBox.js
-        ./js/directives/osErrorBox.html
+X        ./js/services/ErrorService.js
+X        ./js/directives/osErrorBox.js
+X        ./js/directives/osErrorBox.html
     -text dialogs
     -truncate
         ./js/filters/truncate.js

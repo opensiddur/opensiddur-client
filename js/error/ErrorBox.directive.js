@@ -1,10 +1,10 @@
 /*
  * error message directive
  * Open Siddur Project
- * Copyright 2014 Efraim Feinstein, efraim@opensiddur.org
+ * Copyright 2014-2015 Efraim Feinstein, efraim@opensiddur.org
  * Licensed under the GNU Lesser General Public License, version 3 or above
  */
-OpenSiddurClientApp.directive(
+osErrorModule.directive(
         'osErrorBox',
         [
          function() {
@@ -15,7 +15,7 @@ OpenSiddurClientApp.directive(
                      $scope.closeAlert = ErrorService.closeAlert;
                  }],
                  transclude : false,
-                 templateUrl : "/js/directives/osErrorBox.html"
+                 templateUrl : "/js/error/ErrorBox.directive.html"
              };
          }
          ]
