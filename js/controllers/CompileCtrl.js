@@ -38,7 +38,10 @@ OpenSiddurClientApp.controller(
     $scope.status = {};
 
     RestApi["/api/data/original"].backgroundCompile({"resource" : $scope.resource}, "",
-        function (data) { $scope.compilation = data; getStatus(); },
+        function (data, headers) { 
+            $scope.compilation = {job : headers("Location").replace("/exist/restxq/api/jobs/", "")};    // WARNING: RestApi's transformResponse is not running 
+            getStatus(); 
+        },
         function(data) { ErrorService.addApiError(data); }
     ) ;
   }]
