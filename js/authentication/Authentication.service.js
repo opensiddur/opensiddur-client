@@ -1,9 +1,9 @@
 /* Authentication service 
  * Open Siddur Project
- * Copyright 2013-2014 Efraim Feinstein <efraim@opensiddur.org>
+ * Copyright 2013-2015 Efraim Feinstein <efraim@opensiddur.org>
  * Licensed under the GNU Lesser General Public License, version 3 or later
  */
-OpenSiddurClientApp.service( 
+osAuthenticationModule.factory( 
   'AuthenticationService', 
   ['$rootScope', '$http', 'localStorageService',
   function( $rootScope, $http, localStorageSevice ) {

@@ -58,6 +58,7 @@ var OpenSiddurClientApp =
        'ui.codemirror',
        'unsavedChanges',
        // Open Siddur specific modules
+       'osAuthentication',
        'osError',
        'osCompiler',
        'osJobs'
@@ -95,8 +96,8 @@ OpenSiddurClientApp.config(
 );
 
 OpenSiddurClientApp.config(
-  ['$routeProvider', '$locationProvider', 'osJobsConst', 'osCompilerConst',
-  function($routeProvider, $locationProvider, osJobsConst, osCompilerConst) {
+  ['$routeProvider', '$locationProvider', 'osAuthenticationConst', 'osJobsConst', 'osCompilerConst',
+  function($routeProvider, $locationProvider, osAuthenticationConst, osJobsConst, osCompilerConst) {
     $locationProvider.html5Mode(true).hashPrefix("!");
     $routeProvider
       .when('/changes/:userName?', {templateUrl: '/partials/RecentChanges.html', controller: "RecentChangesCtrl"})
@@ -105,7 +106,7 @@ OpenSiddurClientApp.config(
       .when('/contributors/:userName?', {templateUrl: '/partials/profile.html', controller: "ProfileCtrl"})
       .when('/jobs/:userName', {templateUrl: osJobsConst.partial, controller: "JobsCtrl"})
       .when('/jobstatus/:jobid', {templateUrl: '/partials/Compile.html', controller: "JobStatusCtrl"})
-      .when('/signin', {templateUrl: '/partials/signin.html', controller: "AuthenticationCtrl"})
+      .when('/signin', {templateUrl: osAuthenticationConst.partial.signin, controller: "AuthenticationCtrl"})
       .when('/sources/:resource?', {templateUrl: '/partials/sources.html', controller: "SourcesCtrl"})
       .when('/styles/:resource?', {templateUrl: '/partials/texts.html', controller: "TextsCtrl"})
       .when('/texts/:resource?', {templateUrl: '/partials/texts.html', controller: "TextsCtrl"})
@@ -113,7 +114,7 @@ OpenSiddurClientApp.config(
       .when('/translations/:resource?', {templateUrl: '/partials/translations.html', controller: "TranslationsCtrl"})
       .when('/conditionals/:resource?', {templateUrl: '/partials/texts.html', controller: "TextsCtrl"})
       .when('/profile/:userName', {templateUrl: '/partials/profile.html', controller: "ProfileCtrl"})
-      .when('/changepassword', {templateUrl: '/partials/changepassword.html', controller: "ChangePasswordCtrl"})
+      .when('/changepassword', {templateUrl: osAuthenticationConst.partial.password, controller: "ChangePasswordCtrl"})
       .when('/about', {templateUrl: '/partials/about.html', controller: "AboutCtrl"})
       .otherwise({redirectTo: '/about'});
   }

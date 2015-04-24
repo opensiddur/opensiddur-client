@@ -3,7 +3,7 @@
  * Copyright 2013-2014 Efraim Feinstein <efraim@opensiddur.org>
  * Licensed under the GNU Lesser General Public License, version 3 or later
 */
-OpenSiddurClientApp.controller(
+osAuthenticationModule.controller(
   'AuthenticationWidgetCtrl',
   ['$scope', '$location', 'AuthenticationService',
   function ($scope, $location, AuthenticationService) {

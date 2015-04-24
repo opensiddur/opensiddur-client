@@ -5,7 +5,7 @@
  * Licensed under the GNU Lesser General Public License, version 3 or later
  */
 
-OpenSiddurClientApp.controller(
+osAuthenticationModule.controller(
   'AuthenticationCtrl', 
   ['$scope', '$location', 'AuthenticationService', 'ErrorService',
   function ($scope, $location, AuthenticationService, ErrorService){

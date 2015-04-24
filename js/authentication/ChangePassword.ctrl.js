@@ -5,7 +5,7 @@
  * Licensed under the GNU Lesser General Public License, version 3 or later
  */
 /* controller for signin and registration page */
-OpenSiddurClientApp.controller(
+osAuthenticationModule.controller(
   'ChangePasswordCtrl', 
   ['$scope', 'AuthenticationService', 'ErrorService', 
   function ($scope, AuthenticationService, ErrorService){
