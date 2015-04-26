@@ -17,54 +17,42 @@
  */
 
 
-OpenSiddurClientApp.controller(
+osProfileModule.controller(
   'ProfileCtrl',
   ['$scope', '$location', '$rootScope', '$routeParams', '$http', 
-   'AccessService', 'AuthenticationService', 'DialogService', 'ErrorService', 'RestApi', 'XsltService',
-  function ($scope, $location, $rootScope, $routeParams, $http, AccessService, AuthenticationService, DialogService, ErrorService, RestApi, XsltService) {
+   'AccessService', 'AuthenticationService', 'DialogService', 'ErrorService', 'ProfileService',
+  function ($scope, $location, $rootScope, $routeParams, $http, 
+    AccessService, AuthenticationService, DialogService, ErrorService, ProfileService) {
     console.log("Profile controller.");
     
     $scope.DialogService = DialogService;
     $scope.AccessService = AccessService;
     AccessService.reset();
-    $scope.userName = $routeParams.userName;    
+    $scope.ProfileService = ProfileService;
+
     $scope.loggedIn = AuthenticationService.loggedIn;
     $scope.loggedInUser = AuthenticationService.userName;
 
     $scope.mode = ($location.path().indexOf("/contributors")==0 ? "thirdparty" : "self");
-    $scope.isNew = !$scope.userName; 
 
-    $scope.get = function ( ) {  
+    var get = function ( ) {  
         // HTTP interaction with the API
-        // TODO: use a RestApi service 
-        $http.get(
-          host + ((this.isNew) ? "/templates/contributor.xml" : ("/api/user/" + this.userName)),
-          {
-            transformResponse: function(data, headers) {
-                console.log(data);
-                if (data.match("<error")) {
-                    return data;
-                }
-                xsltTransformed = XsltService.transformString('profileFormTemplate', data);
-                console.log(xsltTransformed);
-                jsTransformed = x2js.xml2json(xsltTransformed);
-                console.log(jsTransformed);
-                return jsTransformed;
-            }
-          })
-          .success(
+        var userName = $routeParams.userName;    
+        $scope.isNew = !userName; 
+        var requestData =  ($scope.isNew) ? 
+            ProfileService.loadNew() :
+            ProfileService.load(userName);
+        requestData.success(
               function(data, status, headers, config) {
                   console.log(data);
-                  $scope.profile = data;
-                  $scope.profileType = ($scope.profile.contributor.orgName.__text) ? 'organization' : 'individual';
                   
-                  if ($scope.userName) {
-                    AccessService.load("/api/user", $scope.userName)
+                  if (ProfileService.userName) {
+                    AccessService.load("/api/user", ProfileService.userName)
                     .success(function(acc) {
                         $scope.ownership =  
-                            ($scope.loggedIn && $scope.userName == $scope.loggedInUser) ?
+                            ($scope.loggedIn && ProfileService.userName == $scope.loggedInUser) ?
                                 'self' : 
-                                ((acc.owner == $scope.profile.contributor.idno.__text) ? 'other' : 'thirdparty');
+                                ((acc.owner == ProfileService.profile.contributor.idno.__text) ? 'other' : 'thirdparty');
     
                     })
                     .error(function (err) {
@@ -97,25 +85,13 @@ OpenSiddurClientApp.controller(
     };
 
 
-    $scope.save = function () {       
-        $http.put(host + "/api/user/" + ((this.userName) ? this.userName : this.profile.contributor.idno.__text),
-            $(".instance").html(),
-            {
-                transformRequest: function (data, headerGetters) {
-                    var formTei = XsltService.transformString('htmlToTei', data);
-                    var formCleaned = XsltService.transform('cleanupForm', formTei); 
-                    return formCleaned;
-                }
-            }
-        )
+    $scope.save = function () {      
+        ProfileService.save()
         .success(
             function(data, status, headers, config) {
                 $scope.profileForm.$setPristine();
-                if ($scope.isNew) {
-                    $scope.userName = decodeURI(headers("Location").split("/").pop());
-                }
                 $scope.isNew = 0;
-                $location.path("/contributors/" + encodeURIComponent($scope.userName), false);
+                $location.path("/contributors/" + encodeURIComponent(ProfileService.userName), false);
             }
         )
         .error(
@@ -131,7 +107,7 @@ OpenSiddurClientApp.controller(
                     : "Read-only";
     };
     
-    $scope.get();
+    get();
   }
   ]
 );

@@ -7,16 +7,15 @@ App parts:
     ./js/controllers/NavbarCtrl.js
     ./partials/about.html
 -authentication management
-    ./partials/signin.html
-    ./partials/changepassword.html
-    ./js/services/AuthenticationService.js
-    ./js/controllers/authenticationwidgetctrl.js
-    ./js/controllers/ChangePasswordCtrl.js
-    ./js/controllers/AuthenticationCtrl.js
--password management (part of auth?)
+X    ./partials/signin.html
+X    ./partials/changepassword.html
+X    ./js/services/AuthenticationService.js
+X    ./js/controllers/authenticationwidgetctrl.js
+X    ./js/controllers/ChangePasswordCtrl.js
+X    ./js/controllers/AuthenticationCtrl.js
 -contributor management
-    ./js/controllers/ProfileCtrl.js
-    ./partials/profile.html
+X    ./js/controllers/ProfileCtrl.js
+X    ./partials/profile.html
 -sources/bibliography management
     ./js/controllers/SourcesCtrl.js
     ./js/services/SourceService.js
@@ -104,7 +103,7 @@ X        ./js/directives/osErrorBox.html
     -truncate
         ./js/filters/truncate.js
     -XSLT
-        ./js/services/XsltService.js
+X        ./js/services/XsltService.js
     -shared-data     
         ./js/services/LanguageService.js
 

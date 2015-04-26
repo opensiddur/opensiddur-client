@@ -46,14 +46,14 @@ var getApiError = function(data) {
 var OpenSiddurClientApp = 
   angular.module(
       'OpenSiddurClientApp',
-      ['filters',
+      [
        'ngCkeditor',
        'ngRoute',
        'ngResource',
        'ngSanitize',
        'panzoom', 
        'panzoomwidget', 
-       'LocalStorageModule',
+       //'LocalStorageModule',
        'infinite-scroll',
        'ui.codemirror',
        'unsavedChanges',
@@ -61,7 +61,10 @@ var OpenSiddurClientApp =
        'osAuthentication',
        'osError',
        'osCompiler',
-       'osJobs'
+       'osJobs',
+       'osProfile',
+       'osSharing',
+       'osXslt' // probably won't be needed when completely modularized
       ]);
 
 OpenSiddurClientApp.config(
@@ -96,14 +99,16 @@ OpenSiddurClientApp.config(
 );
 
 OpenSiddurClientApp.config(
-  ['$routeProvider', '$locationProvider', 'osAuthenticationConst', 'osJobsConst', 'osCompilerConst',
-  function($routeProvider, $locationProvider, osAuthenticationConst, osJobsConst, osCompilerConst) {
+  ['$routeProvider', '$locationProvider', 
+    'osAuthenticationConst', 'osJobsConst', 'osCompilerConst', 'osProfileConst',
+  function($routeProvider, $locationProvider, 
+    osAuthenticationConst, osJobsConst, osCompilerConst, osProfileConst) {
     $locationProvider.html5Mode(true).hashPrefix("!");
     $routeProvider
       .when('/changes/:userName?', {templateUrl: '/partials/RecentChanges.html', controller: "RecentChangesCtrl"})
       .when('/compile/:resource', {templateUrl: osCompilerConst.partial, controller: "CompileCtrl"})
       .when('/compiled/:resource', {templateUrl: '/partials/Compiled.html', controller: "CompiledCtrl"})
-      .when('/contributors/:userName?', {templateUrl: '/partials/profile.html', controller: "ProfileCtrl"})
+      .when('/contributors/:userName?', {templateUrl: osProfileConst.partial, controller: "ProfileCtrl"})
       .when('/jobs/:userName', {templateUrl: osJobsConst.partial, controller: "JobsCtrl"})
       .when('/jobstatus/:jobid', {templateUrl: '/partials/Compile.html', controller: "JobStatusCtrl"})
       .when('/signin', {templateUrl: osAuthenticationConst.partial.signin, controller: "AuthenticationCtrl"})
@@ -113,7 +118,7 @@ OpenSiddurClientApp.config(
       .when('/annotations/:resource?', {templateUrl: '/partials/texts.html', controller: "TextsCtrl"})
       .when('/translations/:resource?', {templateUrl: '/partials/translations.html', controller: "TranslationsCtrl"})
       .when('/conditionals/:resource?', {templateUrl: '/partials/texts.html', controller: "TextsCtrl"})
-      .when('/profile/:userName', {templateUrl: '/partials/profile.html', controller: "ProfileCtrl"})
+      .when('/profile/:userName', {templateUrl: osProfileConst.partial, controller: "ProfileCtrl"})
       .when('/changepassword', {templateUrl: osAuthenticationConst.partial.password, controller: "ChangePasswordCtrl"})
       .when('/about', {templateUrl: '/partials/about.html', controller: "AboutCtrl"})
       .otherwise({redirectTo: '/about'});

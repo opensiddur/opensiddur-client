@@ -11,12 +11,13 @@ osErrorModule.service(
         return {
             messages : [],
             addApiError : function ( message ) {
-                this.addAlert(
-                    $.makeArray( 
+                var messageText = $.makeArray( 
                         $( "message", $.parseXML( message ) ).map(
                             function( i, x ) { return $(x).text().trim(); }
                         )
-                    ).join("<br/>"), "error");
+                    ).join("<br/>");
+
+                this.addAlert(messageText || message, "error");
             },
             addAlert : function( message, level ) {
                 this.messages.push( { 'message' : message, 'level' : level } );

@@ -3,7 +3,7 @@
  * Copyright 2013-2014 Efraim Feinstein <efraim@opensiddur.org>
  * Licensed under the GNU Lesser General Public License, version 3 or later
  */
-OpenSiddurClientApp.service(
+osXsltModule.factory(
     'XsltService',
     ['$rootScope', '$http', '$location', 'ErrorService',
     function ( $rootScope, $http, $location, ErrorService ) {
@@ -55,6 +55,7 @@ OpenSiddurClientApp.service(
                 return vkbeautify.xml(this.serializeToStringTEINSClean(xmlDoc, includeFlat), 4);  
             }  
         }
+        // this interface is deprecated. Please stop using it.
         svc.addProcessor('autoSegment', '/xsl/AutoSegment.xsl');
         svc.addProcessor('extractTranscriptionLinks', '/xsl/ExtractTranscriptionLinks.xsl');
         svc.addProcessor('instance', '/xsl/instance.xsl');

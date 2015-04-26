@@ -8,7 +8,7 @@
  * Copyright 2014-2015 Efraim Feinstein, efraim@opensiddur.org
  * Licensed under the GNU Lesser General Public License, version 3 or above
  */
-OpenSiddurClientApp.directive(
+osSharingModule.directive(
         'osSharingStatus',
         ["AccessService",
          function(AccessService) {
@@ -24,7 +24,7 @@ OpenSiddurClientApp.directive(
                     $scope.AccessService = AccessService;
                  }],
                  transclude : false,
-                 templateUrl : "/js/directives/osSharingStatus.html"
+                 templateUrl : "/js/sharing/osSharingStatus.directive.html"
              };
          }
          ]

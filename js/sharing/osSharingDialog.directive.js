@@ -7,7 +7,7 @@
  * Copyright 2013-2015 Efraim Feinstein, efraim@opensiddur.org
  * Licensed under the GNU Lesser General Public License, version 3 or later
  */
-OpenSiddurClientApp.directive(
+osSharingModule.directive(
         'osSharingDialog',
         [
         'AccessService', 'ErrorService',
@@ -45,7 +45,7 @@ OpenSiddurClientApp.directive(
                     });
                  },
                  transclude : false,
-                 templateUrl : "/js/directives/osSharingDialog.html"
+                 templateUrl : "/js/sharing/osSharingDialog.directive.html"
              };
         }
         ]

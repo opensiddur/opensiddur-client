@@ -10,7 +10,7 @@
  * @Param string, default = "..."
  * @return string
  */
-angular.module('filters', []).
+var osTruncateModule = angular.module('osTruncate', []).
     filter('truncate', function () {
         return function (text, length, end) {
             length = length || 10;

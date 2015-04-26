@@ -4,7 +4,7 @@
  * Copyright 2014-2015 Efraim Feinstein, efraim@opensiddur.org
  * Licensed under the GNU Lesser General Public License, version 3 or above
  */
-OpenSiddurClientApp.service( 
+osSharingModule.factory( 
     'AccessService', 
     ["$http", "AuthenticationService",
     function( $http, AuthenticationService ) {

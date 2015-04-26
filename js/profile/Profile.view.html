@@ -4,7 +4,7 @@
             <div class="btn-toolbar">
                 <div data-ng-show="mode == 'thirdparty'">
                     <p class="navbar-text"
-                        data-ng-show="!isNew">{{ profile.contributor.name.__text | truncate:30 }}{{ profile.contributor.orgName.__text | truncate:30 }}</p>
+                        data-ng-show="!isNew">{{ ProfileService.profile.contributor.name.__text | truncate:30 }}{{ ProfileService.profile.contributor.orgName.__text | truncate:30 }}</p>
                     <p class="navbar-text" 
                         data-ng-show="isNew">New profile</p>
                 </div>
@@ -63,14 +63,14 @@
               <label class="radio-inline">This profile is for an:</label>
               <label class="radio-inline" for="formIndividual">
                 <input type="radio"
-                  data-ng-model="profileType"
+                  data-ng-model="ProfileService.profileType"
                   value="individual"
                   name="formIndividual"
                   /> Individual
               </label>
               <label class="radio-inline" for="formOrganization">
                 <input type="radio"
-                  data-ng-model="profileType"
+                  data-ng-model="ProfileService.profileType"
                   value="organization"
                   name="formOrganization"
                   /> Organization/group
@@ -84,7 +84,7 @@
                     name="formUserName" 
                     class="form-control"
                     required="1" 
-                    data-ng-model="profile.contributor.idno.__text" 
+                    data-ng-model="ProfileService.profile.contributor.idno.__text" 
                     data-ng-readonly="!isNew"
                     placeholder="Link name"/>
                 </div>
@@ -93,26 +93,26 @@
               <div class="form-group" data-ng-switch-when="individual">
                 <label class="col-md-2 control-label" for="formRealName">Name:</label>
                 <div class="col-md-6">
-                  <input type="text" class="form-control" placeholder="Real Name or pseudonym" data-ng-model="profile.contributor.name.__text"/>
+                  <input type="text" class="form-control" placeholder="Real Name or pseudonym" data-ng-model="ProfileService.profile.contributor.name.__text"/>
                 </div>
               </div>
               <div class="form-group" data-ng-switch-when="organization">
                 <label class="control-label col-md-2" for="formOrgName">Name:</label>
                 <div class="col-md-6">
-                  <input class="form-control" placeholder="Organization or group name" data-ng-model="profile.contributor.orgName.__text"/>
+                  <input class="form-control" placeholder="Organization or group name" data-ng-model="ProfileService.profile.contributor.orgName.__text"/>
                 </div>
               </div>
             </div>
             <div class="form-group" data-ng-class="{error : profileForm.formEmail.$error.email}">
               <label class="control-label col-md-2" for="formEmail">Email address:</label>
               <div class="col-md-6">
-                <input name="formEmail" class="form-control" placeholder="Email" data-type="email" data-ng-model="profile.contributor.email.__text"/>
+                <input name="formEmail" class="form-control" placeholder="Email" data-type="email" data-ng-model="ProfileService.profile.contributor.email.__text"/>
               </div>
               <div class="col-md-4">
                 <span class="help-block alert-danger" data-ng-hide="!profileForm.formEmail.$dirty || !profileForm.formEmail.$error.email">Must be an email address of the form xyz@example.com</span>
               </div>
             </div>
-            <div data-os-array-input="profile.contributor.address.addrLine_asArray"
+            <div data-os-array-input="ProfileService.profile.contributor.address.addrLine_asArray"
                 data-label="Postal address"
                 data-name="formAddress"
                 data-placeholder="Address line"
@@ -120,7 +120,7 @@
             <div class="form-group" data-ng-show="profileType == 'individual'" data-ng-class="{ error : profileForm.formUrl.$error.url }">
               <label class="col-md-2 control-label" for="formUrl">Website:</label>
               <div class="col-md-6">
-                <input name="formUrl" class="form-control" placeholder="Personal website" data-type="url" data-ng-model="profile.contributor.ptr._target"/>
+                <input name="formUrl" class="form-control" placeholder="Personal website" data-type="url" data-ng-model="ProfileService.profile.contributor.ptr._target"/>
               </div>
               <div class="col-md-4">
                 <span class="help-block alert-danger" data-ng-hide="!profileForm.formUrl.$dirty || !profileForm.formUrl.$error.url">Must be a web address of the form http://example.com/x/y/z</span>
@@ -129,7 +129,7 @@
             <div class="form-group" data-ng-show="profileType == 'organization'" data-ng-class="{ error : profileForm.formOrgUrl.$error.url }">
               <label class="control-label col-md-2" for="formOrgUrl">Website:</label>
               <div class="col-md-6">
-                <input name="formOrgUrl" class="form-control" placeholder="Organization website" data-type="url" data-ng-model="profile.contributor.affiliation.ptr._target"/>
+                <input name="formOrgUrl" class="form-control" placeholder="Organization website" data-type="url" data-ng-model="ProfileService.profile.contributor.affiliation.ptr._target"/>
               </div>
               <div class="col-md-4">
                 <span class="help-block alert-danger" data-ng-hide="!profileForm.formOrgUrl.$dirty || !profileForm.formOrgUrl.$error.url">Must be a web address of the form http://example.com/x/y/z</span>
@@ -138,12 +138,12 @@
             <div class="form-group" data-ng-show="profileType == 'individual'" data-ng-class="{ error : profileForm.formAffiliationUrl.$error.url }">
               <label class="col-md-2 control-label" for="formAffiliation">Affiliation</label>
               <div class="col-md-6">
-                <input name="formAffiliation" class="form-control" placeholder="Institution name" data-ng-model="profile.contributor.affiliation.orgName.__text"/>
+                <input name="formAffiliation" class="form-control" placeholder="Institution name" data-ng-model="ProfileService.profile.contributor.affiliation.orgName.__text"/>
               </div>
             </div>
             <div class="form-group" data-ng-show="profileType == 'individual'">
                 <div class="col-md-6 col-md-offset-2">
-                    <input name="formAffiliationUrl" class="form-control" data-type="url" placeholder="Institution website" data-ng-model="profile.contributor.affiliation.ptr._target"/>
+                    <input name="formAffiliationUrl" class="form-control" data-type="url" placeholder="Institution website" data-ng-model="ProfileService.profile.contributor.affiliation.ptr._target"/>
                 </div>
                 <div class="col-md-4">
                     <span class="help-block alert-danger" data-ng-hide="!profileForm.formAffiliationUrl.$dirty || !profileForm.formAffiliationUrl.$error.url">Must be a web address of the form http://example.com/x/y/z</span>
@@ -152,25 +152,6 @@
           </form>
         </div>
         <div class="span2"></div>
-      </div>
-      <div class="instance" data-ng-hide="1">
-        <div class="j-contributor" data-xml-lang="{{profile.contributor._lang}}">
-          <div class="tei-idno">{{profile.contributor.idno.__text}}</div>
-          <div class="tei-name">{{profile.contributor.name.__text}}</div>
-          <div class="tei-orgName">{{profile.contributor.orgName.__text}}</div>
-          <div class="tei-email">{{profile.contributor.email.__text}}</div>
-          <div class="tei-address">
-            <div class="tei-addrLine" data-ng-repeat="addrLine in profile.contributor.address.addrLine">{{addrLine.__text}}</div>
-          </div>
-          <div class="tei-affiliation">
-            <div class="tei-orgName">{{profile.contributor.affiliation.orgName.__text}}</div>
-            <div class="tei-address">
-              <div class="tei-addrLine" data-ng-repeat="addrLine in profile.contributor.affiliation.address.addrLine">{{addrLine.__text}}</div>
-            </div>
-            <div class="tei-ptr" data-type="url" data-target="{{profile.contributor.affiliation.ptr._target}}"></div>
-          </div>
-          <div class="tei-ptr" data-type="url" data-target="{{profile.contributor.ptr._target}}"></div>
-        </div>
       </div>
     </div>
     <os-open-dialog api="'/api/user'"
