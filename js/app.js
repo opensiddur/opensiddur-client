@@ -61,9 +61,11 @@ var OpenSiddurClientApp =
        'osAuthentication',
        'osError',
        'osCompiler',
+       'osGlobalData',
        'osJobs',
        'osProfile',
        'osSharing',
+       'osSources',
        'osXslt' // probably won't be needed when completely modularized
       ]);
 
@@ -100,9 +102,9 @@ OpenSiddurClientApp.config(
 
 OpenSiddurClientApp.config(
   ['$routeProvider', '$locationProvider', 
-    'osAuthenticationConst', 'osJobsConst', 'osCompilerConst', 'osProfileConst',
+    'osAuthenticationConst', 'osJobsConst', 'osCompilerConst', 'osProfileConst', 'osSourcesConst',
   function($routeProvider, $locationProvider, 
-    osAuthenticationConst, osJobsConst, osCompilerConst, osProfileConst) {
+    osAuthenticationConst, osJobsConst, osCompilerConst, osProfileConst, osSourcesConst) {
     $locationProvider.html5Mode(true).hashPrefix("!");
     $routeProvider
       .when('/changes/:userName?', {templateUrl: '/partials/RecentChanges.html', controller: "RecentChangesCtrl"})
@@ -112,7 +114,7 @@ OpenSiddurClientApp.config(
       .when('/jobs/:userName', {templateUrl: osJobsConst.partial, controller: "JobsCtrl"})
       .when('/jobstatus/:jobid', {templateUrl: '/partials/Compile.html', controller: "JobStatusCtrl"})
       .when('/signin', {templateUrl: osAuthenticationConst.partial.signin, controller: "AuthenticationCtrl"})
-      .when('/sources/:resource?', {templateUrl: '/partials/sources.html', controller: "SourcesCtrl"})
+      .when('/sources/:resource?', {templateUrl: osSourcesConst.partial, controller: "SourcesCtrl"})
       .when('/styles/:resource?', {templateUrl: '/partials/texts.html', controller: "TextsCtrl"})
       .when('/texts/:resource?', {templateUrl: '/partials/texts.html', controller: "TextsCtrl"})
       .when('/annotations/:resource?', {templateUrl: '/partials/texts.html', controller: "TextsCtrl"})

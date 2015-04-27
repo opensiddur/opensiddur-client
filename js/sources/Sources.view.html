@@ -1,7 +1,7 @@
 <div>
     <div class="toolbar navbar navbar-inverse nav-collapse">
         <div class="container-fluid">
-          <p class="navbar-text">{{ editor.content.biblStruct.monogr.title_asArray[0].__text | truncate:30 }}</p>
+          <p class="navbar-text">{{ SourceService.content.biblStruct.monogr.title_asArray[0].__text | truncate:30 }}</p>
           <div class="btn-toolbar navbar-btn">
               <div class="btn-group navbar-btn">
                   <button class="btn btn-primary" 
@@ -24,7 +24,7 @@
         </div>
     </div>
     
-    <div class="page-container container-fluid sources-editor" data-ng-show="!editor.isNew || editor.loggedIn">
+    <div class="page-container container-fluid sources-editor" data-ng-show="SourceService.resource || editor.loggedIn">
         <div class="row">
             <div class="col-md-10 col-md-offset-1 alert alert-info text-center">
                 <p>For <strong>printed works</strong>, the following information is <strong>required</strong>: 
@@ -42,7 +42,7 @@
                           <select 
                               class="form-control"
                               name="biblStruct._xmlLang"
-                              data-ng-model="editor.content.biblStruct['_xml:lang']" 
+                              data-ng-model="SourceService.content.biblStruct['_xml:lang']" 
                               required="true"
                               data-ng-options="code as language.toString() for (code, language) in LanguageService.supportedLanguages"/>
                         </div>
@@ -55,7 +55,7 @@
                                   type="radio"
                                   name="isAnalytic1"
                                   value="1"
-                                  data-ng-model="editor.isAnalytic"
+                                  data-ng-model="SourceService.isAnalytic"
                                   />Yes
                           </label>
                           <label class="radio-inline">
@@ -63,7 +63,7 @@
                                   type="radio"
                                   name="isAnalytic2"
                                   value="0"
-                                  data-ng-model="editor.isAnalytic"
+                                  data-ng-model="SourceService.isAnalytic"
                                   />No
                           </label>
                         </div>
@@ -76,7 +76,7 @@
                                   type="radio"
                                   name="isSeries1"
                                   value="1"
-                                  data-ng-model="editor.isSeries"
+                                  data-ng-model="SourceService.isSeries"
                                   />Yes
                           </label>
                           <label class="radio-inline">
@@ -84,12 +84,12 @@
                                   type="radio"
                                   name="isSeries2"
                                   value="0"
-                                  data-ng-model="editor.isSeries"
+                                  data-ng-model="SourceService.isSeries"
                                   />No
                           </label>
                         </div>
                     </div>
-                    <fieldset data-ng-show="editor.isAnalytic">
+                    <fieldset data-ng-show="SourceService.isAnalytic">
                         <legend>Section</legend>
                         <div class="form-group">
                             <label class="col-md-2 control-label" for="biblStruct.analytic.title_main">Section title:</label>
@@ -97,15 +97,15 @@
                                 <select
                                     class="form-control" 
                                     name="biblStruct.analytic.title_main_xmlLang"
-                                    data-ng-model="editor.content.biblStruct.analytic.title_asArray[0]['_xml:lang']" 
-                                    data-ng-required="editor.content.biblStruct.analytic.title_asArray[0].__text"
+                                    data-ng-model="SourceService.content.biblStruct.analytic.title_asArray[0]['_xml:lang']" 
+                                    data-ng-required="SourceService.content.biblStruct.analytic.title_asArray[0].__text"
                                     data-ng-options="code as language.toString() for (code, language) in LanguageService.supportedLanguages"/>
                             </div>
                             <div class="col-md-6">
                                 <input class="form-control"
                                     name="biblStruct.analytic.title_main" 
-                                    data-ng-model="editor.content.biblStruct.analytic.title_asArray[0].__text"
-                                    data-ng-required="editor.isAnalytic"
+                                    data-ng-model="SourceService.content.biblStruct.analytic.title_asArray[0].__text"
+                                    data-ng-required="SourceService.isAnalytic"
                                     placeholder="Main section title"/>
                             </div>
                         </div>
@@ -115,12 +115,12 @@
                                 <select 
                                     class="form-control"
                                     name="biblStruct.analytic.title_sub_xmlLang"
-                                    data-ng-model="editor.content.biblStruct.analytic.title_asArray[1]['_xml:lang']" 
-                                    data-ng-required="editor.content.biblStruct.analytics.title_asArray[1].__text"
+                                    data-ng-model="SourceService.content.biblStruct.analytic.title_asArray[1]['_xml:lang']" 
+                                    data-ng-required="SourceService.content.biblStruct.analytics.title_asArray[1].__text"
                                     data-ng-options="code as language.toString() for (code, language) in LanguageService.supportedLanguages"/>
                             </div>
                             <div class="col-md-6">
-                                <input class="form-control" name="biblStruct.analytic.title_sub" data-ng-model="editor.content.biblStruct.analytic.title_asArray[1].__text"
+                                <input class="form-control" name="biblStruct.analytic.title_sub" data-ng-model="SourceService.content.biblStruct.analytic.title_asArray[1].__text"
                                     placeholder="Section subtitle"/>
                             </div>
                         </div>
@@ -130,12 +130,12 @@
                                 <select 
                                     class="form-control"
                                     name="biblStruct.analytic.title_alt_xmlLang"
-                                    data-ng-model="editor.content.biblStruct.analytic.title_asArray[2]['_xml:lang']" 
-                                    data-ng-required="editor.content.biblStruct.analytics.title_asArray[2].__text"
+                                    data-ng-model="SourceService.content.biblStruct.analytic.title_asArray[2]['_xml:lang']" 
+                                    data-ng-required="SourceService.content.biblStruct.analytics.title_asArray[2].__text"
                                     data-ng-options="code as language.toString() for (code, language) in LanguageService.supportedLanguages"/>
                             </div>
                             <div class="col-md-6">
-                                <input class="form-control" name="biblStruct.analytic.title_alt" data-ng-model="editor.content.biblStruct.analytic.title_asArray[2].__text"
+                                <input class="form-control" name="biblStruct.analytic.title_alt" data-ng-model="SourceService.content.biblStruct.analytic.title_asArray[2].__text"
                                     placeholder="Alternate title (eg, translation)"/>
                             </div>
                         </div>
@@ -145,21 +145,21 @@
                               <select 
                                   class="form-control"
                                   name="biblStruct.analytic.title_alt_sub_xmlLang"
-                                  data-ng-model="editor.content.biblStruct.analytic.title_asArray[3]['_xml:lang']" 
-                                  data-ng-required="editor.content.biblStruct.analytics.title_asArray[3].__text"
+                                  data-ng-model="SourceService.content.biblStruct.analytic.title_asArray[3]['_xml:lang']" 
+                                  data-ng-required="SourceService.content.biblStruct.analytics.title_asArray[3].__text"
                                   data-ng-options="code as language.toString() for (code, language) in LanguageService.supportedLanguages"/>
                             </div>
                             <div class="col-md-6">
-                                <input class="form-control" name="biblStruct.analytic.title_alt_sub" data-ng-model="editor.content.biblStruct.analytic.title_asArray[3].__text"
+                                <input class="form-control" name="biblStruct.analytic.title_alt_sub" data-ng-model="SourceService.content.biblStruct.analytic.title_asArray[3].__text"
                                     placeholder="Alternate subtitle (eg, translation)"/>
                             </div>
                         </div>
-                        <div data-os-array-input="editor.content.biblStruct.analytic.author_asArray" 
+                        <div data-os-array-input="SourceService.content.biblStruct.analytic.author_asArray" 
                             data-placeholder="Section Author"
                             data-label="Section authors"
                             data-name="biblStruct.analytic.author"
                             data-child="name"/>
-                        <div data-os-array-input="editor.content.biblStruct.analytic.editor_asArray" 
+                        <div data-os-array-input="SourceService.content.biblStruct.analytic.editor_asArray" 
                             data-placeholder="Section Editor"
                             data-label="Section Editors"
                             data-name="biblStruct.analytic.editor"
@@ -169,8 +169,8 @@
                             <label class="control-label col-md-offset-1" for="biblStruct.analytic.respStmt.name1">Additional Responsibilities for the section</label>
                         </div>
                         <div
-                            data-ng-repeat="respStmt in editor.content.biblStruct.analytic.respStmt_asArray">
-                            <div class="form-group" data-ng-show="$index == 0 || editor.content.biblStruct.analytic.respStmt_asArray[$index - 1].name.__text || respStmt.name.__text">
+                            data-ng-repeat="respStmt in SourceService.content.biblStruct.analytic.respStmt_asArray">
+                            <div class="form-group" data-ng-show="$index == 0 || SourceService.content.biblStruct.analytic.respStmt_asArray[$index - 1].name.__text || respStmt.name.__text">
                                 <div class="col-md-offset-2 col-md-2">
                                     <select class="form-control"
                                         name="biblStruct.analytic.respStmt.resp_key{{$index}}"
@@ -199,7 +199,7 @@
                                 <select 
                                     class="form-control"
                                     name="biblStruct.monogr.title_main_xmlLang"
-                                    data-ng-model="editor.content.biblStruct.monogr.title_asArray[0]['_xml:lang']" 
+                                    data-ng-model="SourceService.content.biblStruct.monogr.title_asArray[0]['_xml:lang']" 
                                     required="true"
                                     data-ng-options="code as language.toString() for (code, language) in LanguageService.supportedLanguages"/>
                             </div>
@@ -207,7 +207,7 @@
                                 <input class="form-control" 
                                     name="biblStruct.monogr.title_main"
                                     required="true"
-                                    data-ng-model="editor.content.biblStruct.monogr.title_asArray[0].__text"
+                                    data-ng-model="SourceService.content.biblStruct.monogr.title_asArray[0].__text"
                                     placeholder="Main title"/>
                             </div>
                         </div>
@@ -217,12 +217,12 @@
                                 <select 
                                     class="form-control"
                                     name="biblStruct.monogr.title_sub_xmlLang"
-                                    data-ng-model="editor.content.biblStruct.monogr.title_asArray[1]['_xml:lang']" 
-                                    data-ng-required="editor.content.biblStruct.monogr.title_asArray[1].__text"
+                                    data-ng-model="SourceService.content.biblStruct.monogr.title_asArray[1]['_xml:lang']" 
+                                    data-ng-required="SourceService.content.biblStruct.monogr.title_asArray[1].__text"
                                     data-ng-options="code as language.toString() for (code, language) in LanguageService.supportedLanguages"/>
                             </div>
                             <div class="col-md-6">
-                                <input class="form-control" name="biblStruct.monogr.title_sub" data-ng-model="editor.content.biblStruct.monogr.title_asArray[1].__text"
+                                <input class="form-control" name="biblStruct.monogr.title_sub" data-ng-model="SourceService.content.biblStruct.monogr.title_asArray[1].__text"
                                     placeholder="subtitle"/>
                             </div>
                         </div>
@@ -232,12 +232,12 @@
                                 <select 
                                     class="form-control"
                                     name="biblStruct.monogr.title_alt_xmlLang"
-                                    data-ng-model="editor.content.biblStruct.monogr.title_asArray[2]['_xml:lang']" 
-                                    data-ng-required="editor.content.biblStruct.monogr.title_asArray[2].__text"
+                                    data-ng-model="SourceService.content.biblStruct.monogr.title_asArray[2]['_xml:lang']" 
+                                    data-ng-required="SourceService.content.biblStruct.monogr.title_asArray[2].__text"
                                     data-ng-options="code as language.toString() for (code, language) in LanguageService.supportedLanguages"/>
                             </div>
                             <div class="col-md-6">
-                                <input class="form-control" name="biblStruct.monogr.title_alt" data-ng-model="editor.content.biblStruct.monogr.title_asArray[2].__text"
+                                <input class="form-control" name="biblStruct.monogr.title_alt" data-ng-model="SourceService.content.biblStruct.monogr.title_asArray[2].__text"
                                     placeholder="Alternate main title (eg, translation)"/>
                             </div>
                         </div>
@@ -247,21 +247,21 @@
                                 <select 
                                     class="form-control"
                                     name="biblStruct.monogr.title_alt_sub_xmlLang"
-                                    data-ng-model="editor.content.biblStruct.monogr.title_asArray[3]['_xml:lang']" 
-                                    data-ng-required="editor.content.biblStruct.monogr.title_asArray[3].__title"
+                                    data-ng-model="SourceService.content.biblStruct.monogr.title_asArray[3]['_xml:lang']" 
+                                    data-ng-required="SourceService.content.biblStruct.monogr.title_asArray[3].__title"
                                     data-ng-options="code as language.toString() for (code, language) in LanguageService.supportedLanguages"/>
                             </div>
                             <div class="col-md-6">
-                                <input class="form-control" name="biblStruct.monogr.title_alt_sub" data-ng-model="editor.content.biblStruct.monogr.title_asArray[3].__text"
+                                <input class="form-control" name="biblStruct.monogr.title_alt_sub" data-ng-model="SourceService.content.biblStruct.monogr.title_asArray[3].__text"
                                     placeholder="Alternate subtitle (eg, translation)"/>
                             </div>
                         </div>
-                        <div data-os-array-input="editor.content.biblStruct.monogr.author_asArray" 
+                        <div data-os-array-input="SourceService.content.biblStruct.monogr.author_asArray" 
                             data-placeholder="Author"
                             data-label="Authors"
                             data-name="biblStruct.monogr.author"
                             data-child="name"/>
-                        <div data-os-array-input="editor.content.biblStruct.monogr.editor_asArray" 
+                        <div data-os-array-input="SourceService.content.biblStruct.monogr.editor_asArray" 
                             data-placeholder="Editor"
                             data-label="Editors"
                             data-name="biblStruct.monogr.editor"
@@ -271,8 +271,8 @@
                             <label class="col-md-offset-1 control-label" for="biblStruct.monogr.respStmt.name1">Additional Responsibilities for the book</label>
                         </div>
                         <div
-                            data-ng-repeat="respStmt in editor.content.biblStruct.monogr.respStmt_asArray">
-                            <div class="form-group" data-ng-show="$index == 0 || editor.content.biblStruct.monogr.respStmt_asArray[$index - 1].name.__text || respStmt.name.__text">
+                            data-ng-repeat="respStmt in SourceService.content.biblStruct.monogr.respStmt_asArray">
+                            <div class="form-group" data-ng-show="$index == 0 || SourceService.content.biblStruct.monogr.respStmt_asArray[$index - 1].name.__text || respStmt.name.__text">
                                 <div class="col-md-2">
                                     <select class="form-control"
                                         name="biblStruct.monogr.respStmt.resp_key{{$index}}"
@@ -297,7 +297,7 @@
                             <div class="col-md-6">
                                 <input
                                     class="form-control"
-                                    data-ng-model="editor.content.biblStruct.monogr.edition_asArray[0].__text"
+                                    data-ng-model="SourceService.content.biblStruct.monogr.edition_asArray[0].__text"
                                     name="biblStruct.monogr.edition" 
                                     placeholder="Edition (eg, 5th)"
                                     />
@@ -309,24 +309,24 @@
                                 <select 
                                     class="form-control"
                                     name="biblStruct.monogr.biblScope_unit"
-                                    data-ng-model="editor.content.biblStruct.monogr.biblScope_asArray[0]._unit" 
-                                    data-ng-required="editor.content.biblStruct.monogr.biblScope_asArray[0]._from || editor.content.biblStruct.monogr.biblScope_asArray[0]._to"
+                                    data-ng-model="SourceService.content.biblStruct.monogr.biblScope_asArray[0]._unit" 
+                                    data-ng-required="SourceService.content.biblStruct.monogr.biblScope_asArray[0]._from || SourceService.content.biblStruct.monogr.biblScope_asArray[0]._to"
                                     data-ng-options="code as scope for (code, scope) in editor.monographScopes"/>
                             </div>
                             <label class="control-label col-md-1" for="biblStruct.monogr.biblScope1">from</label>
                             <div class="col-md-1">
                                 <input class="form-control"
-                                    data-ng-model="editor.content.biblStruct.monogr.biblScope_asArray[0]._from"
+                                    data-ng-model="SourceService.content.biblStruct.monogr.biblScope_asArray[0]._from"
                                     name="biblStruct.monogr.biblScope1"
-                                    data-ng-required="editor.content.biblStruct.monogr.biblScope_asArray[0]._unit || editor.content.biblStruct.monogr.biblScope_asArray[0]._to"
+                                    data-ng-required="SourceService.content.biblStruct.monogr.biblScope_asArray[0]._unit || SourceService.content.biblStruct.monogr.biblScope_asArray[0]._to"
                                     placeholder="From"/>
                             </div>
                             <label class="control-label col-md-1" for="biblStruct.monogr.biblScope2">to</label>
                             <div class="col-md-1">
                                 <input class="form-control"
-                                    data-ng-model="editor.content.biblStruct.monogr.biblScope_asArray[0]._to"
+                                    data-ng-model="SourceService.content.biblStruct.monogr.biblScope_asArray[0]._to"
                                     name="biblStruct.monogr.biblScope2"
-                                    data-ng-required="editor.content.biblStruct.monogr.biblScope_asArray[0]._unit || editor.content.biblStruct.monogr.biblScope_asArray[0]._from"
+                                    data-ng-required="SourceService.content.biblStruct.monogr.biblScope_asArray[0]._unit || SourceService.content.biblStruct.monogr.biblScope_asArray[0]._from"
                                     placeholder="To"/>
                             </div>
                         </div>
@@ -335,9 +335,9 @@
                             <div class="col-md-6">
                                 <input
                                     class="form-control"
-                                    data-ng-model="editor.content.biblStruct.monogr.imprint.publisher_asArray[0].__text"
+                                    data-ng-model="SourceService.content.biblStruct.monogr.imprint.publisher_asArray[0].__text"
                                     name="biblStruct.monogr.imprint.publisher"
-                                    data-ng-required="!editor.content.biblStruct.monogr.imprint.distributor.name_asArray[0].__text &amp;&amp; !editor.content.biblStruct.monogr.imprint.distributor.ref_asArray[0]._target &amp;&amp; !editor.content.biblStruct.monogr.imprint.distributor.ref_asArray[0].__text" 
+                                    data-ng-required="!SourceService.content.biblStruct.monogr.imprint.distributor.name_asArray[0].__text &amp;&amp; !SourceService.content.biblStruct.monogr.imprint.distributor.ref_asArray[0]._target &amp;&amp; !SourceService.content.biblStruct.monogr.imprint.distributor.ref_asArray[0].__text" 
                                     placeholder="Publisher"
                                     />
                             </div>
@@ -347,7 +347,7 @@
                             <div class="col-md-6">
                                 <input
                                     class="form-control"
-                                    data-ng-model="editor.content.biblStruct.monogr.imprint.pubPlace_asArray[0].__text"
+                                    data-ng-model="SourceService.content.biblStruct.monogr.imprint.pubPlace_asArray[0].__text"
                                     name="biblStruct.monogr.imprint.pubPlace" 
                                     placeholder="Publication place (eg, Jerusalem, Israel; New York, NY)"
                                     />
@@ -358,9 +358,9 @@
                             <div class="col-md-2">
                                 <input
                                     class="form-control"
-                                    data-ng-model="editor.content.biblStruct.monogr.imprint.date_asArray[0].__text"
+                                    data-ng-model="SourceService.content.biblStruct.monogr.imprint.date_asArray[0].__text"
                                     name="biblStruct.monogr.imprint.date"
-                                    data-ng-required="editor.content.biblStruct.monogr.imprint.publisher_asArray[0].__text"
+                                    data-ng-required="SourceService.content.biblStruct.monogr.imprint.publisher_asArray[0].__text"
                                     data-ng-pattern="/^(\d{4}(-[01]\d(-[0-3]\d)?)?)$/"
                                     placeholder="YYYY-MM-DD"
                                     />
@@ -371,8 +371,8 @@
                             <div class="col-md-6">
                                 <input
                                     class="form-control"
-                                    data-ng-model="editor.content.biblStruct.monogr.imprint.distributor.name_asArray[0].__text"
-                                    data-ng-required="!editor.content.biblStruct.monogr.imprint.publisher.__text &amp;&amp; !editor.content.biblStruct.monogr.imprint.distributor.ref_asArray[0].__text"
+                                    data-ng-model="SourceService.content.biblStruct.monogr.imprint.distributor.name_asArray[0].__text"
+                                    data-ng-required="!SourceService.content.biblStruct.monogr.imprint.publisher.__text &amp;&amp; !SourceService.content.biblStruct.monogr.imprint.distributor.ref_asArray[0].__text"
                                     name="biblStruct.monogr.imprint.distributor.name" 
                                     placeholder="Offline distributor"
                                     />
@@ -383,9 +383,9 @@
                             <div class="col-md-6">
                                 <input
                                     class="form-control"
-                                    data-ng-model="editor.content.biblStruct.monogr.imprint.distributor.ref_asArray[0].__text"
+                                    data-ng-model="SourceService.content.biblStruct.monogr.imprint.distributor.ref_asArray[0].__text"
                                     name="biblStruct.monogr.imprint.distributor.ref" 
-                                    data-ng-required="(!editor.content.biblStruct.monogr.imprint.distributor.name_asArray[0].__text &amp;&amp; !editor.content.biblStruct.monogr.imprint.publisher_asArray[0].__text) || editor.content.biblStruct.monogr.imprint.distributor.ref_asArray[0]._target"
+                                    data-ng-required="(!SourceService.content.biblStruct.monogr.imprint.distributor.name_asArray[0].__text &amp;&amp; !SourceService.content.biblStruct.monogr.imprint.publisher_asArray[0].__text) || SourceService.content.biblStruct.monogr.imprint.distributor.ref_asArray[0]._target"
                                     placeholder="Online distributor website title"
                                     />
                             </div>
@@ -394,16 +394,16 @@
                             <div class="col-md-6 col-md-offset-2">
                                 <input
                                     class="form-control"
-                                    data-ng-model="editor.content.biblStruct.monogr.imprint.distributor.ref_asArray[0]._target"
+                                    data-ng-model="SourceService.content.biblStruct.monogr.imprint.distributor.ref_asArray[0]._target"
                                     name="biblStruct.monogr.imprint.distributor.ref._target" 
-                                    data-ng-required="editor.content.biblStruct.monogr.imprint.distributor.ref_asArray[0].__text"
+                                    data-ng-required="SourceService.content.biblStruct.monogr.imprint.distributor.ref_asArray[0].__text"
                                     placeholder="Distributor URL (eg, http://www.example.com/x/y/z)"
                                     />
                             </div>
                             <div class="col-md-2">
                                 <input
                                     class="form-control"
-                                    data-ng-model="editor.content.biblStruct.monogr.imprint.distributor.date_asArray[0].__text"
+                                    data-ng-model="SourceService.content.biblStruct.monogr.imprint.distributor.date_asArray[0].__text"
                                     name="biblStruct.monogr.imprint.distributor.date" 
                                     data-ng-pattern="/^\d{4}-[01]\d-[0-3]\d$/"
                                     placeholder="Access date (YYYY-MM-DD)"
@@ -411,7 +411,7 @@
                             </div>
                         </div>
                     </fieldset>
-                    <fieldset data-ng-show="editor.isSeries">
+                    <fieldset data-ng-show="SourceService.isSeries">
                         <legend>Series</legend>
                         <div class="form-group">
                             <label class="col-md-2 control-label" for="biblStruct.series.title_main">Series title:</label>
@@ -419,13 +419,13 @@
                                 <select 
                                     class="form-control"
                                     name="biblStruct.series.title_main_xmlLang"
-                                    data-ng-model="editor.content.biblStruct.series.title_asArray[0]['_xml:lang']" 
-                                    data-ng-required="editor.isSeries"
+                                    data-ng-model="SourceService.content.biblStruct.series.title_asArray[0]['_xml:lang']" 
+                                    data-ng-required="SourceService.isSeries"
                                     data-ng-options="code as language.toString() for (code, language) in LanguageService.supportedLanguages"/>
                             </div>
                             <div class="col-md-6">
-                                <input class="form-control" name="biblStruct.series.title_main" data-ng-model="editor.content.biblStruct.series.title_asArray[0].__text"
-                                    placeholder="Main series title" data-ng-required="editor.isSeries"/>
+                                <input class="form-control" name="biblStruct.series.title_main" data-ng-model="SourceService.content.biblStruct.series.title_asArray[0].__text"
+                                    placeholder="Main series title" data-ng-required="SourceService.isSeries"/>
                             </div>
                         </div>
                         <div class="form-group">
@@ -434,12 +434,12 @@
                                 <select 
                                     class="form-control"
                                     name="biblStruct.series.title_sub_xmlLang"
-                                    data-ng-model="editor.content.biblStruct.series.title_asArray[1]['_xml:lang']" 
-                                    data-ng-required="editor.content.biblStruct.series.title_asArray[1].__text"
+                                    data-ng-model="SourceService.content.biblStruct.series.title_asArray[1]['_xml:lang']" 
+                                    data-ng-required="SourceService.content.biblStruct.series.title_asArray[1].__text"
                                     data-ng-options="code as language.toString() for (code, language) in LanguageService.supportedLanguages"/>
                             </div>
                             <div class="col-md-6">
-                                <input class="form-control" name="biblStruct.series.title_sub" data-ng-model="editor.content.biblStruct.series.title_asArray[1].__text"
+                                <input class="form-control" name="biblStruct.series.title_sub" data-ng-model="SourceService.content.biblStruct.series.title_asArray[1].__text"
                                     placeholder="Series subtitle"/>
                             </div>
                         </div>
@@ -449,12 +449,12 @@
                                 <select 
                                     class="form-control"
                                     name="biblStruct.series.title_alt_xmlLang"
-                                    data-ng-model="editor.content.biblStruct.series.title_asArray[2]['_xml:lang']" 
-                                    data-ng-required="editor.content.biblStruct.series.title_asArray[2].__text"
+                                    data-ng-model="SourceService.content.biblStruct.series.title_asArray[2]['_xml:lang']" 
+                                    data-ng-required="SourceService.content.biblStruct.series.title_asArray[2].__text"
                                     data-ng-options="code as language.toString() for (code, language) in LanguageService.supportedLanguages"/>
                             </div>
                             <div class="col-md-6">
-                                <input class="form-control" name="biblStruct.series.title_alt" data-ng-model="editor.content.biblStruct.series.title_asArray[2].__text"
+                                <input class="form-control" name="biblStruct.series.title_alt" data-ng-model="SourceService.content.biblStruct.series.title_asArray[2].__text"
                                     placeholder="Alternate series main title (eg, translation)"/>
                             </div>
                         </div>
@@ -464,23 +464,23 @@
                                 <select 
                                     class="form-control"
                                     name="biblStruct.series.title_alt_sub_xmlLang"
-                                    data-ng-model="editor.content.biblStruct.series.title_asArray[3]['_xml:lang']" 
-                                    data-ng-required="editor.content.biblStruct.series.title_asArray[3].__text"
+                                    data-ng-model="SourceService.content.biblStruct.series.title_asArray[3]['_xml:lang']" 
+                                    data-ng-required="SourceService.content.biblStruct.series.title_asArray[3].__text"
                                     data-ng-options="code as language.toString() for (code, language) in LanguageService.supportedLanguages"/>
                             </div>
                             <div class="col-md-6">
-                                <input class="form-control" name="biblStruct.series.title_alt_sub" data-ng-model="editor.content.biblStruct.series.title_asArray[3].__text"
+                                <input class="form-control" name="biblStruct.series.title_alt_sub" data-ng-model="SourceService.content.biblStruct.series.title_asArray[3].__text"
                                     placeholder="Alternate series subtitle (eg, translation)"/>
                             </div>
                         </div>
                         <!-- Do series have authors or just editors?
-                        <div data-os-array-input="editor.content.biblStruct.series.author_asArray" 
+                        <div data-os-array-input="SourceService.content.biblStruct.series.author_asArray" 
                             data-placeholder="Series Author"
                             data-label="Series authors"
                             data-name="biblStruct.series.author"
                             data-child="name"/>
                         -->
-                        <div data-os-array-input="editor.content.biblStruct.series.editor_asArray" 
+                        <div data-os-array-input="SourceService.content.biblStruct.series.editor_asArray" 
                             data-placeholder="Series Editor"
                             data-label="Series Editors"
                             data-name="biblStruct.series.editor"
@@ -490,8 +490,8 @@
                             <label class="col-md-offset-1 control-label" for="biblStruct.series.respStmt.name1">Additional Responsibilities for the series</label>
                         </div>
                         <div
-                            data-ng-repeat="respStmt in editor.content.biblStruct.series.respStmt_asArray">
-                            <div class="form-group" data-ng-show="$index == 0 || editor.content.biblStruct.series.respStmt_asArray[$index - 1].name.__text || respStmt.name.__text">
+                            data-ng-repeat="respStmt in SourceService.content.biblStruct.series.respStmt_asArray">
+                            <div class="form-group" data-ng-show="$index == 0 || SourceService.content.biblStruct.series.respStmt_asArray[$index - 1].name.__text || respStmt.name.__text">
                                 <div class="col-md-2">
                                     <select class="form-control"
                                         name="biblStruct.series.respStmt.resp_key{{$index}}"
@@ -519,7 +519,7 @@
                                 <textarea
                                     class="form-control" 
                                     placeholder="Note."
-                                    data-ng-model="editor.content.biblStruct.note_asArray[1].__text"
+                                    data-ng-model="SourceService.content.biblStruct.note_asArray[1].__text"
                                     name="biblStruct.note"
                                     />
                             </div>
@@ -530,7 +530,7 @@
                                 <textarea
                                     class="form-control" 
                                     placeholder="Note about licensing or copyright status, if necessary"
-                                    data-ng-model="editor.content.biblStruct.note_asArray[0].note.__text"
+                                    data-ng-model="SourceService.content.biblStruct.note_asArray[0].note.__text"
                                     name="biblStruct.note_copyright.note"
                                     />
                             </div>
@@ -540,17 +540,17 @@
                             <label class="control-label col-md-2" for="biblStruct.note.ref" class="span2">License name/URL:</label>
                             <div class="col-md-4">
                                 <input class="form-control"
-                                    data-ng-model="editor.content.biblStruct.note.ref.__text"
-                                    data-ng-required="editor.content.biblStruct.note.ref._target"
+                                    data-ng-model="SourceService.content.biblStruct.note.ref.__text"
+                                    data-ng-required="SourceService.content.biblStruct.note.ref._target"
                                     name="biblStruct.note.ref"
                                     placeholder="Name of copyright license"
                                     />
                             </div>
                             <div class="col-md-5">
                                 <input class="form-control"
-                                    data-ng-model="editor.content.biblStruct.note.ref._target"
+                                    data-ng-model="SourceService.content.biblStruct.note.ref._target"
                                     name="biblStruct.note.ref._target"
-                                    data-ng-required="editor.content.biblStruct.note.ref.__text"
+                                    data-ng-required="SourceService.content.biblStruct.note.ref.__text"
                                     placeholder="URL of license (eg, http://www.creativecommons.org/publicdomain/zero/1.0)"
                                     />
                             </div>
@@ -563,7 +563,7 @@
                             <div class="col-md-2">
                                 <select
                                     class="form-control" 
-                                    data-ng-model="editor.content.biblStruct.idno._type">
+                                    data-ng-model="SourceService.content.biblStruct.idno._type">
                                     <option value="">-- Select --</option>
                                     <option value="uri">URL</option>
                                     <option value="archive.org">Internet Archive</option>
@@ -573,7 +573,7 @@
                             <div class="col-md-6">
                                 <input class="form-control"
                                     name="biblStruct.idno.__text"
-                                    data-ng-model="editor.content.biblStruct.idno.__text"
+                                    data-ng-model="SourceService.content.biblStruct.idno.__text"
                                     placeholder="Archive id"
                                     />
                             </div>

@@ -17,9 +17,9 @@ X    ./js/controllers/AuthenticationCtrl.js
 X    ./js/controllers/ProfileCtrl.js
 X    ./partials/profile.html
 -sources/bibliography management
-    ./js/controllers/SourcesCtrl.js
-    ./js/services/SourceService.js
-    ./partials/sources.html
+X    ./js/controllers/SourcesCtrl.js
+X    ./js/services/SourceService.js
+X    ./partials/sources.html
 -texts
     ./partials/texts.html
     ./js/services/TextService.js
@@ -68,11 +68,11 @@ X    ./partials/Compile.html
         ./js/directives/osarrayinput.js
         ./js/directives/osarrayinput.html
     -sharing
-        ./js/services/AccessService.js
-        ./js/directives/osSharingDialog.js
-        ./js/directives/osSharingDialog.html
-        ./js/directives/osSharingStatus.js
-        ./js/directives/osSharingStatus.html
+X        ./js/services/AccessService.js
+X        ./js/directives/osSharingDialog.js
+X        ./js/directives/osSharingDialog.html
+X        ./js/directives/osSharingStatus.js
+X        ./js/directives/osSharingStatus.html
     -open
         ./js/directives/osOpenDialog.html
         ./js/directives/osOpenDialog.js
@@ -104,8 +104,8 @@ X        ./js/directives/osErrorBox.html
         ./js/filters/truncate.js
     -XSLT
 X        ./js/services/XsltService.js
-    -shared-data     
-        ./js/services/LanguageService.js
+    -globaldata 
+X        ./js/services/LanguageService.js
 
 - ckeditor features
     ./js/services/EditorDataService.js
