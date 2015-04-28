@@ -64,6 +64,7 @@ var OpenSiddurClientApp =
        'osGlobalData',
        'osJobs',
        'osProfile',
+       'osRecentChanges',
        'osSharing',
        'osSources',
        'osXslt' // probably won't be needed when completely modularized
@@ -102,12 +103,12 @@ OpenSiddurClientApp.config(
 
 OpenSiddurClientApp.config(
   ['$routeProvider', '$locationProvider', 
-    'osAuthenticationConst', 'osJobsConst', 'osCompilerConst', 'osProfileConst', 'osSourcesConst',
+    'osAuthenticationConst', 'osJobsConst', 'osCompilerConst', 'osProfileConst', 'osRecentChangesConst', 'osSourcesConst',
   function($routeProvider, $locationProvider, 
-    osAuthenticationConst, osJobsConst, osCompilerConst, osProfileConst, osSourcesConst) {
+    osAuthenticationConst, osJobsConst, osCompilerConst, osProfileConst, osRecentChangesConst, osSourcesConst) {
     $locationProvider.html5Mode(true).hashPrefix("!");
     $routeProvider
-      .when('/changes/:userName?', {templateUrl: '/partials/RecentChanges.html', controller: "RecentChangesCtrl"})
+      .when('/changes/:userName?', {templateUrl: osRecentChangesConst.partial, controller: "RecentChangesCtrl"})
       .when('/compile/:resource', {templateUrl: osCompilerConst.partial, controller: "CompileCtrl"})
       .when('/compiled/:resource', {templateUrl: '/partials/Compiled.html', controller: "CompiledCtrl"})
       .when('/contributors/:userName?', {templateUrl: osProfileConst.partial, controller: "ProfileCtrl"})

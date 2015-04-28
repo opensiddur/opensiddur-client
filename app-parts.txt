@@ -40,8 +40,8 @@ X    ./partials/sources.html
     ./js/directives/osTranscriptionWindow.html
     ./js/services/PageImageUrlService.js
 -changes
-    ./js/controllers/RecentChangesCtrl.js
-    ./partials/RecentChanges.html
+X    ./js/controllers/RecentChangesCtrl.js
+X    ./partials/RecentChanges.html
 -jobs
 X    ./js/controllers/JobStatusCtrl.js
 X    ./js/controllers/JobsCtrl.js
