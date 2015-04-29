@@ -7,7 +7,7 @@
  * Copyright 2014 Efraim Feinstein, efraim@opensiddur.org
  * Licensed under the GNU Lesser General Public License, version 3 or later
  */
-OpenSiddurClientApp.directive(
+osTranscriptionWindowModule.directive(
         'osTranscriptionWindow',
         [
         'TextService', 'SourceService', 'ErrorService',
@@ -48,7 +48,7 @@ OpenSiddurClientApp.directive(
                     });
                  },
                  transclude : false,
-                 templateUrl : "/js/directives/osTranscriptionWindow.html"
+                 templateUrl : "/js/transcription/osTranscriptionWindow.directive.html"
              };
         }
         ]

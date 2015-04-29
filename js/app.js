@@ -51,8 +51,6 @@ var OpenSiddurClientApp =
        'ngRoute',
        'ngResource',
        'ngSanitize',
-       'panzoom', 
-       'panzoomwidget', 
        //'LocalStorageModule',
        'infinite-scroll',
        'ui.codemirror',
@@ -67,6 +65,7 @@ var OpenSiddurClientApp =
        'osRecentChanges',
        'osSharing',
        'osSources',
+       'osTranscriptionWindow', // a dependency of the text module, can be moved when completely modularized
        'osXslt' // probably won't be needed when completely modularized
       ]);
 

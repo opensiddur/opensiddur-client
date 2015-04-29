@@ -8,7 +8,7 @@
  * Copyright 2014 Efraim Feinstein, efraim@opensiddur.org
  * Licensed under the GNU Lesser General Public License, version 3 or later
  */
-OpenSiddurClientApp.directive(
+osTranscriptionWindowModule.directive(
         'osTranscriptionViewer',
         [
         'PageImageUrlService', 'SourceService', 'ErrorService',
@@ -45,8 +45,8 @@ OpenSiddurClientApp.directive(
                         if (newSource) {
                             SourceService.load(newSource).then(function() {
                                 console.log("Source loaded");
-                                scope.sourceArchive = SourceService._content.biblStruct.idno._type;
-                                scope.archiveId = SourceService._content.biblStruct.idno.__text;
+                                scope.sourceArchive = SourceService.content.biblStruct.idno._type;
+                                scope.archiveId = SourceService.content.biblStruct.idno.__text;
                                 scope.page = scope.page;
                                 scope.loadPageImage();
                             });
@@ -54,7 +54,7 @@ OpenSiddurClientApp.directive(
                     });
                  },
                  transclude : false,
-                 templateUrl : "/js/directives/osTranscriptionViewer.html"
+                 templateUrl : "/js/transcription/osTranscriptionViewer.directive.html"
              };
         }
         ]

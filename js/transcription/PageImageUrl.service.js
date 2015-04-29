@@ -5,7 +5,7 @@
  * Copyright 2014 Efraim Feinstein, efraim@opensiddur.org
  * Licensed under the GNU Lesser General Public License, version 3 or later
  */
-OpenSiddurClientApp.service("PageImageUrlService",
+osTranscriptionWindowModule.service("PageImageUrlService",
     function () {
         var patterns = {
             "archive.org" : "http://www.archive.org/download/{archiveId}/page/n{page}.jpg",
