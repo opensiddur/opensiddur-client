@@ -34,11 +34,11 @@ X    ./partials/sources.html
 -misc text-like objects (conditions, annotations)
 -styles
 -transcription viewer
-    ./js/directives/osTranscriptionViewer.js
-    ./js/directives/osTranscriptionViewer.html
-    ./js/directives/osTranscriptionWindow.js
-    ./js/directives/osTranscriptionWindow.html
-    ./js/services/PageImageUrlService.js
+X    ./js/directives/osTranscriptionViewer.js
+X    ./js/directives/osTranscriptionViewer.html
+X    ./js/directives/osTranscriptionWindow.js
+X    ./js/directives/osTranscriptionWindow.html
+X    ./js/services/PageImageUrlService.js
 -changes
 X    ./js/controllers/RecentChangesCtrl.js
 X    ./partials/RecentChanges.html
@@ -117,7 +117,7 @@ X        ./js/services/LanguageService.js
     ./js/directives/osEditLinkDialogSimple.html
     ./js/ckeditor/plugins/tei-p/plugin.js
     ./js/ckeditor/config.js
-- vendor
+- thirdparty 
     base64
         ./js/base64.js
     infinite-scroll
@@ -138,7 +138,7 @@ REMOVED
     bootstrap.min.js
     angular.min.js
 TO BE REMOVED FUNCTIONALITY
-    ./js/directives/osinstance.js
+X    ./js/directives/osinstance.js
     ./js/jsonml-utils.js
     ./js/jsonml-xml.js
     ./js/jquery-2.0.3.min.js
