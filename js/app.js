@@ -58,6 +58,7 @@ var OpenSiddurClientApp =
        // Open Siddur specific modules
        'osAuthentication',
        'osError',
+       'osCompiled',
        'osCompiler',
        'osGlobalData',
        'osJobs',
@@ -102,17 +103,17 @@ OpenSiddurClientApp.config(
 
 OpenSiddurClientApp.config(
   ['$routeProvider', '$locationProvider', 
-    'osAuthenticationConst', 'osJobsConst', 'osCompilerConst', 'osProfileConst', 'osRecentChangesConst', 'osSourcesConst',
+    'osAuthenticationConst', 'osJobsConst', 'osCompiledConst', 'osCompilerConst', 'osProfileConst', 'osRecentChangesConst', 'osSourcesConst',
   function($routeProvider, $locationProvider, 
-    osAuthenticationConst, osJobsConst, osCompilerConst, osProfileConst, osRecentChangesConst, osSourcesConst) {
+    osAuthenticationConst, osJobsConst, osCompiledConst, osCompilerConst, osProfileConst, osRecentChangesConst, osSourcesConst) {
     $locationProvider.html5Mode(true).hashPrefix("!");
     $routeProvider
       .when('/changes/:userName?', {templateUrl: osRecentChangesConst.partial, controller: "RecentChangesCtrl"})
       .when('/compile/:resource', {templateUrl: osCompilerConst.partial, controller: "CompileCtrl"})
-      .when('/compiled/:resource', {templateUrl: '/partials/Compiled.html', controller: "CompiledCtrl"})
+      .when('/compiled/:resource', {templateUrl: osCompiledConst.partial, controller: "CompiledCtrl"})
       .when('/contributors/:userName?', {templateUrl: osProfileConst.partial, controller: "ProfileCtrl"})
-      .when('/jobs/:userName', {templateUrl: osJobsConst.partial, controller: "JobsCtrl"})
-      .when('/jobstatus/:jobid', {templateUrl: '/partials/Compile.html', controller: "JobStatusCtrl"})
+      .when('/jobs/:userName', {templateUrl: osJobsConst.partial.jobs, controller: "JobsCtrl"})
+      .when('/jobstatus/:jobid', {templateUrl: osJobsConst.partial.jobstatus, controller: "JobStatusCtrl"})
       .when('/signin', {templateUrl: osAuthenticationConst.partial.signin, controller: "AuthenticationCtrl"})
       .when('/sources/:resource?', {templateUrl: osSourcesConst.partial, controller: "SourcesCtrl"})
       .when('/styles/:resource?', {templateUrl: '/partials/texts.html', controller: "TextsCtrl"})
