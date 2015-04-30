@@ -55,15 +55,15 @@ X    ./partials/Compiled.html
 -dialogs and controls
     ./js/services/DialogService.js
     -id list
-        ./js/directives/osIdList.js
-        ./js/directives/osIdList.html
+X        ./js/directives/osIdList.js
+X        ./js/directives/osIdList.html
     -search
-        ./js/directives/osQueryBox.js
-        ./js/directives/osQueryBox.html
-        ./js/directives/osSearchList.js
-        ./js/directives/osSearchList.html
-        ./js/directives/osResultsBox.js
-        ./js/directives/osResultsBox.html
+X        ./js/directives/osQueryBox.js
+X        ./js/directives/osQueryBox.html
+X        ./js/directives/osSearchList.js
+X        ./js/directives/osSearchList.html
+X        ./js/directives/osResultsBox.js
+X        ./js/directives/osResultsBox.html
     -input
         ./js/directives/osarrayinput.js
         ./js/directives/osarrayinput.html
