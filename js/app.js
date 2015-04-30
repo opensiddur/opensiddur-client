@@ -64,6 +64,7 @@ var OpenSiddurClientApp =
        'osJobs',
        'osProfile',
        'osRecentChanges',
+       'osSearch',  // a dependency of dialogs, can be moved when completely modularized
        'osSharing',
        'osSources',
        'osTranscriptionWindow', // a dependency of the text module, can be moved when completely modularized

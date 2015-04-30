@@ -6,11 +6,11 @@
  * Copyright 2013-2014 Efraim Feinstein, efraim@opensiddur.org
  * Licensed under the GNU Lesser General Public License, version 3 or later
  */
-OpenSiddurClientApp.directive(
+osSearchModule.directive(
         'osSearchList',
         [
-        'RestApi',
-        function( RestApi ) {
+        'QueryService',
+        function( QueryService ) {
             return {
                 restrict : 'AE',
                 scope : {
@@ -53,13 +53,12 @@ OpenSiddurClientApp.directive(
                             scope.resultsEnd = true;
       
                             scope.inProgress = true;
-                            RestApi[scope.api].query({
+                            QueryService.query(scope.api, {
                                     q : scope.query.q, 
                                     start : 1, 
                                     'max-results' : 100
-                                },
-                                addResults
-                            );
+                                })
+                            .success(addResults);
                         }
                     }
                     
@@ -83,7 +82,7 @@ OpenSiddurClientApp.directive(
                     });
                  },
                  transclude : false,
-                 templateUrl : "/js/directives/osSearchList.html"
+                 templateUrl : "/js/search/osSearchList.directive.html"
              };
         }
         ]

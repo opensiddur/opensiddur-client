@@ -50,8 +50,8 @@ X    ./partials/Jobs.html
 X    ./js/controllers/CompileCtrl.js
 X    ./partials/Compile.html
 - compiled viewer
-    ./js/controllers/CompiledCtrl.js
-    ./partials/Compiled.html
+X    ./js/controllers/CompiledCtrl.js
+X    ./partials/Compiled.html
 -dialogs and controls
     ./js/services/DialogService.js
     -id list
@@ -101,7 +101,7 @@ X        ./js/directives/osErrorBox.js
 X        ./js/directives/osErrorBox.html
     -text dialogs
     -truncate
-        ./js/filters/truncate.js
+X        ./js/filters/truncate.js
     -XSLT
 X        ./js/services/XsltService.js
     -globaldata 
@@ -119,18 +119,18 @@ X        ./js/services/LanguageService.js
     ./js/ckeditor/config.js
 - thirdparty 
     base64
-        ./js/base64.js
+X        ./js/base64.js
     infinite-scroll
-        ./js/infinite-scroll/ng-infinite-scroll.min.js
+X        ./js/infinite-scroll/ng-infinite-scroll.min.js
     x2js
-        ./js/x2js/xml2json.js
+X        ./js/x2js/xml2json.js
     saxon-ce
-        ./js/saxon-ce/SaxonceDebug/Saxonce.nocache.js
-        ./js/saxon-ce/Saxonce/Saxonce.nocache.js
+X        ./js/saxon-ce/SaxonceDebug/Saxonce.nocache.js
+X        ./js/saxon-ce/Saxonce/Saxonce.nocache.js
     vkbeautify
-        ./js/vkbeautify/vkbeautify.js
+X        ./js/vkbeautify/vkbeautify.js
     angular-local-storage
-        ./js/angular-local-storage/localStorageModule.js
+X        ./js/angular-local-storage/localStorageModule.js
 DEPRECATED
     ./js/services/RestApi.js
 

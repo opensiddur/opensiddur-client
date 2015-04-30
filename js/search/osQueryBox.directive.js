@@ -6,7 +6,7 @@
  * Copyright 2013-2014 Efraim Feinstein <efraim@opensiddur.org>
  * Licensed under the GNU Lesser General Public License, version 3 or later
  */
-OpenSiddurClientApp.directive(
+osSearchModule.directive(
         'osQueryBox',
         [
          function() {
@@ -23,7 +23,7 @@ OpenSiddurClientApp.directive(
                     };
                  }],
                  transclude : false,
-                 templateUrl : "/js/directives/osQueryBox.html"
+                 templateUrl : "/js/search/osQueryBox.directive.html"
              };
          }
          ]
