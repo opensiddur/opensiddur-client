@@ -18,7 +18,7 @@
  * Copyright 2014-2015 Efraim Feinstein, efraim@opensiddur.org
  * Licensed under the GNU Lesser General Public License, version 3 or later
  */
-OpenSiddurClientApp.directive(
+osDialogNewModule.directive(
         'osNewDialog',
         ["LanguageService",
         function(LanguageService) {
@@ -83,7 +83,7 @@ OpenSiddurClientApp.directive(
                     elem.find(".osNewDialog").attr("id", scope.name);
                  },
                  transclude : false,
-                 templateUrl : "/js/directives/osNewDialog.html"
+                 templateUrl : "/js/dialog/new/osNewDialog.directive.html"
              };
         }
         ]
