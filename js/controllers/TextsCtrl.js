@@ -7,10 +7,10 @@
 OpenSiddurClientApp.controller(
     'TextsCtrl',
     ['$scope', '$location', '$route', '$routeParams', '$timeout', '$window', 'XsltService', 
-    'AccessService', 'AuthenticationService', 'DialogService', 'ErrorService', 'RestApi',
+    'AccessService', 'AuthenticationService', 'DialogService', 'ErrorService', 
     'LanguageService', 'TextService',
     function ($scope, $location, $route, $routeParams, $timeout, $window, XsltService, 
-        AccessService, AuthenticationService, DialogService, ErrorService, RestApi,
+        AccessService, AuthenticationService, DialogService, ErrorService,
         LanguageService, TextService) {
         console.log("Texts controller.");
         $scope.DialogService = DialogService;

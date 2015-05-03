@@ -72,12 +72,11 @@ osSearchModule.directive(
                             console.log("resultsEnd. query.start=", scope.query.start);
 
                             scope.inProgress = true;
-                            RestApi[scope.api].query({
+                            QueryService.query(scope.api, {
                                 q : scope.query.q, 
                                 start : scope.query.start, 
-                                'max-results' : scope.query['max-results']},
-                                addResults
-                            );
+                                'max-results' : scope.query['max-results']}
+                            ).success(addResults);
                         } 
                     });
                  },
