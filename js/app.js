@@ -69,6 +69,7 @@ var OpenSiddurClientApp =
        'osDialog.New', // ditto
        'osDialog.Open', // ditto
        'osDialog.InternalLink', // ditto
+       'osDialog.ExternalLink', // ditto
        'osSharing',
        'osSources',
        'osTranscriptionWindow', // a dependency of the text module, can be moved when completely modularized

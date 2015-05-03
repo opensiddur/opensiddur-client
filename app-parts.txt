@@ -24,8 +24,6 @@ X    ./partials/sources.html
     ./partials/texts.html
     ./js/services/TextService.js
     ./js/controllers/TextsCtrl.js
-    ./js/directives/osInsertInternalLinkDialog.js
-    (?) ./js/services/ListingService.js
 -translation linkages
     ./partials/translations.html
     ./js/controllers/TranslationsCtrl.js
@@ -81,8 +79,8 @@ X        ./js/directives/osNewDialog.js
 X        ./js/directives/osNewDialog.html
     -save
     -links
-        ./js/directives/osInsertLinkDialog.js
-        ./js/directives/osInsertLinkDialog.html
+X        ./js/directives/osInsertLinkDialog.js
+X        ./js/directives/osInsertLinkDialog.html
     - dialog/internallink
 X        ./js/directives/osInsertInternalLinkDialog.html
 X        ./js/directives/osInsertInternalLinkDialog.js
@@ -135,6 +133,7 @@ X        ./js/vkbeautify/vkbeautify.js
 X        ./js/angular-local-storage/localStorageModule.js
 DEPRECATED
     ./js/services/RestApi.js
+    (?) ./js/services/ListingService.js (replace with search.QueryService)
 
 REMOVED
     bootstrap.min.js

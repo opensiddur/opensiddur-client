@@ -8,11 +8,11 @@
  * Copyright 2014 Efraim Feinstein, efraim@opensiddur.org
  * Licensed under the GNU Lesser General Public License, version 3 or later
  */
-OpenSiddurClientApp.directive(
+osDialogExternalLinkModule.directive(
         'osInsertLinkDialog',
         [
-        'RestApi', 'ErrorService',
-        function( RestApi, ErrorService ) {
+        'GetAnyService', 'ErrorService',
+        function( GetAnyService, ErrorService ) {
             return {
                 restrict : 'AE',
                 scope : {
@@ -21,7 +21,7 @@ OpenSiddurClientApp.directive(
                     name : "@",
                     title : "@"
                 },
-                controller: ['$scope', 'RestApi', function ($scope, RestApi) {
+                controller: ['$scope', function ($scope) {
                     console.log("In insert link dialog controller");
 
                     $scope.typesWithAllowedRanges = ["/api/data/original"];
@@ -58,10 +58,11 @@ OpenSiddurClientApp.directive(
                             this.selectedFile = newSelection;                            
                             // if a fragment is allowed, load the content
                             if ($scope.typesWithAllowedFragments.indexOf(this.selectedType) >= 0) {
-                                RestApi[this.selectedType].get(
-                                    { resource : decodeURI(this.selection.replace("\/exist\/restxq" + this.selectedType + "/", "")) },  // TODO: need to standardize when URIs are encoded!
+                                GetAnyService.get(this.selectedType, 
+                                    decodeURI(this.selection.replace("\/exist\/restxq" + this.selectedType + "/", ""))                                      )
+                                    .success(
                                     function(content) {
-                                        $scope.links.content = content.xml;
+                                        $scope.links.content = content;
                                     } );
                             } 
                             this.composeLink();
@@ -115,7 +116,7 @@ OpenSiddurClientApp.directive(
 
                  },
                  transclude : false,
-                 templateUrl : "/js/directives/osInsertLinkDialog.html"
+                 templateUrl : "/js/dialog/externallink/osInsertLinkDialog.directive.html"
              };
         }
         ]
