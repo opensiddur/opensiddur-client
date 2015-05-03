@@ -8,7 +8,7 @@
  * Copyright 2014 Efraim Feinstein, efraim@opensiddur.org
  * Licensed under the GNU Lesser General Public License, version 3 or later
  */
-OpenSiddurClientApp.directive(
+osDialogInternalLinkModule.directive(
         'osInsertInternalLinkDialog',
         [
         'ErrorService',
@@ -52,7 +52,7 @@ OpenSiddurClientApp.directive(
                     });
                  },
                  transclude : false,
-                 templateUrl : "/js/directives/osInsertInternalLinkDialog.html"
+                 templateUrl : "/js/dialog/internallink/osInsertInternalLinkDialog.directive.html"
              };
         }
         ]

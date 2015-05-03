@@ -83,7 +83,9 @@ X        ./js/directives/osNewDialog.html
     -links
         ./js/directives/osInsertLinkDialog.js
         ./js/directives/osInsertLinkDialog.html
-        ./js/directives/osInsertInternalLinkDialog.html
+    - dialog/internallink
+X        ./js/directives/osInsertInternalLinkDialog.html
+X        ./js/directives/osInsertInternalLinkDialog.js
     -metadata
         ./js/directives/osMetadataCommitLogDialog.html
         ./js/directives/osMetadataLicenseDialog.html
