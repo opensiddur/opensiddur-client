@@ -74,11 +74,11 @@ X        ./js/directives/osSharingDialog.html
 X        ./js/directives/osSharingStatus.js
 X        ./js/directives/osSharingStatus.html
     -open
-        ./js/directives/osOpenDialog.html
-        ./js/directives/osOpenDialog.js
+X        ./js/directives/osOpenDialog.html
+X        ./js/directives/osOpenDialog.js
     -new
-        ./js/directives/osNewDialog.js
-        ./js/directives/osNewDialog.html
+X        ./js/directives/osNewDialog.js
+X        ./js/directives/osNewDialog.html
     -save
     -links
         ./js/directives/osInsertLinkDialog.js

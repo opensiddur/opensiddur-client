@@ -8,11 +8,11 @@
  * Copyright 2013-2015 Efraim Feinstein, efraim@opensiddur.org
  * Licensed under the GNU Lesser General Public License, version 3 or later
  */
-OpenSiddurClientApp.directive(
+osDialogOpenModule.directive(
         'osOpenDialog',
         [
-        'RestApi',
-        function( RestApi ) {
+        'QueryService',
+        function( QueryService ) {
             return {
                 restrict : 'AE',
                 scope : {
@@ -64,22 +64,23 @@ OpenSiddurClientApp.directive(
                         };
                     var newSearch = function( ) {
                         // query has changed, rerun search
-                        scope.results = [];
-                        scope.query.start = 1;
-                        scope.resultsEnd = true;
 
                         if (scope.api && !scope.inProgress) {
+                            scope.results = [];
+                            scope.query.start = 1;
+                            scope.resultsEnd = true;
+
                             scope.inProgress = true;
-                            RestApi[scope.api].query({
+                            QueryService.query(scope.api, {
                                     q : scope.query.q, 
                                     start : 1, 
                                     'max-results' : 100
-                                },
-                                addResults
-                            );
+                                }
+                            )
+                            .success(addResults);
                         }
                     }
-                    
+                    elem.on("shown.bs.modal", newSearch);
                     scope.$watch("api", newSearch);
 
                     scope.$watch("query.q", newSearch);
@@ -90,17 +91,17 @@ OpenSiddurClientApp.directive(
                             console.log("resultsEnd. query.start=", scope.query.start);
 
                             scope.inProgress = true;
-                            RestApi[scope.api].query({
+                            QueryService.query(scope.api, {
                                 q : scope.query.q, 
                                 start : scope.query.start, 
-                                'max-results' : scope.query['max-results']},
-                                addResults
-                            );
+                                'max-results' : scope.query['max-results']}
+                            )
+                            .success(addResults);
                         } 
                     });
                  },
                  transclude : false,
-                 templateUrl : "/js/directives/osOpenDialog.html"
+                 templateUrl : "/js/dialog/open/osOpenDialog.directive.html"
              };
         }
         ]
