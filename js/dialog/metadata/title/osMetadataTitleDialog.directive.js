@@ -8,7 +8,7 @@
  * Copyright 2014-2015 Efraim Feinstein, efraim@opensiddur.org
  * Licensed under the GNU Lesser General Public License, version 3 or later
  */
-OpenSiddurClientApp.directive(
+osDialogMetadataTitleModule.directive(
         'osMetadataTitleDialog',
         [
         'AccessService', 'LanguageService', 'TextService',
@@ -79,7 +79,7 @@ OpenSiddurClientApp.directive(
                     });
                  },
                  transclude : false,
-                 templateUrl : "/js/directives/osMetadataTitleDialog.html"
+                 templateUrl : "/js/dialog/metadata/title/osMetadataTitleDialog.directive.html"
              };
         }
         ]

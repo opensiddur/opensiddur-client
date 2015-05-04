@@ -73,6 +73,7 @@ var OpenSiddurClientApp =
        'osDialog.Metadata.Commit', //ditto
        'osDialog.Metadata.License', // ditto
        'osDialog.Metadata.Resp', // ditto
+       'osDialog.Metadata.Title', // ditto
        'osSharing',
        'osSources',
        'osText',
