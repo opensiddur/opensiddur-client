@@ -22,7 +22,7 @@ X    ./js/services/SourceService.js
 X    ./partials/sources.html
 -texts
     ./partials/texts.html
-    ./js/services/TextService.js
+X    ./js/services/TextService.js
     ./js/controllers/TextsCtrl.js
 -translation linkages
     ./partials/translations.html
@@ -85,8 +85,8 @@ X        ./js/directives/osInsertLinkDialog.html
 X        ./js/directives/osInsertInternalLinkDialog.html
 X        ./js/directives/osInsertInternalLinkDialog.js
     -metadata
-        ./js/directives/osMetadataCommitLogDialog.html
-        ./js/directives/osMetadataLicenseDialog.html
+X        ./js/directives/osMetadataCommitLogDialog.html
+X        ./js/directives/osMetadataLicenseDialog.html
         ./js/directives/osMetadataRespDialog.js
         ./js/directives/osMetadataLicenseDialog.js
         ./js/directives/osMetadataSourcesDialog.js

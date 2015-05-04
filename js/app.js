@@ -71,6 +71,7 @@ var OpenSiddurClientApp =
        'osDialog.InternalLink', // ditto
        'osDialog.ExternalLink', // ditto
        'osDialog.Metadata.Commit', //ditto
+       'osDialog.Metadata.License', // ditto
        'osSharing',
        'osSources',
        'osText',
