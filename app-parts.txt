@@ -87,14 +87,14 @@ X        ./js/directives/osInsertInternalLinkDialog.js
     -metadata
 X        ./js/directives/osMetadataCommitLogDialog.html
 X        ./js/directives/osMetadataLicenseDialog.html
-        ./js/directives/osMetadataRespDialog.js
-        ./js/directives/osMetadataLicenseDialog.js
+X        ./js/directives/osMetadataCommitLogDialog.js
+X        ./js/directives/osMetadataLicenseDialog.js
+X        ./js/directives/osMetadataRespDialog.js
+X        ./js/directives/osMetadataRespDialog.html
         ./js/directives/osMetadataSourcesDialog.js
-        ./js/directives/osMetadataCommitLogDialog.js
-        ./js/directives/osMetadataTitleDialog.js
         ./js/directives/osMetadataSourcesDialog.html
+        ./js/directives/osMetadataTitleDialog.js
         ./js/directives/osMetadataTitleDialog.html
-        ./js/directives/osMetadataRespDialog.html
     -error reporting
 X        ./js/services/ErrorService.js
 X        ./js/directives/osErrorBox.js
