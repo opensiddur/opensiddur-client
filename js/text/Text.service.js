@@ -4,18 +4,18 @@
  * Copyright 2014-2015 Efraim Feinstein, efraim@opensiddur.org
  * Licensed under the GNU Lesser General Public License, version 3 or later
  */
-OpenSiddurClientApp.service("TextService", [
+osTextModule.service("TextService", [
     "$http", "$q", "$timeout", "ErrorService", "XsltService",
     function($http, $q, $timeout, ErrorService, XsltService) {
     var xj = new X2JS({ arrayAccessForm : "property" });   
     var documentTemplates = {
-        "/api/data/original" : "/templates/original.xsl",
-        "/api/data/conditionals" : "/templates/conditionals.xsl",
-        "/api/data/notes" : "/templates/annotations.xsl",
-        "/api/data/styles" : "/templates/styles.xsl"
+        "/api/data/original" : "/js/text/Original.template.xsl",
+        "/api/data/conditionals" : "/js/text/Conditionals.template.xsl",
+        "/api/data/notes" : "/js/text/Annotations.template.xsl",
+        "/api/data/styles" : "/js/text/Styles.template.xsl"
     };
     var flatDocumentTemplates = {
-        "/api/data/original" : "/templates/flatoriginal.xsl"
+        "/api/data/original" : "/js/text/FlatOriginal.template.xsl"
     };
     return {
         _content : "",
@@ -50,12 +50,12 @@ OpenSiddurClientApp.service("TextService", [
                     transformResponse : function(data, headersGetter, httpStatus) {
                         if (!data.match(/^\<error/) && data.match(/^\</)) {
                             var templated = XsltService.serializeToStringTEINSClean(
-                                XsltService.transformString("/xsl/originaltemplate.xsl", data),
+                                XsltService.transformString("/js/text/Load.template.xsl", data),
                                 flat
                             );
                             var flattened = flat ? 
                                 XsltService.indentToString(
-                                    XsltService.transformString("/xsl/FlatToEditingHtml.xsl", templated),
+                                    XsltService.transformString("/js/text/FlatToEditingHtml.xsl", templated),
                                     flat
                                 ) 
                                 : templated;
@@ -115,13 +115,13 @@ OpenSiddurClientApp.service("TextService", [
                 // convert content back to XML
                 var backupContent = this._content;      // this needs to be saved so if the save fails, we can go back easily
                 this._content = XsltService.indentToString(
-                        XsltService.transformString("/xsl/EditingHtmlToXml.xsl", this._content)
+                        XsltService.transformString("/js/text/EditingHtmlToXml.xsl", this._content)
                     );
             }
             var thiz = this;
             var content = this._content;
             var transformed =
-                XsltService.transformString( "/xsl/OriginalBeforeSave.xsl", content );
+                XsltService.transformString( "/js/text/Save.template.xsl", content );
             if (transformed) {
                 var indata = XsltService.serializeToStringTEINSClean(transformed);
                 jindata = $(indata);
@@ -192,7 +192,7 @@ OpenSiddurClientApp.service("TextService", [
             // primary language
             if (setLanguage) {
                 this._content = XsltService.indentToString(
-                    XsltService.transformString("/xsl/SetLanguage.xsl", this._content, { 
+                    XsltService.transformString("/js/text/Language.set.xsl", this._content, { 
                         "language" : setLanguage.language}), this._isFlat);
                 return this;
             }
@@ -205,24 +205,24 @@ OpenSiddurClientApp.service("TextService", [
             
             if (titleJson) {
                 this._content = XsltService.indentToString(
-                    XsltService.transformString("/xsl/SetTitles.xsl", this._content, { 
+                    XsltService.transformString("/js/text/Title.set.xsl", this._content, { 
                         "new-titles" : xj.json2xml(angular.fromJson(angular.toJson({titles : {title : titleJson}})))}
                 ), this._isFlat);
                 return this;
             }
-            return xj.xml2json(XsltService.transformString("/xsl/GetTitles.xsl", this._content)).titles.title_asArray;
+            return xj.xml2json(XsltService.transformString("/js/text/Title.get.xsl", this._content)).titles.title_asArray;
         },
         responsibility : function(respJson) {
             // [ {respName, respType, respText, respRef} ]
             
             if (respJson) {
                 this._content = XsltService.indentToString(
-                    XsltService.transformString("/xsl/SetResps.xsl", this._content, { 
+                    XsltService.transformString("/js/text/Resp.set.xsl", this._content, { 
                         "new-respStmts" : xj.json2xml(angular.fromJson(angular.toJson({respStmts : {respStmt : respJson}})))}
                 ), this._isFlat);
                 return this;
             }
-            var js = xj.xml2json(XsltService.transformString("/xsl/GetResps.xsl", this._content))
+            var js = xj.xml2json(XsltService.transformString("/js/text/Resp.get.xsl", this._content))
             
             return ("respStmt" in js.respStmts) ? js.respStmts.respStmt_asArray : [];
         },
@@ -230,7 +230,7 @@ OpenSiddurClientApp.service("TextService", [
             // return or accept { license : "string" }
             if (licenseJson) {
                 this._content = XsltService.indentToString(
-                    XsltService.transformString("/xsl/SetLicense.xsl", this._content, licenseJson), this._isFlat);
+                    XsltService.transformString("/js/text/License.set.xsl", this._content, licenseJson), this._isFlat);
                 return this;
             }
             return { license : $("tei\\:licence", this._content).attr("target") };
@@ -239,13 +239,13 @@ OpenSiddurClientApp.service("TextService", [
             // { sources : 
             if (sourcesJson) {
                 this._content = XsltService.indentToString(
-                    XsltService.transformString("/xsl/SetSources.xsl", this._content, {
+                    XsltService.transformString("/js/text/Sources.set.xsl", this._content, {
                         "new-sources" : xj.json2xml(angular.fromJson(angular.toJson({sources : {bibl : sourcesJson}})))
                         }),
                     this._isFlat);
                 return this;
             }
-            var js = xj.xml2json(XsltService.transformString("/xsl/GetSources.xsl", this._content))
+            var js = xj.xml2json(XsltService.transformString("/js/text/Sources.get.xsl", this._content))
             // the title is URL encoded. Decode it here
             if ("bibl_asArray" in js.sources) {
                 var bibl = js.sources.bibl_asArray;
@@ -272,19 +272,20 @@ OpenSiddurClientApp.service("TextService", [
             var xjc = new X2JS({ "arrayAccessForm" : "none", "emptyNodeForm" : "text" }); 
             if (newMessage) {
                 this._content = XsltService.indentToString(
-                    XsltService.transformString("/xsl/SetCommitMessage.xsl", this._content, {
+                    XsltService.transformString("/js/text/CommitMessage.set.xsl", this._content, {
                         "commit-message" : newMessage.message.__text
                     }), this._isFlat);
                 return this;
             }
-            return xjc.xml2json(XsltService.transformString("/xsl/GetCommitMessage.xsl", this._content));
+            return xjc.xml2json(XsltService.transformString("/js/text/CommitMessage.get.xsl", this._content));
         },
         commitLog : function() {
             // return value is [{ who, when, message }...]
-            var js = xj.xml2json(XsltService.transformString("/xsl/GetCommitLog.xsl", this._content));
+            var js = xj.xml2json(XsltService.transformString("/js/text/CommitLog.get.xsl", this._content));
             return ("change_asArray" in js.changes) ? js.changes.change_asArray : [];
         },
         listXmlIds : function(contextCharacters, streamOnly) {
+            // TODO: this XSLT is shared with osIdList -- figure out where this should be done.
             var js = xj.xml2json(XsltService.transformString("/xsl/ListXmlId.xsl", this._content, {
                 "context-chars" : contextCharacters || 30
             })).xmlids.xmlid_asArray;
@@ -293,7 +294,7 @@ OpenSiddurClientApp.service("TextService", [
         addLayer : function(layerType) {
             // add a concurrent hierarchy of a particular type if one does not exist
             this._content = XsltService.indentToString(
-                XsltService.transformString("/xsl/AddLayer.xsl", this._content, {
+                XsltService.transformString("/js/text/Layer.add.xsl", this._content, {
                     "resource" : this._resourceApi + "/" + encodeURIComponent(this._resource),
                     "layer-type" : layerType
                 }), this._isFlat);

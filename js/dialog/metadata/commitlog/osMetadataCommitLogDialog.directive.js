@@ -8,7 +8,7 @@
  * Copyright 2014-2015 Efraim Feinstein, efraim@opensiddur.org
  * Licensed under the GNU Lesser General Public License, version 3 or later
  */
-OpenSiddurClientApp.directive(
+osDialogMetadataCommitModule.directive(
         'osMetadataCommitLogDialog',
         [
         'AccessService', 'TextService',
@@ -52,7 +52,7 @@ OpenSiddurClientApp.directive(
                     });
                  },
                  transclude : false,
-                 templateUrl : "/js/directives/osMetadataCommitLogDialog.html"
+                 templateUrl : "/js/dialog/metadata/commitlog/osMetadataCommitLogDialog.directive.html"
              };
         }
         ]
