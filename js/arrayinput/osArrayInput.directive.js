@@ -7,10 +7,10 @@
  *      label="" />
  *
  * Open Siddur Project
- * Copyright 2013 Efraim Feinstein, efraim@opensiddur.org
+ * Copyright 2013,2015 Efraim Feinstein, efraim@opensiddur.org
  * Licensed under the GNU Lesser General Public License, version 3 or later
  */
-OpenSiddurClientApp.directive(
+osArrayInputModule.directive(
     'osArrayInput',
     [
     function() {
@@ -33,7 +33,7 @@ OpenSiddurClientApp.directive(
 
             },
             transclude : false,
-            templateUrl : "/js/directives/osarrayinput.html"    
+            templateUrl : "/js/arrayinput/osArrayInput.directive.html"    
         }
     }
     ]
