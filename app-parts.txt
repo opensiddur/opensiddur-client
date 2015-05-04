@@ -91,8 +91,8 @@ X        ./js/directives/osMetadataCommitLogDialog.js
 X        ./js/directives/osMetadataLicenseDialog.js
 X        ./js/directives/osMetadataRespDialog.js
 X        ./js/directives/osMetadataRespDialog.html
-        ./js/directives/osMetadataSourcesDialog.js
-        ./js/directives/osMetadataSourcesDialog.html
+X        ./js/directives/osMetadataSourcesDialog.js
+X        ./js/directives/osMetadataSourcesDialog.html
 X        ./js/directives/osMetadataTitleDialog.js
 X        ./js/directives/osMetadataTitleDialog.html
     -error reporting
