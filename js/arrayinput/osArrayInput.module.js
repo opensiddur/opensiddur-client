@@ -1,2 +1,2 @@
-var osArrayInputModule = angular.module('osArrayInput', [])
+var osArrayInputModule = angular.module('osClient.arrayInput', [])
     ;

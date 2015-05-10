@@ -1,2 +1,2 @@
-var osSearchModule = angular.module('osSearch', [])
+var osSearchModule = angular.module('osClient.search', [])
     ;

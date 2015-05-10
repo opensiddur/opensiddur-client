@@ -1,1 +1,1 @@
-var osGlobalDataModule = angular.module("osGlobalData", []);
+var osGlobalDataModule = angular.module("osClient.globalData", []);

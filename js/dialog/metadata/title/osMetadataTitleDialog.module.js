@@ -1,2 +1,2 @@
-var osDialogMetadataTitleModule = angular.module('osDialog.Metadata.Title', ['osSharing', 'osText', 'osGlobalData' ])
+var osDialogMetadataTitleModule = angular.module('osClient.dialog.metadata.title', ['osClient.sharing', 'osClient.text', 'osClient.globalData' ])
     ;

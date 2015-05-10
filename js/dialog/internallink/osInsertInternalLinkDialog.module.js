@@ -1,2 +1,2 @@
-var osDialogInternalLinkModule = angular.module('osDialog.InternalLink', ['osError', 'osIdList'])
+var osDialogInternalLinkModule = angular.module('osClient.dialog.internalLink', ['osClient.error', 'osClient.idList'])
     ;

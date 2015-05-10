@@ -56,31 +56,31 @@ var OpenSiddurClientApp =
        'ui.codemirror',
        'unsavedChanges',
        // Open Siddur specific modules
-       'osAuthentication',
-       'osError',
-       'osCompiled',
-       'osCompiler',
-       'osGlobalData',
-       'osJobs',
-       'osProfile',
-       'osRecentChanges',
-       'osSearch',  // a dependency of dialogs, can be moved when completely modularized
-       'osIdList',  // ditto
-       'osArrayInput', // ditto
-       'osDialog.New', // ditto
-       'osDialog.Open', // ditto
-       'osDialog.InternalLink', // ditto
-       'osDialog.ExternalLink', // ditto
-       'osDialog.Metadata.Commit', //ditto
-       'osDialog.Metadata.License', // ditto
-       'osDialog.Metadata.Resp', // ditto
-       'osDialog.Metadata.Sources', // ditto
-       'osDialog.Metadata.Title', // ditto
-       'osSharing',
-       'osSources',
-       'osText',
-       'osTranscriptionWindow', // a dependency of the text module, can be moved when completely modularized
-       'osXslt' // probably won't be needed when completely modularized
+       'osClient.authentication',
+       'osClient.error',
+       'osClient.compiled',
+       'osClient.compiler',
+       'osClient.globalData',
+       'osClient.jobs',
+       'osClient.profile',
+       'osClient.recentChanges',
+       'osClient.search',  // a dependency of dialogs, can be moved when completely modularized
+       'osClient.idList',  // ditto
+       'osClient.arrayInput', // ditto
+       'osClient.dialog.new', // ditto
+       'osClient.dialog.open', // ditto
+       'osClient.dialog.internalLink', // ditto
+       'osClient.dialog.externalLink', // ditto
+       'osClient.dialog.metadata.commit', //ditto
+       'osClient.dialog.metadata.license', // ditto
+       'osClient.dialog.metadata.resp', // ditto
+       'osClient.dialog.metadata.sources', // ditto
+       'osClient.dialog.metadata.title', // ditto
+       'osClient.sharing',
+       'osClient.sources',
+       'osClient.text',
+       'osClient.transcriptionWindow', // a dependency of the text module, can be moved when completely modularized
+       'osClient.xslt' // probably won't be needed when completely modularized
       ]);
 
 OpenSiddurClientApp.config(

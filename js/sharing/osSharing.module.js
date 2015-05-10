@@ -1,4 +1,4 @@
-var osSharingModule = angular.module('osSharing', ['osAuthentication', 'osError'])
+var osSharingModule = angular.module('osClient.sharing', ['osClient.authentication', 'osClient.error'])
     .constant("osSharingConst", { 
     })
     ;

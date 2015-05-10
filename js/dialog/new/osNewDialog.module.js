@@ -1,2 +1,2 @@
-var osDialogNewModule = angular.module('osDialog.New', ['osGlobalData'])
+var osDialogNewModule = angular.module('osClient.dialog.new', ['osClient.globalData'])
     ;

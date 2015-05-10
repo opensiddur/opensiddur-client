@@ -1,2 +1,2 @@
-var osIdListModule = angular.module('osIdList', ['osXslt'])
+var osIdListModule = angular.module('osClient.idList', ['osClient.xslt'])
     ;

@@ -1,2 +1,2 @@
-var osDialogMetadataLicenseModule = angular.module('osDialog.Metadata.License', ['osSharing', 'osText' ])
+var osDialogMetadataLicenseModule = angular.module('osClient.dialog.metadata.license', ['osClient.sharing', 'osClient.text' ])
     ;

@@ -1,1 +1,1 @@
-var osGetAnyModule = angular.module("osGetAny", []);
+var osGetAnyModule = angular.module("osClient.getAny", []);

@@ -1,2 +1,2 @@
-var osDialogOpenModule = angular.module('osDialog.Open', ['osSearch'])
+var osDialogOpenModule = angular.module('osClient.dialog.open', ['osClient.search'])
     ;

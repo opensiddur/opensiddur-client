@@ -1,2 +1,2 @@
-var osTextModule = angular.module('osText', ['osError', 'osXslt'])
+var osTextModule = angular.module('osClient.text', ['osClient.error', 'osClient.xslt'])
     ;

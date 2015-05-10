@@ -1,1 +1,1 @@
-var osErrorModule = angular.module("osError", []);
+var osErrorModule = angular.module("osClient.error", []);

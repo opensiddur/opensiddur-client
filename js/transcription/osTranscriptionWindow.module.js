@@ -1,3 +1,3 @@
-var osTranscriptionWindowModule = angular.module('osTranscriptionWindow', 
-        ['panzoom', 'panzoomwidget', 'osError', 'osSources'])
+var osTranscriptionWindowModule = angular.module('osClient.transcriptionWindow', 
+        ['panzoom', 'panzoomwidget', 'osClient.error', 'osClient.sources'])
     ;
