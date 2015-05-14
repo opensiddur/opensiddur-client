@@ -1,0 +1,16 @@
+<div class="osTranslationBlock">
+    <div ng-repeat="block in ngModel">
+        <div class="block-wrapper row">
+            <div class="left-block col-md-6">
+                <div ng-repeat="segment in block[0]">
+                    <os-translation-segment ng-model="segment"></os-translation-segment>
+                </div>
+            </div>
+            <div class="right-block col-md-6">
+                <div ng-repeat="segment in block[1]">
+                    <os-translation-segment ng-model="segment"></os-translation-segment>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

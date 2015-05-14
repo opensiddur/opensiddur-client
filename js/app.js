@@ -38,11 +38,6 @@ var supportedResponsibilities = {
 };
 
 
-/* retrieve an API error return value and return the string */
-var getApiError = function(data) {
-  return $($.parseXML(data)).find("message").text();
-}
-
 var OpenSiddurClientApp = 
   angular.module(
       'OpenSiddurClientApp',
@@ -80,6 +75,7 @@ var OpenSiddurClientApp =
        'osClient.sources',
        'osClient.text',
        'osClient.transcriptionWindow', // a dependency of the text module, can be moved when completely modularized
+       'osClient.translations',
        'osClient.xslt' // probably won't be needed when completely modularized
       ]);
 
@@ -116,9 +112,9 @@ OpenSiddurClientApp.config(
 
 OpenSiddurClientApp.config(
   ['$routeProvider', '$locationProvider', 
-    'osAuthenticationConst', 'osJobsConst', 'osCompiledConst', 'osCompilerConst', 'osProfileConst', 'osRecentChangesConst', 'osSourcesConst',
+    'osAuthenticationConst', 'osJobsConst', 'osCompiledConst', 'osCompilerConst', 'osProfileConst', 'osRecentChangesConst', 'osSourcesConst', 'translationsConst',
   function($routeProvider, $locationProvider, 
-    osAuthenticationConst, osJobsConst, osCompiledConst, osCompilerConst, osProfileConst, osRecentChangesConst, osSourcesConst) {
+    osAuthenticationConst, osJobsConst, osCompiledConst, osCompilerConst, osProfileConst, osRecentChangesConst, osSourcesConst, translationsConst) {
     $locationProvider.html5Mode(true).hashPrefix("!");
     $routeProvider
       .when('/changes/:userName?', {templateUrl: osRecentChangesConst.partial, controller: "RecentChangesCtrl"})
@@ -132,7 +128,7 @@ OpenSiddurClientApp.config(
       .when('/styles/:resource?', {templateUrl: '/partials/texts.html', controller: "TextsCtrl"})
       .when('/texts/:resource?', {templateUrl: '/partials/texts.html', controller: "TextsCtrl"})
       .when('/annotations/:resource?', {templateUrl: '/partials/texts.html', controller: "TextsCtrl"})
-      .when('/translations/:resource?', {templateUrl: '/partials/translations.html', controller: "TranslationsCtrl"})
+      .when('/translations/:resource?', {templateUrl: translationsConst.partial, controller: "TranslationsCtrl"})
       .when('/conditionals/:resource?', {templateUrl: '/partials/texts.html', controller: "TextsCtrl"})
       .when('/profile/:userName', {templateUrl: osProfileConst.partial, controller: "ProfileCtrl"})
       .when('/changepassword', {templateUrl: osAuthenticationConst.partial.password, controller: "ChangePasswordCtrl"})

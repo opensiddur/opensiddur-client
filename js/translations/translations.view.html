@@ -1,0 +1,61 @@
+<div>
+    <div class="toolbar navbar navbar-inverse nav-collapse">
+        <div class="container-fluid">
+            <p class="navbar-text">{{ TranslationsService.TextService.title()[0].text | truncate:30 }}</p>
+            <div class="btn-toolbar">
+                <div class="btn-group navbar-btn">
+                      <button class="btn btn-primary" type="submit"
+                          data-ng-disabled="!AuthenticationService.loggedIn"
+                          data-ng-click="newButton()"  
+                          >New</button>
+                      <button class="btn btn-primary" 
+                          data-ng-click="DialogService.open('openDialog')"  
+                          >Open</button>
+                      <button data-ng-class="{'btn' : true, 'btn-primary' : true, 'btn-success' : trForm.$pristine}" type="submit" 
+                          data-ng-click="saveDocument()"  
+                          data-ng-disabled="!AccessService.access.write || trForm.$invalid || trForm.$pristine">{{saveButtonText()}}</button>
+                </div>
+                <!-- TODO: new metadata/translation id setting -->
+                <div class="navbar-right navbar-btn">
+                    <os-sharing-status sharing-dialog="sharingDialog"></os-sharing-status>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- page content -->
+    <div class="page-container container-fluid">
+        <div data-ng-show="!AuthenticationService.loggedIn && !TranslationsService.resource">
+            Log in to be able to edit a new document, or open a document to view it.
+            {{AuthenticationService.loggedIn }} {{ TranslationsService.resource }}
+        </div>
+        <div data-ng-show="AuthenticationService.loggedIn || TranslationsService.resource">
+            <form name="trForm">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div>
+                            <button class="btn btn-primary btn-small" ng-click="DialogService.open('openDialogLeft')">Change: {{TranslationsService.leftResource}}</button>
+                        </div>
+                        <os-translation-stream ng-model="TranslationsService.left" selected="selected.left"></os-translation-stream>
+                    </div>
+                    <div class="col-md-6">
+                        <os-translation-block ng-model="TranslationsService.blocks"></os-translation-block>
+                    </div>
+                    <div class="col-md-3">
+                        <div>
+                            <button class="btn btn-primary btn-small" ng-click="DialogService.open('openDialogRight')">Change: {{TranslationsService.rightResource}}</button>
+                        </div>
+                        <os-translation-stream ng-model="TranslationsService.right" selected="selected.right"></os-translation-stream>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <os-open-dialog api="'/api/data/linkage'" name="openDialog" title="Open Translation Linkage"
+        on-ok="openDocument" on-close="dialogCancel"></os-open-dialog> 
+    <os-open-dialog api="'/api/data/original'" name="openDialogLeft" title="Set parallel text 1"
+        on-ok="setLinkLeft" on-close="dialogCancel"></os-open-dialog> 
+    <os-open-dialog api="'/api/data/original'" name="openDialogRight" title="Set parallel text 2"
+        on-ok="setLinkRight" on-close="dialogCancel"></os-open-dialog> 
+    <os-sharing-dialog is-new="!TranslationsService.resource" name="sharingDialog" title="Sharing"></os-sharing-dialog> 
+</div>
+
