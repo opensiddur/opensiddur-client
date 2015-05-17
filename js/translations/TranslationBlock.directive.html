@@ -1,14 +1,45 @@
 <div class="osTranslationBlock">
+    <div class="block-wrapper row" ng-show="ngModel.length == 0" 
+        ng-drop="true" 
+        ng-drop-success="onDropStartBlocks($data, $event)">
+        <p>Drag the segments you want to align here to begin</p>
+    </div>
     <div ng-repeat="block in ngModel">
-        <div class="block-wrapper row">
-            <div class="left-block col-md-6">
+        <div class="row">
+            <div class="col-md-1 btn-group">
+                <button type="button" 
+                    class="btn btn-default btn-xs dropdown-toggle"
+                    data-toggle="dropdown">
+                    <span class="glyphicon glyphicon glyphicon-menu-hamburger"></span>
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                    <li role="presentation"><a role="menuitem" tabindex="-1" href="#" ng-click="insertBlock(block, -1)">Insert block above</a></li>
+                    <li role="presentation"><a role="menuitem" tabindex="-1" href="#" ng-click="insertBlock(block, +1)">Insert block below</a></li>
+                    <li role="presentation"><a role="menuitem" tabindex="-1" href="#" ng-click="removeBlock(block)">Remove block</a></li>
+                    
+                </ul>
+            </div>
+        </div>
+        <div class="block-wrapper row"
+            ng-drop="true"
+            ng-drop-success="onDropInsertIntoBlock(block, $data, $event)">
+            <div class="left-block col-md-6 nopadding" ng-drop="true">
                 <div ng-repeat="segment in block[0]">
-                    <os-translation-segment ng-model="segment"></os-translation-segment>
+                    <os-translation-segment ng-model="segment"
+                        ng-drag="true"
+                        ng-drag-success="onDragRemoveFromBlock(block, $data, $event)"
+                        ng-drag-data="segment"
+                    ></os-translation-segment>
                 </div>
             </div>
-            <div class="right-block col-md-6">
+            <div class="right-block col-md-6 nopadding">
                 <div ng-repeat="segment in block[1]">
-                    <os-translation-segment ng-model="segment"></os-translation-segment>
+                    <os-translation-segment ng-model="segment"
+                        ng-drag="true"
+                        ng-drag-success="onDragRemoveFromBlock(block, $data, $event)"
+                        ng-drag-data="segment"
+                        ></os-translation-segment>
                 </div>
             </div>
         </div>

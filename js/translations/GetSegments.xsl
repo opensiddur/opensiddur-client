@@ -16,14 +16,17 @@
     >
     <xsl:output method="xml"/>
 
+    <xsl:param name="side" as="xs:string"/>
+
     <xsl:template match="j:streamText/*[@xml:id|@jf:id|@id]">
         <segment>
-            <position><xsl:value-of select="count(preceding-sibling::*)"/></position>
+            <position><xsl:sequence select="count(preceding-sibling::*)"/></position>
+            <side><xsl:sequence select="$side"/></side>
             <name><xsl:value-of select="(@xml:id, @jf:id, @id)[1]"/></name>
             <element><xsl:value-of select="name()"/></element>
             <text><xsl:value-of select="normalize-space(.)"/></text>
             <target><xsl:value-of select="self::tei:ptr/@target"/></target>
-            <external><xsl:value-of select="if (self::tei:ptr and substring-before(@target,'#')) then 1 else 0"/></external>
+            <external><xsl:sequence select="if (self::tei:ptr and substring-before(@target,'#')) then 1 else 0"/></external>
             <inblock>0</inblock>
         </segment>
     </xsl:template>

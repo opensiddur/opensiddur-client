@@ -31,16 +31,16 @@
         <div data-ng-show="AuthenticationService.loggedIn || TranslationsService.resource">
             <form name="trForm">
                 <div class="row">
-                    <div class="col-md-3">
+                    <div class="col-md-3 nopadding">
                         <div>
                             <button class="btn btn-primary btn-small" ng-click="DialogService.open('openDialogLeft')">Change: {{TranslationsService.leftResource}}</button>
                         </div>
                         <os-translation-stream ng-model="TranslationsService.left" selected="selected.left"></os-translation-stream>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-6 nopadding">
                         <os-translation-block ng-model="TranslationsService.blocks"></os-translation-block>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-3 nopadding">
                         <div>
                             <button class="btn btn-primary btn-small" ng-click="DialogService.open('openDialogRight')">Change: {{TranslationsService.rightResource}}</button>
                         </div>

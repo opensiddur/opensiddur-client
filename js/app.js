@@ -43,6 +43,7 @@ var OpenSiddurClientApp =
       'OpenSiddurClientApp',
       [
        'ngCkeditor',
+       'ngDraggable',
        'ngRoute',
        'ngResource',
        'ngSanitize',

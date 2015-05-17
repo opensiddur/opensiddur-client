@@ -12,21 +12,30 @@ translationsModule.factory("TranslationsService", [
     function($http, $q, TextService, XsltService) {
     var x2j = new X2JS({ "arrayAccessForm" : "none", emptyNodeForm : "text" });
 
-    var loadSegmentsFrom = function(resource) {
+    var loadSegmentsFrom = function(resource, side) {
         return $http.get("/api/data/original/" + encodeURIComponent(resource), {
                 transformResponse : function(data, headers, httpStatus) {
                     if (httpStatus >= 400 || data.match("<error")) {
                         return data;
                     }
-                    var segs = XsltService.transformString("/js/translations/GetSegments.xsl", data); 
+                    var segs = XsltService.transformString("/js/translations/GetSegments.xsl", data, {
+                        side : String(side)
+                    }); 
                     var js = x2j.xml2json(segs).segments;
-                    return (js.segment.length > 1) ? js.segment : [js.segment];
+                    return ((js.segment.length > 1) ? js.segment : [js.segment])
+                        .map(function(x) {
+                            x.position = parseInt(x.position);
+                            x.side = parseInt(x.side);
+                            x.external = parseInt(x.external); 
+                            return x;
+                        });
                 }
             });
     };
     
     var segmentTemplate = {
         position : "", // order
+        side : 0,
         name : "",
         element : "",
         text : "", 
@@ -144,40 +153,48 @@ translationsModule.factory("TranslationsService", [
         save : function() {
             return TextService.save();
         },
+        resetBlocks : function() {
+            $.each(this.left, function(i, x) { x.inblock = 0; });
+            $.each(this.right, function(i, x) { x.inblock = 0; });
+            this.blocks = [];
+        },
         clearLeft : function() {
             this.leftResource = "";
             this.left = [];
-            this.blocks = [];
+            this.resetBlocks();
         },
         setLeft : function(leftResource) {
             var thiz = this;
-            return loadSegmentsFrom(leftResource)
+            return loadSegmentsFrom(leftResource, 0)
                 .then(function(response) {
                     thiz.left = response.data;
                     thiz.leftResource = leftResource;
-                    thiz.blocks = [];
+                    thiz.resetBlocks();
                 });
         },
         clearRight : function() {
             this.rightResource = "";
             this.right = [];
-            this.blocks = [];
+            this.resetBlocks();
         },
         setRight : function(rightResource) {
             var thiz = this;
-            return loadSegmentsFrom(rightResource)
+            return loadSegmentsFrom(rightResource, 1)
                 .then(function(response) {
                     thiz.right = response.data;
                     thiz.rightResource = rightResource;
-                    thiz.blocks = []
+                    thiz.resetBlocks();
                 });
         },
-        canInsert : function(segment, block, fromSide) {    // fromSide = 0 for left, 1 for right
+        canInsert : function(segment, block) { 
             // immediate failure modes:
-            if (block < 0 || block > this.blocks.length || segment.external
-                || this.left.length == 0 || this.right.length == 0) return false;
+            var fromSide = segment.side;
+            var blockIndex = this.blocks.indexOf(block);
+            if (segment.external
+                || this.left.length == 0 || this.right.length == 0
+                || segment.inblock > 0) return false;
             // immediate success modes:
-            if (this.blocks.length == 1 && this.blocks[block][side].length == 0) {
+            if (this.blocks.length == 1 && block[fromSide].length == 0) {
                 // there's only 1 block, it's this one, and it's empty
                 return true;
             }
@@ -185,41 +202,44 @@ translationsModule.factory("TranslationsService", [
             var lastPossibleSegment = (fromSide == 0) ? 
                 this.left[this.left.length - 1].position : 
                 this.right[this.right.length - 1].position;
-            var priorOccupiedBlock = block;
-            var nextOccupiedBlock = block;
-            var thisBlockFirst = (this.blocks[block][side].length > 0) ? 
-                this.blocks[block][side][0].position : -1;
-            var thisBlockLast = (this.blocks[block][side].length > 0) ? 
-                this.blocks[block][side][this.blocks[block][side].length - 1].position : 
-                lastPossibleSegment + 1;
+            var thisBlockFirst = (block[fromSide].length > 0) ? 
+                block[fromSide][0].position : null;
+            var thisBlockLast = (block[fromSide].length > 0) ? 
+                block[fromSide][block[fromSide].length - 1].position : 
+                null;
             // find the prior occupied block and the next occupied block
-            while (priorOccupiedBlock > 0 && this.blocks[priorOccupiedBlock][side].length == 0) 
+            var priorOccupiedBlock = blockIndex - 1;
+            var nextOccupiedBlock = blockIndex + 1;
+            while (priorOccupiedBlock > 0 && this.blocks[priorOccupiedBlock][fromSide].length == 0) 
                 priorOccupiedBlock--;
-            while (nextOccupiedBlock < this.blocks.length && this.blocks[nextOccupiedBlock][side].length == 0) 
+            while (nextOccupiedBlock < this.blocks.length && this.blocks[nextOccupiedBlock][fromSide].length == 0) 
                 nextOccupiedBlock++;
-            var priorBlockLast = (this.blocks[priorOccupiedBlock][side].length > 0) ? 
-                this.blocks[priorOccupiedBlock][side][this.blocks[priorOccupiedBlock][side].length - 1].position : 
-                -1;
-            var nextBlockFirst = (this.blocks[nextOccupiedBlock][side].length > 0) ? 
-                this.blocks[nextOccupiedBlock][side][0].position : 
-                lastPossibleSegment + 1;
+            var priorBlockLast = (
+                priorOccupiedBlock >= 0 &&
+                priorOccupiedBlock < blockIndex && 
+                this.blocks[priorOccupiedBlock][fromSide].length > 0) ? 
+                this.blocks[priorOccupiedBlock][fromSide][this.blocks[priorOccupiedBlock][fromSide].length - 1].position : 
+                null;
+            var nextBlockFirst = (
+                nextOccupiedBlock < this.blocks.length && 
+                nextOccupiedBlock > blockIndex && this.blocks[nextOccupiedBlock][fromSide].length > 0) ? 
+                this.blocks[nextOccupiedBlock][fromSide][0].position : 
+                null;
 
-            var firstInsertablePosition = Math.max([
-                priorBlockLast,
-                thisBlockFirst,
+            var firstInsertablePosition = (
+                priorBlockLast ||
                 0
-            ]);
-            var lastInsertablePosition = Math.min([
-                nextBlockFirst,
-                thisBlockLast,
+            );
+            var lastInsertablePosition = (
+                nextBlockFirst ||
                 lastPossibleSegment
-            ]);
+            );
             
             if (segment.position >= firstInsertablePosition && segment.position <= lastInsertablePosition) {
                 // check that inserting this segment will not cross an external pointer
-                var checkStartPosition = min([segment.position, thisBlockFirst]);
-                var checkEndPosition = max([segment.position, thisBlockLast]);
-                var allSegments = (side == 0) ? this.left : this.right;
+                var checkStartPosition = Math.min(segment.position, thisBlockFirst);
+                var checkEndPosition = Math.max(segment.position, thisBlockLast);
+                var allSegments = (fromSide == 0) ? this.left : this.right;
                 for (var i = checkStartPosition; i <= checkEndPosition; i++) {
                     if (allSegments[i].external) 
                         return false;
@@ -228,10 +248,11 @@ translationsModule.factory("TranslationsService", [
             }
             else return false;
         },
-        insertIntoBlock : function(segment, block, fromSide) {
-            if (canInsert(segment, block, fromSide)) {
+        insertIntoBlock : function(segment, block) {
+            var fromSide = segment.side;
+            if (this.canInsert(segment, block)) {
                 // determine what position to insert at
-                var blockArray = this.blocks[block][fromSide];
+                var blockArray = block[fromSide];
                 segment.inblock = 1;
                 if (blockArray.length == 0) {
                     blockArray.push(segment);
@@ -245,16 +266,31 @@ translationsModule.factory("TranslationsService", [
                 return this;
             }
         },
-        removeFromBlock : function(segment, block, toSide) {
-            var blocksArray = this.blocks[block][toSide];
+        removeFromBlock : function(segment, block) {
+            var toSide = segment.side;
+            var blocksArray = block[toSide];
             blocksArray.splice(blocksArray.indexOf(segment), 1);
             segment.inblock = 0;
             return this;
         },
         insertEmptyBlock : function(block, beforeOrAfter) { // before or after = 0 for before, 1 for after
-            var block = Math.max(Math.min(block, this.blocks.length - 1), 0);
+            if (this.blocks.length == 0) {
+                this.blocks = [[[], []]];
+                return this;
+            }
+            var blockIndex = this.blocks.indexOf(block);
             var newBlock = [[], []];
-            this.blocks.splice(block+beforeOrAfter, 0, newBlock);
+            this.blocks.splice(blockIndex+beforeOrAfter, 0, newBlock);
+            return this;
+        },
+        removeBlock : function(block) { // remove an existing block
+            var blockIndex = this.blocks.indexOf(block);
+            for (var side = 0; side <= 1; side++) {
+                for (var i = 0; i < block[side].length; i++) {
+                    block[side][i].inblock = 0;
+                }
+            }
+            this.blocks.splice(blockIndex, 1);
             return this;
         }
     };
