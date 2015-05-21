@@ -22,13 +22,15 @@ translationsModule.factory("TranslationsService", [
                         side : String(side)
                     }); 
                     var js = x2j.xml2json(segs).segments;
-                    return ((js.segment.length > 1) ? js.segment : [js.segment])
+                    return [
+                        js._domain,
+                        ((js.segment.length > 1) ? js.segment : [js.segment])
                         .map(function(x) {
                             x.position = parseInt(x.position);
                             x.side = parseInt(x.side);
                             x.external = parseInt(x.external); 
                             return x;
-                        });
+                        })];
                 }
             });
     };
@@ -48,9 +50,10 @@ translationsModule.factory("TranslationsService", [
         left : [],
         right : [],
         blocks : [],
-        resource : "",
         leftResource : "",
+        leftDomain : "",
         rightResource : "",
+        rightDomain : "",
         translationId : function(id) {
             if (id) {
                 TextService.content(
@@ -148,9 +151,62 @@ translationsModule.factory("TranslationsService", [
                     thiz.clearLeft();
                     thiz.clearRight();
                     thiz.blocks = [];
+                    // default the idno to the user's username
+                    thiz.translationId(AuthenticationService.userName);
                 });
         },
+        syncContent : function() {
+            // one way sync the content in TextService.content with the content of represented in this service's
+            // data model.
+            var jsBlocks = { 
+            blocks : 
+                { block : 
+                    this.blocks
+                        .filter(function(block) { return block[0].length > 0 && block[1].length > 0 })
+                        .map(function(block) {
+                            return {
+                                left : {
+                                    start : block[0][0].name,
+                                    end : block[0][block[0].length - 1].name
+                                },
+                                right : {
+                                    start : block[1][0].name,
+                                    end : block[1][block[1].length - 1].name
+                                }
+                            }; 
+                        })
+                }
+            };
+            var xmlBlocks = x2js.json2xml(jsBlocks);
+            var leftResourcePtr =  "/data/original/" + encodeURIComponent(this.leftResource);
+            var rightResourcePtr =  "/data/original/" + encodeURIComponent(this.rightResource);
+            TextService.content(
+                XsltService.serializeToStringTEINSClean(
+                    XsltService.transformString(
+                        "/js/translations/SetBlocks.xsl",
+                        TextService.content(),
+                        {   leftResource : leftResourcePtr, 
+                            leftStream : this.leftDomain,
+                            rightResource : rightResourcePtr,
+                            rightStream : this.rightDomain,
+                            blocks : xmlBlocks }
+                    )
+                )
+            );
+            return this;
+        },
         save : function() {
+            this.syncContent();
+            var title = TextService.title();
+            if (!title.text) {
+                // default the title
+                TextService.title({
+                    lang : "en", // TODO: this should not just default to English!
+                    text : this.leftResource + "=" + this.rightResource,
+                    subLang : "",
+                    subText : ""
+                });
+            }
             return TextService.save();
         },
         resetBlocks : function() {
@@ -160,6 +216,7 @@ translationsModule.factory("TranslationsService", [
         },
         clearLeft : function() {
             this.leftResource = "";
+            this.leftDomain = "";
             this.left = [];
             this.resetBlocks();
         },
@@ -167,12 +224,14 @@ translationsModule.factory("TranslationsService", [
             var thiz = this;
             return loadSegmentsFrom(leftResource, 0)
                 .then(function(response) {
-                    thiz.left = response.data;
+                    thiz.leftDomain = response.data[0]; 
+                    thiz.left = response.data[1];
                     thiz.leftResource = leftResource;
                     thiz.resetBlocks();
                 });
         },
         clearRight : function() {
+            this.rightDomain = "";
             this.rightResource = "";
             this.right = [];
             this.resetBlocks();
@@ -181,7 +240,8 @@ translationsModule.factory("TranslationsService", [
             var thiz = this;
             return loadSegmentsFrom(rightResource, 1)
                 .then(function(response) {
-                    thiz.right = response.data;
+                    thiz.rightDomain = response.data[0];
+                    thiz.right = response.data[1];
                     thiz.rightResource = rightResource;
                     thiz.resetBlocks();
                 });

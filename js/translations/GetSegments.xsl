@@ -36,7 +36,7 @@
     <xsl:template match="text()"/>
 
     <xsl:template match="/">
-        <segments>
+        <segments domain="{//j:streamText/@xml:id}">
             <xsl:apply-templates/>
         </segments>
     </xsl:template>

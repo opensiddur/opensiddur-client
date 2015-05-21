@@ -6,13 +6,18 @@
  */
 translationsModule.controller(
     'TranslationsCtrl',
-    ['$scope', '$http', '$location', '$route', '$routeParams', '$q', 'AccessService', 'AuthenticationService', 'DialogService', 'ErrorService', 'TranslationsService', 
-    function($scope, $http, $location, $route, $routeParams, $q, AccessService, AuthenticationService, DialogService, ErrorService, TranslationsService) {
+    ['$scope', '$http', '$location', '$route', '$routeParams', '$q', 
+    'AccessService', 'AuthenticationService', 'DialogService', 'ErrorService', 
+    'TextService', 'TranslationsService', 
+    function($scope, $http, $location, $route, $routeParams, $q, 
+    AccessService, AuthenticationService, DialogService, 
+    ErrorService, TextService, TranslationsService) {
         console.log("translations controller");
         
         $scope.DialogService = DialogService;
         $scope.AccessService = AccessService;
         $scope.AuthenticationService = AuthenticationService;
+        $scope.TextService = TextService;
         $scope.TranslationsService = TranslationsService;
         $scope.selected = {
             left : 0,
@@ -25,6 +30,7 @@ translationsModule.controller(
             TranslationsService.loadNew()
             .success(function() {
                 AccessService.reset();
+                $scope.trForm.$setPristine();
             })
             .error(
                 function(data) {
@@ -46,6 +52,7 @@ translationsModule.controller(
                     .error(function(err) {
                         ErrorService.addApiError(err);
                     });
+                    $scope.trForm.$setPristine();
                 })
                 .error(function(error) {   // error function
                     ErrorService.addApiError(error);
@@ -65,21 +72,42 @@ translationsModule.controller(
                 $location.path( "/translations/" + resourceName );
             }
         };
+        $scope.saveDocument = function() {
+            var isNew = !TextService.resource;
+            TranslationsService.save()
+            .success(function() {
+                if (isNew) {
+                    AccessService.setResource(TextService._resourceApi, TextService._resource)
+                    .save()
+                    .error(function(error) {
+                        ErrorService.addApiError(error);
+                    });
+                }
+                $scope.trForm.$setPristine();
+            })
+            .error(function(error) {
+                ErrorService.addApiError(error);
+            });
+        };
         var cleanLink = function(link) {
             return decodeURIComponent(link.replace(/^\/exist\/restxq\/api\/data\/original\//, ""))
         };
         $scope.setLinkLeft = function(link) {
-            TranslationsService.setLeft(cleanLink(link));
+            TranslationsService.setLeft(cleanLink(link))
+            .then(function() { $scope.trForm.$setDirty(); });
         };
         $scope.setLinkRight = function(link) {
-            TranslationsService.setRight(cleanLink(link));
+            TranslationsService.setRight(cleanLink(link))
+            .then(function() { $scope.trForm.$setDirty(); });
         };
         $scope.dialogCancel = function() {};
 
         $scope.saveButtonText = function() {
             return this.trForm.$pristine ? ((!TranslationsService.resource) ? "Unsaved, No changes" : "Saved" ) : "Save";
         };
-
+        $scope.$on("draggable:end", function() {
+            $scope.trForm.$setDirty();
+        });
         setDocument();
     }
     ]
