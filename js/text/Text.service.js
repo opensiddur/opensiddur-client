@@ -97,14 +97,14 @@ osTextModule.service("TextService", [
                 // extend a promise to make it behave like $http
                 promise.success = function(fn) {  
                     promise.then(function(response) {
-                        fn(response.data, response.status, response.headers, config);
+                        fn(response.data, response.status, response.headers, response.config);
                     });
                     return promise;
                   };
 
                 promise.error = function(fn) {  
                     promise.then(null, function(response) {
-                        fn(response.data, response.status, response.headers, config);
+                        fn(response.data, response.status, response.headers, response.config);
                     });
                     return promise;
                 };
@@ -210,7 +210,10 @@ osTextModule.service("TextService", [
                 ), this._isFlat);
                 return this;
             }
-            return xj.xml2json(XsltService.transformString("/js/text/Title.get.xsl", this._content)).titles.title_asArray;
+            
+            return (this._content) ?
+                xj.xml2json(XsltService.transformString("/js/text/Title.get.xsl", this._content)).titles.title_asArray
+                : [{ title: "", titleLang : "", subtitle : "", subtitleLang : "" }];
         },
         responsibility : function(respJson) {
             // [ {respName, respType, respText, respRef} ]
