@@ -8,8 +8,10 @@
     Licensed under the GNU Lesser General Public License, version 3
 */
 translationsModule.factory("TranslationsService", [
-    "$http", "$q", "TextService", "XsltService",  
-    function($http, $q, TextService, XsltService) {
+    "$http", "$q", 
+    "AuthenticationService", "TextService", "XsltService",  
+    function($http, $q, 
+    AuthenticationService, TextService, XsltService) {
     var x2j = new X2JS({ "arrayAccessForm" : "none", emptyNodeForm : "text" });
 
     var loadSegmentsFrom = function(resource, side) {
@@ -57,9 +59,11 @@ translationsModule.factory("TranslationsService", [
         translationId : function(id) {
             if (id) {
                 TextService.content(
-                    XsltService.transformString("/js/translations/TranslationId.set.xsl", TextService.content(), {
-                        translationId : id
-                    })
+                    XsltService.indentToString(
+                        XsltService.transformString("/js/translations/TranslationId.set.xsl", TextService.content(), {
+                            translationId : id
+                        })
+                    )
                 );
                 return this;
             }

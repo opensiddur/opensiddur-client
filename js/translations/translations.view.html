@@ -15,7 +15,16 @@
                           data-ng-click="saveDocument()"  
                           data-ng-disabled="!AccessService.access.write || trForm.$invalid || trForm.$pristine">{{saveButtonText()}}</button>
                 </div>
-                <!-- TODO: new metadata/translation id setting -->
+                <div class="btn-group navbar-btn">
+                    <button data-ng-disabled="!AuthenticationService.loggedIn && !TranslationsService.TextService.resource" class="btn dropdown-toggle" data-toggle="dropdown">Metadata<b class="caret"></b></button>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a href="#" data-ng-click="DialogService.open('metadataTitleDialog')">Set titles...</a></li>
+                        <li><a href="#" data-ng-click="DialogService.open('metadataLicenseDialog')">Copyright License...</a></li>
+                        <li><a href="#" data-ng-click="DialogService.open('metadataRespDialog')">Set responsibility credits...</a></li>
+                        <li><a href="#" data-ng-click="DialogService.open('metadataSourcesDialog')">Set Sources...</a></li>
+                        <li><a href="#" data-ng-click="DialogService.open('metadataCommitLogDialog')">View commit log/Set commit message...</a></li>
+                    </ul>
+                </div>
                 <div class="navbar-right navbar-btn">
                     <os-sharing-status sharing-dialog="sharingDialog"></os-sharing-status>
                 </div>
@@ -33,16 +42,17 @@
                 <div class="row">
                     <div class="col-md-3 nopadding">
                         <div>
-                            <button class="btn btn-primary btn-small" ng-click="DialogService.open('openDialogLeft')">Change: {{TranslationsService.leftResource}}</button>
+                            <button class="btn btn-primary btn-small" ng-click="DialogService.open('openDialogLeft')">Change: {{TranslationsService.leftResource | truncate:30 }}</button>
                         </div>
                         <os-translation-stream ng-model="TranslationsService.left" selected="selected.left"></os-translation-stream>
                     </div>
                     <div class="col-md-6 nopadding">
+                            <button class="btn btn-primary btn-small" ng-click="DialogService.open('translationIdDialog')">Translation identifier: {{TranslationsService.translationId() | truncate:30 }}</button>
                         <os-translation-block ng-model="TranslationsService.blocks"></os-translation-block>
                     </div>
                     <div class="col-md-3 nopadding">
                         <div>
-                            <button class="btn btn-primary btn-small" ng-click="DialogService.open('openDialogRight')">Change: {{TranslationsService.rightResource}}</button>
+                            <button class="btn btn-primary btn-small" ng-click="DialogService.open('openDialogRight')">Change: {{TranslationsService.rightResource | truncate:30 }}</button>
                         </div>
                         <os-translation-stream ng-model="TranslationsService.right" selected="selected.right"></os-translation-stream>
                     </div>
@@ -56,6 +66,27 @@
         on-ok="setLinkLeft" on-close="dialogCancel"></os-open-dialog> 
     <os-open-dialog api="'/api/data/original'" name="openDialogRight" title="Set parallel text 2"
         on-ok="setLinkRight" on-close="dialogCancel"></os-open-dialog> 
+    <os-translation-id-dialog name="translationIdDialog"></os-translation-id-dialog>
     <os-sharing-dialog is-new="!TranslationsService.resource" name="sharingDialog" title="Sharing"></os-sharing-dialog> 
+    <os-metadata-license-dialog
+            name="metadataLicenseDialog"
+            title="License"
+            on-ok="makeDirty"></os-metadata-license-dialog>
+    <os-metadata-title-dialog
+            name="metadataTitleDialog"
+            title="Titles"
+            on-ok="makeDirty"></os-metadata-title-dialog>
+    <os-metadata-resp-dialog
+            name="metadataRespDialog"
+            title="Responsibility Credits"
+            on-ok="makeDirty"></os-metadata-resp-dialog>
+    <os-metadata-sources-dialog
+            name="metadataSourcesDialog"
+            title="Sources"
+            on-ok="makeDirty"></os-metadata-sources-dialog>
+    <os-metadata-commit-log-dialog
+            name="metadataCommitLogDialog"
+            title="Commit Log"
+            on-ok="makeDirty"></os-metadata-commit-log-dialog>
 </div>
 

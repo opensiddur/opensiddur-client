@@ -100,7 +100,14 @@ translationsModule.controller(
             TranslationsService.setRight(cleanLink(link))
             .then(function() { $scope.trForm.$setDirty(); });
         };
+        $scope.setTranslationId = function(newId) {
+            TranslationsService.translationId(newId);
+        };
         $scope.dialogCancel = function() {};
+        $scope.makeDirty = function() {
+            $scope.trForm.$setDirty();
+            return true;
+        };
 
         $scope.saveButtonText = function() {
             return this.trForm.$pristine ? ((!TranslationsService.resource) ? "Unsaved, No changes" : "Saved" ) : "Save";
