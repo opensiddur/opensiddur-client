@@ -74,7 +74,7 @@ osDialogMetadataSourcesModule.directive(
                     $scope.streamContentChanged = function() {
                         // whole stream is checked or unchecked
                         var s = $scope.sourcesModel[$scope.selectedSource].contents.stream;
-                        if (s.streamChecked) {
+                        if (s.streamChecked && "id_asArray" in s) {
                             for (var i = 0; i < s.id_asArray.length; i++) { 
                                 s.id_asArray[i].checked = true;
                             }
@@ -84,11 +84,13 @@ osDialogMetadataSourcesModule.directive(
                         var s = $scope.sourcesModel[$scope.selectedSource].contents.stream;
                         var idArray = s.id_asArray;
                         var nTrue = 0;
-                        for (var i=0; i < idArray.length; i++) {
-                            idArray[i].checked = selectionValue;
-                            nTrue += (selectionValue == true) ? 1 : 0;
+                        if (idArray) {
+                            for (var i=0; i < idArray.length; i++) {
+                                idArray[i].checked = selectionValue;
+                                nTrue += (selectionValue == true) ? 1 : 0;
+                            }
+                            s.streamChecked = nTrue == idArray.length;
                         }
-                        s.streamChecked = nTrue == idArray.length;
                     };
                     $scope.selectAll = function() {
                         setSelections(true);
@@ -156,8 +158,10 @@ osDialogMetadataSourcesModule.directive(
                         // set up the template for new sources
                         template.contents.stream = angular.copy(scope.sourcesModel[0].contents.stream);
                         template.contents.stream.streamChecked = true;
-                        for (var i = 0; i < template.contents.stream.id_asArray.length; i++) {
-                            template.contents.stream.id_asArray[i].checked = true;
+                        if ("id_asArray" in template.contents.stream) {
+                            for (var i = 0; i < template.contents.stream.id_asArray.length; i++) {
+                                template.contents.stream.id_asArray[i].checked = true;
+                            }
                         }
 
                         scope.select(0); 

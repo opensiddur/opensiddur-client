@@ -257,10 +257,12 @@ osTextModule.service("TextService", [
                     bibl[i].scope.fromPage = parseInt(bibl[i].scope.fromPage);
                     bibl[i].scope.toPage = parseInt(bibl[i].scope.toPage);
                     bibl[i].contents.stream.streamChecked = 
-                        (bibl[i].contents.stream.streamChecked == "false") ? false : true; 
-                    for (var j=0; j < bibl[i].contents.stream.id_asArray.length; j++) {
-                        bibl[i].contents.stream.id_asArray[j].checked =
-                            (bibl[i].contents.stream.id_asArray[j].checked == "false") ? false : true;
+                        (bibl[i].contents.stream.streamChecked == "false") ? false : true;
+                    if ("id_asArray" in bibl[i].contents.stream) { 
+                        for (var j=0; j < bibl[i].contents.stream.id_asArray.length; j++) {
+                            bibl[i].contents.stream.id_asArray[j].checked =
+                                (bibl[i].contents.stream.id_asArray[j].checked == "false") ? false : true;
+                        }
                     }
                 }
                 return bibl; 
