@@ -204,7 +204,7 @@ osTextModule.service("TextService", [
             // [ {title :, lang:, subtitle: } ]
             
             if (titleJson) {
-                this._content = XsltService.indentToString(
+                this._content = XsltService.serializeToStringTEINSClean(
                     XsltService.transformString("/js/text/Title.set.xsl", this._content, { 
                         "new-titles" : xj.json2xml(angular.fromJson(angular.toJson({titles : {title : titleJson}})))}
                 ), this._isFlat);
