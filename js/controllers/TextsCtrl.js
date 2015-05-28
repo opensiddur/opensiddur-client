@@ -205,13 +205,13 @@ OpenSiddurClientApp.controller(
                         $scope.editor.title = TextService.title()[0].text;
                         $scope.editor.isNew = 0;
                         $scope.editor.isLoaded = 1;
-                        $scope.textsForm.$setPristine();
                         setTimeout(
                             function() { 
                                 $scope.editor.codemirror.editor.refresh();
                                 if (cursorLocation) {
                                     $scope.editor.codemirror.doc.setCursor(cursorLocation);
                                 }
+                                $scope.textsForm.$setPristine();
                             }, 250
                         );
 
