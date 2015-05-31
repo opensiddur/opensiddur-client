@@ -4,7 +4,7 @@
  * Copyright 2014 Efraim Feinstein <efraim@opensiddur.org>
  * Licensed under the GNU Lesser General Public License, version 3 or later
  */
-OpenSiddurClientApp.controller(
+osClientModule.controller(
   'NavbarCtrl',
   ['$scope', '$route', '$location', '$routeParams', 
   function ($scope, $route, $location, $routeParams) {

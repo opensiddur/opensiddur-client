@@ -12,8 +12,8 @@
 OpenSiddurClientApp.directive(
         'osEditLinkDialogSimple',
         [
-        'EditorDataService', 'ListingService', 'TextService', 'ErrorService',
-        function( EditorDataService, ListingService, TextService, ErrorService ) {
+        'EditorDataService', 'TextService', 'ErrorService',
+        function( EditorDataService, TextService, ErrorService ) {
             return {
                 restrict : 'AE',
                 scope : {
@@ -22,7 +22,7 @@ OpenSiddurClientApp.directive(
                     name : "@",
                     title : "@"
                 },
-                controller: ['$scope', 'ListingService', function ($scope, ListingService) {
+                controller: ['$scope', function ($scope) {
                     console.log("In edit link dialog (simple) controller");
                     $scope.selectLinkType = function(linkType) {
                         if (linkType == "internal") {

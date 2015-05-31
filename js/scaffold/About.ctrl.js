@@ -4,7 +4,7 @@
  * Copyright 2013-2014 Efraim Feinstein <efraim@opensiddur.org>
  * Licensed under the GNU Lesser General Public License, version 3 or later
  */
-OpenSiddurClientApp.controller(
+osClientModule.controller(
   'AboutCtrl',
   ['$scope', 
   function ($scope) {

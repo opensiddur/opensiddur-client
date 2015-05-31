@@ -79,7 +79,13 @@ var osClientModule =
        'osClient.transcriptionWindow', // a dependency of the text module, can be moved when completely modularized
        'osClient.translations',
        'osClient.xslt' // probably won't be needed when completely modularized
-      ]);
+      ])
+.constant("scaffoldConst", {
+    partial : {
+        about : "/js/scaffold/about.view.html"
+    }
+})
+;
 
 osClientModule.config(
   ['$httpProvider', 
@@ -114,9 +120,9 @@ osClientModule.config(
 
 osClientModule.config(
   ['$routeProvider', '$locationProvider', 
-    'osAuthenticationConst', 'osJobsConst', 'osCompiledConst', 'osCompilerConst', 'osProfileConst', 'osRecentChangesConst', 'osSourcesConst', 'translationsConst',
+    'osAuthenticationConst', 'osJobsConst', 'osCompiledConst', 'osCompilerConst', 'osProfileConst', 'osRecentChangesConst', 'osSourcesConst', 'scaffoldConst', 'translationsConst',
   function($routeProvider, $locationProvider, 
-    osAuthenticationConst, osJobsConst, osCompiledConst, osCompilerConst, osProfileConst, osRecentChangesConst, osSourcesConst, translationsConst) {
+    osAuthenticationConst, osJobsConst, osCompiledConst, osCompilerConst, osProfileConst, osRecentChangesConst, osSourcesConst, scaffoldConst, translationsConst) {
     $locationProvider.html5Mode(true).hashPrefix("!");
     $routeProvider
       .when('/changes/:userName?', {templateUrl: osRecentChangesConst.partial, controller: "RecentChangesCtrl"})
@@ -134,7 +140,7 @@ osClientModule.config(
       .when('/conditionals/:resource?', {templateUrl: '/partials/texts.html', controller: "TextsCtrl"})
       .when('/profile/:userName', {templateUrl: osProfileConst.partial, controller: "ProfileCtrl"})
       .when('/changepassword', {templateUrl: osAuthenticationConst.partial.password, controller: "ChangePasswordCtrl"})
-      .when('/about', {templateUrl: '/partials/about.html', controller: "AboutCtrl"})
+      .when('/about', {templateUrl: scaffoldConst.partial.about, controller: "AboutCtrl"})
       .otherwise({redirectTo: '/about'});
   }
 ]);
