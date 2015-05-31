@@ -73,6 +73,8 @@ var osClientModule =
        'osClient.dialog.metadata.resp', // ditto
        'osClient.dialog.metadata.sources', // ditto
        'osClient.dialog.metadata.title', // ditto
+       'osClient.dialog.simple.editlink', // ditto
+       'osClient.dialog.simple.editsegment', // ditto
        'osClient.sharing',
        'osClient.sources',
        'osClient.text',
@@ -120,9 +122,11 @@ osClientModule.config(
 
 osClientModule.config(
   ['$routeProvider', '$locationProvider', 
-    'osAuthenticationConst', 'osJobsConst', 'osCompiledConst', 'osCompilerConst', 'osProfileConst', 'osRecentChangesConst', 'osSourcesConst', 'scaffoldConst', 'translationsConst',
+    'osAuthenticationConst', 'osJobsConst', 'osCompiledConst', 
+    'osCompilerConst', 'osProfileConst', 'osRecentChangesConst', 
+    'osSourcesConst', 'scaffoldConst', 'textConst', 'translationsConst',
   function($routeProvider, $locationProvider, 
-    osAuthenticationConst, osJobsConst, osCompiledConst, osCompilerConst, osProfileConst, osRecentChangesConst, osSourcesConst, scaffoldConst, translationsConst) {
+    osAuthenticationConst, osJobsConst, osCompiledConst, osCompilerConst, osProfileConst, osRecentChangesConst, osSourcesConst, scaffoldConst, textConst, translationsConst) {
     $locationProvider.html5Mode(true).hashPrefix("!");
     $routeProvider
       .when('/changes/:userName?', {templateUrl: osRecentChangesConst.partial, controller: "RecentChangesCtrl"})
@@ -133,11 +137,11 @@ osClientModule.config(
       .when('/jobstatus/:jobid', {templateUrl: osJobsConst.partial.jobstatus, controller: "JobStatusCtrl"})
       .when('/signin', {templateUrl: osAuthenticationConst.partial.signin, controller: "AuthenticationCtrl"})
       .when('/sources/:resource?', {templateUrl: osSourcesConst.partial, controller: "SourcesCtrl"})
-      .when('/styles/:resource?', {templateUrl: '/partials/texts.html', controller: "TextsCtrl"})
-      .when('/texts/:resource?', {templateUrl: '/partials/texts.html', controller: "TextsCtrl"})
-      .when('/annotations/:resource?', {templateUrl: '/partials/texts.html', controller: "TextsCtrl"})
+      .when('/styles/:resource?', {templateUrl: textConst.partial, controller: "TextsCtrl"})
+      .when('/texts/:resource?', {templateUrl: textConst.partial, controller: "TextsCtrl"})
+      .when('/annotations/:resource?', {templateUrl: textConst.partial, controller: "TextsCtrl"})
       .when('/translations/:resource?', {templateUrl: translationsConst.partial, controller: "TranslationsCtrl"})
-      .when('/conditionals/:resource?', {templateUrl: '/partials/texts.html', controller: "TextsCtrl"})
+      .when('/conditionals/:resource?', {templateUrl: textConst.partial, controller: "TextsCtrl"})
       .when('/profile/:userName', {templateUrl: osProfileConst.partial, controller: "ProfileCtrl"})
       .when('/changepassword', {templateUrl: osAuthenticationConst.partial.password, controller: "ChangePasswordCtrl"})
       .when('/about', {templateUrl: scaffoldConst.partial.about, controller: "AboutCtrl"})

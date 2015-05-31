@@ -4,7 +4,7 @@
  * Copyright 2013-2015 Efraim Feinstein <efraim@opensiddur.org>
  * Licensed under the GNU Lesser General Public License, version 3 or later
  */
-OpenSiddurClientApp.controller(
+osTextModule.controller(
     'TextsCtrl',
     ['$scope', '$location', '$route', '$routeParams', '$timeout', '$window', 'XsltService', 
     'AccessService', 'AuthenticationService', 'DialogService', 'ErrorService', 

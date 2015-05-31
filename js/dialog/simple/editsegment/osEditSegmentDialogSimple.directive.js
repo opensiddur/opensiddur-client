@@ -9,7 +9,7 @@
  * Copyright 2015 Efraim Feinstein, efraim@opensiddur.org
  * Licensed under the GNU Lesser General Public License, version 3 or later
  */
-OpenSiddurClientApp.directive(
+dialogSimpleEditSegmentModule.directive(
         'osEditSegmentDialogSimple',
         [
         'EditorDataService', 'LanguageService',
@@ -50,7 +50,7 @@ OpenSiddurClientApp.directive(
                     });
                  },
                  transclude : false,
-                 templateUrl : "/js/directives/osEditSegmentDialogSimple.html"
+                 templateUrl : "/js/dialog/simple/editsegment/osEditSegmentDialogSimple.directive.html"
              };
         }
         ]

@@ -4,7 +4,7 @@
  * Copyright 2015 Efraim Feinstein, efraim@opensiddur.org
  * Licensed under the GNU Lesser General Public License, version 3 or later
  */
-OpenSiddurClientApp.factory("EditorDataService", [ 
+osTextModule.factory("EditorDataService", [ 
     function() {
         return {
             editLinkDialog : {},
