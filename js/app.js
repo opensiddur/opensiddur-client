@@ -38,9 +38,9 @@ var supportedResponsibilities = {
 };
 
 
-var OpenSiddurClientApp = 
+var osClientModule = 
   angular.module(
-      'OpenSiddurClientApp',
+      'osClient',
       [
        'ngCkeditor',
        'ngDraggable',
@@ -58,6 +58,7 @@ var OpenSiddurClientApp =
        'osClient.compiler',
        'osClient.globalData',
        'osClient.jobs',
+       'osClient.pwCheck',
        'osClient.profile',
        'osClient.recentChanges',
        'osClient.search',  // a dependency of dialogs, can be moved when completely modularized
@@ -80,7 +81,7 @@ var OpenSiddurClientApp =
        'osClient.xslt' // probably won't be needed when completely modularized
       ]);
 
-OpenSiddurClientApp.config(
+osClientModule.config(
   ['$httpProvider', 
   function($httpProvider) {
     // for eXist to return application/xml by default.
@@ -95,7 +96,7 @@ OpenSiddurClientApp.config(
 ]);
 
 // allow external URLs from Internet Archive, Google Books, and Wikimedia Commons to be loaded
-OpenSiddurClientApp.config(
+osClientModule.config(
     ['$sceDelegateProvider', 
     function($sceDelegateProvider) {
         $sceDelegateProvider.resourceUrlWhitelist([
@@ -111,7 +112,7 @@ OpenSiddurClientApp.config(
     }]
 );
 
-OpenSiddurClientApp.config(
+osClientModule.config(
   ['$routeProvider', '$locationProvider', 
     'osAuthenticationConst', 'osJobsConst', 'osCompiledConst', 'osCompilerConst', 'osProfileConst', 'osRecentChangesConst', 'osSourcesConst', 'translationsConst',
   function($routeProvider, $locationProvider, 
@@ -139,7 +140,7 @@ OpenSiddurClientApp.config(
 ]);
 
 // this is required to make $location.path() have a parameter to prevent reloading
-OpenSiddurClientApp.run(['$route', '$rootScope', '$location', function ($route, $rootScope, $location) {
+osClientModule.run(['$route', '$rootScope', '$location', function ($route, $rootScope, $location) {
     var original = $location.path;
     $location.path = function (path, reload) {
         if (reload === false) {
@@ -163,47 +164,4 @@ window.encodeURIComponent = function(str) {
       return '%' + c.charCodeAt(0).toString(16);
     });
 }; 
-/*
-OpenSiddurClientApp.config(['$httpProvider', function($httpProvider) {
-  $httpProvider.interceptors.push(function($q) {
-    var realEncodeURIComponent = window.encodeURIComponent;
-    return {
-      'request': function(config) {
-         window.encodeURIComponent = function(str) {
-              return realEncodeURIComponent(str).replace(/[,!'()*]/g, function(c) {
-                return '%' + c.charCodeAt(0).toString(16);
-              });
-         }; 
-         return config || $q.when(config);
-      },
-      'response': function(config) {
-         window.encodeURIComponent = realEncodeURIComponent;
-         return config || $q.when(config);
-      }
-    };
-  });
-}]);
-*/
-/* password check 
- * code from http://blog.brunoscopelliti.com/angularjs-directive-to-check-that-passwords-match 
- */
-OpenSiddurClientApp.directive(
-  'osPwCheck', 
-  [
-   function () {
-    return {
-      require: 'ngModel',
-      link: function (scope, elem, attrs, ctrl) {
-        var firstPassword = '#' + attrs.osPwCheck;
-        elem.add(firstPassword).on('keyup', function () {
-          scope.$apply(function () {
-            var v = elem.val()===$(firstPassword).val();
-            ctrl.$setValidity('pwmatch', v);
-          });
-        });
-      }
-    }
-   }
-  ]
-);
 
