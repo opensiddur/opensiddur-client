@@ -1,0 +1,11 @@
+<div class="osTranslationSegment" ng-class="{inblock : ngModel.inblock == 1}">
+    <div ng-show="ngModel.element != 'tei:ptr' && ngModel.element != 'tei:anchor'">
+        {{ngModel.text}}
+    </div>
+    <div ng-show="ngModel.element == 'tei:ptr'">
+        <img src="/js/translations/external-link.png" alt="outgoing link ->"/>{{ngModel.target}}
+    </div>
+    <div ng-show="ngModel.element == 'tei:anchor'">
+        <img src="/js/translations/anchor.png" alt="Anchor"/>{{ngModel.name}}
+    </div>
+</div>

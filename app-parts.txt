@@ -1,0 +1,146 @@
+App parts:
+./js/app.js
+./index.html
+
+- scaffolding
+    ./js/controllers/AboutCtrl.js
+    ./js/controllers/NavbarCtrl.js
+    ./partials/about.html
+-authentication management
+X    ./partials/signin.html
+X    ./partials/changepassword.html
+X    ./js/services/AuthenticationService.js
+X    ./js/controllers/authenticationwidgetctrl.js
+X    ./js/controllers/ChangePasswordCtrl.js
+X    ./js/controllers/AuthenticationCtrl.js
+-contributor management
+X    ./js/controllers/ProfileCtrl.js
+X    ./partials/profile.html
+-sources/bibliography management
+X    ./js/controllers/SourcesCtrl.js
+X    ./js/services/SourceService.js
+X    ./partials/sources.html
+-texts
+    ./partials/texts.html
+X    ./js/services/TextService.js
+    ./js/controllers/TextsCtrl.js
+-translation linkages
+    ./partials/translations.html
+    ./js/controllers/TranslationsCtrl.js
+    ./js/directives/osTranslationSegment.js
+    ./js/directives/osTranslationSegment.html
+-misc text-like objects (conditions, annotations)
+-styles
+-transcription viewer
+X    ./js/directives/osTranscriptionViewer.js
+X    ./js/directives/osTranscriptionViewer.html
+X    ./js/directives/osTranscriptionWindow.js
+X    ./js/directives/osTranscriptionWindow.html
+X    ./js/services/PageImageUrlService.js
+-changes
+X    ./js/controllers/RecentChangesCtrl.js
+X    ./partials/RecentChanges.html
+-jobs
+X    ./js/controllers/JobStatusCtrl.js
+X    ./js/controllers/JobsCtrl.js
+X    ./partials/Jobs.html
+-compiler
+X    ./js/controllers/CompileCtrl.js
+X    ./partials/Compile.html
+- compiled viewer
+X    ./js/controllers/CompiledCtrl.js
+X    ./partials/Compiled.html
+-dialogs and controls
+    ./js/services/DialogService.js
+    -id list
+X        ./js/directives/osIdList.js
+X        ./js/directives/osIdList.html
+    -search
+X        ./js/directives/osQueryBox.js
+X        ./js/directives/osQueryBox.html
+X        ./js/directives/osSearchList.js
+X        ./js/directives/osSearchList.html
+X        ./js/directives/osResultsBox.js
+X        ./js/directives/osResultsBox.html
+    -input
+X        ./js/directives/osarrayinput.js
+X        ./js/directives/osarrayinput.html
+    -sharing
+X        ./js/services/AccessService.js
+X        ./js/directives/osSharingDialog.js
+X        ./js/directives/osSharingDialog.html
+X        ./js/directives/osSharingStatus.js
+X        ./js/directives/osSharingStatus.html
+    -open
+X        ./js/directives/osOpenDialog.html
+X        ./js/directives/osOpenDialog.js
+    -new
+X        ./js/directives/osNewDialog.js
+X        ./js/directives/osNewDialog.html
+    -save
+    -links
+X        ./js/directives/osInsertLinkDialog.js
+X        ./js/directives/osInsertLinkDialog.html
+    - dialog/internallink
+X        ./js/directives/osInsertInternalLinkDialog.html
+X        ./js/directives/osInsertInternalLinkDialog.js
+    -metadata
+X        ./js/directives/osMetadataCommitLogDialog.html
+X        ./js/directives/osMetadataLicenseDialog.html
+X        ./js/directives/osMetadataCommitLogDialog.js
+X        ./js/directives/osMetadataLicenseDialog.js
+X        ./js/directives/osMetadataRespDialog.js
+X        ./js/directives/osMetadataRespDialog.html
+X        ./js/directives/osMetadataSourcesDialog.js
+X        ./js/directives/osMetadataSourcesDialog.html
+X        ./js/directives/osMetadataTitleDialog.js
+X        ./js/directives/osMetadataTitleDialog.html
+    -error reporting
+X        ./js/services/ErrorService.js
+X        ./js/directives/osErrorBox.js
+X        ./js/directives/osErrorBox.html
+    -text dialogs
+    -truncate
+X        ./js/filters/truncate.js
+    -XSLT
+X        ./js/services/XsltService.js
+    -globaldata 
+X        ./js/services/LanguageService.js
+
+- ckeditor features
+    ./js/services/EditorDataService.js
+    ./js/ckeditor/plugins/tei-seg/plugin.js
+    ./js/directives/osEditSegmentDialogSimple.js
+    ./js/directives/osEditSegmentDialogSimple.html
+    ./js/ckeditor/plugins/tei-ptr/plugin.js
+    ./js/directives/osEditLinkDialogSimple.js
+    ./js/directives/osEditLinkDialogSimple.html
+    ./js/ckeditor/plugins/tei-p/plugin.js
+    ./js/ckeditor/config.js
+- thirdparty 
+    base64
+X        ./js/base64.js
+    infinite-scroll
+X        ./js/infinite-scroll/ng-infinite-scroll.min.js
+    x2js
+X        ./js/x2js/xml2json.js
+    saxon-ce
+X        ./js/saxon-ce/SaxonceDebug/Saxonce.nocache.js
+X        ./js/saxon-ce/Saxonce/Saxonce.nocache.js
+    vkbeautify
+X        ./js/vkbeautify/vkbeautify.js
+    angular-local-storage
+X        ./js/angular-local-storage/localStorageModule.js
+DEPRECATED
+    ./js/services/RestApi.js
+    (?) ./js/services/ListingService.js (replace with search.QueryService)
+
+REMOVED
+    bootstrap.min.js
+    angular.min.js
+TO BE REMOVED FUNCTIONALITY
+X    ./js/directives/osinstance.js
+    ./js/jsonml-utils.js
+    ./js/jsonml-xml.js
+    ./js/jquery-2.0.3.min.js
+     

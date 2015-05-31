@@ -38,28 +38,58 @@ var supportedResponsibilities = {
 };
 
 
-/* retrieve an API error return value and return the string */
-var getApiError = function(data) {
-  return $($.parseXML(data)).find("message").text();
-}
-
-var OpenSiddurClientApp = 
+var osClientModule = 
   angular.module(
-      'OpenSiddurClientApp',
-      ['filters',
+      'osClient',
+      [
        'ngCkeditor',
+       'ngDraggable',
        'ngRoute',
        'ngResource',
        'ngSanitize',
-       'panzoom', 
-       'panzoomwidget', 
-       'LocalStorageModule',
+       //'LocalStorageModule',
        'infinite-scroll',
        'ui.codemirror',
-       'unsavedChanges'
-      ]);
+       'unsavedChanges',
+       // Open Siddur specific modules
+       'osClient.authentication',
+       'osClient.error',
+       'osClient.compiled',
+       'osClient.compiler',
+       'osClient.globalData',
+       'osClient.jobs',
+       'osClient.pwCheck',
+       'osClient.profile',
+       'osClient.recentChanges',
+       'osClient.search',  // a dependency of dialogs, can be moved when completely modularized
+       'osClient.idList',  // ditto
+       'osClient.arrayInput', // ditto
+       'osClient.dialog.new', // ditto
+       'osClient.dialog.open', // ditto
+       'osClient.dialog.internalLink', // ditto
+       'osClient.dialog.externalLink', // ditto
+       'osClient.dialog.metadata.commit', //ditto
+       'osClient.dialog.metadata.license', // ditto
+       'osClient.dialog.metadata.resp', // ditto
+       'osClient.dialog.metadata.sources', // ditto
+       'osClient.dialog.metadata.title', // ditto
+       'osClient.dialog.simple.editlink', // ditto
+       'osClient.dialog.simple.editsegment', // ditto
+       'osClient.sharing',
+       'osClient.sources',
+       'osClient.text',
+       'osClient.transcriptionWindow', // a dependency of the text module, can be moved when completely modularized
+       'osClient.translations',
+       'osClient.xslt' // probably won't be needed when completely modularized
+      ])
+.constant("scaffoldConst", {
+    partial : {
+        about : "/js/scaffold/about.view.html"
+    }
+})
+;
 
-OpenSiddurClientApp.config(
+osClientModule.config(
   ['$httpProvider', 
   function($httpProvider) {
     // for eXist to return application/xml by default.
@@ -74,7 +104,7 @@ OpenSiddurClientApp.config(
 ]);
 
 // allow external URLs from Internet Archive, Google Books, and Wikimedia Commons to be loaded
-OpenSiddurClientApp.config(
+osClientModule.config(
     ['$sceDelegateProvider', 
     function($sceDelegateProvider) {
         $sceDelegateProvider.resourceUrlWhitelist([
@@ -90,33 +120,37 @@ OpenSiddurClientApp.config(
     }]
 );
 
-OpenSiddurClientApp.config(
-  ['$routeProvider', '$locationProvider',
-  function($routeProvider, $locationProvider) {
+osClientModule.config(
+  ['$routeProvider', '$locationProvider', 
+    'osAuthenticationConst', 'osJobsConst', 'osCompiledConst', 
+    'osCompilerConst', 'osProfileConst', 'osRecentChangesConst', 
+    'osSourcesConst', 'scaffoldConst', 'textConst', 'translationsConst',
+  function($routeProvider, $locationProvider, 
+    osAuthenticationConst, osJobsConst, osCompiledConst, osCompilerConst, osProfileConst, osRecentChangesConst, osSourcesConst, scaffoldConst, textConst, translationsConst) {
     $locationProvider.html5Mode(true).hashPrefix("!");
     $routeProvider
-      .when('/changes/:userName?', {templateUrl: '/partials/RecentChanges.html', controller: "RecentChangesCtrl"})
-      .when('/compile/:resource', {templateUrl: '/partials/Compile.html', controller: "CompileCtrl"})
-      .when('/compiled/:resource', {templateUrl: '/partials/Compiled.html', controller: "CompiledCtrl"})
-      .when('/contributors/:userName?', {templateUrl: '/partials/profile.html', controller: "ProfileCtrl"})
-      .when('/jobs/:userName', {templateUrl: '/partials/Jobs.html', controller: "JobsCtrl"})
-      .when('/jobstatus/:jobid', {templateUrl: '/partials/Compile.html', controller: "JobStatusCtrl"})
-      .when('/signin', {templateUrl: '/partials/signin.html', controller: "AuthenticationCtrl"})
-      .when('/sources/:resource?', {templateUrl: '/partials/sources.html', controller: "SourcesCtrl"})
-      .when('/styles/:resource?', {templateUrl: '/partials/texts.html', controller: "TextsCtrl"})
-      .when('/texts/:resource?', {templateUrl: '/partials/texts.html', controller: "TextsCtrl"})
-      .when('/annotations/:resource?', {templateUrl: '/partials/texts.html', controller: "TextsCtrl"})
-      .when('/translations/:resource?', {templateUrl: '/partials/translations.html', controller: "TranslationsCtrl"})
-      .when('/conditionals/:resource?', {templateUrl: '/partials/texts.html', controller: "TextsCtrl"})
-      .when('/profile/:userName', {templateUrl: '/partials/profile.html', controller: "ProfileCtrl"})
-      .when('/changepassword', {templateUrl: '/partials/changepassword.html', controller: "ChangePasswordCtrl"})
-      .when('/about', {templateUrl: '/partials/about.html', controller: "AboutCtrl"})
+      .when('/changes/:userName?', {templateUrl: osRecentChangesConst.partial, controller: "RecentChangesCtrl"})
+      .when('/compile/:resource', {templateUrl: osCompilerConst.partial, controller: "CompileCtrl"})
+      .when('/compiled/:resource', {templateUrl: osCompiledConst.partial, controller: "CompiledCtrl"})
+      .when('/contributors/:userName?', {templateUrl: osProfileConst.partial, controller: "ProfileCtrl"})
+      .when('/jobs/:userName', {templateUrl: osJobsConst.partial.jobs, controller: "JobsCtrl"})
+      .when('/jobstatus/:jobid', {templateUrl: osJobsConst.partial.jobstatus, controller: "JobStatusCtrl"})
+      .when('/signin', {templateUrl: osAuthenticationConst.partial.signin, controller: "AuthenticationCtrl"})
+      .when('/sources/:resource?', {templateUrl: osSourcesConst.partial, controller: "SourcesCtrl"})
+      .when('/styles/:resource?', {templateUrl: textConst.partial, controller: "TextsCtrl"})
+      .when('/texts/:resource?', {templateUrl: textConst.partial, controller: "TextsCtrl"})
+      .when('/annotations/:resource?', {templateUrl: textConst.partial, controller: "TextsCtrl"})
+      .when('/translations/:resource?', {templateUrl: translationsConst.partial, controller: "TranslationsCtrl"})
+      .when('/conditionals/:resource?', {templateUrl: textConst.partial, controller: "TextsCtrl"})
+      .when('/profile/:userName', {templateUrl: osProfileConst.partial, controller: "ProfileCtrl"})
+      .when('/changepassword', {templateUrl: osAuthenticationConst.partial.password, controller: "ChangePasswordCtrl"})
+      .when('/about', {templateUrl: scaffoldConst.partial.about, controller: "AboutCtrl"})
       .otherwise({redirectTo: '/about'});
   }
 ]);
 
 // this is required to make $location.path() have a parameter to prevent reloading
-OpenSiddurClientApp.run(['$route', '$rootScope', '$location', function ($route, $rootScope, $location) {
+osClientModule.run(['$route', '$rootScope', '$location', function ($route, $rootScope, $location) {
     var original = $location.path;
     $location.path = function (path, reload) {
         if (reload === false) {
@@ -140,47 +174,4 @@ window.encodeURIComponent = function(str) {
       return '%' + c.charCodeAt(0).toString(16);
     });
 }; 
-/*
-OpenSiddurClientApp.config(['$httpProvider', function($httpProvider) {
-  $httpProvider.interceptors.push(function($q) {
-    var realEncodeURIComponent = window.encodeURIComponent;
-    return {
-      'request': function(config) {
-         window.encodeURIComponent = function(str) {
-              return realEncodeURIComponent(str).replace(/[,!'()*]/g, function(c) {
-                return '%' + c.charCodeAt(0).toString(16);
-              });
-         }; 
-         return config || $q.when(config);
-      },
-      'response': function(config) {
-         window.encodeURIComponent = realEncodeURIComponent;
-         return config || $q.when(config);
-      }
-    };
-  });
-}]);
-*/
-/* password check 
- * code from http://blog.brunoscopelliti.com/angularjs-directive-to-check-that-passwords-match 
- */
-OpenSiddurClientApp.directive(
-  'osPwCheck', 
-  [
-   function () {
-    return {
-      require: 'ngModel',
-      link: function (scope, elem, attrs, ctrl) {
-        var firstPassword = '#' + attrs.osPwCheck;
-        elem.add(firstPassword).on('keyup', function () {
-          scope.$apply(function () {
-            var v = elem.val()===$(firstPassword).val();
-            ctrl.$setValidity('pwmatch', v);
-          });
-        });
-      }
-    }
-   }
-  ]
-);
 

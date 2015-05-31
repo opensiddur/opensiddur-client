@@ -1,0 +1,11 @@
+<div class="osTranslationStream">
+    <div ng-repeat="segment in ngModel" 
+        ng-drop="true"
+        >
+        <os-translation-segment 
+            ng-model="segment"
+            ng-drag="segment.inblock == 0"
+            ng-drag-data="segment"
+            ></os-translation-segment>
+    </div>
+</div>

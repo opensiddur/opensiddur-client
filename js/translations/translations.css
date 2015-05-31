@@ -1,0 +1,55 @@
+/* styling for translations 
+
+*/
+
+[ng-drag]{
+    -moz-user-select: -moz-none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    cursor:move;
+}
+/*
+[ng-drag].drag-over{
+    border:solid 2px red;
+}
+*/
+[ng-drag].dragging{
+    opacity: 0.5;
+}
+
+.osTranslationSegment {
+    border:2px solid black;
+    padding: 2px 0px 2px 0px;
+    margin: 8px 1px 8px 1px;
+}
+
+.osTranslationStream {
+    height:70vh;
+    overflow-y:auto;
+}
+
+.osTranslationStream .osTranslationSegment.inblock {
+    color:gray;
+    border:2px solid gray;
+}
+
+.osTranslationBlock {
+    height:75vh;
+    overflow-y:auto;
+}
+
+.osTranslationBlock .block-wrapper {
+    border:2px dashed black;
+    margin-bottom: 4px;
+    margin-top:4px;
+    margin-right:15px;
+    margin-left:15px;
+    min-height:1em;
+}
+
+.nopadding {
+    padding: 0 !important;
+    margin: 0 !important;
+}
