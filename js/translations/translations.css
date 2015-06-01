@@ -53,3 +53,8 @@
     padding: 0 !important;
     margin: 0 !important;
 }
+
+/* icon images on translation segments */
+.icon-image {
+    padding:5px;
+}
