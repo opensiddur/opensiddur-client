@@ -301,8 +301,9 @@ translationsModule.factory("TranslationsService", [
             
             if (segment.position >= firstInsertablePosition && segment.position <= lastInsertablePosition) {
                 // check that inserting this segment will not cross an external pointer
-                var checkStartPosition = Math.min(segment.position, thisBlockFirst);
-                var checkEndPosition = Math.max(segment.position, thisBlockLast);
+                // min/max null handling assumes null=0
+                var checkStartPosition = Math.min(segment.position, thisBlockFirst==null ? segment.position : thisBlockFirst);
+                var checkEndPosition = Math.max(segment.position, thisBlockLast == null ? segment.position : thisBlockLast);
                 var allSegments = (fromSide == 0) ? this.left : this.right;
                 for (var i = checkStartPosition; i <= checkEndPosition; i++) {
                     if (allSegments[i].external) 
