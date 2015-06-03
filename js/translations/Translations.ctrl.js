@@ -71,6 +71,7 @@ translationsModule.controller(
             if (resourceName && resourceName != TranslationsService.resource) {
                 $location.path( "/translations/" + resourceName );
             }
+            return true;
         };
         $scope.saveDocument = function() {
             var isNew = !TextService.resource;
@@ -95,10 +96,12 @@ translationsModule.controller(
         $scope.setLinkLeft = function(link) {
             TranslationsService.setLeft(cleanLink(link))
             .then(function() { $scope.trForm.$setDirty(); });
+            return true;
         };
         $scope.setLinkRight = function(link) {
             TranslationsService.setRight(cleanLink(link))
             .then(function() { $scope.trForm.$setDirty(); });
+            return true;
         };
         $scope.setTranslationId = function(newId) {
             TranslationsService.translationId(newId);
