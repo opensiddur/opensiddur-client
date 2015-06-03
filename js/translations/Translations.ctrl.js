@@ -113,7 +113,9 @@ translationsModule.controller(
             return this.trForm.$pristine ? ((!TranslationsService.resource) ? "Unsaved, No changes" : "Saved" ) : "Save";
         };
         $scope.$on("draggable:end", function() {
-            $scope.trForm.$setDirty();
+            if (AccessService.access.write) {
+                $scope.trForm.$setDirty();
+            }
         });
         setDocument();
     }

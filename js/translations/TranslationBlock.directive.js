@@ -12,8 +12,8 @@
     
 */
 translationsModule.directive("osTranslationBlock", [
-    "ErrorService", "TranslationsService",
-    function(ErrorService, TranslationsService) {
+    "AccessService", "ErrorService", "TranslationsService",
+    function(AccessService, ErrorService, TranslationsService) {
         return {
             restrict : "AE",
             scope : {
@@ -23,27 +23,37 @@ translationsModule.directive("osTranslationBlock", [
             link : function(scope, elem, attrs, ctrl) {
                 scope.onDropStartBlocks = function($data, $event) {
                     // this function is called when a segment is dropped on an empty set of blocks
-                    TranslationsService.insertEmptyBlock()
-                        .insertIntoBlock($data, TranslationsService.blocks[0]);
+                    if (AccessService.access.write) {
+                        TranslationsService.insertEmptyBlock()
+                            .insertIntoBlock($data, TranslationsService.blocks[0]);
+                    }
                 };
                 scope.onDropInsertIntoBlock = function(block, $data, $event) {
-                    // this function is called when a segment is dropped on an existing block
-                    if (!TranslationsService.insertIntoBlock($data, block)) {
-                        ErrorService.addAlert("The selected segment cannot be inserted in that position.\n" +
-                            "(1) Segments must be inserted in order and \n" +
-                            "(2) A translation block cannot contain segments that are both before and after an external pointer.\n"+
-"(3) The segment must not already be in a block.", "info");
+                    if (AccessService.access.write) {
+                        // this function is called when a segment is dropped on an existing block
+                        if (!TranslationsService.insertIntoBlock($data, block)) {
+                            ErrorService.addAlert("The selected segment cannot be inserted in that position.\n" +
+                                "(1) Segments must be inserted in order and \n" +
+                                "(2) A translation block cannot contain segments that are both before and after an external pointer.\n"+
+    "(3) The segment must not already be in a block.", "info");
+                        }
                     }
                 };
                 scope.onDragRemoveFromBlock = function(block, $data, $event) {
                     // this function is called when a segment is dragged away from the block
-                    TranslationsService.removeFromBlock($data, block);
+                    if (AccessService.access.write) {
+                        TranslationsService.removeFromBlock($data, block);
+                    }
                 };
                 scope.insertBlock = function(block, direction) {
-                    TranslationsService.insertEmptyBlock(block, direction);
+                    if (AccessService.access.write) {
+                        TranslationsService.insertEmptyBlock(block, direction);
+                    }
                 };
                 scope.removeBlock = function(block) {
-                    TranslationsService.removeBlock(block);
+                    if (AccessService.access.write) {
+                        TranslationsService.removeBlock(block);
+                    }
                 };
             },
             transclude : false,
