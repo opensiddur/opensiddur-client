@@ -15,6 +15,6 @@
     "commit": "4e337c126f86bb243c3be2b2c2ec30d93357288e"
   },
   "_source": "git://github.com/monospaced/hamster.js.git",
-  "_target": "^1.0.5",
+  "_target": ">=1.0.2",
   "_originalSource": "hamsterjs"
 }

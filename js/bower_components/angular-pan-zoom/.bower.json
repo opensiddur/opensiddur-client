@@ -1,6 +1,6 @@
 {
   "name": "angular-pan-zoom",
-  "version": "1.0.6",
+  "version": "1.0.8",
   "main": "release/panzoom.min.js",
   "ignore": [
     "*.launch",
@@ -27,11 +27,11 @@
     "angular-mocks": "^1.3.13"
   },
   "homepage": "https://github.com/mvindahl/angular-pan-zoom",
-  "_release": "1.0.6",
+  "_release": "1.0.8",
   "_resolution": {
     "type": "version",
-    "tag": "1.0.6",
-    "commit": "2c1bf34a9e7beec9a7e6629793bdd6762ca04e45"
+    "tag": "1.0.8",
+    "commit": "d9ae45836dad7058fd2381390071d991556178a4"
   },
   "_source": "git://github.com/mvindahl/angular-pan-zoom.git",
   "_target": "~1.0.3",
