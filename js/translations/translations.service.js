@@ -73,9 +73,8 @@ translationsModule.factory("TranslationsService", [
             var thiz = this;
             return TextService.load("/api/data/linkage", resource)
                 .success(function(data) {
-                    var $docXml = $.parseXML(data);
-                    var $$docXml = $($docXml);
-                    var linkGrp = $$docXml.find("parallelText").find("linkGrp");
+                    var $docXml = $(data);
+                    var linkGrp = $docXml.find("j\\:parallelText tei\\:linkGrp");
                     var domains = linkGrp.attr("domains").split(/\s+/);
                     var leftDomain = decodeURIComponent(domains[0].split("#")[0].split("/").pop());
                     var rightDomain = decodeURIComponent(domains[1].split("#")[0].split("/").pop());
@@ -104,7 +103,7 @@ translationsModule.factory("TranslationsService", [
 
                             leftCtr = 0;
                             rightCtr = 0;
-                            linkGrp.find("link").each(
+                            linkGrp.find("tei\\:link").each(
                                 function(idx, link) {
                                     var targets = $(link).attr("target").split(/\s+/);
                                     var leftTarget = startAndEndFromTarget(targets[0]);
