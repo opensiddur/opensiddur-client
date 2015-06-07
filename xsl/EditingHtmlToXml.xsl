@@ -67,8 +67,10 @@
         </xsl:if>
     </xsl:template>
 
-    <!-- p -> tei:seg -->
-    <xsl:template match="html:p[normalize-space(.)]" mode="streamText">
+    <!-- p -> tei:seg 
+    when p lacks a class, it is considered a segment because magicline inserts p[not(@class)]
+    -->
+    <xsl:template match="html:p[contains(@class, 'tei-seg') or not(@class)][normalize-space(.)]" mode="streamText">
         <tei:seg>
             <xsl:apply-templates select="@*" />
             <xsl:call-template name="add-xmlid">
@@ -91,20 +93,28 @@
         </tei:ptr>
     </xsl:template>
 
-    <!-- html:a[@id] -> leave an anchor -->
-    <xsl:template match="html:a" mode="streamText">
+    <!-- html:p -> leave an anchor -->
+    <xsl:template match="html:p[contains(@class,'tei-p')]" mode="streamText">
         <tei:anchor>
             <xsl:variable name="classes" select="tokenize(@class, '\s+')"/>
-            <xsl:attribute name="xml:id" select="
-                if ($classes='start')
-                then concat('start_', @id)
-                else if ($classes='end')
-                then concat('end_', substring-after(@id, '_end_'))
-                else @id
-            "/>
+            <xsl:attribute name="xml:id" select="@id"/>
         </tei:anchor>
     </xsl:template>
-    
+   
+    <xsl:template match="jf:merged" mode="layer">
+        <xsl:param name="layer-type" as="xs:string"/>
+        <xsl:for-each-group 
+            select="*"
+            group-starting-with="*[contains(@class, $layer-type)][contains(@class, 'start')]"
+            >
+            <xsl:variable name="starting-element" select="current-group()[1]"/>
+            <xsl:element name="{if ($layer-type='layer-p') then 'tei:p' else 'j:unknown'}">
+                <tei:ptr target="#range({$starting-element/@id},{replace($starting-element/@id, '^start_', 'end_')})">
+                </tei:ptr>
+            </xsl:element>
+        </xsl:for-each-group>
+    </xsl:template>
+ 
     <xsl:template match="jf:concurrent">
         <j:concurrent>
             <xsl:apply-templates select="@*"/>
@@ -113,13 +123,18 @@
     </xsl:template>
 
     <xsl:template match="jf:layer">
-        <j:layer>
-            <xsl:apply-templates select="@*"/>
-            <xsl:sequence select="@type"/>
-            <xsl:apply-templates select="//jf:merged/*" mode="layer">
-                <xsl:with-param name="layer-type" as="xs:string" select="concat('layer-',@type)"/>
-            </xsl:apply-templates>
-        </j:layer>
+        <xsl:variable name="layer-content" as="element()*">
+          <xsl:apply-templates select="//jf:merged" mode="layer">
+              <xsl:with-param name="layer-type" as="xs:string" select="concat('layer-',@type)"/>
+          </xsl:apply-templates>
+        </xsl:variable>
+        <xsl:if test="exists($layer-content)">
+          <j:layer>
+              <xsl:apply-templates select="@*"/>
+              <xsl:sequence select="@type"/>
+              <xsl:sequence select="$layer-content"/>
+          </j:layer>
+        </xsl:if>
     </xsl:template>
 
     <xsl:template match="tei:*|j:*">

@@ -70,11 +70,12 @@ OpenSiddurClientApp.controller(
 
         // this should be in $scope.editor, but ng-ckeditor will not allow it to be (see line 73)
         $scope.ckeditorOptions = {
+            autoParagraph : false,
             contentsCss : "/css/simple-editor.css",
             customConfig : "/js/ckeditor/config.js",    // points to the plugin directories
             enterMode : CKEDITOR.ENTER_P,
             entities : false,   // need XML entities, but not HTML entities...
-            extraPlugins : "language,tei-ptr,tei-seg",
+            extraPlugins : "language,tei-p,tei-ptr,tei-seg",
             fillEmptyBlocks : false,
             language : "en",
             language_list : LanguageService.getCkeditorList(),
@@ -101,7 +102,7 @@ OpenSiddurClientApp.controller(
             removeButtons : 'Paste,PasteFromWord',  
             allowedContent :
                 "a[href,data-target-base,data-target-fragment,target](tei-ptr);"+
-                "p[!id](tei-seg);" +
+                "p[!id](tei-seg,tei-p,layer-p,layer,start,end);" +
                 "*[id,lang,dir,data-*]"
         };
         $scope.editor = {
@@ -109,9 +110,14 @@ OpenSiddurClientApp.controller(
             ckeditorChanged : function() {
                 var lang = TextService.language().language;
                 var dir = LanguageService.getDirection(lang);
-                var htmlElement = CKEDITOR.instances.editor1.document.getDocumentElement().$;
-                htmlElement.setAttribute("lang", lang);
-                htmlElement.setAttribute("dir", dir);
+                try {
+                    var htmlElement = CKEDITOR.instances.editor1.document.getDocumentElement().$;
+                    htmlElement.setAttribute("lang", lang);
+                    htmlElement.setAttribute("dir", dir);
+                }
+                catch (err) {
+                    console.log("CKEDITOR instance does not exist. Could be an issue.");
+                }
             }, 
             codemirrorOptions : {
                 lineWrapping : true,
@@ -162,9 +168,11 @@ OpenSiddurClientApp.controller(
                 $scope.editor.title = TextService.title()[0].text;
                 $scope.editor.isLoaded = 1;
                 $location.path("/texts/" + $scope.editor.title, false);
-                // work around a bug where the editor does not refresh after load
                 setTimeout(
                     function() { 
+                        // work around a bug where sometimes the editor does not display text unless resized
+                        CKEDITOR.instances.editor1.resize('100%', '100%');  
+                        // work around a bug where the editor does not refresh after load
                         $scope.editor.codemirror.editor.refresh(); 
                         // set the form dirty only after the location change has occurred
                         $scope.textsForm.$setDirty();
@@ -200,7 +208,7 @@ OpenSiddurClientApp.controller(
                         $scope.textsForm.$setPristine();
                         setTimeout(
                             function() { 
-                                $scope.editor.codemirror.editor.refresh(); 
+                                $scope.editor.codemirror.editor.refresh();
                                 if (cursorLocation) {
                                     $scope.editor.codemirror.doc.setCursor(cursorLocation);
                                 }

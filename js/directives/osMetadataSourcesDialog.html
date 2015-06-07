@@ -34,10 +34,12 @@
                                 <td>{{source.title}}</td>
                                 <td><input data-ng-hide="source.source == 'Born%20Digital'"
                                     data-ng-change="fromPageChange()" 
+                                    data-ng-model-options='{ debounce: 500 }'
                                     type="number" data-ng-model="source.scope.fromPage"/></td>
                                 <td><input 
                                     data-ng-hide="source.source == 'Born%20Digital'"
                                     data-ng-change="toPageChange()"
+                                    data-ng-model-options='{ debounce: 500 }'
                                     type="number" data-ng-model="source.scope.toPage"/></td>   
                             </tr>
                         </tbody>

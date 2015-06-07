@@ -15,7 +15,7 @@ CKEDITOR.plugins.add( 'tei-ptr', {
 	icons: 'tei-ptr',
 
 	init: function( editor ) {
-		CKEDITOR.dialog.add( 'tei-ptr', this.path + 'dialogs/tei-ptr.js' );
+		//CKEDITOR.dialog.add( 'tei-ptr', this.path + 'dialogs/tei-ptr.js' );
 
 		editor.widgets.add( 'tei-ptr', {
             draggable : false,

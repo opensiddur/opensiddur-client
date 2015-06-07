@@ -193,7 +193,7 @@ OpenSiddurClientApp.service("TextService", [
             if (setLanguage) {
                 this._content = XsltService.indentToString(
                     XsltService.transformString("/xsl/SetLanguage.xsl", this._content, { 
-                        "language" : setLanguage.language}));
+                        "language" : setLanguage.language}), this._isFlat);
                 return this;
             }
             var l =  this._content.match(/xml:lang="([^"]+)"/);
@@ -207,7 +207,7 @@ OpenSiddurClientApp.service("TextService", [
                 this._content = XsltService.indentToString(
                     XsltService.transformString("/xsl/SetTitles.xsl", this._content, { 
                         "new-titles" : xj.json2xml(angular.fromJson(angular.toJson({titles : {title : titleJson}})))}
-                ));
+                ), this._isFlat);
                 return this;
             }
             return xj.xml2json(XsltService.transformString("/xsl/GetTitles.xsl", this._content)).titles.title_asArray;
@@ -219,7 +219,7 @@ OpenSiddurClientApp.service("TextService", [
                 this._content = XsltService.indentToString(
                     XsltService.transformString("/xsl/SetResps.xsl", this._content, { 
                         "new-respStmts" : xj.json2xml(angular.fromJson(angular.toJson({respStmts : {respStmt : respJson}})))}
-                ));
+                ), this._isFlat);
                 return this;
             }
             var js = xj.xml2json(XsltService.transformString("/xsl/GetResps.xsl", this._content))
@@ -230,7 +230,7 @@ OpenSiddurClientApp.service("TextService", [
             // return or accept { license : "string" }
             if (licenseJson) {
                 this._content = XsltService.indentToString(
-                    XsltService.transformString("/xsl/SetLicense.xsl", this._content, licenseJson));
+                    XsltService.transformString("/xsl/SetLicense.xsl", this._content, licenseJson), this._isFlat);
                 return this;
             }
             return { license : $("tei\\:licence", this._content).attr("target") };
@@ -241,7 +241,8 @@ OpenSiddurClientApp.service("TextService", [
                 this._content = XsltService.indentToString(
                     XsltService.transformString("/xsl/SetSources.xsl", this._content, {
                         "new-sources" : xj.json2xml(angular.fromJson(angular.toJson({sources : {bibl : sourcesJson}})))
-                    }));
+                        }),
+                    this._isFlat);
                 return this;
             }
             var js = xj.xml2json(XsltService.transformString("/xsl/GetSources.xsl", this._content))
@@ -273,7 +274,7 @@ OpenSiddurClientApp.service("TextService", [
                 this._content = XsltService.indentToString(
                     XsltService.transformString("/xsl/SetCommitMessage.xsl", this._content, {
                         "commit-message" : newMessage.message.__text
-                    }));
+                    }), this._isFlat);
                 return this;
             }
             return xjc.xml2json(XsltService.transformString("/xsl/GetCommitMessage.xsl", this._content));
@@ -288,6 +289,15 @@ OpenSiddurClientApp.service("TextService", [
                 "context-chars" : contextCharacters || 30
             })).xmlids.xmlid_asArray;
             return js.filter(function(x) { return !(streamOnly && x.stream == 'N') });
+        },
+        addLayer : function(layerType) {
+            // add a concurrent hierarchy of a particular type if one does not exist
+            this._content = XsltService.indentToString(
+                XsltService.transformString("/xsl/AddLayer.xsl", this._content, {
+                    "resource" : this._resourceApi + "/" + encodeURIComponent(this._resource),
+                    "layer-type" : layerType
+                }), this._isFlat);
+            return this;
         }
     };
 }]);
