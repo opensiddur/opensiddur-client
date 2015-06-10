@@ -78,7 +78,8 @@ osProfileModule.controller(
     $scope.dialogCancel = function() {};
     // load a profile or start a new one
     $scope.openDocument = function(selection) {
-        $location.path( "/contributors/" + decodeURIComponent(selection.split("/").pop()) ); 
+        $location.path( "/contributors/" + decodeURIComponent(selection.split("/").pop()) );
+        return true; 
     };
     $scope.newProfile = function() {
         $location.path( "/contributors" );    
