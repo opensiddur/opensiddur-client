@@ -1,0 +1,95 @@
+<div>
+    <div class="toolbar navbar navbar-inverse nav-collapse">
+        <div class="container-fluid">
+            <p class="navbar-text">{{ TextService.title()[0].text | truncate:30 }}</p>
+            <div class="btn-toolbar">
+                <div class="btn-group navbar-btn">
+                      <button class="btn btn-primary" type="submit"
+                          data-ng-disabled="!AuthenticationService.loggedIn"
+                          data-ng-click="newButton()"  
+                          >New</button>
+                      <button class="btn btn-primary" 
+                          data-ng-click="DialogService.open('openDialog')"  
+                          >Open</button>
+                      <button data-ng-class="{'btn' : true, 'btn-primary' : true, 'btn-success' : trForm.$pristine}" type="submit" 
+                          data-ng-click="saveDocument()"  
+                          data-ng-disabled="!AccessService.access.write || trForm.$invalid || trForm.$pristine">{{saveButtonText()}}</button>
+                </div>
+                <div class="btn-group navbar-btn">
+                    <button data-ng-disabled="!AuthenticationService.loggedIn && !TextService._resource" class="btn dropdown-toggle" data-toggle="dropdown">Metadata<b class="caret"></b></button>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a href="#" data-ng-click="DialogService.open('metadataTitleDialog')">Set titles...</a></li>
+                        <li><a href="#" data-ng-click="DialogService.open('metadataLicenseDialog')">Copyright License...</a></li>
+                        <li><a href="#" data-ng-click="DialogService.open('metadataRespDialog')">Set responsibility credits...</a></li>
+                        <li><a href="#" data-ng-click="DialogService.open('metadataSourcesDialog')">Set Sources...</a></li>
+                        <li><a href="#" data-ng-click="DialogService.open('metadataCommitLogDialog')">View commit log/Set commit message...</a></li>
+                    </ul>
+                </div>
+                <div class="navbar-right navbar-btn">
+                    <os-sharing-status sharing-dialog="sharingDialog"></os-sharing-status>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- page content -->
+    <div class="page-container container-fluid">
+        <div data-ng-show="!AuthenticationService.loggedIn && !TextService._resource">
+            Log in to be able to edit a new document, or open a document to view it.
+        </div>
+        <div data-ng-show="AuthenticationService.loggedIn || TextService._resource">
+            <form name="trForm">
+                <div class="row">
+                    <div class="col-md-3 nopadding">
+                        <div>
+                            <button class="btn btn-primary btn-small" ng-click="DialogService.open('openDialogLeft')" 
+                            ng-disabled="!AccessService.access.write">Change: {{TranslationsService.leftResource | truncate:30 }}</button>
+                        </div>
+                        <os-translation-stream ng-model="TranslationsService.left" selected="selected.left"></os-translation-stream>
+                    </div>
+                    <div class="col-md-6 nopadding">
+                            <button class="btn btn-primary btn-small" 
+                                ng-click="DialogService.open('translationIdDialog')"
+                                ng-disabled="!AccessService.access.write">Translation identifier: {{TranslationsService.translationId() | truncate:30 }}</button>
+                        <os-translation-block ng-model="TranslationsService.blocks"></os-translation-block>
+                    </div>
+                    <div class="col-md-3 nopadding">
+                        <div>
+                            <button class="btn btn-primary btn-small" ng-click="DialogService.open('openDialogRight')"
+                                ng-disabled="!AccessService.access.write">Change: {{TranslationsService.rightResource | truncate:30 }}</button>
+                        </div>
+                        <os-translation-stream ng-model="TranslationsService.right" selected="selected.right"></os-translation-stream>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <os-open-dialog api="'/api/data/linkage'" name="openDialog" title="Open Translation Linkage"
+        on-ok="openDocument" on-close="dialogCancel"></os-open-dialog> 
+    <os-open-dialog api="'/api/data/original'" name="openDialogLeft" title="Set parallel text 1"
+        on-ok="setLinkLeft" on-close="dialogCancel"></os-open-dialog> 
+    <os-open-dialog api="'/api/data/original'" name="openDialogRight" title="Set parallel text 2"
+        on-ok="setLinkRight" on-close="dialogCancel"></os-open-dialog> 
+    <os-translation-id-dialog name="translationIdDialog"></os-translation-id-dialog>
+    <os-sharing-dialog is-new="!TextService._resource" name="sharingDialog" title="Sharing"></os-sharing-dialog> 
+    <os-metadata-license-dialog
+            name="metadataLicenseDialog"
+            title="License"
+            on-ok="makeDirty"></os-metadata-license-dialog>
+    <os-metadata-title-dialog
+            name="metadataTitleDialog"
+            title="Titles"
+            on-ok="makeDirty"></os-metadata-title-dialog>
+    <os-metadata-resp-dialog
+            name="metadataRespDialog"
+            title="Responsibility Credits"
+            on-ok="makeDirty"></os-metadata-resp-dialog>
+    <os-metadata-sources-dialog
+            name="metadataSourcesDialog"
+            title="Sources"
+            on-ok="makeDirty"></os-metadata-sources-dialog>
+    <os-metadata-commit-log-dialog
+            name="metadataCommitLogDialog"
+            title="Commit Log"
+            on-ok="makeDirty"></os-metadata-commit-log-dialog>
+</div>
+
