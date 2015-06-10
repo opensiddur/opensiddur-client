@@ -39,6 +39,7 @@ osSourcesModule.controller(
             },
             openDocument : function (selection) {
                 $location.path( "/sources/" + decodeURIComponent(selection.split("/").pop()) );
+                return true;
             },
             dialogCancel : function () {},
             setDocument : function( ) {
