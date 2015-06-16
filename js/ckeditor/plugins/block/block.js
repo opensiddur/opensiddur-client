@@ -133,7 +133,7 @@ var BlockObject = function(editor) {
             }
         }
     };
-    var getAscendantSegment = function(node, originalNode) {
+    var getAscendantSegment = function(node, originalNode, elementType) {
         var originalNode = originalNode || node;
         if (!node || node.type == 9) {  // document node, nowhere to go
             return originalNode;
@@ -146,7 +146,7 @@ var BlockObject = function(editor) {
                 return node;
             }
             else {
-                return getAscendantSegment(node.getParent(), originalNode);
+                return getAscendantSegment(node.getParent(), originalNode, elementType);
             }
         }   
     };
@@ -175,8 +175,8 @@ var BlockObject = function(editor) {
         var thisId = getRandomId(layerType, elementType);
         var selection = editor.getSelection();
         var ranges = selection.getRanges();
-        var startElement = getAscendantSegment(ranges[0].startContainer);
-        var endElement = getAscendantSegment(ranges[ranges.length - 1].endContainer);
+        var startElement = getAscendantSegment(ranges[0].startContainer, null, elementType);
+        var endElement = getAscendantSegment(ranges[ranges.length - 1].endContainer, null, elementType);
         var begInsert = new CKEDITOR.dom.element.createFromHtml(beginTemplate(thisId));
         var endInsert = new CKEDITOR.dom.element.createFromHtml(endTemplate(thisId));
         removeInternalBlocks(startElement, endElement, classType);
