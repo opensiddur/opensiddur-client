@@ -28,6 +28,16 @@ osTextModule.controller(
                 defaultTitle : "New text",
                 editorMode : "xml"
             },
+            "stexts" : {
+                path : "stexts",
+                type : "original",
+                api : "/api/data/original",
+                supportsAccess : true,
+                supportsCompile : true,
+                supportsTranscriptionView : true,
+                defaultTitle : "New text",
+                editorMode : "xml"
+            },
             "conditionals" : {
                 path : "conditionals",
                 type : "conditionals",
@@ -75,7 +85,7 @@ osTextModule.controller(
             customConfig : "/js/ckeditor/config.js",    // points to the plugin directories
             enterMode : CKEDITOR.ENTER_P,
             entities : false,   // need XML entities, but not HTML entities...
-            extraPlugins : "language,tei-p,tei-ptr,tei-seg",
+            extraPlugins : "language,jf-annotation,tei-p,tei-ptr,tei-seg",
             fillEmptyBlocks : false,
             language : "en",
             language_list : LanguageService.getCkeditorList(),
@@ -103,6 +113,8 @@ osTextModule.controller(
             allowedContent :
                 "a[href,data-target-base,data-target-fragment,target](tei-ptr);"+
                 "p[!id](tei-seg,tei-p,layer-p,layer,start,end);" +
+                "div[!id](jf-annotation,layer-phony-annotation,layer,start,end);" +
+                "div[id](tei-note);" +
                 "*[id,lang,dir,data-*]"
         };
         $scope.editor = {
@@ -334,7 +346,7 @@ osTextModule.controller(
             $scope.helper.link.insertable = newSelection.replace(/^\/exist\/restxq\/api/, "")
         });
 
-        $scope.editor.setDocument($routeParams.resource, false, false);
+        $scope.editor.setDocument($routeParams.resource, false, $location.path().split("/")[1] == "stexts");
 
     }]
 );

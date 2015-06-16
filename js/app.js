@@ -138,6 +138,7 @@ osClientModule.config(
       .when('/signin', {templateUrl: osAuthenticationConst.partial.signin, controller: "AuthenticationCtrl"})
       .when('/sources/:resource?', {templateUrl: osSourcesConst.partial, controller: "SourcesCtrl"})
       .when('/styles/:resource?', {templateUrl: textConst.partial, controller: "TextsCtrl"})
+      .when('/stexts/:resource?', {templateUrl: textConst.partial, controller: "TextsCtrl"})
       .when('/texts/:resource?', {templateUrl: textConst.partial, controller: "TextsCtrl"})
       .when('/annotations/:resource?', {templateUrl: textConst.partial, controller: "TextsCtrl"})
       .when('/translations/:resource?', {templateUrl: translationsConst.partial, controller: "TranslationsCtrl"})
