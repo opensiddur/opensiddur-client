@@ -1,0 +1,72 @@
+<div class="osEditAnnotationDialogSimple modal" aria-hidden="true" aria-labelledBy="editAnnotationDialogSimpleHeader">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-ng-click="CloseButton()" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="editAnnotationDialogSimpleHeader">{{ title }}</h4>
+            </div>
+            <div class="modal-body">
+                <!-- TODO: add a note location tab -->
+                <!-- TODO: add an image preview window -->
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <label class="control-label col-md-2" for="note.id">Unique identifier</label>
+                        <div class="col-md-9">
+                            <input class="form-control" 
+                                required="true" 
+                                type="text" 
+                                data-ng-model="note.id" 
+                                id="note.id"></input>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-2" for="note.lang">Language</label>
+                        <div class="col-md-5">
+                            <select
+                                class="form-control"
+                                data-ng-model="note.lang" 
+                                data-ng-required="1"
+                                data-ng-options="code as lang.toString() for (code, lang) in LanguageService.supportedLanguages"
+                                placeholder="Language"/>
+                       </div> 
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-2" for="note.type">Type</label>
+                        <div class="col-md-5">
+                            <select
+                                class="form-control"
+                                data-ng-model="note.type" 
+                                data-ng-required="1"
+                                placeholder="Type">
+                                <option value="comment">Comment</option>
+                                <option value="editorial">Editorial</option>
+                                <option value="inline">Inline</option>
+                                <option value="instruction">Instruction</option>
+                                <option value="transcription">Transcription</option>
+                                <option value="translation">Translation</option>
+                                <option value="audio">Audio</option>
+                            </select>
+                       </div> 
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-2" for="note.content">Content</label>
+                        <div class="col-md-5">
+                            <textarea
+                                class="form-control"
+                                data-ng-model="note.content" 
+                                data-ng-required="1"
+                                placeholder="Note content">
+                            </textarea>
+                       </div> 
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn" data-ng-click="CloseButton()" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal"
+                    data-ng-click="OKButton()">Edit</button>
+            </div>
+        </div>
+    </div>
+</div>
+

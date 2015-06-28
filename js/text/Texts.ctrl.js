@@ -115,7 +115,8 @@ osTextModule.controller(
                 "p[!id](tei-seg,tei-p,layer-p,layer,start,end);" +
                 "div[!id](jf-annotation,layer-phony-annotation,layer,start,end);" +
                 "div[id](tei-note);" +
-                "*[id,lang,dir,data-*]"
+                "*[id,lang,dir,data-*];" +
+                "*[editor-internal];"
         };
         $scope.editor = {
             loggedIn : AuthenticationService.loggedIn,

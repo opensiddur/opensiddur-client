@@ -73,6 +73,7 @@ var osClientModule =
        'osClient.dialog.metadata.resp', // ditto
        'osClient.dialog.metadata.sources', // ditto
        'osClient.dialog.metadata.title', // ditto
+       'osClient.dialog.simple.editannotation', // ditto
        'osClient.dialog.simple.editlink', // ditto
        'osClient.dialog.simple.editsegment', // ditto
        'osClient.sharing',

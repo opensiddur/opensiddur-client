@@ -32,27 +32,39 @@ CKEDITOR.plugins.add( 'jf-annotation', {
             inline : false, 
 			allowedContent:
 				'div[id](jf-annotation,tei-note,layer,layer-phony-annotation,start,end);' + 
-                'div[id](tei-note)',
+                'div[id](tei-note);' +
+                'span(editor-internal,type,resource,annotation-id)',
 			requiredContent: 'div(jf-annotation)',
 
 			button: 'Annotate',
+/*
             editables : {
                 note : {
                     selector : "div.tei-note",
                     allowedContent : "p"
                 }
             },
-            /*
+*/
             edit : function ( evt) {
                 var injector = angular.element('*[data-ng-app]').injector();
                 var DialogService = injector.get("DialogService");
                 var EditorDataService = injector.get("EditorDataService");
                 var el = this.element;
-                
-                EditorDataService.set("editParagraphDialog", {
-				    id : el.getAttribute("id") || "" ,
+                var noteElement = el.findOne("div.tei-note");
+                var typeElement = el.findOne(".editor-internal.type");
+                EditorDataService.set("editAnnotationDialog", {
+				    id : noteElement.getAttribute("id") || "" ,
+                    lang : noteElement.getAttribute("lang") || "en",
+                    type : noteElement.getAttribute("data-type") || "comment",
+                    content : noteElement.getHtml(),
                     callback : function(ok) {
                         if (ok) {
+                            // set the content
+                            noteElement.setAttribute("id", this.id);
+                            noteElement.setAttribute("lang", this.lang);
+                            noteElement.setAttribute("data-type", this.type);
+                            typeElement.setHtml(this.type);   
+                            noteElement.setHtml(this.content);
                         }
                         else {
                             // cancel
@@ -63,17 +75,19 @@ CKEDITOR.plugins.add( 'jf-annotation', {
                         }
                     }
                 });
-                DialogService.open("editParagraphSimple");
+                DialogService.open("editAnnotationDialogSimple");
                 
             },
-            */
             insert: function() {
                 blockObject.insert(
                     "phony-annotation", "div", "jf-annotation",
                     function(id) {  // beginTemplate 
                         return '<div id="start_'+id+'" data-jf-annotation="" class="jf-annotation layer layer-phony-annotation start">[A]&#x21d3;'+
                                 // put an annotation icon here
-                               '<div class="tei-note" id="">Annotation here...</div>' +
+                               '[<span class="editor-internal type">comment</span>]'+
+                               /*'<span class="editor-internal resource">resource here</span>'+
+                               '(<span class="editor-internal annotation-id">idno</span>)'+*/
+                               '<div class="tei-note" id="" data-type="comment">Annotation here...</div>' +
                                '</div>'; 
                     },
                     function(id) {  // endTemplate
@@ -85,7 +99,7 @@ CKEDITOR.plugins.add( 'jf-annotation', {
 			upcast: function( element ) {
 				return element.name == 'div' && element.hasClass( 'jf-annotation' );
 			},
-			init: function() {
+			init: function(ev) {
                 //this.on( 'doubleclick', blockObject.doubleclick);
 			},
             destroy : blockObject.destroy,

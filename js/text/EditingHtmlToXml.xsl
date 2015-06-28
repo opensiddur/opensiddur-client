@@ -94,13 +94,15 @@
     </xsl:template>
 
     <!-- html:p -> leave an anchor -->
-    <xsl:template match="html:p[contains(@class,'tei-p')]" mode="streamText">
+    <!-- html:div(jf:annotation) -->
+    <xsl:template match="html:p[contains(@class,'tei-p')]|html:div[contains(@class, 'jf-annotation')]" 
+        mode="streamText">
         <tei:anchor>
             <xsl:variable name="classes" select="tokenize(@class, '\s+')"/>
             <xsl:attribute name="xml:id" select="@id"/>
         </tei:anchor>
     </xsl:template>
-   
+
     <xsl:template match="jf:merged" mode="layer">
         <xsl:param name="layer-type" as="xs:string"/>
         <xsl:for-each-group 
@@ -135,6 +137,46 @@
               <xsl:sequence select="$layer-content"/>
           </j:layer>
         </xsl:if>
+    </xsl:template>
+
+    <!-- links mode: find streamtext elements that should become links and make them links  -->
+    <xsl:template match="j:links">
+        <xsl:copy copy-namespaces="no">
+            <xsl:apply-templates select="@*" mode="generic"/>
+            <xsl:apply-templates select="//jf:merged" mode="links"/>
+        </xsl:copy>
+    </xsl:template>
+
+    <xsl:template match="html:div[contains(@class, 'jf-annotation')][starts-with(@id, 'start_')]" mode="links">
+        <tei:link target="#range({@id},{replace(@id, '^start_', 'end_')}) {@data-target}">
+            <xsl:variable name="note-type" as="xs:string" select="html:div[contains(@class, 'tei-note')]/@data-type"/>
+            <xsl:attribute name="type" select="
+                    if ($note-type='instruction') 
+                    then 'instruction' 
+                    else if ($note-type=('comment', 'editorial', 'inline', 'transcription', 'translation')) 
+                    then 'note' 
+                    else 'annotation'"/>
+        </tei:link>
+    </xsl:template>
+
+    <xsl:template match="*|text()" mode="links"/>
+
+    <xsl:template match="tei:TEI">
+        <xsl:copy copy-namespaces="no">
+            <xsl:apply-templates select="@*" mode="generic"/>
+            <!-- if there are any annotations, make sure we have a links element --> 
+            <xsl:if test="not(j:links)">
+                <xsl:variable name="all-links" as="element()*">
+                    <xsl:apply-templates select="//jf:merged" mode="links"/>
+                </xsl:variable>
+                <xsl:if test="exists($all-links)">
+                    <j:links>
+                        <xsl:sequence select="$all-links"/>
+                    </j:links>
+                </xsl:if>
+            </xsl:if>
+            <xsl:apply-templates/>
+        </xsl:copy>
     </xsl:template>
 
     <xsl:template match="tei:*|j:*">

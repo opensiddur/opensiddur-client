@@ -189,6 +189,10 @@
             name="metadataCommitLogDialog"
             title="Commit Log"
             on-ok="editor.makeDirty"></os-metadata-commit-log-dialog>
+    <os-edit-annotation-dialog-simple on-ok="editor.makeDirty"
+        on-close="editor.dialogCanceled"
+        name="editAnnotationDialogSimple"
+        ></os-edit-segment-dialog-simple>
     <os-edit-link-dialog-simple on-ok="editor.makeDirty"
         on-close="editor.dialogCanceled"
         name="editLinkDialogSimple"
