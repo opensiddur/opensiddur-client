@@ -5,8 +5,9 @@
  *
  */
 
-var BlockObject = function(editor) {
+var BlockObject = function(editor, allowOverlap) {
     this.editor = editor;
+    this.allowOverlap = allowOverlap || false;
     var injector = angular.element('*[data-ng-app]').injector();
     this.TextService = injector.get("TextService");
     var getRandomId = function(blockType, elementType) {
@@ -164,11 +165,12 @@ var BlockObject = function(editor) {
         1. get selection
         2. if the beginning of the selection is in a segment, find the place before the segment, call that the start position; else, the start of the selection is the insertion point.
         3. if the ending of the selection is in a segment, find a place after the segment, call that the ending position; else the end of the selection is the insertion point
-        4. if the same type of block begins or ends inside the selection, remove the beginning/ending
-        5. if the same type of block begins before the start position and does not end, place an end for that block before starting this one
-        6. if the same type of block ends after the start position and does not begin after it, place a begin for that block after this one
-        7. if any blocks have been terminated, delete them if they are empty (contain no segments).
-        8. if any blocks have been split in both directions (unterminated and unstarted) rename the ids for the unstarted portion of the block.
+        if allowOverlap = false:
+            4. if the same type of block begins or ends inside the selection, remove the beginning/ending
+            5. if the same type of block begins before the start position and does not end, place an end for that block before starting this one
+            6. if the same type of block ends after the start position and does not begin after it, place a begin for that block after this one
+            7. if any blocks have been terminated, delete them if they are empty (contain no segments).
+            8. if any blocks have been split in both directions (unterminated and unstarted) rename the ids for the unstarted portion of the block.
         */
         var editor = this.editor;
         this.TextService.addLayer(layerType);
@@ -179,23 +181,24 @@ var BlockObject = function(editor) {
         var endElement = getAscendantSegment(ranges[ranges.length - 1].endContainer, null, elementType);
         var begInsert = new CKEDITOR.dom.element.createFromHtml(beginTemplate(thisId));
         var endInsert = new CKEDITOR.dom.element.createFromHtml(endTemplate(thisId));
-        removeInternalBlocks(startElement, endElement, classType);
-        var unterminatedStarts = getAllPrecedingUnterminatedBlockStarts(startElement, classType);
-        var unstartedEnds = getAllFollowingUnstartedBlockEnds(endElement, classType);
-        blockIdRename(unterminatedStarts, unstartedEnds, classType);
-        for (var i = 0; i < unterminatedStarts.length; i++) {
-            // insert end tags
-            var endTag = new CKEDITOR.dom.element.createFromHtml(endTemplate(unterminatedStarts[i].getId().replace(/^start_/, "")));
-            endTag.insertBefore(startElement);
-            editor.widgets.initOn( endTag, classType );
-        }
-        for (var i = 0; i < unstartedEnds.length; i++) {
-            // insert start tags
-            var startTag = new CKEDITOR.dom.element.createFromHtml(beginTemplate(unstartedEnds[i].getId().replace(/^end_/, "")));
-            startTag.insertAfter(endElement);
-            editor.widgets.initOn( startTag, classType );
-        }
-                
+        if (!this.allowOverlap) {
+            removeInternalBlocks(startElement, endElement, classType);
+            var unterminatedStarts = getAllPrecedingUnterminatedBlockStarts(startElement, classType);
+            var unstartedEnds = getAllFollowingUnstartedBlockEnds(endElement, classType);
+            blockIdRename(unterminatedStarts, unstartedEnds, classType);
+            for (var i = 0; i < unterminatedStarts.length; i++) {
+                // insert end tags
+                var endTag = new CKEDITOR.dom.element.createFromHtml(endTemplate(unterminatedStarts[i].getId().replace(/^start_/, "")));
+               endTag.insertBefore(startElement);
+                editor.widgets.initOn( endTag, classType );
+            }
+            for (var i = 0; i < unstartedEnds.length; i++) {
+                // insert start tags
+                var startTag = new CKEDITOR.dom.element.createFromHtml(beginTemplate(unstartedEnds[i].getId().replace(/^end_/, "")));
+                startTag.insertAfter(endElement);
+                editor.widgets.initOn( startTag, classType );
+            }
+        }    
         begInsert.insertBefore(startElement);
         endInsert.insertAfter(endElement);
         editor.widgets.initOn( begInsert, classType )
