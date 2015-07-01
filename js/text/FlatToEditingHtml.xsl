@@ -120,7 +120,7 @@
     <xsl:template match="jf:annotation[@jf:start]" mode="filler">
         <xsl:text>[A]&#x21d3;</xsl:text>
         <!-- the temporary id here cannot contain some characters because of a bug in ckeditor -->
-        <div class="tei-note" id="note_{generate-id(.)}" data-loaded="0"><xsl:value-of select="concat('Loading ', @jf:annotation, '...')"/></div>
+        <div class="tei-note" id="{substring-after(@jf:annotation, '#')}" data-loaded="0"><xsl:value-of select="concat('Loading ', @jf:annotation, '...')"/></div>
     </xsl:template>
     <xsl:template match="jf:annotation[@jf:end]" mode="filler">
         <xsl:text>&#x21d1;[A]</xsl:text>

@@ -17,6 +17,7 @@ CKEDITOR.plugins.add( 'jf-annotation', {
 	init: function( editor ) {
         var injector = angular.element('*[data-ng-app]').injector();
         var TextService = injector.get("TextService");
+        var AnnotationsService = injector.get("AnnotationsService");
         var $interval = injector.get("$interval");
         // block plugins require check widgets every short interval
         
@@ -101,6 +102,21 @@ CKEDITOR.plugins.add( 'jf-annotation', {
 			},
 			init: function(ev) {
                 //this.on( 'doubleclick', blockObject.doubleclick);
+
+                /* when initialized, call AnnotationsService to load the annotation content */
+                var jfAnnotation = this.element.getAttribute("data-jf-annotation");
+                var el = this.element;
+                if (jfAnnotation) {
+                    var spl = jfAnnotation.split("#");
+                    var resource = spl[0].split("/").pop();
+                    var id = spl[1];
+                    AnnotationsService.getNote(resource, id)
+                    .then(function(annotation) {
+                        // probably function doesn't exist
+                        var newAnnotation = new CKEDITOR.dom.element.createFromHtml(annotation);
+                        newAnnotation.replace(el.getElementsByTag("div").getItem(0));
+                    });
+                }
 			},
             destroy : blockObject.destroy,
 			data: function() {
