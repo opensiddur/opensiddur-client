@@ -53,26 +53,22 @@ CKEDITOR.plugins.add( 'jf-annotation', {
                 var el = this.element;
                 var noteElement = el.findOne("div.tei-note");
                 var typeElement = el.findOne(".editor-internal.type");
+                var randomId =  "note_" + parseInt(Math.random()*10000000) ;
                 EditorDataService.set("editAnnotationDialog", {
-				    id : noteElement.getAttribute("id") || "" ,
+				    id : noteElement.getAttribute("id") || randomId,
                     lang : noteElement.getAttribute("lang") || "en",
                     type : noteElement.getAttribute("data-type") || "comment",
                     content : noteElement.getHtml(),
                     callback : function(ok) {
                         if (ok) {
                             // set the content
-                            noteElement.setAttribute("id", this.id);
+                            var id = this.id || randomId;
+                            noteElement.setAttribute("id", id);
                             noteElement.setAttribute("lang", this.lang);
                             noteElement.setAttribute("data-type", this.type);
                             typeElement.setHtml(this.type);   
                             noteElement.setHtml(this.content);
-                        }
-                        else {
-                            // cancel
-                            if (isNew) {
-                                // remove the element
-                                el.remove(false);
-                            }   
+                            el.setAttribute("data-jf-annotation", "/data/notes/" + encodeURIComponent(TextService.resource) + "#" + id);
                         }
                     }
                 });
@@ -85,7 +81,7 @@ CKEDITOR.plugins.add( 'jf-annotation', {
                     function(id) {  // beginTemplate 
                         return '<div id="start_'+id+'" data-jf-annotation="" class="jf-annotation layer layer-phony-annotation start">[A]&#x21d3;'+
                                 // put an annotation icon here
-                               '[<span class="editor-internal type">comment</span>]'+
+                               '<span class="editor-internal type">comment</span>'+
                                /*'<span class="editor-internal resource">resource here</span>'+
                                '(<span class="editor-internal annotation-id">idno</span>)'+*/
                                '<div class="tei-note" id="" data-type="comment">Annotation here...</div>' +
@@ -112,9 +108,19 @@ CKEDITOR.plugins.add( 'jf-annotation', {
                     var id = spl[1];
                     AnnotationsService.getNote(resource, id)
                     .then(function(annotation) {
-                        // probably function doesn't exist
                         var newAnnotation = new CKEDITOR.dom.element.createFromHtml(annotation);
+                        var annotationType = newAnnotation.getAttribute("data-type");
+                        var annotationTypeSpan = new CKEDITOR.dom.element.createFromHtml(
+                               '<span class="editor-internal type">' + annotationType + '</span>');
+                        var spans = el.getElementsByTag("span");
+                        if (spans.count() > 0) {
+                            spans.getItem(0).replace(annotationTypeSpan);
+                        }
+                        else {
+                            el.getElementsByTag("div").getItem(0).insertBeforeMe(annotationTypeSpan);
+                        }
                         newAnnotation.replace(el.getElementsByTag("div").getItem(0));
+                        el.setAttribute("data-loaded", "1");
                     });
                 }
 			},
