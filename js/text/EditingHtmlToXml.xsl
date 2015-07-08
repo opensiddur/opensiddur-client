@@ -25,6 +25,8 @@
         <xsl:attribute name="xml:lang" select="."/>
     </xsl:template>
 
+    <xsl:template match="@data-loaded" mode="#default generic"/>
+
     <xsl:template match="@*[starts-with(name(.), 'data-')]" as="attribute()">
         <xsl:attribute 
             name="{replace(substring-after(name(.), 'data-'), '-', ':')}"
@@ -81,7 +83,7 @@
     </xsl:template>
 
     <!-- html:a[@href] -> tei:ptr -->
-    <xsl:template match="html:a[@href]" mode="streamText">
+    <xsl:template match="html:a[@href][contains(@class, 'tei-ptr')]" mode="streamText">
         <tei:ptr>
             <xsl:apply-templates select="@*[not(name(.)=('data-target-base', 'data-target-fragment'))]"/>
             <!-- @href contains /texts/[name], @data-target-base/@data-target-fragment contain the pointer -->
@@ -91,6 +93,20 @@
                 <xsl:with-param name="element-name" select="'tei:ptr'"/>
             </xsl:call-template>
         </tei:ptr>
+    </xsl:template>
+
+    <!-- html:a -> tei:ref -->
+    <xsl:template match="html:a[@href][contains(@class, 'tei-ref')]" mode="streamText">
+        <tei:ref>
+            <xsl:apply-templates select="@*[not(name(.)=('data-target-base', 'data-target-fragment'))]"/>
+            <!-- @href contains /texts/[name], @data-target-base/@data-target-fragment contain the pointer -->
+            <xsl:attribute name="target" 
+                select="concat('/data/original/', @data-target-base, @data-target-fragment)"/>
+            <xsl:call-template name="add-xmlid"> 
+                <xsl:with-param name="element-name" select="'tei:ref'"/>
+            </xsl:call-template>
+            <xsl:apply-templates mode="#current"/>
+        </tei:ref>
     </xsl:template>
 
     <!-- html:p -> leave an anchor -->
@@ -118,13 +134,18 @@
     </xsl:template>
  
     <xsl:template match="jf:concurrent">
-        <j:concurrent>
-            <xsl:apply-templates select="@*"/>
-            <xsl:apply-templates/>
-        </j:concurrent>
+        <xsl:variable name="layers" as="element(j:layer)*">
+            <xsl:apply-templates select="jf:layer"/>
+        </xsl:variable>
+        <xsl:if test="exists($layers)">
+            <j:concurrent>
+                <xsl:apply-templates select="@*"/>
+                <xsl:sequence select="$layers"/>
+            </j:concurrent>
+        </xsl:if>
     </xsl:template>
 
-    <xsl:template match="jf:layer">
+    <xsl:template match="jf:layer[not(starts-with(@type, 'phony-'))]">
         <xsl:variable name="layer-content" as="element()*">
           <xsl:apply-templates select="//jf:merged" mode="layer">
               <xsl:with-param name="layer-type" as="xs:string" select="concat('layer-',@type)"/>
@@ -148,7 +169,9 @@
     </xsl:template>
 
     <xsl:template match="html:div[contains(@class, 'jf-annotation')][starts-with(@id, 'start_')]" mode="links">
-        <tei:link target="#range({@id},{replace(@id, '^start_', 'end_')}) {@data-target}">
+        <xsl:variable name="resource" select="tokenize(@data-jf-annotation, '#')[1]"/>
+        <xsl:variable name="id" select="html:div[contains(@class, 'tei-note')]/@id/string()"/>
+        <tei:link target="#range({@id},{replace(@id, '^start_', 'end_')}) {$resource}#{$id}">
             <xsl:variable name="note-type" as="xs:string" select="html:div[contains(@class, 'tei-note')]/@data-type"/>
             <xsl:attribute name="type" select="
                     if ($note-type='instruction') 
@@ -159,14 +182,17 @@
         </tei:link>
     </xsl:template>
 
-    <xsl:template match="*|text()" mode="links"/>
+    <xsl:template match="*|text()" mode="links">
+        <xsl:apply-templates mode="#current"/>
+    </xsl:template>
 
     <xsl:template match="tei:TEI">
         <xsl:copy copy-namespaces="no">
             <xsl:apply-templates select="@*" mode="generic"/>
+            <xsl:apply-templates select="tei:teiHeader"/>
             <!-- if there are any annotations, make sure we have a links element --> 
             <xsl:if test="not(j:links)">
-                <xsl:variable name="all-links" as="element()*">
+                <xsl:variable name="all-links" as="element(tei:link)*">
                     <xsl:apply-templates select="//jf:merged" mode="links"/>
                 </xsl:variable>
                 <xsl:if test="exists($all-links)">
@@ -175,7 +201,7 @@
                     </j:links>
                 </xsl:if>
             </xsl:if>
-            <xsl:apply-templates/>
+            <xsl:apply-templates select="* except tei:teiHeader"/>
         </xsl:copy>
     </xsl:template>
 

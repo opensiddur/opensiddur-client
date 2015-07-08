@@ -47,7 +47,8 @@ CKEDITOR.plugins.add( 'jf-annotation', {
             },
 */
             edit : function ( evt) {
-                var injector = angular.element('*[data-ng-app]').injector();
+                var root = angular.element('*[data-ng-app]');  
+                var injector = root.injector();
                 var DialogService = injector.get("DialogService");
                 var EditorDataService = injector.get("EditorDataService");
                 var el = this.element;
@@ -62,13 +63,18 @@ CKEDITOR.plugins.add( 'jf-annotation', {
                     callback : function(ok) {
                         if (ok) {
                             // set the content
+                            var resource = el.getAttribute("data-jf-annotation") ?
+                                el.getAttribute("data-jf-annotation").split("#")[0].split("/").pop() :
+                                encodeURIComponent(TextService._resource);
                             var id = this.id || randomId;
                             noteElement.setAttribute("id", id);
                             noteElement.setAttribute("lang", this.lang);
                             noteElement.setAttribute("data-type", this.type);
                             typeElement.setHtml(this.type);   
                             noteElement.setHtml(this.content);
-                            el.setAttribute("data-jf-annotation", "/data/notes/" + encodeURIComponent(TextService.resource) + "#" + id);
+                            el.setAttribute("data-jf-annotation", "/data/notes/" + resource + "#" + id);
+                            // artificially send a change event to ng-ckeditor so it will update the scope
+                            editor.fire("change");
                         }
                     }
                 });
@@ -120,8 +126,16 @@ CKEDITOR.plugins.add( 'jf-annotation', {
                             el.getElementsByTag("div").getItem(0).insertBeforeMe(annotationTypeSpan);
                         }
                         newAnnotation.replace(el.getElementsByTag("div").getItem(0));
+                        el.setAttribute("data-jf-annotation", "/data/notes/" + resource  + "#" + id);
                         el.setAttribute("data-loaded", "1");
                     });
+                }
+                else { // no data-jf-annotation content, set everything to defaults
+                    var resource = encodeURIComponent(TextService._resource);
+                    var id =  "note_" + parseInt(Math.random()*10000000) ;
+                    var annotationType = "comment";
+                    el.setAttribute("data-jf-annotation", "/data/notes/" + resource  + "#" + id);
+                    el.setAttribute("data-loaded", "1");
                 }
 			},
             destroy : blockObject.destroy,

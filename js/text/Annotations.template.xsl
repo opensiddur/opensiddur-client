@@ -48,7 +48,14 @@
             </tei:teiHeader>
             <j:annotations xml:id="ann">
                 <tei:idno><xsl:value-of select="title/idno"/></tei:idno>
-                <tei:note xml:id="note1" type="comment">I am an example. Edit or delete me.</tei:note>
+                <xsl:choose>
+                    <xsl:when test="initialAnnotation">
+                        <xsl:sequence select="initialAnnotation//tei:note"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <tei:note xml:id="note1" type="comment">I am an example. Edit or delete me.</tei:note>
+                    </xsl:otherwise>
+                </xsl:choose>
             </j:annotations>
         </tei:TEI>
     </xsl:template>

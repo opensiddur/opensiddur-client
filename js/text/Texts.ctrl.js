@@ -7,10 +7,10 @@
 osTextModule.controller(
     'TextsCtrl',
     ['$scope', '$location', '$route', '$routeParams', '$timeout', '$window', 'XsltService', 
-    'AccessService', 'AuthenticationService', 'DialogService', 'ErrorService', 
+    'AccessService', 'AnnotationsService', 'AuthenticationService', 'DialogService', 'ErrorService', 
     'LanguageService', 'TextService',
     function ($scope, $location, $route, $routeParams, $timeout, $window, XsltService, 
-        AccessService, AuthenticationService, DialogService, ErrorService,
+        AccessService, AnnotationsService, AuthenticationService, DialogService, ErrorService,
         LanguageService, TextService) {
         console.log("Texts controller.");
         $scope.DialogService = DialogService;
@@ -238,24 +238,28 @@ osTextModule.controller(
             },
             saveDocument : function () {
                 console.log("Save:", this);
-                TextService.save()
-                    .success(function(data, statusCode, headers) {   // success
-                        $scope.textsForm.$setPristine();
-                        if ($scope.editor.isNew) {
-                            $scope.editor.isNew = 0;
-                            // save the access model for the new document
-                            if ($scope.resourceType.current.supportsAccess) {
-                                AccessService.setResource(TextService._resourceApi, TextService._resource)
-                                .save()
-                                .error(function(error) {
-                                    ErrorService.addApiError(error);
-                                });
-                             }
-                        }
-                    })
-                    .error(function(error) {
-                        ErrorService.addApiError(error);
-                        console.log("error saving ", TextService._resource);
+                AnnotationsService.saveAll()
+                // TODO: catch errors saving annotations
+                .then(function() {
+                    TextService.save()
+                        .success(function(data, statusCode, headers) {   // success
+                            $scope.textsForm.$setPristine();
+                            if ($scope.editor.isNew) {
+                                $scope.editor.isNew = 0;
+                                // save the access model for the new document
+                                if ($scope.resourceType.current.supportsAccess) {
+                                    AccessService.setResource(TextService._resourceApi, TextService._resource)
+                                    .save()
+                                    .error(function(error) {
+                                        ErrorService.addApiError(error);
+                                    });
+                                 }
+                            }
+                        })
+                        .error(function(error) {
+                            ErrorService.addApiError(error);
+                            console.log("error saving ", TextService._resource);
+                        })  
                     });
             },
             newButton : function () {
