@@ -25,9 +25,8 @@
         <xsl:attribute name="xml:lang" select="."/>
     </xsl:template>
 
-    <xsl:template match="@data-loaded" mode="#default generic"/>
-
-    <xsl:template match="@*[starts-with(name(.), 'data-')]" as="attribute()">
+    <!-- do not save attributes that are added by the client -->
+    <xsl:template match="@*[starts-with(name(.), 'data-')][not(starts-with(name(.), 'data-os-'))]" as="attribute()">
         <xsl:attribute 
             name="{replace(substring-after(name(.), 'data-'), '-', ':')}"
             select="."/>

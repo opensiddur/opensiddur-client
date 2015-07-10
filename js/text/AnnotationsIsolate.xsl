@@ -1,5 +1,6 @@
 <!--
-    Isolate annotations
+    Isolate changed annotations that need to be saved
+
     Open Siddur Project
     Copyright 2015 Efraim Feinstein, efraim@opensiddur.org
     Licensed under the GNU Lesser General Public License, version 3 or later
@@ -16,7 +17,7 @@
     >
     <xsl:import href="EditingHtmlToXml.xsl"/>
 
-    <xsl:template match="html:div[contains(@class, 'jf-annotation')][contains(@class, 'start')]">
+    <xsl:template match="html:div[@data-os-changed][contains(@class, 'jf-annotation')][contains(@class, 'start')]">
         <jf:annotation 
             resource="{substring-before(@data-jf-annotation, '#')}" 
             id="{substring-after(@data-jf-annotation, '#')}">
@@ -27,7 +28,7 @@
     <xsl:template match="/">
         <jf:allAnnotations>
             <xsl:variable name="isolated-annotations" as="element(jf:annotation)*">
-                <xsl:apply-templates select="//html:div[contains(@class, 'jf-annotation')][contains(@class, 'start')]"/>
+                <xsl:apply-templates select="//html:div[@data-os-changed][contains(@class, 'jf-annotation')][contains(@class, 'start')]"/>
             </xsl:variable>
             <xsl:message><xsl:sequence select="$isolated-annotations"/></xsl:message>
             <xsl:for-each-group 

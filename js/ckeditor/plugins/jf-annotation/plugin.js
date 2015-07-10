@@ -15,10 +15,14 @@ CKEDITOR.plugins.add( 'jf-annotation', {
 	icons: 'jf-annotation',
 
 	init: function( editor ) {
-        var injector = angular.element('*[data-ng-app]').injector();
+        var rootElement = angular.element('*[data-ng-app]'); 
+        var formElement = angular.element('form[name=textsForm]'); 
+        var injector = rootElement.injector();
         var TextService = injector.get("TextService");
         var AnnotationsService = injector.get("AnnotationsService");
         var $interval = injector.get("$interval");
+        var $timeout = injector.get("$timeout");
+        var $scope = formElement.scope();
         // block plugins require check widgets every short interval
         
         var thiz = this;
@@ -62,17 +66,26 @@ CKEDITOR.plugins.add( 'jf-annotation', {
                     content : noteElement.getHtml(),
                     callback : function(ok) {
                         if (ok) {
-                            // set the content
-                            var resource = el.getAttribute("data-jf-annotation") ?
-                                el.getAttribute("data-jf-annotation").split("#")[0].split("/").pop() :
+                            // set the content of all annotations that have the same data-jf-annotation as this one
+                            var thisAnnotation = el.getAttribute("data-jf-annotation");
+                            var stream = el.getParents()[1];
+                            var sameAnnotations = stream.find("*[data-jf-annotation=\"" + thisAnnotation + "\"]");
+                            var resource = thisAnnotation ?
+                                thisAnnotation.split("#")[0].split("/").pop() :
                                 encodeURIComponent(TextService._resource);
-                            var id = this.id || randomId;
-                            noteElement.setAttribute("id", id);
-                            noteElement.setAttribute("lang", this.lang);
-                            noteElement.setAttribute("data-type", this.type);
-                            typeElement.setHtml(this.type);   
-                            noteElement.setHtml(this.content);
-                            el.setAttribute("data-jf-annotation", "/data/notes/" + resource + "#" + id);
+                            for (var i = 0; i < sameAnnotations.count(); i++) {
+                                var thisEl = sameAnnotations.getItem(i); 
+                                var id = this.id || randomId;
+                                var thisNoteElement = thisEl.findOne("div.tei-note");
+                                var thisTypeElement = thisEl.findOne(".editor-internal.type");
+                                thisNoteElement.setAttribute("id", id);
+                                thisNoteElement.setAttribute("lang", this.lang);
+                                thisNoteElement.setAttribute("data-type", this.type);
+                                thisTypeElement.setHtml(this.type);   
+                                thisNoteElement.setHtml(this.content);
+                                thisEl.setAttribute("data-jf-annotation", "/data/notes/" + resource + "#" + id);
+                                thisEl.setAttribute("data-os-changed", "1");
+                            }
                             // artificially send a change event to ng-ckeditor so it will update the scope
                             editor.fire("change");
                         }
@@ -127,7 +140,10 @@ CKEDITOR.plugins.add( 'jf-annotation', {
                         }
                         newAnnotation.replace(el.getElementsByTag("div").getItem(0));
                         el.setAttribute("data-jf-annotation", "/data/notes/" + resource  + "#" + id);
-                        el.setAttribute("data-loaded", "1");
+                        el.setAttribute("data-os-loaded", "1");
+                        // artificially send a change event to ng-ckeditor so it will update the scope
+                        editor.fire("change");
+                        $timeout(function() { $scope.textsForm.$setPristine(); }, 0, false);
                     });
                 }
                 else { // no data-jf-annotation content, set everything to defaults
@@ -135,7 +151,10 @@ CKEDITOR.plugins.add( 'jf-annotation', {
                     var id =  "note_" + parseInt(Math.random()*10000000) ;
                     var annotationType = "comment";
                     el.setAttribute("data-jf-annotation", "/data/notes/" + resource  + "#" + id);
-                    el.setAttribute("data-loaded", "1");
+                    el.setAttribute("data-os-loaded", "1");
+                    // artificially send a change event to ng-ckeditor so it will update the scope
+                    editor.fire("change");
+                    $timeout(function() { $scope.textsForm.$setPristine(); }, 0, false);
                 }
 			},
             destroy : blockObject.destroy,
