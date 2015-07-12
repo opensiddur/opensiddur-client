@@ -73,6 +73,7 @@ var osClientModule =
        'osClient.dialog.metadata.resp', // ditto
        'osClient.dialog.metadata.sources', // ditto
        'osClient.dialog.metadata.title', // ditto
+       'osClient.dialog.simple.editannotation', // ditto
        'osClient.dialog.simple.editlink', // ditto
        'osClient.dialog.simple.editsegment', // ditto
        'osClient.sharing',
@@ -138,6 +139,7 @@ osClientModule.config(
       .when('/signin', {templateUrl: osAuthenticationConst.partial.signin, controller: "AuthenticationCtrl"})
       .when('/sources/:resource?', {templateUrl: osSourcesConst.partial, controller: "SourcesCtrl"})
       .when('/styles/:resource?', {templateUrl: textConst.partial, controller: "TextsCtrl"})
+      .when('/stexts/:resource?', {templateUrl: textConst.partial, controller: "TextsCtrl"})
       .when('/texts/:resource?', {templateUrl: textConst.partial, controller: "TextsCtrl"})
       .when('/annotations/:resource?', {templateUrl: textConst.partial, controller: "TextsCtrl"})
       .when('/translations/:resource?', {templateUrl: translationsConst.partial, controller: "TranslationsCtrl"})

@@ -7,10 +7,10 @@
 osTextModule.controller(
     'TextsCtrl',
     ['$scope', '$location', '$route', '$routeParams', '$timeout', '$window', 'XsltService', 
-    'AccessService', 'AuthenticationService', 'DialogService', 'ErrorService', 
+    'AccessService', 'AnnotationsService', 'AuthenticationService', 'DialogService', 'ErrorService', 
     'LanguageService', 'TextService',
     function ($scope, $location, $route, $routeParams, $timeout, $window, XsltService, 
-        AccessService, AuthenticationService, DialogService, ErrorService,
+        AccessService, AnnotationsService, AuthenticationService, DialogService, ErrorService,
         LanguageService, TextService) {
         console.log("Texts controller.");
         $scope.DialogService = DialogService;
@@ -20,6 +20,16 @@ osTextModule.controller(
         $scope.resourceType = {
             "texts" : {
                 path : "texts",
+                type : "original",
+                api : "/api/data/original",
+                supportsAccess : true,
+                supportsCompile : true,
+                supportsTranscriptionView : true,
+                defaultTitle : "New text",
+                editorMode : "xml"
+            },
+            "stexts" : {
+                path : "stexts",
                 type : "original",
                 api : "/api/data/original",
                 supportsAccess : true,
@@ -75,7 +85,7 @@ osTextModule.controller(
             customConfig : "/js/ckeditor/config.js",    // points to the plugin directories
             enterMode : CKEDITOR.ENTER_P,
             entities : false,   // need XML entities, but not HTML entities...
-            extraPlugins : "language,tei-p,tei-ptr,tei-seg",
+            extraPlugins : "language,jf-annotation,tei-p,tei-ptr,tei-seg",
             fillEmptyBlocks : false,
             language : "en",
             language_list : LanguageService.getCkeditorList(),
@@ -103,7 +113,10 @@ osTextModule.controller(
             allowedContent :
                 "a[href,data-target-base,data-target-fragment,target](tei-ptr);"+
                 "p[!id](tei-seg,tei-p,layer-p,layer,start,end);" +
-                "*[id,lang,dir,data-*]"
+                "div[!id](jf-annotation,layer-phony-annotation,layer,start,end);" +
+                "div[id](tei-note);" +
+                "*[id,lang,dir,data-*];" +
+                "*[editor-internal];"
         };
         $scope.editor = {
             loggedIn : AuthenticationService.loggedIn,
@@ -225,24 +238,28 @@ osTextModule.controller(
             },
             saveDocument : function () {
                 console.log("Save:", this);
-                TextService.save()
-                    .success(function(data, statusCode, headers) {   // success
-                        $scope.textsForm.$setPristine();
-                        if ($scope.editor.isNew) {
-                            $scope.editor.isNew = 0;
-                            // save the access model for the new document
-                            if ($scope.resourceType.current.supportsAccess) {
-                                AccessService.setResource(TextService._resourceApi, TextService._resource)
-                                .save()
-                                .error(function(error) {
-                                    ErrorService.addApiError(error);
-                                });
-                             }
-                        }
-                    })
-                    .error(function(error) {
-                        ErrorService.addApiError(error);
-                        console.log("error saving ", TextService._resource);
+                AnnotationsService.saveAll()
+                // TODO: catch errors saving annotations
+                .then(function() {
+                    TextService.save()
+                        .success(function(data, statusCode, headers) {   // success
+                            $scope.textsForm.$setPristine();
+                            if ($scope.editor.isNew) {
+                                $scope.editor.isNew = 0;
+                                // save the access model for the new document
+                                if ($scope.resourceType.current.supportsAccess) {
+                                    AccessService.setResource(TextService._resourceApi, TextService._resource)
+                                    .save()
+                                    .error(function(error) {
+                                        ErrorService.addApiError(error);
+                                    });
+                                 }
+                            }
+                        })
+                        .error(function(error) {
+                            ErrorService.addApiError(error);
+                            console.log("error saving ", TextService._resource);
+                        })  
                     });
             },
             newButton : function () {
@@ -334,7 +351,7 @@ osTextModule.controller(
             $scope.helper.link.insertable = newSelection.replace(/^\/exist\/restxq\/api/, "")
         });
 
-        $scope.editor.setDocument($routeParams.resource, false, false);
+        $scope.editor.setDocument($routeParams.resource, false, $location.path().split("/")[1] == "stexts");
 
     }]
 );

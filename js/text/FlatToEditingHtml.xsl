@@ -51,21 +51,23 @@
 
     <!-- elements -->
     <xsl:template match="*[@jf:start]">
-        <p id="start_{@jf:start}">  <!-- id has to conform to the client expectations -->
+        <xsl:element name="{if (self::jf:annotation) then 'div' else 'p'}">
+            <xsl:attribute name="id" select="concat('start_',@jf:start)"/>  <!-- id has to conform to the client expectations -->
             <xsl:apply-templates select="@* except @jf:start"/>
             <xsl:call-template name="class-attribute"/>
             <xsl:apply-templates select="following-sibling::*[1][not(@jf:start|@jf:end)][@jf:layer-id=current()/@jf:layer-id]"
                 mode="in-a"/>
             <xsl:apply-templates select="." mode="filler"/>
-        </p>
+        </xsl:element>
     </xsl:template>
 
     <xsl:template match="*[@jf:end]">
-        <p id="end_{@jf:end}">
+        <xsl:element name="{if (self::jf:annotation) then 'div' else 'p'}">
+            <xsl:attribute name="id" select="concat('end_',@jf:end)"/>  <!-- id has to conform to the client expectations -->
             <xsl:apply-templates select="@* except @jf:end"/>
             <xsl:call-template name="class-attribute"/>
             <xsl:apply-templates select="." mode="filler"/>
-        </p>
+        </xsl:element>
     </xsl:template>
 
     <xsl:template match="*[@jf:layer-id][not(@jf:start|@jf:end)]"/>
@@ -113,6 +115,16 @@
     </xsl:template>
     <xsl:template match="tei:p[@jf:end]" mode="filler">
         <xsl:text>&#x21d1;&#182;</xsl:text>
+    </xsl:template>
+
+    <xsl:template match="jf:annotation[@jf:start]" mode="filler">
+        <xsl:text>[A]&#x21d3;</xsl:text>
+        <span class="editor-internal type"><xsl:value-of select="@type"/></span>
+        <!-- the temporary id here cannot contain some characters because of a bug in ckeditor -->
+        <div class="tei-note" id="{substring-after(@jf:annotation, '#')}" data-os-loaded="0"><xsl:value-of select="concat('Loading ', @jf:annotation, '...')"/></div>
+    </xsl:template>
+    <xsl:template match="jf:annotation[@jf:end]" mode="filler">
+        <xsl:text>&#x21d1;[A]</xsl:text>
     </xsl:template>
 
     <!-- attributes -->

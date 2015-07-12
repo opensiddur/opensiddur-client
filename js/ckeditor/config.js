@@ -8,6 +8,7 @@
  */
 
 // insert plugin names here...
+CKEDITOR.plugins.addExternal("jf-annotation", "/js/ckeditor/plugins/jf-annotation/");
 CKEDITOR.plugins.addExternal("tei-seg", "/js/ckeditor/plugins/tei-seg/");
 CKEDITOR.plugins.addExternal("tei-p", "/js/ckeditor/plugins/tei-p/");
 CKEDITOR.plugins.addExternal("tei-ptr", "/js/ckeditor/plugins/tei-ptr/");
