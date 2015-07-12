@@ -90,6 +90,7 @@ osTextModule.controller(
             language : "en",
             language_list : LanguageService.getCkeditorList(),
             readOnly : !AccessService.access.write,
+            removePlugins : "image",
             toolbar : "basic",
             toolbar_full : [],
             toolbarGroups : [
@@ -116,7 +117,8 @@ osTextModule.controller(
                 "div[!id](jf-annotation,layer-phony-annotation,layer,start,end);" +
                 "div[id](tei-note);" +
                 "*[id,lang,dir,data-*];" +
-                "*[editor-internal];"
+                "img[src,alt,title];" +
+                "*(editor-*);"
         };
         $scope.editor = {
             loggedIn : AuthenticationService.loggedIn,

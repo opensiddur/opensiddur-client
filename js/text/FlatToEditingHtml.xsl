@@ -118,7 +118,8 @@
     </xsl:template>
 
     <xsl:template match="jf:annotation[@jf:start]" mode="filler">
-        <xsl:text>[A]&#x21d3;</xsl:text>
+        <img class="editor-internal editor-icon" src="/img/icons_32x32/icon_annotation.png"/>
+        <xsl:text>&#x21d3;</xsl:text>
         <span class="editor-internal type"><xsl:value-of select="@type"/></span>
         <!-- the temporary id here cannot contain some characters because of a bug in ckeditor -->
         <div class="tei-note" id="{substring-after(@jf:annotation, '#')}" data-os-loaded="0"><xsl:value-of select="concat('Loading ', @jf:annotation, '...')"/></div>

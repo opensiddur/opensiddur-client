@@ -38,7 +38,9 @@ CKEDITOR.plugins.add( 'jf-annotation', {
 			allowedContent:
 				'div[id](jf-annotation,tei-note,layer,layer-phony-annotation,start,end);' + 
                 'div[id](tei-note);' +
-                'span(editor-internal,type,resource,annotation-id)',
+                'span(type,resource,annotation-id);' +
+                'img[src,alt,title]' +
+                '*(editor-*)',
 			requiredContent: 'div(jf-annotation)',
 
 			button: 'Annotate',
@@ -98,8 +100,10 @@ CKEDITOR.plugins.add( 'jf-annotation', {
                 blockObject.insert(
                     "phony-annotation", "div", "jf-annotation",
                     function(id) {  // beginTemplate 
-                        return '<div id="start_'+id+'" data-jf-annotation="" class="jf-annotation layer layer-phony-annotation start">[A]&#x21d3;'+
+                        return '<div id="start_'+id+'" data-jf-annotation="" class="jf-annotation layer layer-phony-annotation start">' + 
                                 // put an annotation icon here
+                               '<img class="editor-internal editor-icon" src="/img/icons_32x32/icon_annotation.png"></img>'+
+                               '&#x21d3;'+
                                '<span class="editor-internal type">comment</span>'+
                                /*'<span class="editor-internal resource">resource here</span>'+
                                '(<span class="editor-internal annotation-id">idno</span>)'+*/
