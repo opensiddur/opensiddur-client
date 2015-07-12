@@ -44,6 +44,11 @@ server {
             }
         }
         
+        location /apps {
+            proxy_pass $scheme://dev.jewishliturgy.org:8080/exist$request_uri;
+            proxy_intercept_errors on;
+        }
+
 
         ## everything else, config from http://java.dzone.com/articles/html5angularjsnginx-crawlable
         ## point directly to index.html for no URL path
