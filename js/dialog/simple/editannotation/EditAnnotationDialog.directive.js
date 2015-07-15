@@ -12,8 +12,8 @@
 dialogSimpleEditAnnotationModule.directive(
         'osEditAnnotationDialogSimple',
         [
-        'EditorDataService', 'LanguageService',
-        function( EditorDataService, LanguageService ) {
+        'EditorDataService', 'LanguageService', 'TextService', 
+        function( EditorDataService, LanguageService, TextService ) {
             return {
                 restrict : 'AE',
                 scope : {
@@ -25,6 +25,7 @@ dialogSimpleEditAnnotationModule.directive(
                 controller: ['$scope', function ($scope) {
                     console.log("In edit annotation dialog (simple) controller");
                     $scope.LanguageService = LanguageService;
+                    
                     $scope.OKButton = function () {
                         $scope.note.callback(true);
                         $scope.onOk()();
@@ -46,6 +47,19 @@ dialogSimpleEditAnnotationModule.directive(
 
                     elem.on("shown.bs.modal", function () {
                         scope.note = EditorDataService.editAnnotationDialog;
+                        scope.resourceApi = "/exist/restxq/api/data/notes/" + encodeURIComponent(scope.note.resource);
+                        scope.isLocal = scope.note.resource == TextService._resource;
+                        scope.localChanged = function() {
+                            if (scope.isLocal) {
+                                scope.note.resource = TextService._resource;
+                            }
+                        };
+                        scope.$watch("resourceApi", function(newResourceApi) {
+                            // there should be a better way to do this!
+                            if (newResourceApi) {
+                                scope.note.resource = decodeURIComponent(newResourceApi.split("/").pop());
+                            }
+                        });
                         scope.$apply();
                     });
                  },

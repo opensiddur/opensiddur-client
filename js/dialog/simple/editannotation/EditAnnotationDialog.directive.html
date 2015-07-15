@@ -77,7 +77,22 @@
                         </form>
                     </div>
                     <div role="tabpanel" class="tab-pane" id="storage">
-                        <p>Storage</p>
+                        <p>Select the resource where the note will be stored.</p>
+                        <form name="storageTab">
+                            <div class="form-group">
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" ng-model="isLocal" ng-change="localChanged()"/> The annotation is unique to this resource.
+                                    </label>
+                                </div>
+                            </div>
+                            <p> Note will be stored at <b>{{note.resource}}</b></p>
+                            <div ng-show="!isLocal">
+                                <os-search-list api="'/api/data/notes'"
+                                    selection="resourceApi"
+                                    ></os-search-list>
+                            </div>
+                        </form>
                     </div>
                     <div role="tabpanel" class="tab-pane" id="identity">
                         <p>Identity</p>

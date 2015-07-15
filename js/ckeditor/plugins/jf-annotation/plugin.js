@@ -61,7 +61,9 @@ CKEDITOR.plugins.add( 'jf-annotation', {
                 var noteElement = el.findOne("div.tei-note");
                 var typeElement = el.findOne(".editor-internal.type");
                 var randomId =  "note_" + parseInt(Math.random()*10000000) ;
+                var thisAnnotation = el.getAttribute("data-jf-annotation");
                 EditorDataService.set("editAnnotationDialog", {
+                    resource : decodeURIComponent(thisAnnotation.split("#")[0].split("/").pop()),
 				    id : noteElement.getAttribute("id") || randomId,
                     lang : noteElement.getAttribute("lang") || "en",
                     type : noteElement.getAttribute("data-type") || "comment",
@@ -69,12 +71,10 @@ CKEDITOR.plugins.add( 'jf-annotation', {
                     callback : function(ok) {
                         if (ok) {
                             // set the content of all annotations that have the same data-jf-annotation as this one
-                            var thisAnnotation = el.getAttribute("data-jf-annotation");
                             var stream = el.getParents()[1];
                             var sameAnnotations = stream.find("*[data-jf-annotation=\"" + thisAnnotation + "\"]");
-                            var resource = thisAnnotation ?
-                                thisAnnotation.split("#")[0].split("/").pop() :
-                                encodeURIComponent(TextService._resource);
+                            var resource = 
+                                encodeURIComponent(this.resource || TextService._resource);
                             for (var i = 0; i < sameAnnotations.count(); i++) {
                                 var thisEl = sameAnnotations.getItem(i); 
                                 var id = this.id || randomId;
