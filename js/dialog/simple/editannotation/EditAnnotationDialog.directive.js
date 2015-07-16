@@ -12,8 +12,8 @@
 dialogSimpleEditAnnotationModule.directive(
         'osEditAnnotationDialogSimple',
         [
-        'EditorDataService', 'LanguageService', 'TextService', 
-        function( EditorDataService, LanguageService, TextService ) {
+        'AnnotationsService', 'EditorDataService', 'LanguageService', 'TextService', 
+        function( AnnotationsService, EditorDataService, LanguageService, TextService ) {
             return {
                 restrict : 'AE',
                 scope : {
@@ -48,6 +48,9 @@ dialogSimpleEditAnnotationModule.directive(
                     elem.on("shown.bs.modal", function () {
                         scope.note = EditorDataService.editAnnotationDialog;
                         scope.resourceApi = "/exist/restxq/api/data/notes/" + encodeURIComponent(scope.note.resource);
+                        scope.annotationResource = "";
+                        scope.externalId = "";
+
                         scope.isLocal = scope.note.resource == TextService._resource;
                         scope.localChanged = function() {
                             if (scope.isLocal) {
@@ -60,7 +63,25 @@ dialogSimpleEditAnnotationModule.directive(
                                 scope.note.resource = decodeURIComponent(newResourceApi.split("/").pop());
                             }
                         });
+                        scope.$watch("externalId", function(newExternalId) {
+                            // there should be a better way to do this!
+                            if (newExternalId) {
+                                scope.note.id = newExternalId.slice(1);
+                                AnnotationsService.getNote(scope.note.resource, scope.note.id)
+                                .then(function(content) {
+                                    scope.note.content = $(content).html();
+                                });
+                            }
+                        });
                         scope.$apply();
+                    });
+                    elem.on("shown.bs.tab", function(evt) {
+                        if (evt.target.id == "identityTabSelect") {
+                            AnnotationsService.load(scope.note.resource)
+                            .then(function(data) {
+                                scope.annotationResource = data;
+                            });
+                        }
                     });
                  },
                  transclude : false,

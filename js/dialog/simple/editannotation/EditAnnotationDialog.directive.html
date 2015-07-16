@@ -8,32 +8,22 @@
             <div class="modal-body">
                 <ul class="nav nav-tabs" role="tablist">
                     <li role="presentation" class="active">
-                        <a href="#annotation" target="_self" aria-controls="annotation" role="tab" data-toggle="tab">Note</a>
+                        <a id="annotationTabSelect" href="#annotation" target="_self" aria-controls="annotation" role="tab" data-toggle="tab">Note</a>
                     </li>
                     <li role="presentation">
-                        <a href="#storage" target="_self" aria-controls="storage" role="tab" data-toggle="tab">Stored as</a>
+                        <a id="storageTabSelect" href="#storage" target="_self" aria-controls="storage" role="tab" data-toggle="tab">Stored as</a>
                     </li>
                     <li role="presentation">
-                        <a href="#identity" target="_self" aria-controls="identity" role="tab" data-toggle="tab">Identity</a>
+                        <a id="identityTabSelect" href="#identity" target="_self" aria-controls="identity" role="tab" data-toggle="tab">Identity</a>
                     </li>
                     <li role="presentation">
-                        <a href="#source" target="_self" aria-controls="source" role="tab" data-toggle="tab">Source/Bibliography</a>
+                        <a id="sourceTabSelect" href="#source" target="_self" aria-controls="source" role="tab" data-toggle="tab">Source/Bibliography</a>
                     </li>
                 </ul>
                 <div class="tab-content">
                     <div role="tabpanel" class="tab-pane active" id="annotation">
                         <!-- TODO: add an image preview window -->
                         <form class="form-horizontal">
-                            <div class="form-group">
-                                <label class="control-label col-md-2" for="note.id">Unique identifier</label>
-                                <div class="col-md-9">
-                                    <input class="form-control" 
-                                        required="true" 
-                                        type="text" 
-                                        data-ng-model="note.id" 
-                                        id="note.id"></input>
-                                </div>
-                            </div>
                             <div class="form-group">
                                 <label class="control-label col-md-2" for="note.lang">Language</label>
                                 <div class="col-md-5">
@@ -95,7 +85,28 @@
                         </form>
                     </div>
                     <div role="tabpanel" class="tab-pane" id="identity">
-                        <p>Identity</p>
+                        <form name="identityForm">
+                            <div class="form-group">
+                                <label class="control-label col-md-2" for="note.id">Unique identifier</label>
+                                <div class="col-md-9">
+                                    <input class="form-control" 
+                                        required="true" 
+                                        type="text" 
+                                        data-ng-model="note.id" 
+                                        id="note.id"></input>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <p>To select an external annotation, select one here:</p>
+                            </div>
+                            <div class="form-group">
+                                <os-id-list 
+                                    content="annotationResource" 
+                                    update="annotationResource" 
+                                    allow-range="false" 
+                                    selection="externalId"></os-id-list>
+                            </div>
+                        </form> 
                     </div>
                     <div role="tabpanel" class="tab-pane" id="source">
                         <p>Source</p>
