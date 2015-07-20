@@ -43,7 +43,7 @@
                 if yes=1, then the stream or id is included in this source
             -->
             <contents>
-                <xsl:apply-templates select="//j:streamText|//tei:text/jf:merged|//j:parallelText">
+                <xsl:apply-templates select="//j:streamText|//tei:text/jf:merged|//j:parallelText|//j:annotations">
                     <xsl:with-param name="content-ids" as="xs:string*">
                         <xsl:apply-templates select="tei:ptr[@type='bibl-content']"/>
                     </xsl:with-param>
@@ -73,7 +73,7 @@
         </xsl:for-each>
     </xsl:template>
 
-    <xsl:template match="j:streamText|tei:text/jf:merged|j:parallelText">
+    <xsl:template match="j:streamText|tei:text/jf:merged|j:parallelText|j:annotations">
         <xsl:param name="content-ids" as="xs:string*"/>
 
         <xsl:variable name="stream-checked" select="((@id,@jf:id,@xml:id)=$content-ids, false())[1]"/>
