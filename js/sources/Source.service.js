@@ -97,7 +97,7 @@ osSourcesModule.factory("SourceService", [
                 $http.post : 
                 $http.put;
             var resource = "/api/data/sources" + ((this.resource == "") ? "" : "/") + encodeURIComponent(this.resource);
-            return httpOperation(this.resource, indata, {
+            return httpOperation(resource, indata, {
                 transformRequest : function(data) {
                     var xmlData = x2js.json2xml(data);
                     var cleanedXmlData = XsltService.transform('/js/profile/CleanupForm.xsl', xmlData);
