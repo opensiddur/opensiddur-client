@@ -17,6 +17,7 @@ osTextModule.factory("AnnotationsService", [
             resourceName : "xml"
         */
         var resources = {};    
+        var xj = new X2JS({ arrayAccessForm : "property" });   
         return {
             loadAll : function() {
                 // load the content of all annotations in TextService._flatContent
@@ -57,6 +58,58 @@ osTextModule.factory("AnnotationsService", [
                             XsltService.transformString("/js/text/Annotation.get.xsl", resourceContent, {
                                 id : id
                             }) 
+                        );
+                    });
+            },
+            getSources : function(resource) {
+                // return (a promise pointing to) all the sources used by the given annotation file
+                return this.load(resource)
+                    .then(function(resourceContent) { 
+                        var js = xj.xml2json(XsltService.transformString("/js/text/Sources.get.xsl", resourceContent))
+                        // the title is URL encoded. Decode it here (code is copied verbatim from TextService)
+                        if ("bibl_asArray" in js.sources) {
+                            var bibl = js.sources.bibl_asArray;
+                            for (var i=0; i < bibl.length; i++) {
+                                bibl[i].title = decodeURIComponent(bibl[i].title);
+                                bibl[i].scope.fromPage = parseInt(bibl[i].scope.fromPage);
+                                bibl[i].scope.toPage = parseInt(bibl[i].scope.toPage);
+                                bibl[i].contents.stream.streamChecked = 
+                                    (bibl[i].contents.stream.streamChecked == "false") ? false : true;
+                                if ("id_asArray" in bibl[i].contents.stream) { 
+                                    for (var j=0; j < bibl[i].contents.stream.id_asArray.length; j++) {
+                                        bibl[i].contents.stream.id_asArray[j].checked =
+                                            (bibl[i].contents.stream.id_asArray[j].checked == "false") ? false : true;
+                                    }
+                                }
+                            }
+                            return bibl; 
+                        }
+                        else {
+                            return [];
+                        }
+                    });
+            },
+            getNoteSource : function(resource, id) {
+                // return the sources used by the note in given resource/id 
+                return this.getSources(resource)
+                    .then(function(sources) {
+                        return sources.filter(function(s) {
+                            return !s.contents.stream.streamChecked && 
+                                s.contents.stream.id_asArray.filter(function(i) { return i.xmlid == id; }).length > 0;
+                        });
+                    });
+            },
+            setNoteSource : function(resource, id, bibl) {
+                // set the source(s) of resource/id to the given bibl
+                // bibl is an array of sources. 
+                var biblXml = xj.json2xml(angular.fromJson(angular.toJson({sources : { bibl : bibl}})));
+                return this.getSources(resource)
+                    .then(function(sourceData) {
+                        resources[resource] = XsltService.serializeToString(
+                            XsltService.transformString("/js/text/AnnotationSources.set.xsl", resources[resource], {
+                                id : id,
+                                "new-sources" : biblXml
+                            })
                         );
                     });
             },

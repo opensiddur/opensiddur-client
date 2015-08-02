@@ -77,6 +77,7 @@ var osClientModule =
        'osClient.dialog.simple.editlink', // ditto
        'osClient.dialog.simple.editsegment', // ditto
        'osClient.sharing',
+       'osClient.sourceChooser',
        'osClient.sources',
        'osClient.text',
        'osClient.transcriptionWindow', // a dependency of the text module, can be moved when completely modularized
