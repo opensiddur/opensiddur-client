@@ -12,8 +12,8 @@
 dialogSimpleEditAnnotationModule.directive(
         'osEditAnnotationDialogSimple',
         [
-        'EditorDataService', 'LanguageService',
-        function( EditorDataService, LanguageService ) {
+        'AnnotationsService', 'EditorDataService', 'LanguageService', 'TextService', 
+        function( AnnotationsService, EditorDataService, LanguageService, TextService ) {
             return {
                 restrict : 'AE',
                 scope : {
@@ -25,6 +25,7 @@ dialogSimpleEditAnnotationModule.directive(
                 controller: ['$scope', function ($scope) {
                     console.log("In edit annotation dialog (simple) controller");
                     $scope.LanguageService = LanguageService;
+                    
                     $scope.OKButton = function () {
                         $scope.note.callback(true);
                         $scope.onOk()();
@@ -46,7 +47,54 @@ dialogSimpleEditAnnotationModule.directive(
 
                     elem.on("shown.bs.modal", function () {
                         scope.note = EditorDataService.editAnnotationDialog;
+                        scope.resourceApi = "/exist/restxq/api/data/notes/" + encodeURIComponent(scope.note.resource);
+                        scope.annotationResource = "";
+                        scope.externalId = "";
+
+                        scope.isLocal = scope.note.resource == TextService._resource;
+                        scope.localChanged = function() {
+                            if (scope.isLocal) {
+                                scope.note.resource = TextService._resource;
+                            }
+                        };
+                        scope.$watch("resourceApi", function(newResourceApi) {
+                            // there should be a better way to do this!
+                            if (newResourceApi) {
+                                scope.note.resource = decodeURIComponent(newResourceApi.split("/").pop());
+                            }
+                        });
+                        scope.$watch("externalId", function(newExternalId) {
+                            // there should be a better way to do this!
+                            if (newExternalId) {
+                                scope.note.id = newExternalId.slice(1);
+                                AnnotationsService.getNote(scope.note.resource, scope.note.id)
+                                .then(function(content) {
+                                    var $content = $(content);
+                                    scope.note.type = $content.attr("data-type");
+                                    scope.note.lang = $content.attr("lang") || "en";    // TODO: this should default to the xml:lang in the file!
+                                    scope.note.content = $content.html();
+                                });
+                            }
+                        });
+
+                        scope.note.sources = [];
+                        // when dialog is first shown, activate the first tab
+                        $("#annotationTabSelect").tab("show");
                         scope.$apply();
+                    });
+                    elem.on("shown.bs.tab", function(evt) {
+                        if (evt.target.id == "identityTabSelect") {
+                            AnnotationsService.load(scope.note.resource)
+                            .then(function(data) {
+                                scope.annotationResource = data;
+                            });
+                        }
+                        else if (evt.target.id == "sourceTabSelect") {
+                            AnnotationsService.getNoteSource(scope.note.resource, scope.note.id)
+                            .then(function(sources) {
+                                scope.note.sources = sources;
+                            });
+                        }
                     });
                  },
                  transclude : false,
