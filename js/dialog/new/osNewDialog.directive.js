@@ -52,8 +52,7 @@ osDialogNewModule.directive(
                             title: {
                                 main : "",
                                 alt : "",
-                                altLang : "en",
-                                idno : ""
+                                altLang : "en"
                             },
                             license : "http://www.creativecommons.org/publicdomain/zero/1.0",
                             source : "/exist/restxq/api/data/sources/Born%20Digital",

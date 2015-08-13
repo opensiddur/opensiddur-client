@@ -130,7 +130,7 @@ osTextModule.factory("AnnotationsService", [
                             // check if it exists
                             return thiz.load(thisResource)
                             .catch(function(errorResponse) {
-                                // if not, create the annotation resource with idno=the id of the document, POST it
+                                // if not, create the annotation resource, POST it
                                 console.log("does not exist");
                                 var title = decodeURIComponent(thisResource);
                                 var idno = TextService._resource;
@@ -138,7 +138,7 @@ osTextModule.factory("AnnotationsService", [
                                 var template = 
                                     "<annotationTemplate>" +
                                         "<lang>" + TextService.language().language + "</lang>" +  
-                                        "<title><main>" + title + "</main><idno>" + idno + "</idno></title>" +
+                                        "<title><main>" + title + "</main></title>" +
                                         "<license>" + TextService.license().license + "</license>" +
                                         "<sourceTitle>" + src.title  + "</sourceTitle>" +
                                         "<source>/data/sources/" + src.source + "</source>" +
@@ -173,12 +173,6 @@ osTextModule.factory("AnnotationsService", [
                             });
                         })
                     );
-            },
-            getResourceIdno : function(resource) {
-                // get the annotation idno's of a given resource
-            },
-            setResourceIdno : function(resource, id) {
-                // change the annotation idno(s) of a given resource (must be loaded!)
             },
             content : function(resource, id, type, content) {
                 // get or set the type and/or content of a given resource/annotation
