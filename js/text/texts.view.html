@@ -80,6 +80,12 @@
                         <li><a href="#" data-ng-click="helper.xml.addIds()">Add required xml:id attributes</a></li>
                     </ul>
                 </div>
+                <div class="btn-group navbar-btn">
+                    <button data-ng-disabled="!editor.isLoaded" class="btn dropdown-toggle" data-toggle="dropdown">Settings<b class="caret"></b></button>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a href="#" data-ng-click="DialogService.open('settingsAnnotationsDialog')">Annotations</a></li>
+                    </ul>
+                </div>
                 <div class="btn-group navbar-btn" data-ng-show="resourceType.current.supportsTranscriptionView">
                     <button class="btn btn-primary" 
                         data-ng-disabled="!editor.isLoaded" 
@@ -192,7 +198,7 @@
     <os-edit-annotation-dialog-simple on-ok="editor.makeDirty"
         on-close="editor.dialogCanceled"
         name="editAnnotationDialogSimple"
-        ></os-edit-segment-dialog-simple>
+        ></os-edit-annotation-dialog-simple>
     <os-edit-link-dialog-simple on-ok="editor.makeDirty"
         on-close="editor.dialogCanceled"
         name="editLinkDialogSimple"
@@ -201,4 +207,8 @@
         on-close="editor.dialogCanceled"
         name="editSegmentDialogSimple"
         ></os-edit-segment-dialog-simple>
+    <os-annotation-settings-dialog on-ok="editor.makeDirty"
+        on-close="editor.dialogCanceled"
+        name="settingsAnnotationsDialog"
+        ></os-annotation-settings-dialog>
 </div>
