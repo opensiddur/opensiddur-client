@@ -161,8 +161,14 @@
         <xsl:attribute name="data-{replace(name(), ':', '-')}" select="."/>
     </xsl:template>
 
-    <!-- these will become inconsistent if allowed to coexist with the merged section -->
-    <xsl:template match="j:links"/>
+    <!-- these will become inconsistent if allowed to coexist with the merged section,
+        unless we allow them on an individual basis -->
+    <xsl:template match="j:links">
+        <xsl:copy copy-namespaces="no">
+            <xsl:sequence select="@*"/>
+            <xsl:sequence select="tei:link[@type=('set','note')]"/>
+        </xsl:copy>
+    </xsl:template>
 
     <!-- resource-level parts that will not become inconsistent -->
     <xsl:template match="tei:teiHeader|j:conditions|j:settings">
