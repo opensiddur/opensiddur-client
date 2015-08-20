@@ -18,22 +18,29 @@ osTextModule.factory("SettingsService", [
                 // retrieve a list of active annotations that start/end at the given id 
                 // the form will be annotations : annotation { name: "", state : "" } }
                 var annsXml = XsltService.transformString("/js/text/ActiveAnnotations.get.xsl", 
-                    TextService.content()/*, (id) ? {
+                    TextService.content(), (id) ? {
                         "id" : id
-                    } : undefined*/); 
-                debugger;
+                    } : undefined); 
                 var annsJs = xj.xml2json(annsXml);
+                if (typeof(annsJs.annotations)=="string" || !("annotation" in annsJs.annotations)) {
+                    // there are no existing annotation settings
+                    annsJs.annotations = {};
+                    annsJs.annotations.annotation = [];
+                    annsJs.annotations.annotation_asArray = [];
+                }
                 return annsJs;
             },
             setActiveAnnotations : function(annotationSettings, startId, endId) {
                 var idRange = (endId && (startId != endId)) ? ("range(" + startId + "," + endId + ")") : startId;
+                var annXml = xj.json2xml(angular.fromJson(angular.toJson(annotationSettings)));
                 TextService.content(
                     XsltService.serializeToStringTEINSClean(
                         XsltService.transformString("/js/text/ActiveAnnotations.set.xsl", 
                             TextService.content(),{
                             "id" : idRange,
-                            "settings" : annotationSettings
-                        })
+                            "annotations" : annXml
+                        }), 
+                        true
                     )
                 );
             }

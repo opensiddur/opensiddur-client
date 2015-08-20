@@ -159,11 +159,13 @@
         </xsl:if>
     </xsl:template>
 
-    <!-- links mode: find streamtext elements that should become links and make them links  -->
+    <!-- links mode: find streamtext elements that should become links and make them links,
+        preserve other links  -->
     <xsl:template match="j:links">
         <xsl:copy copy-namespaces="no">
             <xsl:apply-templates select="@*" mode="generic"/>
             <xsl:apply-templates select="//jf:merged" mode="links"/>
+            <xsl:apply-templates select="tei:link[@type='set']"/>
         </xsl:copy>
     </xsl:template>
 

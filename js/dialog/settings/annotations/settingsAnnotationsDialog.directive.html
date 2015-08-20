@@ -1,0 +1,57 @@
+<div class="osSettingsAnnotationsDialog modal" aria-hidden="true" aria-labelledBy="settingsAnnotationsDialogHeader">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-ng-click="CloseButton()" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="settingsAnnotationsDialogHeader">{{ title }}</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <table class="table table-hover table-condensed table-striped table-scrollable">
+                            <thead>
+                                <th>
+                                    List of active annotation settings:
+                                </th>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="annotation in activeAnnotations.annotations.annotation_asArray" ng-click="selectActiveAnnotation(annotation)">
+                                    <td>{{ annotation.name }}</td>
+                                    <td>{{ annotation.state }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-md-4">
+                        <div ng-show="selectedAnnotation">
+                            <ul>
+                                <li><b>Name</b>: {{ selectedAnnotation.name }}</li>
+                                <li><b>State</b>: {{ selectedAnnotation.state }} 
+                                    <button class="btn btn-small" ng-show="selectedAnnotation.state == 'ON'" ng-click="setAnnotationState(selectedAnnotation, 'OFF')">Turn OFF</button>
+                                    <button class="btn btn-small" ng-show="selectedAnnotation.state == 'OFF'" ng-click="setAnnotationState(selectedAnnotation, 'ON')">Turn ON</button>
+                                </li>
+                            </ul>
+                            <button class="btn btn-danger btn-small" ng-click="removeSelectedAnnotation()">Remove</button>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <os-search-list api="'/api/data/notes'" selection="selectedNewAnnotation"></os-search-list>
+                        <button class="btn btn-primary" 
+                            ng-disabled="!AccessService.access.write"
+                            ng-click="addSelectedNewAnnotation('ON')">&#x2b05; Include</button> 
+                        <button class="btn btn-primary" 
+                            ng-disabled="!AccessService.access.write"
+                            ng-click="addSelectedNewAnnotation('OFF')">&#x2b05; Exclude</button> 
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn" ng-click="CloseButton()" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal"
+                    ng-disabled="!AccessService.access.write" 
+                    ng-click="OKButton()">Set annotations</button>
+            </div>
+        </div>
+    </div>
+</div>
+

@@ -12,12 +12,14 @@
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
     xmlns:tei="http://www.tei-c.org/ns/1.0"
     xmlns:j="http://jewishliturgy.org/ns/jlptei/1.0"
+    xmlns:jf="http://jewishliturgy.org/ns/jlptei/flat/1.0"
     version="2.0"
     exclude-result-prefixes="#all">
     <!-- filter that it must begin|end at an id, {id}, start_{id} or end_{id} -->
     <xsl:param name="id" as="xs:string?" select="(//j:streamText|//jf:merged)/(@xml:id|@jf:id)/string()"/>
     <xsl:param name="annotations" as="document-node(element(annotations))?"/>
 
+    <!-- list of jf:id's of tei:fs elements that are set for $id -->
     <xsl:variable name="settings-id" as="xs:string*">
         <xsl:apply-templates select="//tei:link[@type='set']" mode="get-annotations"/>
     </xsl:variable>
@@ -27,9 +29,10 @@
         <xsl:sequence select="replace($i, 'range|[(),]', '_')"/>
     </xsl:function>
 
-    <!-- remove existing settings -->
-    <xsl:template match="j:settings/tei:fs[@xml:id=$settings-id]"/>
-    <xsl:template match="tei:link[@type='set'][tokenize(@target, '\s+')[1]=$id]"/>
+    <!-- remove existing settings:
+        warning: this should only remove existing *annotation* settings -->
+    <xsl:template match="j:settings/tei:fs[@type='opensiddur:annotation'][(@xml:id, @jf:id)=$settings-id]"/>
+    <xsl:template match="tei:link[@type='set'][substring-after(tokenize(@target, '\s+')[2], '#')=$settings-id]"/>
 
     <xsl:template match="j:settings">
         <xsl:copy copy-namespaces="no">
@@ -44,18 +47,51 @@
             <xsl:sequence select="@*"/>
             <xsl:apply-templates/>
             <xsl:if test="exists($annotations/annotations/annotation)">
-                <tei:link type="set" target="#{id} #annotation_{j:clean-id($id)}"/>
+                <tei:link type="set" target="#{$id} #annotation_{j:clean-id($id)}"/>
             </xsl:if>
         </xsl:copy>
 
-    </xsl:templates>
+    </xsl:template>
 
     <!-- find relevant settings links. return their xml:ids -->
     <xsl:template match="tei:link[@type='set']" as="xs:string?" mode="get-annotations">
         <xsl:variable name="link-tokens" as="xs:string*" select="tokenize(@target, '\s+')"/>
-        <xsl:if test="$link-tokens[1]=$id">
-            <xsl:sequence select="substring-after($link-tokens[2], '#')"/>
+        <xsl:variable name="link-target" select="substring-after($link-tokens[2], '#')"/>
+        <xsl:if test="$link-tokens[1]=concat('#', $id) and //tei:fs[@type='opensiddur:annotation'][(@jf:id,@xml:id)=$link-target]">
+            <xsl:sequence select="$link-target"/>
         </xsl:if>
+    </xsl:template>
+
+    <xsl:template match="jf:merged[@jf:id=$id]">
+        <xsl:copy copy-namespaces="no">
+            <xsl:sequence select="@* except @jf:set"/>
+            <xsl:attribute name="jf:set" select="string-join((
+                concat('#annotation_',j:clean-id($id)),
+                tokenize(@jf:set, '\s+')[not(substring-after(., '#')=$settings-id)] 
+                ), ' ')"/>
+            <xsl:apply-templates/>
+        </xsl:copy>
+    </xsl:template>
+
+    <xsl:template match="tei:TEI">
+        <xsl:variable name="has-settings" select="exists($annotations/annotations/annotation)"/>
+        <xsl:copy copy-namespaces="no">
+            <xsl:sequence select="@*"/>
+            <xsl:apply-templates select="tei:teiHeader"/>
+            <xsl:if test="empty(j:settings) and $has-settings">
+                <j:settings>
+                    <xsl:apply-templates select="$annotations"/>
+                </j:settings>
+            </xsl:if>
+            <xsl:apply-templates select="j:settings"/>
+            <xsl:if test="empty(j:links) and $has-settings">
+                <j:links>
+                    <tei:link type="set" target="#{$id} #annotation_{j:clean-id($id)}"/>
+                </j:links>
+            </xsl:if>
+            <xsl:apply-templates select="j:links"/>
+            <xsl:apply-templates select="* except (tei:teiHeader, j:settings, j:links)"/>
+        </xsl:copy>
     </xsl:template>
 
     <xsl:template match="element()">
@@ -66,15 +102,21 @@
     </xsl:template>
 
     <xsl:template match="annotations">
-        <tei:fs xml:id="annotation_{j:clean-id($id)}" type="opensiddur:annotation">
+        <xsl:variable name="annotation" as="element(tei:f)*">
             <xsl:apply-templates/>
-        </tei:fs>
-    <xsl:template>
+        </xsl:variable>
+        <xsl:if test="exists($annotation)">
+            <tei:fs jf:id="annotation_{j:clean-id($id)}" type="opensiddur:annotation">
+                <xsl:sequence select="$annotation"/>
+            </tei:fs>
+        </xsl:if>
+    </xsl:template>
 
-    <xsl:template match="annotation">
+    <!-- match an annotation to a feature if the annotation has a name -->
+    <xsl:template match="annotation[name]">
         <tei:f name="{name}">
             <xsl:choose>
-                <xsl:when test="upper-case(value)='ON'"><j:on/></xsl:when>
+                <xsl:when test="upper-case(state)='ON'"><j:on/></xsl:when>
                 <xsl:otherwise><j:off/></xsl:otherwise>
             </xsl:choose>
         </tei:f>
