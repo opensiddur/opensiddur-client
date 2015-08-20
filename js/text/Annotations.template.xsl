@@ -47,7 +47,6 @@
                 </tei:revisionDesc>
             </tei:teiHeader>
             <j:annotations xml:id="ann">
-                <tei:idno><xsl:value-of select="title/idno"/></tei:idno>
                 <xsl:choose>
                     <xsl:when test="initialAnnotation">
                         <xsl:sequence select="initialAnnotation//tei:note"/>
