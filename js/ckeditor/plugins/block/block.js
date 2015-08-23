@@ -30,7 +30,7 @@ var BlockObject = function(editor, allowOverlap) {
         return node.hasClass(blockType) && node.hasClass("layer") && 
             boundaryTypes.some(function(b) {return node.hasClass(b);}) ? node : false; 
     };
-    var removeInternalBlocks = function(startNode, endNode, blockType) {
+    var removeInternalBlocks = function(startNode, endNode, blockType, thisId) {
         var rng = new CKEDITOR.dom.range(editor.document);
         rng.setStart(startNode,0);
         rng.setEnd(endNode,0);
@@ -42,6 +42,9 @@ var BlockObject = function(editor, allowOverlap) {
             } 
         } 
         for (var i = 0; i < internalBlocks.length; i++) {
+            // disable the "destroy" functionality that will remove the start/end tag when a block is 
+            // removed from being internal.
+            internalBlocks[i].setAttribute("data-disable-destroy", "true");
             internalBlocks[i].remove();
         }
     };
@@ -182,14 +185,14 @@ var BlockObject = function(editor, allowOverlap) {
         var begInsert = new CKEDITOR.dom.element.createFromHtml(beginTemplate(thisId));
         var endInsert = new CKEDITOR.dom.element.createFromHtml(endTemplate(thisId));
         if (!this.allowOverlap) {
-            removeInternalBlocks(startElement, endElement, classType);
+            removeInternalBlocks(startElement, endElement, classType, thisId);
             var unterminatedStarts = getAllPrecedingUnterminatedBlockStarts(startElement, classType);
             var unstartedEnds = getAllFollowingUnstartedBlockEnds(endElement, classType);
             blockIdRename(unterminatedStarts, unstartedEnds, classType);
             for (var i = 0; i < unterminatedStarts.length; i++) {
                 // insert end tags
                 var endTag = new CKEDITOR.dom.element.createFromHtml(endTemplate(unterminatedStarts[i].getId().replace(/^start_/, "")));
-               endTag.insertBefore(startElement);
+                endTag.insertBefore(startElement);
                 editor.widgets.initOn( endTag, classType );
             }
             for (var i = 0; i < unstartedEnds.length; i++) {
@@ -222,17 +225,19 @@ var BlockObject = function(editor, allowOverlap) {
     };  
     this.destroy = function(evt) {
         // destroy event handler. use in parallel with init()
-        var idtokens = this.element.getId().match(/^(start|end)_(.+)/);
-        var bound = idtokens[1];
-        var thisId = idtokens[2];
-        var otherBound = bound == "start" ? "end" : "start";
-        var otherBoundId = otherBound + "_" + thisId;
-        var body = editor.document;   
-        if (body) {
-            var otherBoundElement = body.findOne("*[id="+otherBoundId.replace(/[.]/g, "\\.")+"]");
-            if (otherBoundElement) {
-                var otherBoundWrapper = otherBoundElement.getParent();
-                otherBoundWrapper.remove();
+        if (!this.element.getParent().hasAttribute("data-disable-destroy")) {
+            var idtokens = this.element.getId().match(/^(start|end)_(.+)/);
+            var bound = idtokens[1];
+            var thisId = idtokens[2];
+            var otherBound = bound == "start" ? "end" : "start";
+            var otherBoundId = otherBound + "_" + thisId;
+            var body = editor.document;   
+            if (body) {
+                var otherBoundElement = body.findOne("*[id="+otherBoundId.replace(/[.]/g, "\\.")+"]");
+                if (otherBoundElement) {
+                    var otherBoundWrapper = otherBoundElement.getParent();
+                    otherBoundWrapper.remove();
+                }
             }
         }
     };
