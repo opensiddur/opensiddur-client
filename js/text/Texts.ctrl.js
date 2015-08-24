@@ -243,6 +243,7 @@ osTextModule.controller(
                 AnnotationsService.saveAll()
                 // TODO: catch errors saving annotations
                 .then(function() {
+                    // TODO: change the name of the annotations that are linked to as resource="" to same as current resource 
                     TextService.save()
                         .success(function(data, statusCode, headers) {   // success
                             $scope.textsForm.$setPristine();

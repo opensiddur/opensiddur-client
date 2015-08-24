@@ -40,9 +40,31 @@ osTextModule.factory("AnnotationsService", [
             load : function(resource) {
                 // load an annotation resource (if not already loaded)
                 // return a promise
+                var deferred = $q.defer();
                 if (resource in resources) {
-                    var deferred = $q.defer();
                     deferred.resolve(resources[resource]);
+                    return deferred.promise;
+                }
+                else if (resource == "") {
+                    // first reference to load an annotation new document. 
+                    // there's nothing there yet, so make a blank annotation document
+                    var title = TextService.title().title;
+                    var src = TextService.sources()[0]; // big assumption!
+                    var template = 
+                        "<annotationTemplate>" +
+                            "<lang>" + TextService.language().language + "</lang>" +  
+                            "<title><main>" + title + "</main></title>" +
+                            "<license>" + TextService.license().license + "</license>" +
+                            "<sourceTitle>" + src.title  + "</sourceTitle>" +
+                            "<source>/data/sources/" + src.source + "</source>" +
+                            "<initialAnnotation></initialAnnotation>" +
+                        "</annotationTemplate>"
+                    var templated = XsltService.serializeToStringTEINSClean(
+                        XsltService.transform("/js/text/Save.template.xsl", 
+                            XsltService.transformString("/js/text/Annotations.template.xsl", template))
+                        );
+                    resources[""] = templated;
+                    deferred.resolve(resources[""]);
                     return deferred.promise;
                 }
                 else {
@@ -129,30 +151,6 @@ osTextModule.factory("AnnotationsService", [
                             var thisResource = annotationResource.getAttribute("resource").split("/").pop();
                             // check if it exists
                             return thiz.load(thisResource)
-                            .catch(function(errorResponse) {
-                                // if not, create the annotation resource, POST it
-                                console.log("does not exist");
-                                var title = decodeURIComponent(thisResource);
-                                var idno = TextService._resource;
-                                var src = TextService.sources()[0]; // big assumption!
-                                var template = 
-                                    "<annotationTemplate>" +
-                                        "<lang>" + TextService.language().language + "</lang>" +  
-                                        "<title><main>" + title + "</main></title>" +
-                                        "<license>" + TextService.license().license + "</license>" +
-                                        "<sourceTitle>" + src.title  + "</sourceTitle>" +
-                                        "<source>/data/sources/" + src.source + "</source>" +
-                                        "<initialAnnotation>" + XsltService.serializeToString(annotationResource) + "</initialAnnotation>" +
-                                    "</annotationTemplate>"
-                                var templated = XsltService.serializeToStringTEINSClean(
-                                    XsltService.transform("/js/text/Save.template.xsl", 
-                                        XsltService.transformString("/js/text/Annotations.template.xsl", template))
-                                    );
-                                return $http.post("/api/data/notes", templated)
-                                    .success(function() {
-                                        thiz.reload(thisResource);
-                                    });
-                            })
                             .then(function(originalResource) {
                                 // if it does exist, load it and merge the changed annotations into the resource, then PUT
                                 if (originalResource) {
@@ -164,11 +162,32 @@ osTextModule.factory("AnnotationsService", [
                                             })
                                         )
                                     );
-                                    return $http.put("/api/data/notes/" + thisResource, mergedAnnotations)
-                                        .success(function() {
-                                            // get any server-induced changes (revision history, eg)
-                                            thiz.reload(thisResource);
+                                    if (thisResource == "") {
+                                        // post a new annotation resource
+                                        console.log("annotation resource does not exist");
+                                        var parentTitle = TextService.title();
+                                        // reset the title
+                                        resources[""] = XsltService.serializeToStringTEINSClean(
+                                            XsltService.transformString("/js/text/Title.set.xsl", resources[""], { 
+                                                "new-titles" : xj.json2xml({titles : {title : parentTitle }})}
+                                            ));
+                                        
+                                        return $http.post("/api/data/notes", resources[""])
+                                            .success(function(data, statusCode, headers) {
+                                            var resourceName = decodeURIComponent(headers("Location").replace("/exist/restxq/api/notes/", ""));
+                                            // TODO: set the resource name of the annotation document in TextService
+                                            delete resources[""];
+                                            thiz.reload(resourceName);
                                         });
+
+                                    }
+                                    else {
+                                        return $http.put("/api/data/notes/" + thisResource, mergedAnnotations)
+                                            .success(function() {
+                                                // get any server-induced changes (revision history, eg)
+                                                thiz.reload(thisResource);
+                                            });
+                                    }
                                 }
                             });
                         })
