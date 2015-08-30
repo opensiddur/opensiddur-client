@@ -238,6 +238,34 @@ osTextModule.service("TextService", [
             }
             return { license : $("tei\\:licence", this._content).attr("target") };
         },
+        localSettings : function(ls) {
+            // local settings are stored in j:settings/tei:fs[@type='opensiddur:local']
+            // they are local to the file and may help the client (or another reader)
+            // determine how to edit the file
+            // format: settings : { key : value,...}
+            if (ls) {
+                var newSettings = { settings : {setting : $.map(ls, function(val, key) {
+                    return { name : key, value : val };
+                })}};
+                var xSettings = xj.json2xml(newSettings);
+                this._content = XsltService.indentToString(
+                    XsltService.transformString("/js/text/LocalSettings.set.xsl", this._content, {
+                        "settings" : xSettings
+                    }), this._isFlat);
+                return this;
+            }
+            else {
+                var locals = XsltService.transformString("/js/text/LocalSettings.get.xsl", this._content);
+                var lj = xj.xml2json(locals).settings;
+                var settings = {};
+                if (Boolean(lj) && "setting_asArray" in lj) {
+                    for (var i=0 ; i < lj.setting_asArray.length; i++) {
+                        settings[lj.setting_asArray[i].name] = lj.setting_asArray[i].value;
+                    }
+                }
+                return settings;
+            }
+        },
         sources : function(sourcesJson) {
             // { sources : 
             if (sourcesJson) {

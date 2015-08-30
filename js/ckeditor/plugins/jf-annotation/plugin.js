@@ -76,7 +76,7 @@ CKEDITOR.plugins.add( 'jf-annotation', {
                             var stream = el.getParents()[1];
                             var sameAnnotations = stream.find("*[data-jf-annotation=\"" + thisAnnotation + "\"]");
                             var resource = 
-                                encodeURIComponent(this.resource || TextService._resource);
+                                encodeURIComponent(this.resource);
                             for (var i = 0; i < sameAnnotations.count(); i++) {
                                 var thisEl = sameAnnotations.getItem(i); 
                                 var id = this.id || randomId;
@@ -156,7 +156,7 @@ CKEDITOR.plugins.add( 'jf-annotation', {
                     });
                 }
                 else { // no data-jf-annotation content, set everything to defaults
-                    var resource = encodeURIComponent(TextService._resource);
+                    var resource = TextService.localSettings()["local-annotation-resource"] || "";   // blank resource indicates local annotation for a file that is not yet saved
                     var id =  "note_" + parseInt(Math.random()*10000000) ;
                     var annotationType = "comment";
                     el.setAttribute("data-jf-annotation", "/data/notes/" + resource  + "#" + id);

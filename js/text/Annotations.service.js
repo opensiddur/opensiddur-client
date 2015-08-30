@@ -31,7 +31,10 @@ osTextModule.factory("AnnotationsService", [
                     // call the note loaded
             },
             reload : function(resource) {
-                return $http.get("/api/data/notes/" + encodeURIComponent(resource))
+                if (resource == "") {
+                    return resources[""];
+                }
+                else return $http.get("/api/data/notes/" + encodeURIComponent(resource))
                     .then(function(response) {
                         resources[resource] = response.data;
                         return resources[resource];
@@ -146,48 +149,49 @@ osTextModule.factory("AnnotationsService", [
                 var thiz = this;
                 // for each resource,
                 return $q.all(
-                    $.each(annotationsByResource.getElementsByTagNameNS("http://jewishliturgy.org/ns/jlptei/flat/1.0", "annotationResource"),
-                        function(idx, annotationResource) {
+                    $.map(annotationsByResource.getElementsByTagNameNS("http://jewishliturgy.org/ns/jlptei/flat/1.0", "annotationResource"),
+                        function(annotationResource, idx) {
                             var thisResource = annotationResource.getAttribute("resource").split("/").pop();
-                            // check if it exists
                             return thiz.load(thisResource)
-                            .then(function(originalResource) {
-                                // if it does exist, load it and merge the changed annotations into the resource, then PUT
-                                if (originalResource) {
-                                    console.log("saving to", thisResource);
-                                    var mergedAnnotations = XsltService.serializeToStringTEINSClean(
-                                        XsltService.transform("/js/text/Save.template.xsl", 
-                                            XsltService.transformString("/js/text/AnnotationsMerge.xsl", originalResource, {
-                                                annotations : annotationResource
-                                            })
-                                        )
-                                    );
-                                    if (thisResource == "") {
-                                        // post a new annotation resource
-                                        console.log("annotation resource does not exist");
-                                        var parentTitle = TextService.title();
-                                        // reset the title
-                                        resources[""] = XsltService.serializeToStringTEINSClean(
-                                            XsltService.transformString("/js/text/Title.set.xsl", resources[""], { 
-                                                "new-titles" : xj.json2xml({titles : {title : parentTitle }})}
-                                            ));
+                            .then(function(annotationResourceData) {
+                                // load the resource and merge the changed annotations into the resource, then PUT
+                                console.log("saving to", thisResource);
+                                var mergedAnnotations = XsltService.serializeToStringTEINSClean(
+                                    XsltService.transform("/js/text/Save.template.xsl", 
+                                        XsltService.transformString("/js/text/AnnotationsMerge.xsl", annotationResourceData, {
+                                            annotations : annotationResource
+                                        })
+                                    )
+                                );
+                                if (thisResource == "") {
+                                    // post a new annotation resource
+                                    console.log("annotation resource does not yet exist");
+                                    var parentTitle = TextService.title();
+                                    // reset the title
+                                    mergedAnnotations = XsltService.serializeToStringTEINSClean(
+                                        XsltService.transformString("/js/text/Title.set.xsl", mergedAnnotations, { 
+                                            "new-titles" : xj.json2xml({titles : {title : parentTitle }})}
+                                        ));
                                         
-                                        return $http.post("/api/data/notes", resources[""])
-                                            .success(function(data, statusCode, headers) {
-                                            var resourceName = decodeURIComponent(headers("Location").replace("/exist/restxq/api/notes/", ""));
-                                            // TODO: set the resource name of the annotation document in TextService
+                                    return $http.post("/api/data/notes", mergedAnnotations)
+                                        .then(function(response) {
+                                            var headers = response.headers;
+                                            var resourceName = decodeURIComponent(headers("Location").replace("/exist/restxq/api/data/notes/", ""));
                                             delete resources[""];
-                                            thiz.reload(resourceName);
-                                        });
+                                            TextService.localSettings(
+                                                // set the local annotation resource        
+                                                $.extend(TextService.localSettings(),{"local-annotation-resource" : resourceName})
+                                            );
+                                            return thiz.reload(resourceName);
+                                    });
 
-                                    }
-                                    else {
+                                }
+                                else {
                                         return $http.put("/api/data/notes/" + thisResource, mergedAnnotations)
                                             .success(function() {
                                                 // get any server-induced changes (revision history, eg)
                                                 thiz.reload(thisResource);
                                             });
-                                    }
                                 }
                             });
                         })
