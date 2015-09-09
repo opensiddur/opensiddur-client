@@ -37,11 +37,11 @@ osTextModule.service("TextService", [
         loadFlat : function(resource) {
             // load the content from the given resource (without path!) as a flat document
             // only original documents can be loaded flat
-            // return the result of a $http call. errors are catchable through .error
             return this.load("/api/data/original", resource, true);
         },
         get : function(resourceApi, resource, flat) {
             // get the content of the resource without loading it.
+            // return a promise containing the data (or error text)
             return $http.get(resourceApi + "/" + encodeURIComponent(resource) + (flat ? "/flat" : ""),
                 {
                     headers : { 
@@ -64,16 +64,23 @@ osTextModule.service("TextService", [
                         }
                         else return data;
                     }
-                })
-
+                }).then(    // explicitly return the data
+                    function(response) { 
+                        return response.data; 
+                    },
+                    function(error) { 
+                        return $q.reject(error.data); 
+                    }
+                );
         },
         load : function(resourceApi, resource, flat) {
             // load the content from the given resourceApi/resource (without path!) 
-            // return the result of a $http call. errors are catchable through .error
+            // return the TextService or content of the error.
             // load flat (for original only) if flat=true
+
             var thiz = this;
             return this.get(resourceApi, resource, flat)
-                .success(function(data) {
+                .then(function(data) {  // success
                     thiz._resource = resource;
                     thiz._resourceApi = resourceApi;
                     thiz._content = data;
@@ -81,6 +88,9 @@ osTextModule.service("TextService", [
                     thiz._flatContent = flat ? thiz.flatContent() : "";
                     
                     return thiz;
+                },
+                function(error) {
+                    return $q.reject(error.data);
                 });
         },
         syncFlat : function () {
@@ -93,23 +103,6 @@ osTextModule.service("TextService", [
         save : function() {
             var httpOperation = this._resource ? $http.put : $http.post;
             var deferred = $q.defer();  // for errors
-            var extendPromise = function(promise) {
-                // extend a promise to make it behave like $http
-                promise.success = function(fn) {  
-                    promise.then(function(response) {
-                        fn(response.data, response.status, response.headers, response.config);
-                    });
-                    return promise;
-                  };
-
-                promise.error = function(fn) {  
-                    promise.then(null, function(response) {
-                        fn(response.data, response.status, response.headers, response.config);
-                    });
-                    return promise;
-                };
-                return promise;
-            };
             if (this._isFlat) {
                 this.syncFlat();
                 // convert content back to XML
@@ -127,30 +120,33 @@ osTextModule.service("TextService", [
                 jindata = $(indata);
                 if (jindata.prop("tagName") == "PARSERERROR") {
                     deferred.reject("Parser error: invalid XML: " + jindata.html());
-                    return extendPromise(deferred.promise);
+                    return deferred.promise;
                 }
                 else if ($("tei\\:title[type=main]", jindata).text().length == 0 && 
                         $("tei\\:title[type=main]", jindata).children().length == 0) {
                     deferred.reject("A main title is required");
-                    return extendPromise(deferred.promise);
+                    return deferred.promise;
                 }
                 else {
                     return httpOperation(this._resourceApi + (this._resource ? ("/" + this._resource) : ""), 
                         indata)
-                        .success(function (data, statusCode, headers) {   // success
+                        .then(function (response) {   // success
+                            var data = response.data;
+                            var statusCode = response.statusCode;
+                            var headers = response.headers;
                             if (statusCode == 201) {
                                 // created
                                 thiz._resource = decodeURI(headers('Location').replace("/exist/restxq"+thiz._resourceApi+"/", ""));
                             }
-                            return extendPromise($timeout(function() { return thiz.load(thiz._resourceApi, thiz._resource, thiz._isFlat); }, 500));
+                            return thiz.load(thiz._resourceApi, thiz._resource, thiz._isFlat);
                             
-                        })
-                        .error(function(err) {
+                        },
+                        function(err) {
                             if (thiz._isFlat) {
                                 thiz._content = backupContent;
                             }
 
-                            return err;
+                            return $q.reject(err.data);
                         });
                 }
             }
@@ -196,7 +192,7 @@ osTextModule.service("TextService", [
                         "language" : setLanguage.language}), this._isFlat);
                 return this;
             }
-            var l =  this._content.match(/xml:lang="([^"]+)"/);
+            var l =  this._content ? this._content.match(/xml:lang="([^"]+)"/) : "";
 
             return { language : l ? l[1] : "" }; // this relies on xml:lang being required
         },

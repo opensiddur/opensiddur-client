@@ -16,23 +16,22 @@ osCompilerModule.controller(
 
     getStatus = function() {
         JobsService.getJSON($scope.compilation.job)
-        .success(function (stat) { 
-            $scope.status = stat;
-            if (stat.state == "complete") {
-                console.log("Complete. Now redirect to /compiled/" + $scope.resource);
-                $location.path("/compiled/" + $scope.resource);
-            }
-            else if (stat.state == "failed") {
-                console.log("Compile failed");
-            }
-            else {
-                // check status again in another second...
-                $timeout(getStatus, 1000);
-            }
-        })
-        .error(
-            function (data) { 
-                ErrorService.addApiError(data); 
+        .then(function (stat) { 
+                $scope.status = stat;
+                if (stat.state == "complete") {
+                    console.log("Complete. Now redirect to /compiled/" + $scope.resource);
+                    $location.path("/compiled/" + $scope.resource);
+                }
+                else if (stat.state == "failed") {
+                    console.log("Compile failed");
+                }
+                else {
+                    // check status again in another second...
+                    $timeout(getStatus, 1000);
+                }
+            },
+            function (error) { 
+                ErrorService.addApiError(error); 
             }
         );
     };
@@ -41,13 +40,15 @@ osCompilerModule.controller(
     $scope.status = {};
 
     JobsService.start($scope.resource)
-    .success(
-        function (data, httpStatus, headers) { 
-            $scope.compilation = { job : headers("Location").replace("/exist/restxq/api/jobs/", "") }; // TODO: jobservice.start transform response is never called 
+    .then(
+        function (data) { 
+            console.log("Job started: ", data); 
+            $scope.compilation = data;
             getStatus(); 
-        })
-    .error(function(data) { 
-        ErrorService.addApiError(data); 
-    });
+        }, 
+        function(error) { 
+            console.log("Job not started: ", error); 
+            ErrorService.addApiError(error); 
+        });
   }]
 );

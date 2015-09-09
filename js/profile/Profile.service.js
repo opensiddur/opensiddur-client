@@ -6,7 +6,8 @@
     Licensed under the GNU Lesser General Public License, version 3 or later  
 */
 osProfileModule.factory("ProfileService", [
-    "$http", "XsltService", function($http, XsltService) {
+    "$http", "$q", "XsltService", 
+    function($http, $q, XsltService) {
     
     var transformResponse = function(data, headers, httpStatus) {
         console.log(data);
@@ -27,7 +28,14 @@ osProfileModule.factory("ProfileService", [
                 thiz.userName = userName;
                 thiz.profile = data;
                 thiz.profileType = (thiz.profile.contributor.orgName.__text) ? 'organization' : 'individual';
-            });
+            })
+            .then(
+                function(response) { 
+                    return response.data; 
+                },
+                function(error) { 
+                    return $q.reject(error.data); 
+                });
     };
 
     return {
@@ -74,10 +82,15 @@ osProfileModule.factory("ProfileService", [
                     headers : { "Content-type" : "application/xml" } 
                 }
                 )
-            .success( function(data) {
+            .then( function(response) {
+                var data = response.data;
                 if (!thiz.userName) {
                     thiz.userName = decodeURI(headers("Location").split("/").pop());
                 }
+                return data;
+            },
+            function (error) { 
+                return $q.reject(error.data); 
             });
                     
         }

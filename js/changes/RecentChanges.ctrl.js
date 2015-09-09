@@ -14,12 +14,13 @@ osRecentChangesModule.controller(
 
     $scope.load = function() {
         RecentChangesService.load($scope.searchParams)
-        .success(function(json) {
-            $scope.changes = json;
-        })
-        .error(function(error) {
-            ErrorService.addApiError(error);
-        });
+        .then(
+            function(json) {
+                $scope.changes = json;
+            },
+            function(error) {
+                ErrorService.addApiError(error);
+            });
     };
 
     $scope.load();

@@ -19,7 +19,7 @@
 
 osProfileModule.controller(
   'ProfileCtrl',
-  ['$scope', '$location', '$rootScope', '$routeParams', '$http', 
+  ['$scope', '$location', '$rootScope', '$routeParams', '$http',  
    'AccessService', 'AuthenticationService', 'DialogService', 'ErrorService', 'ProfileService',
   function ($scope, $location, $rootScope, $routeParams, $http, 
     AccessService, AuthenticationService, DialogService, ErrorService, ProfileService) {
@@ -42,20 +42,20 @@ osProfileModule.controller(
         var requestData =  ($scope.isNew) ? 
             ProfileService.loadNew() :
             ProfileService.load(userName);
-        requestData.success(
-              function(data, status, headers, config) {
+        requestData.then(
+              function(data) {
                   console.log(data);
                   
                   if (ProfileService.userName) {
                     AccessService.load("/api/user", ProfileService.userName)
-                    .success(function(acc) {
+                    .then(function(acc) {
                         $scope.ownership =  
                             ($scope.loggedIn && ProfileService.userName == $scope.loggedInUser) ?
                                 'self' : 
                                 ((acc.owner == ProfileService.profile.contributor.idno.__text) ? 'other' : 'thirdparty');
     
-                    })
-                    .error(function (err) {
+                    },
+                    function (err) {
                         ErrorService.addApiError(err);
                     });
 
@@ -65,11 +65,9 @@ osProfileModule.controller(
                     $scope.ownership = ($scope.loggedIn) ? 'thirdparty' : 'nobody';
                     $scope.isNew = 1;
                   }
-              }
-          )
-          .error(
-              function(data, status, headers, config) {
-                ErrorService.addApiError(data);
+              },
+              function(error) {
+                    ErrorService.addApiError(error);
               }
           );
         
@@ -88,17 +86,15 @@ osProfileModule.controller(
 
     $scope.save = function () {      
         ProfileService.save()
-        .success(
-            function(data, status, headers, config) {
+        .then(
+            function(data) {
                 $scope.profileForm.$setPristine();
                 $scope.isNew = 0;
                 $location.path("/contributors/" + encodeURIComponent(ProfileService.userName), false);
+            },
+            function(error) {
+              ErrorService.addApiError(error);
             }
-        )
-        .error(
-            function(data, status, headers, config) {
-              ErrorService.addApiError(data);
-            }  
         );
         
     };

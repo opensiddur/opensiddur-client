@@ -49,19 +49,20 @@ osSourcesModule.controller(
                 }
                 else {
                     SourceService.load(toDocument)
-                    .error(function(error) {
-                        ErrorService.addApiError(error);
-                        console.log("error loading", toDocument);
-                    });
+                    .then(null,
+                        function(error) {
+                            ErrorService.addApiError(error);
+                            console.log("error loading", toDocument);
+                        });
                 }
             },
             saveDocument : function() {
                 console.log("Save:", this);
                 SourceService.save()
-                .success(function() {
-                    $scope.sourcesForm.$setPristine();
-                })
-                .error(
+                .then(
+                    function() {
+                        $scope.sourcesForm.$setPristine();
+                    },
                     function(error) {
                         ErrorService.addApiError(error);
                         console.log("error saving ", SourceService.resource);

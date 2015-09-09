@@ -6,7 +6,8 @@
     Licensed under the GNU Lesser General Public License, version 3 or later
 */
 osRecentChangesModule.factory("RecentChangesService", [
-    "$http", function($http) {
+    "$http", "$q",
+    function($http, $q) {
         var defaultParams = {
             by : "",
             type : "",
@@ -67,7 +68,15 @@ osRecentChangesModule.factory("RecentChangesService", [
                             "Accept" : "application/xml"
                         },
                         transformResponse : transformResponse
-                    });
+                    })
+                    .then(
+                        function(response) {
+                            return response.data;
+                        },
+                        function(error) {
+                            return $q.reject(error.data);
+                        }
+                    );
             }
         };
     }

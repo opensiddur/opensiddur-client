@@ -38,6 +38,9 @@ osTextModule.factory("AnnotationsService", [
                     .then(function(response) {
                         resources[resource] = response.data;
                         return resources[resource];
+                    },
+                    function(error) {
+                        return $q.reject(error.data);
                     });
             },
             load : function(resource) {
@@ -183,14 +186,20 @@ osTextModule.factory("AnnotationsService", [
                                                 $.extend(TextService.localSettings(),{"local-annotation-resource" : resourceName})
                                             );
                                             return thiz.reload(resourceName);
-                                    });
+                                        },
+                                        function (error) { 
+                                            return $q.reject(error.data); 
+                                        });
 
                                 }
                                 else {
                                         return $http.put("/api/data/notes/" + thisResource, mergedAnnotations)
-                                            .success(function() {
+                                            .then(function() {
                                                 // get any server-induced changes (revision history, eg)
-                                                thiz.reload(thisResource);
+                                                return thiz.reload(thisResource);
+                                            },
+                                            function(error) { 
+                                                return $q.reject(error.data); 
                                             });
                                 }
                             });
