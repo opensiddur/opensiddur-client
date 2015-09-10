@@ -123,12 +123,16 @@ osTextModule.controller(
         $scope.editor = {
             loggedIn : AuthenticationService.loggedIn,
             ckeditorChanged : function() {
+                var dirty = $scope.textsForm.$dirty;
                 var lang = TextService.language().language;
                 var dir = LanguageService.getDirection(lang);
                 try {
                     var htmlElement = CKEDITOR.instances.editor1.document.getDocumentElement().$;
                     htmlElement.setAttribute("lang", lang);
                     htmlElement.setAttribute("dir", dir);
+                    if (!dirty) {
+                        $scope.textsForm.$setPristine();
+                    }
                 }
                 catch (err) {
                     console.log("CKEDITOR instance does not exist. Could be an issue.");
