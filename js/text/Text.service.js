@@ -90,7 +90,7 @@ osTextModule.service("TextService", [
                     return thiz;
                 },
                 function(error) {
-                    return $q.reject(error.data);
+                    return $q.reject(error);
                 });
         },
         syncFlat : function () {
@@ -131,8 +131,7 @@ osTextModule.service("TextService", [
                     return httpOperation(this._resourceApi + (this._resource ? ("/" + this._resource) : ""), 
                         indata)
                         .then(function (response) {   // success
-                            var data = response.data;
-                            var statusCode = response.statusCode;
+                            var statusCode = response.status;
                             var headers = response.headers;
                             if (statusCode == 201) {
                                 // created
