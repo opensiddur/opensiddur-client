@@ -7,11 +7,13 @@
 osSourcesModule.controller(
     'SourcesCtrl',
     ['$rootScope', '$location', '$route', '$routeParams', '$scope', 'SourceService', 'XsltService', 
-    "AccessService", 'DialogService', "LanguageService", 'AuthenticationService', 'ErrorService',
+    "AccessService", 'DialogService', "LanguageService", "LicensesService", 'AuthenticationService', 'ErrorService',
     function ($rootScope, $location, $route, $routeParams, $scope, SourceService, XsltService, 
-    AccessService, DialogService, LanguageService, AuthenticationService, ErrorService) {
+    AccessService, DialogService, LanguageService, LicensesService, AuthenticationService, ErrorService) {
         $scope.DialogService = DialogService;
         $scope.LanguageService = LanguageService;
+        $scope.supportedLicenses = $.extend(angular.copy(LicensesService.supportedLicenses), {"other" : "Other"});
+        $scope.selectedLicense = "other";
         $scope.SourceService = SourceService;
         AccessService.reset();
 
@@ -49,7 +51,16 @@ osSourcesModule.controller(
                 }
                 else {
                     SourceService.load(toDocument)
-                    .then(null,
+                    .then(
+                        function() {
+                            var lic = SourceService.content.biblStruct.note_asArray[0].ref._target;
+                            if (lic && lic in $scope.supportedLicenses) {
+                                $scope.selectedLicense = lic;
+                            }
+                            else {
+                                $scope.selectedLicense = "other";
+                            }
+                        },
                         function(error) {
                             ErrorService.addApiError(error);
                             console.log("error loading", toDocument);
@@ -97,7 +108,12 @@ osSourcesModule.controller(
         $scope.saveButtonText = function() {
             return this.sourcesForm.$pristine ? ((SourceService.resource == "") ? "Unsaved, No changes" : "Saved" ) : "Save";
         };
-
+        $scope.selectLicense = function(lic) {
+            if (lic != "other" && lic in $scope.supportedLicenses) {
+                SourceService.content.biblStruct.note_asArray[0].ref._target = lic;    
+                SourceService.content.biblStruct.note_asArray[0].ref.__text = $scope.supportedLicenses[lic];
+            }
+        };
         $scope.editor.setDocument();
     }]
 );

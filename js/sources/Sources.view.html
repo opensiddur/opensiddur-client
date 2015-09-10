@@ -538,19 +538,26 @@
                         
                         <div class="form-group">
                             <label class="control-label col-md-2" for="biblStruct.note.ref" class="span2">License name/URL:</label>
-                            <div class="col-md-4">
+                            <div class="col-md-5">
+                                <select
+                                    class="form-control"
+                                    data-ng-model="selectedLicense" 
+                                    data-ng-options="uri as lic for (uri, lic) in supportedLicenses"
+                                    data-ng-change="selectLicense(selectedLicense)"/>
+                            </div>
+                            <div class="col-md-4" ng-show="selectedLicense == 'other'">
                                 <input class="form-control"
-                                    data-ng-model="SourceService.content.biblStruct.note.ref.__text"
-                                    data-ng-required="SourceService.content.biblStruct.note.ref._target"
+                                    data-ng-model="SourceService.content.biblStruct.note_asArray[0].ref.__text"
+                                    data-ng-required="SourceService.content.biblStruct.note_asArray[0].ref._target"
                                     name="biblStruct.note.ref"
                                     placeholder="Name of copyright license"
                                     />
                             </div>
-                            <div class="col-md-5">
+                            <div class="col-md-5" ng-show="selectedLicense == 'other'">
                                 <input class="form-control"
-                                    data-ng-model="SourceService.content.biblStruct.note.ref._target"
+                                    data-ng-model="SourceService.content.biblStruct.note_asArray[0].ref._target"
                                     name="biblStruct.note.ref._target"
-                                    data-ng-required="SourceService.content.biblStruct.note.ref.__text"
+                                    data-ng-required="SourceService.content.biblStruct.note_asArray[0].ref.__text"
                                     placeholder="URL of license (eg, http://www.creativecommons.org/publicdomain/zero/1.0)"
                                     />
                             </div>
