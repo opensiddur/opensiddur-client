@@ -239,6 +239,7 @@ var BlockObject = function(editor, allowOverlap) {
                     otherBoundWrapper.remove();
                 }
             }
+            editor.fire("change");
         }
     };
 };
