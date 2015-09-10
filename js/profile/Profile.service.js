@@ -24,14 +24,13 @@ osProfileModule.factory("ProfileService", [
     var loadData = function(thiz, template, userName) {
         return $http.get(template,
             { transformResponse : transformResponse })
-            .success(function(data) {
-                thiz.userName = userName;
-                thiz.profile = data;
-                thiz.profileType = (thiz.profile.contributor.orgName.__text) ? 'organization' : 'individual';
-            })
             .then(
-                function(response) { 
-                    return response.data; 
+                function(response) {
+                    var data = response.data;
+                    thiz.userName = userName;
+                    thiz.profile = data;
+                    thiz.profileType = (thiz.profile.contributor.orgName.__text) ? 'organization' : 'individual';
+                    return data; 
                 },
                 function(error) { 
                     return $q.reject(error.data); 
@@ -85,7 +84,7 @@ osProfileModule.factory("ProfileService", [
             .then( function(response) {
                 var data = response.data;
                 if (!thiz.userName) {
-                    thiz.userName = decodeURI(headers("Location").split("/").pop());
+                    thiz.userName = decodeURI(response.headers("Location").split("/").pop());
                 }
                 return data;
             },
