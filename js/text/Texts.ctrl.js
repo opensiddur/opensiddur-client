@@ -270,7 +270,7 @@ osTextModule.controller(
                     }
                 )
                 .then(function() {
-                    $scope.textsForm.$setPristine();
+                    $timeout(function() { $scope.textsForm.$setPristine(); }, 750);
                 });
             },
             newButton : function () {
