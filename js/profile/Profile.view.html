@@ -21,7 +21,7 @@
                         class="btn btn-primary"
                         data-ng-class="{'btn-success' : profileForm.$pristine}" type="submit" 
                         data-ng-click="save()"  
-                        data-ng-disabled="!AccessService.access.write || profileForm.$invalid || profileForm.$pristine">{{saveButtonText()}}</button>
+                        data-ng-disabled="!AccessService.access.write || profileForm.$invalid || profileForm.$pristine || exists">{{saveButtonText()}}</button>
                 </div>
                 <div class="navbar-right navbar-btn">
                     <os-sharing-status relicense-disabled="1" chmod-disabled="1"></os-sharing-status>
@@ -86,7 +86,15 @@
                     required="1" 
                     data-ng-model="ProfileService.profile.contributor.idno.__text" 
                     data-ng-readonly="!isNew"
+                    data-ng-pattern="/^[a-zA-Z0-9_.]+$/"
+                    data-ng-change="checkExistence(ProfileService.profile.contributor.idno.__text)"
                     placeholder="Link name"/>
+                </div>
+                <div class="col-md-4 alert alert-danger" data-ng-show="profileForm.formUserName.$error.pattern">
+                    The username must contain only alphanumeric characters, dots and underscores
+                </div>
+                <div class="col-md-4 alert alert-danger" data-ng-show="exists">
+                    The username already exists. Choose a different one.
                 </div>
             </div>
             <div data-ng-switch="profileType">

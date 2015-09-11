@@ -34,6 +34,7 @@ osProfileModule.controller(
     $scope.loggedInUser = AuthenticationService.userName;
 
     $scope.mode = ($location.path().indexOf("/contributors")==0 ? "thirdparty" : "self");
+    $scope.exists = false;
 
     var get = function ( ) {  
         // HTTP interaction with the API
@@ -84,7 +85,19 @@ osProfileModule.controller(
     };
 
 
-    $scope.save = function () {      
+    $scope.checkExistence = function(userName) {
+        if ($scope.isNew) {
+            ProfileService.exists(userName)
+            .then(function(doesExist) { $scope.exists = doesExist; });
+        }
+        else $scope.exists = false;
+    };
+
+    $scope.save = function () {
+        if ($scope.isNew && $scope.exists) {
+            ErrorService.addAlert("The username already exists", "error");
+            return;
+        } 
         ProfileService.save()
         .then(
             function(data) {

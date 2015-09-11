@@ -40,6 +40,17 @@ osProfileModule.factory("ProfileService", [
     return {
         userName : "",  // stores the currently active userName
         profile : {},   // JSON representation of a profile
+        exists : function(userName) {
+            // return (a promise of) true if the userName exists, false otherwise
+            return $http.get("/api/user/" + userName)
+            .then(
+                function(response) { return true; },
+                function(response) {
+                    if (response.status == 404) return false;
+                    else return true;
+                }
+            )
+        },
         loadNew : function() {
             // load a new profile
             var thiz = this;
