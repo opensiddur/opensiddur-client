@@ -87,7 +87,7 @@ osProfileModule.factory("ProfileService", [
                 {
                     transformRequest : function(data, header) {
                         var formCleaned = XsltService.transformString("/js/profile/CleanupForm.xsl" , data);
-                        return formCleaned;
+                        return XsltService.serializeToStringTEINSClean(formCleaned);
                     },
                     headers : { "Content-type" : "application/xml" } 
                 }
