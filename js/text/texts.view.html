@@ -13,7 +13,7 @@
                     <div class="btn-group">
                       <button class="btn btn-primary" type="submit"
                           data-ng-disabled="!editor.loggedIn" 
-                          data-ng-click="DialogService.open('newDialog')"  
+                          data-ng-click="DialogService.open('newDialogSimple')"  
                           >New</button>
                       <button data-ng-show="resourceType.current.api == '/api/data/original'" 
                           data-ng-disabled="!editor.loggedIn" 
@@ -32,7 +32,7 @@
                     </div>
                     <div class="btn-group">
                       <button class="btn btn-primary" type="submit"
-                          data-ng-click="DialogService.open('openDialog')"  
+                          data-ng-click="DialogService.open('openDialogSimple')"  
                           >Open</button>
                       <button data-ng-show="resourceType.current.api == '/api/data/original'" 
                           class="btn btn-primary dropdown-toggle" 
