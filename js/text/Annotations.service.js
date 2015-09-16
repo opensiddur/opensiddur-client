@@ -54,7 +54,7 @@ osTextModule.factory("AnnotationsService", [
                 else if (resource == "") {
                     // first reference to load an annotation new document. 
                     // there's nothing there yet, so make a blank annotation document
-                    var title = TextService.title().title;
+                    var title = TextService.title()[0].text;
                     var src = TextService.sources()[0]; // big assumption!
                     var template = 
                         "<annotationTemplate>" +
@@ -82,7 +82,7 @@ osTextModule.factory("AnnotationsService", [
                 // return the (HTML) content as a promise
                 return this.load(resource)
                     .then(function(resourceContent) {
-                        return XsltService.serializeToString(
+                        return XsltService.serializeToStringTEINSClean(
                             XsltService.transformString("/js/text/Annotation.get.xsl", resourceContent, {
                                 id : id
                             }) 
@@ -133,7 +133,7 @@ osTextModule.factory("AnnotationsService", [
                 var biblXml = xj.json2xml(angular.fromJson(angular.toJson({sources : { bibl : bibl}})));
                 return this.getSources(resource)
                     .then(function(sourceData) {
-                        resources[resource] = XsltService.serializeToString(
+                        resources[resource] = XsltService.serializeToStringTEINSClean(
                             XsltService.transformString("/js/text/AnnotationSources.set.xsl", resources[resource], {
                                 id : id,
                                 "new-sources" : biblXml
