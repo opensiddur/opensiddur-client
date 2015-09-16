@@ -9,13 +9,9 @@ osXsltModule.factory(
     function ( $rootScope, $http, $location, ErrorService ) {
         // initialize all of the stylesheets
         svc = {
-            xsltProcessors : {},
-            addProcessor : function ( processorName, path ) {
-                this.xsltProcessors[processorName] = path; 
-            },
             transform : function ( processorName, domDoc, parameters ) {
                 var transformed = Saxon.run({
-                    stylesheet : (processorName.indexOf("/") == 0) ? processorName : this.xsltProcessors[processorName],
+                    stylesheet : processorName,
                     source : domDoc,
                     parameters : parameters,
                     method : "transformToDocument",
@@ -55,25 +51,6 @@ osXsltModule.factory(
                 return vkbeautify.xml(this.serializeToStringTEINSClean(xmlDoc, includeFlat), 4);  
             }  
         }
-        // this interface is deprecated. Please stop using it.
-        svc.addProcessor('autoSegment', '/xsl/AutoSegment.xsl');
-        svc.addProcessor('extractTranscriptionLinks', '/xsl/ExtractTranscriptionLinks.xsl');
-        svc.addProcessor('instance', '/xsl/instance.xsl');
-        svc.addProcessor('teiToHtml', '/xsl/tei2html.xsl');
-        svc.addProcessor('htmlToTei', '/xsl/html2tei.xsl');
-        svc.addProcessor('listXmlId', '/xsl/ListXmlId.xsl');
-        svc.addProcessor('originalTemplate', '/xsl/originaltemplate.xsl');
-        svc.addProcessor('originalBeforeSave', '/xsl/OriginalBeforeSave.xsl');
-        svc.addProcessor('profileFormTemplate', '/xsl/profileformtemplate.xsl');
-        svc.addProcessor('sourceFormTemplate', '/xsl/sourceformtemplate.xsl');
-        svc.addProcessor('styleBeforeSave', '/xsl/StyleBeforeSave.xsl');
-        svc.addProcessor('templateNewOriginal', '/templates/original.xsl');
-        svc.addProcessor('templateNewConditionals', '/templates/conditionals.xsl');
-        svc.addProcessor('templateNewAnnotations', '/templates/annotations.xsl');
-        svc.addProcessor('templateNewStyle', '/templates/styles.xsl');
-        svc.addProcessor('cleanupForm', '/xsl/cleanupform.xsl');
-        svc.addProcessor('addXmlId', '/xsl/add-xml-id.xsl');
-        svc.addProcessor('wordify', '/xsl/wordify.xsl');
         return svc;
     }]
 );

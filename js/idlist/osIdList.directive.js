@@ -115,7 +115,7 @@ osIdListModule.directive(
                     var x2js_simple = new X2JS({ "arrayAccessForm" : "property", "emptyNodeForm" : "text" });   
                     var loadXmlIds = function (update, oldVal) {
                         if (update) {
-                            var xid = XsltService.transformString("listXmlId", scope.content);
+                            var xid = XsltService.transformString("/xsl/ListXmlId.xsl", scope.content);
                             scope.xmlids = x2js_simple.xml2json(xid).xmlids.xmlid_asArray.map(
                                 function (xid, idx) {
                                     xid.index = idx;
