@@ -64,10 +64,11 @@ osTextModule.factory("AnnotationsService", [
                             "<sourceTitle>" + src.title  + "</sourceTitle>" +
                             "<source>/data/sources/" + src.source + "</source>" +
                             "<initialAnnotation></initialAnnotation>" +
-                        "</annotationTemplate>"
+                        "</annotationTemplate>";
                     var templated = XsltService.serializeToStringTEINSClean(
-                        XsltService.transform("/js/text/Save.template.xsl", 
-                            XsltService.transformString("/js/text/Annotations.template.xsl", template))
+                        XsltService.transformString("/js/text/Save.template.xsl", 
+                            XsltService.serializeToStringTEINSClean( // Firefox has some bug where this transform will fail if not serialized first
+                                XsltService.transformString("/js/text/Annotations.template.xsl", template)))
                         );
                     resources[""] = templated;
                     deferred.resolve(resources[""]);
@@ -160,10 +161,12 @@ osTextModule.factory("AnnotationsService", [
                                 // load the resource and merge the changed annotations into the resource, then PUT
                                 console.log("saving to", thisResource);
                                 var mergedAnnotations = XsltService.serializeToStringTEINSClean(
-                                    XsltService.transform("/js/text/Save.template.xsl", 
-                                        XsltService.transformString("/js/text/AnnotationsMerge.xsl", annotationResourceData, {
-                                            annotations : annotationResource
-                                        })
+                                    XsltService.transformString("/js/text/Save.template.xsl", 
+                                        XsltService.serializeToStringTEINSClean( // FF fix
+                                            XsltService.transformString("/js/text/AnnotationsMerge.xsl", annotationResourceData, {
+                                                annotations : XsltService.parseFromString(XsltService.serializeToStringTEINSClean(annotationResource, true)).childNodes[0] // FF bug...
+                                            })
+                                        )
                                     )
                                 );
                                 if (thisResource == "") {

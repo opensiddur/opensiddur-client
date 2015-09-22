@@ -27,6 +27,9 @@ osXsltModule.factory(
                 // use it before save
                 return str.replace(/&nbsp;/g, "&#160;");
             },
+            parseFromString : function(xmlString) {
+                return new DOMParser().parseFromString(xmlString, "text/xml");
+            },
             transformString : function ( processorName, data, parameters ) {
                 var dataDomDoc = Saxon.parseXML(this.clearEntities(data));
                 return this.transform(processorName, dataDomDoc, parameters);

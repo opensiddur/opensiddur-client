@@ -16,11 +16,20 @@ module.exports = function(config) {
     // list of files / patterns to load in the browser
     files: [
       'js/bower_components/jquery/dist/jquery.js',
+      'js/bower_components/underscore/underscore-min.js',
+      {pattern: 'js/bower_components/underscore/underscore-min.map', included:false, served:true},
       'js/bower_components/angular/angular.js',
       'js/bower_components/angular-mocks/angular-mocks.js',
+      'js/thirdparty/saxon-ce/Saxonce/Saxonce.nocache.js',
+      {pattern: 'js/thirdparty/saxon-ce/Saxonce/*', included:false, served:true},
+      {pattern: 'js/text/*.xsl', included:false, served:true},
+      'js/tests/equivalent-xml.js',
+      'js/tests/spec-helper.js',
       'js/error/osError.module.js',
       'js/error/Error.service.js',
-      'js/error/*.test.js'
+      'js/xslt/xslt.module.js',
+      'js/xslt/Xslt.service.js',
+      'js/xslt/*.test.js'
     ],
 
 
@@ -34,6 +43,9 @@ module.exports = function(config) {
     preprocessors: {
     },
 
+    proxies: {
+        "/js/": "/base/js/"
+    },
 
     // test results reporter to use
     // possible values: 'dots', 'progress'
@@ -60,7 +72,7 @@ module.exports = function(config) {
 
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: ['Chrome'/*, 'Firefox', 'PhantomJS'*/],
+    browsers: ['Chrome', 'Firefox', 'PhantomJS'],
 
 
     // Continuous Integration mode
