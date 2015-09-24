@@ -352,13 +352,13 @@ osTextModule.controller(
                     }
                 },
                 addIds : function () {
-                    this.applyXslt( "addXmlId" );
+                    this.applyXslt( "/js/text/add-xml-id.xsl" );
                 },
                 segment : function () {
-                    this.applyXslt ( "autoSegment" );
+                    this.applyXslt ( "/js/text/auto-segment.xsl" );
                 },
                 wordify : function () {
-                    this.applyXslt( "wordify" );
+                    this.applyXslt( "/js/text/wordify.xsl" );
                 }
             }
         };

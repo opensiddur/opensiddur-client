@@ -28,7 +28,8 @@
 
     <xsl:template match="*|comment()">
         <xsl:copy copy-namespaces="no">
-            <xsl:apply-templates select="@*"/>
+            <!--xsl:apply-templates select="@*"/-->
+            <xsl:sequence select="@*"/>
             <xsl:apply-templates/>
         </xsl:copy>
     </xsl:template>
