@@ -26,7 +26,7 @@ CKEDITOR.plugins.add( 'jf-annotation', {
         // block plugins require check widgets every short interval
         
         var thiz = this;
-        var blockObject = new BlockObject(editor, true);
+        var blockObject = new BlockObject(editor, true, true);
         var interval = $interval(function (evt) {
             editor.widgets.checkWidgets();
         }, 1000);
