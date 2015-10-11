@@ -155,7 +155,7 @@ osTextModule.factory("AnnotationsService", [
                 return $q.all(
                     $.map(annotationsByResource.getElementsByTagNameNS("http://jewishliturgy.org/ns/jlptei/flat/1.0", "annotationResource"),
                         function(annotationResource, idx) {
-                            var thisResource = annotationResource.getAttribute("resource").split("/").pop();
+                            var thisResource = decodeURIComponent(annotationResource.getAttribute("resource").split("/").pop());
                             return thiz.load(thisResource)
                             .then(function(annotationResourceData) {
                                 // load the resource and merge the changed annotations into the resource, then PUT
@@ -196,7 +196,7 @@ osTextModule.factory("AnnotationsService", [
 
                                 }
                                 else {
-                                        return $http.put("/api/data/notes/" + thisResource, mergedAnnotations)
+                                        return $http.put("/api/data/notes/" + encodeURIComponent(thisResource), mergedAnnotations)
                                             .then(function() {
                                                 // get any server-induced changes (revision history, eg)
                                                 return thiz.reload(thisResource);

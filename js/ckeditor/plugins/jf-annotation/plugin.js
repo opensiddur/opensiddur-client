@@ -134,7 +134,7 @@ CKEDITOR.plugins.add( 'jf-annotation', {
                     var spl = jfAnnotation.split("#");
                     var resource = spl[0].split("/").pop();
                     var id = spl[1];
-                    AnnotationsService.getNote(resource, id)
+                    AnnotationsService.getNote(decodeURIComponent(resource), id)
                     .then(function(annotation) {
                         var newAnnotation = new CKEDITOR.dom.element.createFromHtml(annotation);
                         var annotationType = newAnnotation.getAttribute("data-type");
