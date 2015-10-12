@@ -1,5 +1,5 @@
 /*!
- AngularJS pan/zoom v1.0.8
+ AngularJS pan/zoom v1.0.12
  @license: MIT
  Github: https://github.com/mvindahl/angular-pan-zoom
 */
@@ -15,8 +15,8 @@ function ($document, PanZoomService) {
                     config: '=',
                     model: '='
                 },
-                controller: ['$scope', '$element',
-    function ($scope, $element) {
+                controller: ['$scope', '$element', '$timeout',
+    function ($scope, $element, $timeout) {
                         var frameElement = $element;
                         var panElement = $element.find('.pan-element');
                         var zoomElement = $element.find('.zoom-element');
@@ -52,6 +52,8 @@ function ($document, PanZoomService) {
                         $scope.config.panOnClickDrag = $scope.config.panOnClickDrag !== undefined ? $scope.config.panOnClickDrag : true;
 
                         $scope.config.invertMouseWheel = $scope.config.invertMouseWheel || false;
+
+                        $scope.config.chromeUseTransform = $scope.config.chromeUseTransform || false;
 
 
                         var calcZoomToFit = function (rect) {
@@ -118,17 +120,25 @@ function ($document, PanZoomService) {
                             }
 
                             var scale = getCssScale($scope.model.zoomLevel);
-                            if (navigator.userAgent.indexOf('Chrome') !== -1) {
-                                // For Chrome, use the zoom style as it doesn't handle nested SVG very well
-                                // when using transform
 
-                                // http://caniuse.com/#search=zoom
-                                zoomElement.css('zoom', scale);
+                            var scaleString = 'scale(' + scale + ')';
+
+                            if (navigator.userAgent.indexOf('Chrome') !== -1) {
+                                // For Chrome, use the zoom style by default, as it doesn't handle nested SVG very well
+                                // when using transform
+                                if( $scope.config.chromeUseTransform ) {
+                                    // IE > 9.0
+                                    zoomElement.css('transform-origin', '0 0');
+                                    zoomElement.css('transform', scaleString);
+                                } else {
+                                    // http://caniuse.com/#search=zoom
+                                    zoomElement.css('zoom', scale);
+                                }
+
                             } else {
                                 // Special handling of IE, as it doesn't support the zoom style
                                 // http://caniuse.com/#search=transform
 
-                                var scaleString = 'scale(' + scale + ')';
                                 // IE 9.0
                                 zoomElement.css('ms-transform-origin', '0 0');
                                 zoomElement.css('ms-transform', scaleString);
@@ -329,6 +339,8 @@ function ($document, PanZoomService) {
                                 if (doneAnimating) {
                                     tick.isRegistered = false;
                                     lastTick = null;
+                                    $timeout(function() { /* this will trigger $scope.$apply, so no need to call explicitly */ }, 0);
+
                                     return false; // kill the tick for now
                                 } else {
                                     return !scopeIsDestroyed; // kill the tick for good if the directive goes off the page
@@ -364,6 +376,92 @@ function ($document, PanZoomService) {
 
                         var lastMouseEventTime;
                         var previousPosition;
+
+                        function onTouchStart($event) {
+                            $event.preventDefault();
+
+                            if ($event.originalEvent.touches.length === 1) {
+                                // single touch, get ready for panning
+
+                                // Touch events does not have pageX and pageY, make touchstart
+                                // emulate a regular click event to re-use mousedown handler
+                                $event.pageX = $event.originalEvent.touches[0].pageX;
+                                $event.pageY = $event.originalEvent.touches[0].pageY;
+                                $scope.onMousedown($event);
+                            } else {
+                                // multiple touches, get ready for zooming
+
+                                // Calculate x and y distance between touch events
+                                var x = $event.originalEvent.touches[0].pageX - $event.originalEvent.touches[1].pageX;
+                                var y = $event.originalEvent.touches[0].pageY - $event.originalEvent.touches[1].pageY;
+
+                                // Calculate length between touch points with pythagoras
+                                // There is no reason to use Math.pow and Math.sqrt as we
+                                // only want a relative length and not the exact one.
+                                previousPosition = {
+                                    length: x * x + y * y
+                                };
+                            }
+                        }
+
+                        function onTouchMove($event) {
+                            $event.preventDefault();
+
+                            if ($event.originalEvent.touches.length === 1) {
+                                // single touch, emulate mouse move
+                                $event.pageX = $event.originalEvent.touches[0].pageX;
+                                $event.pageY = $event.originalEvent.touches[0].pageY;
+                                $scope.onMousemove($event);
+                            } else {
+                                // multiple touches, zoom in/out
+
+                                // Calculate x and y distance between touch events
+                                var x = $event.originalEvent.touches[0].pageX - $event.originalEvent.touches[1].pageX;
+                                var y = $event.originalEvent.touches[0].pageY - $event.originalEvent.touches[1].pageY;
+                                // Calculate length between touch points with pythagoras
+                                // There is no reason to use Math.pow and Math.sqrt as we
+                                // only want a relative length and not the exact one.
+                                var length = x * x + y * y;
+
+                                // Calculate delta between current position and last position
+                                var delta = length - previousPosition.length;
+
+                                // Naive hysteresis
+                                if (Math.abs(delta) < 100) {
+                                    return;
+                                }
+
+                                // Calculate center between touch points
+                                var centerX = $event.originalEvent.touches[1].pageX + x / 2;
+                                var centerY = $event.originalEvent.touches[1].pageY + y / 2;
+
+                                // Calculate zoom center
+                                var clickPoint = {
+                                    x: centerX - frameElement.offset().left,
+                                    y: centerY - frameElement.offset().top
+                                };
+
+                                // Determine whether to zoom in or out
+                                if (delta > 0) {
+                                    zoomIn(clickPoint);
+                                } else {
+                                    zoomOut(clickPoint);
+                                }
+
+                                // Update length for next move event
+                                previousPosition = {
+                                    length: length
+                                };
+                            }
+                        }
+
+                        function onTouchEnd($event) {
+                            $scope.onMouseup($event);
+                        }
+
+                        $element.on('touchstart', onTouchStart);
+                        $element.on('touchend', onTouchEnd);
+                        $element.on('touchmove', onTouchMove);
 
                         $scope.onMousedown = function ($event) {
                             if ($scope.config.panOnClickDrag) {
@@ -490,7 +588,8 @@ function ($document, PanZoomService) {
                     '</div>',
                 replace: true
             };
-    }]);angular.module('panzoomwidget', [])
+    }]);
+angular.module('panzoomwidget', [])
 .directive('panzoomwidget', ['$document', 'PanZoomService',
 function ($document, PanZoomService) {
   var panzoomId;
