@@ -191,15 +191,15 @@ var BlockObject = function(editor, allowOverlap, allowAllNodeTypes) {
         var selection = editor.getSelection();
         var ranges = selection.getRanges();
         var startOfRange = function(range) {
-            var sor = ranges[0].startContainer;
-            return (sor.getName() == "body") ?
+            var sor = range[0].startContainer;
+            return (sor.type == 1 && sor.getName() == "body") ?
                 // a widget is at the start, find out what widget
                 editor.widgets.selected[0].wrapper
                 : sor;
         };
         var endOfRange = function(range) {
-            var eor = ranges[ranges.length - 1].endContainer;
-            return (eor.getName() == "body") ?
+            var eor = range[range.length - 1].endContainer;
+            return (eor.type == 1 && eor.getName() == "body") ?
                 // a widget is at the end, find out what widget
                 editor.widgets.selected[editor.widgets.selected.length - 1].wrapper
                 : eor;
