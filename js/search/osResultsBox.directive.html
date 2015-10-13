@@ -1,7 +1,8 @@
 <div class="osResultsBox">
     <div class="row search-results">
-        <table class="table table-hover table-condensed table-striped table-scrollable" 
-        infinite-scroll="endReached()" infinite-scroll-distance="3">
+        <table class="table table-hover table-condensed table-striped "
+        infinite-scroll="endReached()" infinite-scroll-distance="3"
+        infinite-scroll-parent="1">
             <tbody>
                 <tr data-ng-repeat="result in results" data-ng-click="select(result.url, result.title, $index)">
                     <td>{{result.title}}</td>
@@ -20,7 +21,7 @@
     </div>
     <style type="text/css">/*<![CDATA[*/
         .search-results {
-            height: 100px;
+            height: 100px !important;
             overflow-y: scroll;
         }
 
