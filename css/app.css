@@ -127,7 +127,7 @@ textarea.ng-invalid {
 
 .osResultsBox .search-results {
     overflow-y:scroll;
-    height:100px !important;
+    height:150px !important;/* no scroll bar shown under 150px? */
 }
 
 .osResultsBox ul.search-contexts {
