@@ -102,11 +102,11 @@
     </xsl:template>
 
     <xsl:template match="tei:ptr" mode="#default in-a-process">
-        <a class="tei-ptr">
+        <p class="tei-ptr">
             <xsl:apply-templates select="@*"/>
             <xsl:apply-templates/>
             <xsl:sequence select="concat('Include: ', tokenize(@target, '/')[last()])"/>
-        </a>
+        </p>
     </xsl:template>
 
     <!-- filler text so widgets will show up -->
@@ -136,8 +136,6 @@
                 if (contains($s, '#')) then substring-before($s, '#')
                 else $s"/>
         <xsl:variable name="target-fragment" select="concat('#', substring-after(.,'#'))"/>
-        <xsl:attribute name="href" select="if ($target-base) then concat('/texts/', $target-base) else '#'"/>
-        <xsl:attribute name="target" select="'_blank'"/>
         <!-- not sure if this is the right way to do it... -->
         <xsl:attribute name="data-target-base" select="$target-base"/>
         <xsl:attribute name="data-target-fragment" select="$target-fragment"/>

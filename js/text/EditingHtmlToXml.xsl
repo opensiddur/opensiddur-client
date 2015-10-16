@@ -89,8 +89,8 @@
         </tei:seg>
     </xsl:template>
 
-    <!-- html:a[@href] -> tei:ptr -->
-    <xsl:template match="html:a[@href][local:has-class(@class, 'tei-ptr')]" mode="streamText">
+    <!-- html:p[@class~tei-ptr] -> tei:ptr -->
+    <xsl:template match="html:p[local:has-class(@class, 'tei-ptr')]" mode="streamText">
         <tei:ptr>
             <xsl:apply-templates select="@*[not(name(.)=('data-target-base', 'data-target-fragment'))]"/>
             <!-- @href contains /texts/[name], @data-target-base/@data-target-fragment contain the pointer -->
