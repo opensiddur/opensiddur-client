@@ -186,7 +186,7 @@ osTextModule.factory("AnnotationsService", [
                                             delete resources[""];
                                             TextService.localSettings(
                                                 // set the local annotation resource        
-                                                $.extend(TextService.localSettings(),{"local-annotation-resource" : resourceName})
+                                                $.extend(TextService.localSettings(),{"local-annotation-resource" : encodeURIComponent(resourceName)})
                                             );
                                             return thiz.reload(resourceName);
                                         },
