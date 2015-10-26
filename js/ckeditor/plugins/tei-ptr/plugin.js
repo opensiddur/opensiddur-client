@@ -57,6 +57,7 @@ CKEDITOR.plugins.add( 'tei-ptr', {
                                 el.remove(false);
                             }   
                         }
+                        editor.fire("change");
                     }
                 });
                 DialogService.open("editLinkDialogSimple");
