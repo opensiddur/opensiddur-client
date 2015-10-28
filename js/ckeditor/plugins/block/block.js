@@ -231,6 +231,7 @@ var BlockObject = function(editor, allowOverlap, allowAllNodeTypes) {
         editor.widgets.initOn( begInsert, classType )
         editor.widgets.initOn( endInsert, classType )
         removeEmptyBlocks(startElement, classType, elementType); 
+        editor.fire("change");
     };
     this.doubleclick = function(evt) {
         // doubleclick event handler: use with this.on('doubleclick')
