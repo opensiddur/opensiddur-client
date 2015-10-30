@@ -127,12 +127,13 @@ osTextModule.controller(
                 var lang = TextService.language().language;
                 var dir = LanguageService.getDirection(lang);
                 try {
-                    var htmlElement = CKEDITOR.instances.editor1.document.getDocumentElement().$;
+                    var htmlElement = CKEDITOR.instances.editor1.document.getDocumentElement().findOne("body");
                     htmlElement.setAttribute("lang", lang);
                     htmlElement.setAttribute("dir", dir);
                     if (!dirty) {
                         $scope.textsForm.$setPristine();
                     }
+                    $scope.apply();
                 }
                 catch (err) {
                     console.log("CKEDITOR instance does not exist. Could be an issue.");
@@ -230,6 +231,7 @@ osTextModule.controller(
                                 if (cursorLocation) {
                                     $scope.editor.codemirror.doc.setCursor(cursorLocation);
                                 }
+                                $scope.editor.ckeditorChanged();
                                 $scope.textsForm.$setPristine();
                             }, 250
                         );
