@@ -186,7 +186,6 @@ var BlockObject = function(editor, allowOverlap, allowAllNodeTypes) {
             8. if any blocks have been split in both directions (unterminated and unstarted) rename the ids for the unstarted portion of the block.
         */
         var editor = this.editor;
-        this.TextService.addLayer(layerType);
         var thisId = getRandomId(layerType, elementType);
         var selection = editor.getSelection();
         var ranges = selection.getRanges();
@@ -195,6 +194,9 @@ var BlockObject = function(editor, allowOverlap, allowAllNodeTypes) {
             return (sor.type == 1 && sor.getName() == "body") ?
                 // a widget is at the start, find out what widget
                 editor.widgets.selected[0].wrapper
+                : (sor.type == 3) ?
+                // it's a text node, get the parent
+                sor.getParent()
                 : sor;
         };
         var endOfRange = function(range) {
@@ -202,10 +204,19 @@ var BlockObject = function(editor, allowOverlap, allowAllNodeTypes) {
             return (eor.type == 1 && eor.getName() == "body") ?
                 // a widget is at the end, find out what widget
                 editor.widgets.selected[editor.widgets.selected.length - 1].wrapper
+                : (eor.type == 3) ?
+                // text node, get parent
+                eor.getParent()
                 : eor;
         };
         var startElement = getAscendantSegment(startOfRange(ranges), null, elementType);
         var endElement = getAscendantSegment(endOfRange(ranges), null, elementType);
+        // there is a pathological case where no start or end element exists.
+        // in that case, abort now
+        if (!startElement || !endElement) {
+            return;
+        }
+        this.TextService.addLayer(layerType);
         var begInsert = new CKEDITOR.dom.element.createFromHtml(beginTemplate(thisId));
         var endInsert = new CKEDITOR.dom.element.createFromHtml(endTemplate(thisId));
         if (!this.allowOverlap) {
@@ -251,6 +262,7 @@ var BlockObject = function(editor, allowOverlap, allowAllNodeTypes) {
     this.destroy = function(evt) {
         // destroy event handler. use in parallel with init()
         if (!this.element.getParent().hasAttribute("data-disable-destroy")) {
+            console.log("destroying ", this.element);
             var idtokens = this.element.getId().match(/^(start|end)_(.+)/);
             var bound = idtokens[1];
             var thisId = idtokens[2];
