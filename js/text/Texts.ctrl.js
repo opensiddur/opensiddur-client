@@ -81,6 +81,7 @@ osTextModule.controller(
         // this should be in $scope.editor, but ng-ckeditor will not allow it to be (see line 73)
         $scope.ckeditorOptions = {
             autoParagraph : false,
+            basicEntities : false,
             contentsCss : "/css/simple-editor.css",
             customConfig : "/js/ckeditor/config.js",    // points to the plugin directories
             enterMode : CKEDITOR.ENTER_P,

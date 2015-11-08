@@ -91,6 +91,12 @@
         </xsl:if>
     </xsl:template>
 
+    <!-- text under tei:seg: spacing should be normalized, but sometimes we
+        should retain spaces -->
+    <xsl:template match="text()[ancestor::html:p[not(@class) or local:has-class(@class, 'tei-seg')]]" mode="streamText">
+        <xsl:sequence select="normalize-space(.)"/>
+    </xsl:template>
+
     <!-- html:p[@class~tei-ptr] -> tei:ptr -->
     <xsl:template match="html:p[local:has-class(@class, 'tei-ptr')]" mode="streamText">
         <tei:ptr>
