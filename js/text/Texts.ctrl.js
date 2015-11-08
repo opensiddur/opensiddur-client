@@ -88,6 +88,7 @@ osTextModule.controller(
             entities : false,   // need XML entities, but not HTML entities...
             extraPlugins : "language,jf-annotation,tei-p,tei-ptr,tei-seg",
             fillEmptyBlocks : false,
+            forcePasteAsPlainText : true,
             language : "en",
             language_list : LanguageService.getCkeditorList(),
             readOnly : !AccessService.access.write,
@@ -249,7 +250,7 @@ osTextModule.controller(
                 console.log("Save:", this);
                 AnnotationsService.saveAll()
                 .then(function() {
-                    TextService.save()
+                    return TextService.save()
                     .then(
                         function(ts) {   // success
                             if ($scope.editor.isNew) {
@@ -277,7 +278,9 @@ osTextModule.controller(
                     }
                 )
                 .then(function() {
-                    $timeout(function() { $scope.textsForm.$setPristine(); }, 750);
+                    return $timeout(function() { 
+                        $scope.textsForm.$setPristine(); 
+                    }, 750);
                 });
             },
             newButton : function () {
