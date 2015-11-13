@@ -4,7 +4,9 @@
     Copyright 2014-2015 Efraim Feinstein, efraim@opensiddur.org
     Licensed under the GNU Lesser General Public License, version 3 or later
 */
-osJobsModule.service("JobsService", ["$http", function($http) {
+osJobsModule.service("JobsService", [
+    "$http", "$q",
+    function($http, $q) {
     return {
         start : function(resource) {
             // initiate a job to compile the given document
@@ -13,17 +15,19 @@ osJobsModule.service("JobsService", ["$http", function($http) {
                     params : {
                         "format" : "html",
                         "transclude" : "true"
-                    },
-                    transformResponse : function(data, headers, httpStatus) {
-                        console.log("transform response was called");
-                        if (httpStatus < 400) {
-                            return {
-                                "job" : headers("Location").replace("/exist/restxq/api/jobs/", "")
-                            };
-                        }
-                        else return data;
                     }
-                });
+                })
+            .then(
+                function (response) {
+                    console.log("job service start success", response);
+                    return {
+                        "job" : response.headers("Location").replace("/exist/restxq/api/jobs/", "")
+                    };
+                },
+                function (error) {
+                    return $q.reject(error.data);
+                }
+            );
         },
         getCompleted : function(resource) {
             // get the result of a completed compilation
@@ -35,7 +39,15 @@ osJobsModule.service("JobsService", ["$http", function($http) {
                     headers : {
                         "Accept" : "application/xhtml+xml"
                     }
-                });
+                })
+            .then(
+                function (response) {
+                    return response.data;
+                },
+                function (error) {
+                    return $q.reject(error.data);
+                }
+            );
         },
         listJSON : function(user, state, fromDate, toDate, start, maxResults) {
             return $http.get("/api/jobs", {
@@ -62,10 +74,26 @@ osJobsModule.service("JobsService", ["$http", function($http) {
                         }
                     } );
                 }
-            });
+            })
+            .then(
+                function (response) {
+                    return response.data;
+                },
+                function (error) {
+                    return $q.reject(error.data);
+                }
+            );
         },
         get : function(job) {
-            return $http.get("/api/jobs/"+job);
+            return $http.get("/api/jobs/"+job)
+            .then(
+                function (response) {
+                    return response.data;
+                },
+                function (error) {
+                    return $q.reject(error.data);
+                }
+            );
         },
         getJSON : function(job) {
             return $http.get("/api/jobs/"+job, {
@@ -132,7 +160,15 @@ osJobsModule.service("JobsService", ["$http", function($http) {
                     };
                 }
                 
-            });
+            })
+            .then(
+                function (response) {
+                    return response.data;
+                },
+                function (error) {
+                    return $q.reject(error.data);
+                }
+            );
         }
     }
 

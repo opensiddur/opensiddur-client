@@ -51,21 +51,23 @@
 
     <!-- elements -->
     <xsl:template match="*[@jf:start]">
-        <p id="start_{@jf:start}">  <!-- id has to conform to the client expectations -->
+        <xsl:element name="{if (self::jf:annotation) then 'div' else 'p'}">
+            <xsl:attribute name="id" select="concat('start_',@jf:start)"/>  <!-- id has to conform to the client expectations -->
             <xsl:apply-templates select="@* except @jf:start"/>
             <xsl:call-template name="class-attribute"/>
             <xsl:apply-templates select="following-sibling::*[1][not(@jf:start|@jf:end)][@jf:layer-id=current()/@jf:layer-id]"
                 mode="in-a"/>
             <xsl:apply-templates select="." mode="filler"/>
-        </p>
+        </xsl:element>
     </xsl:template>
 
     <xsl:template match="*[@jf:end]">
-        <p id="end_{@jf:end}">
+        <xsl:element name="{if (self::jf:annotation) then 'div' else 'p'}">
+            <xsl:attribute name="id" select="concat('end_',@jf:end)"/>  <!-- id has to conform to the client expectations -->
             <xsl:apply-templates select="@* except @jf:end"/>
             <xsl:call-template name="class-attribute"/>
             <xsl:apply-templates select="." mode="filler"/>
-        </p>
+        </xsl:element>
     </xsl:template>
 
     <xsl:template match="*[@jf:layer-id][not(@jf:start|@jf:end)]"/>
@@ -100,11 +102,11 @@
     </xsl:template>
 
     <xsl:template match="tei:ptr" mode="#default in-a-process">
-        <a class="tei-ptr">
+        <p class="tei-ptr">
             <xsl:apply-templates select="@*"/>
             <xsl:apply-templates/>
             <xsl:sequence select="concat('Include: ', tokenize(@target, '/')[last()])"/>
-        </a>
+        </p>
     </xsl:template>
 
     <!-- filler text so widgets will show up -->
@@ -115,6 +117,17 @@
         <xsl:text>&#x21d1;&#182;</xsl:text>
     </xsl:template>
 
+    <xsl:template match="jf:annotation[@jf:start]" mode="filler">
+        <img class="editor-internal editor-icon" src="/img/icons_32x32/icon_annotation.png"/>
+        <xsl:text>&#x21d3;</xsl:text>
+        <span class="editor-internal type"><xsl:value-of select="@type"/></span>
+        <!-- the temporary id here cannot contain some characters because of a bug in ckeditor -->
+        <div class="tei-note" id="{substring-after(@jf:annotation, '#')}" data-os-loaded="0"><xsl:value-of select="concat('Loading ', @jf:annotation, '...')"/></div>
+    </xsl:template>
+    <xsl:template match="jf:annotation[@jf:end]" mode="filler">
+        <xsl:text>&#x21d1;[A]</xsl:text>
+    </xsl:template>
+
     <!-- attributes -->
     <xsl:template match="@target">
         <xsl:variable name="target-base" select="
@@ -123,8 +136,6 @@
                 if (contains($s, '#')) then substring-before($s, '#')
                 else $s"/>
         <xsl:variable name="target-fragment" select="concat('#', substring-after(.,'#'))"/>
-        <xsl:attribute name="href" select="if ($target-base) then concat('/texts/', $target-base) else '#'"/>
-        <xsl:attribute name="target" select="'_blank'"/>
         <!-- not sure if this is the right way to do it... -->
         <xsl:attribute name="data-target-base" select="$target-base"/>
         <xsl:attribute name="data-target-fragment" select="$target-fragment"/>
@@ -148,8 +159,14 @@
         <xsl:attribute name="data-{replace(name(), ':', '-')}" select="."/>
     </xsl:template>
 
-    <!-- these will become inconsistent if allowed to coexist with the merged section -->
-    <xsl:template match="j:links"/>
+    <!-- these will become inconsistent if allowed to coexist with the merged section,
+        unless we allow them on an individual basis -->
+    <xsl:template match="j:links">
+        <xsl:copy copy-namespaces="no">
+            <xsl:sequence select="@*"/>
+            <xsl:sequence select="tei:link[@type=('set','note')]"/>
+        </xsl:copy>
+    </xsl:template>
 
     <!-- resource-level parts that will not become inconsistent -->
     <xsl:template match="tei:teiHeader|j:conditions|j:settings">
@@ -157,7 +174,7 @@
     </xsl:template>
 
     <!-- pass-through -->
-    <xsl:template match="tei:TEI|tei:text|jf:concurrent/descendant-or-self::*|jf:merged">
+    <xsl:template match="tei:TEI|tei:text|jf:merged|jf:concurrent|*[ancestor::jf:concurrent]">
         <xsl:copy copy-namespaces="no">
             <xsl:sequence select="@*"/>
             <xsl:apply-templates />

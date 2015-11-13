@@ -6,8 +6,8 @@
  * Licensed under the GNU Lesser General Public License, version 3 or later
  */
 osSourcesModule.factory("SourceService", [
-    "$http", "XsltService",
-    function($http, XsltService) {
+    "$http", "$q", "XsltService",
+    function($http, $q, XsltService) {
     var xj = new X2JS({ arrayAccessForm : "property", emptyNodeForm : "text" });   
     var transformResponse = function (data, headers) {
         if (data.match(/^<tei/)) {
@@ -71,15 +71,19 @@ osSourcesModule.factory("SourceService", [
                     transformResponse : transformResponse
                 }
                 )
-                .success(function (data) {
-                    thiz.content = data; 
-                    thiz.loaded = 1;
-                    thiz.isAnalytic = hasData(thiz.content.biblStruct.analytic) ? 1 : 0;
-                    thiz.isSeries = hasData(thiz.content.biblStruct.series) ? 1 : 0;
-                })
-                .error(function (error) {
-                    thiz.loaded = 0;
-                });
+                .then(
+                    function (response) {
+                        var data = response.data;
+                        thiz.content = data; 
+                        thiz.loaded = 1;
+                        thiz.isAnalytic = hasData(thiz.content.biblStruct.analytic) ? 1 : 0;
+                        thiz.isSeries = hasData(thiz.content.biblStruct.series) ? 1 : 0;
+                        return thiz;
+                    },
+                    function (error) {
+                        thiz.loaded = 0;
+                        return $q.reject(error.data);
+                    });
         },
         save : function() {
             var thiz = this;
@@ -97,19 +101,25 @@ osSourcesModule.factory("SourceService", [
                 $http.post : 
                 $http.put;
             var resource = "/api/data/sources" + ((this.resource == "") ? "" : "/") + encodeURIComponent(this.resource);
-            return httpOperation(this.resource, indata, {
+            return httpOperation(resource, indata, {
                 transformRequest : function(data) {
                     var xmlData = x2js.json2xml(data);
-                    var cleanedXmlData = XsltService.transform('/js/profile/CleanupForm.xsl', xmlData);
+                    var cleanedXmlData = XsltService.serializeToStringTEINSClean(XsltService.transform('/js/profile/CleanupForm.xsl', xmlData));
                     return cleanedXmlData;
                 }
             })
-            .success( 
-                function(data, headers) {   //success function
+            .then( 
+                function(response) {   //success function
+                    var data = response.data;
+                    var headers = response.headers;
                     if (thiz.resource == "") {
                         var newDocName = decodeURI(headers("Location").split("/").pop());
                         thiz.resource = newDocName;
                     }
+                    return thiz;
+                },
+                function(error) {
+                    return $q.reject(error.data);
                 }
             );
         }

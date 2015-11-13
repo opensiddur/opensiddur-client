@@ -6,8 +6,8 @@
  */
 osSharingModule.factory( 
     'AccessService', 
-    ["$http", "AuthenticationService",
-    function( $http, AuthenticationService ) {
+    ["$http", "$q", "AuthenticationService",
+    function( $http, $q, AuthenticationService ) {
         var getDefaultAccess =  function() {
             // default access model, dependent on login state (userName == "" or undefined for not logged in)
             var userName = AuthenticationService.userName;
@@ -89,11 +89,14 @@ osSharingModule.factory(
                         };
                     }
                 })
-                .success(function(data) {
+                .then(function(response) { // success
                     thiz._resourceApi = resourceApi;
                     thiz._resource = resource;
-                    thiz.access = data;
+                    thiz.access = response.data;
                     return thiz;
+                },
+                function(error) {
+                    return $q.reject(error.data);
                 });
             },
             save : function() {
@@ -140,7 +143,12 @@ osSharingModule.factory(
                             "</a:access>"
                         );
                     }
-                });
+                })
+                .then(null, // nothing special to do here on success 
+                    function(error) { 
+                        return $q.reject(error.data); 
+                    }
+                );
             },
             simpleAccessModel : function(newModel) {
                 // newModel should be one of "public" or "restricted"

@@ -21,11 +21,11 @@ CKEDITOR.plugins.add( 'tei-ptr', {
             draggable : false,
             inline : false, 
 			allowedContent:
-				'a[href,id,target,data-target-base,data-target-fragment](tei-ptr);',
-			requiredContent: 'a(tei-ptr)',
+				'p[id,data-target-base,data-target-fragment](tei-ptr);',
+			requiredContent: 'p(tei-ptr)',
 
 			template:
-				'<a class="tei-ptr" target="_blank" id="" href="#" data-new="1" data-target-base="" data-target-fragment="">Loading...</a>',
+				'<p class="tei-ptr" id="" data-new="1" data-target-base="" data-target-fragment="">Loading...</p>',
 
 			button: 'Create or edit a transclusion link',
 
@@ -47,8 +47,6 @@ CKEDITOR.plugins.add( 'tei-ptr', {
                             el.setAttribute("id", this.id);
                             el.setAttribute("data-target-base",  this.dataTargetBase );
                             el.setAttribute("data-target-fragment",  this.dataTargetFragment );
-                            el.setAttribute("href", this.dataTargetBase ? ("/texts/" + this.dataTargetBase) : "#" );
-                            el.setAttribute("target", "_blank");
                             el.removeAttribute("data-new");
                             el.setText("Include: " + this.dataTargetBase + this.dataTargetFragment);
                         }
@@ -59,6 +57,7 @@ CKEDITOR.plugins.add( 'tei-ptr', {
                                 el.remove(false);
                             }   
                         }
+                        editor.fire("change");
                     }
                 });
                 DialogService.open("editLinkDialogSimple");
@@ -66,7 +65,7 @@ CKEDITOR.plugins.add( 'tei-ptr', {
             },
             // any tei:ptr should be treated as a transclusion according to this widget
 			upcast: function( element ) {
-				return element.name == 'a' && element.hasClass( 'tei-ptr' );
+				return element.name == 'p' && element.hasClass( 'tei-ptr' );
 			},
 			init: function() {
                 var injector = angular.element('*[data-ng-app]').injector();

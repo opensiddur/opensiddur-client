@@ -21,7 +21,7 @@
                         class="btn btn-primary"
                         data-ng-class="{'btn-success' : profileForm.$pristine}" type="submit" 
                         data-ng-click="save()"  
-                        data-ng-disabled="!AccessService.access.write || profileForm.$invalid || profileForm.$pristine">{{saveButtonText()}}</button>
+                        data-ng-disabled="!AccessService.access.write || profileForm.$invalid || profileForm.$pristine || exists">{{saveButtonText()}}</button>
                 </div>
                 <div class="navbar-right navbar-btn">
                     <os-sharing-status relicense-disabled="1" chmod-disabled="1"></os-sharing-status>
@@ -86,10 +86,18 @@
                     required="1" 
                     data-ng-model="ProfileService.profile.contributor.idno.__text" 
                     data-ng-readonly="!isNew"
+                    data-ng-pattern="/^[a-zA-Z0-9_.]+$/"
+                    data-ng-change="checkExistence(ProfileService.profile.contributor.idno.__text)"
                     placeholder="Link name"/>
                 </div>
+                <div class="col-md-4 alert alert-danger" data-ng-show="profileForm.formUserName.$error.pattern">
+                    The username must contain only alphanumeric characters, dots and underscores
+                </div>
+                <div class="col-md-4 alert alert-danger" data-ng-show="exists">
+                    The username already exists. Choose a different one.
+                </div>
             </div>
-            <div data-ng-switch="profileType">
+            <div data-ng-switch="ProfileService.profileType">
               <div class="form-group" data-ng-switch-when="individual">
                 <label class="col-md-2 control-label" for="formRealName">Name:</label>
                 <div class="col-md-6">
@@ -99,7 +107,7 @@
               <div class="form-group" data-ng-switch-when="organization">
                 <label class="control-label col-md-2" for="formOrgName">Name:</label>
                 <div class="col-md-6">
-                  <input class="form-control" placeholder="Organization or group name" data-ng-model="ProfileService.profile.contributor.orgName.__text"/>
+                  <input class="form-control" placeholder="Organization or group name" data-ng-model="ProfileService.profile.contributor.orgName.__text" />
                 </div>
               </div>
             </div>
@@ -117,7 +125,7 @@
                 data-name="formAddress"
                 data-placeholder="Address line"
                 />
-            <div class="form-group" data-ng-show="profileType == 'individual'" data-ng-class="{ error : profileForm.formUrl.$error.url }">
+            <div class="form-group" data-ng-show="ProfileService.profileType == 'individual'" data-ng-class="{ error : profileForm.formUrl.$error.url }">
               <label class="col-md-2 control-label" for="formUrl">Website:</label>
               <div class="col-md-6">
                 <input name="formUrl" class="form-control" placeholder="Personal website" data-type="url" data-ng-model="ProfileService.profile.contributor.ptr._target"/>
@@ -126,7 +134,7 @@
                 <span class="help-block alert-danger" data-ng-hide="!profileForm.formUrl.$dirty || !profileForm.formUrl.$error.url">Must be a web address of the form http://example.com/x/y/z</span>
               </div>
             </div>
-            <div class="form-group" data-ng-show="profileType == 'organization'" data-ng-class="{ error : profileForm.formOrgUrl.$error.url }">
+            <div class="form-group" data-ng-show="ProfileService.profileType == 'organization'" data-ng-class="{ error : profileForm.formOrgUrl.$error.url }">
               <label class="control-label col-md-2" for="formOrgUrl">Website:</label>
               <div class="col-md-6">
                 <input name="formOrgUrl" class="form-control" placeholder="Organization website" data-type="url" data-ng-model="ProfileService.profile.contributor.affiliation.ptr._target"/>
@@ -135,13 +143,13 @@
                 <span class="help-block alert-danger" data-ng-hide="!profileForm.formOrgUrl.$dirty || !profileForm.formOrgUrl.$error.url">Must be a web address of the form http://example.com/x/y/z</span>
               </div>
             </div>
-            <div class="form-group" data-ng-show="profileType == 'individual'" data-ng-class="{ error : profileForm.formAffiliationUrl.$error.url }">
+            <div class="form-group" data-ng-show="ProfileService.profileType == 'individual'" data-ng-class="{ error : profileForm.formAffiliationUrl.$error.url }">
               <label class="col-md-2 control-label" for="formAffiliation">Affiliation</label>
               <div class="col-md-6">
                 <input name="formAffiliation" class="form-control" placeholder="Institution name" data-ng-model="ProfileService.profile.contributor.affiliation.orgName.__text"/>
               </div>
             </div>
-            <div class="form-group" data-ng-show="profileType == 'individual'">
+            <div class="form-group" data-ng-show="ProfileService.profileType == 'individual'">
                 <div class="col-md-6 col-md-offset-2">
                     <input name="formAffiliationUrl" class="form-control" data-type="url" placeholder="Institution website" data-ng-model="ProfileService.profile.contributor.affiliation.ptr._target"/>
                 </div>

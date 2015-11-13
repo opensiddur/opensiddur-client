@@ -39,6 +39,14 @@ server {
                 return 418 'Unauthorized';
             }
         }
+
+        ## proxy pass apps directly to the server ##
+        location /apps {
+            ## to use a local server, uncomment this line and comment the one above:
+            proxy_pass   $scheme://127.0.0.1:8080/exist$request_uri;
+            
+            proxy_intercept_errors on;
+        }
         
 
         ## everything else, config from http://java.dzone.com/articles/html5angularjsnginx-crawlable

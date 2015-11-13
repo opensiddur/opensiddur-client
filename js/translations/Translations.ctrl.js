@@ -28,11 +28,11 @@ translationsModule.controller(
 
             // default access rights for a new file
             TranslationsService.loadNew()
-            .success(function() {
-                AccessService.reset();
-                $scope.trForm.$setPristine();
-            })
-            .error(
+            .then(
+                function() {
+                    AccessService.reset();
+                    $scope.trForm.$setPristine();
+                },
                 function(data) {
                     ErrorService.addApiError(data);
                 }
@@ -47,14 +47,14 @@ translationsModule.controller(
             else {
                 console.log("Load from file");
                 TranslationsService.load(toDocument)
-                .success(function(data) {
+                .then(function(data) {
                     AccessService.load("/api/data/linkage", toDocument)
-                    .error(function(err) {
+                    .then(null, function(err) {
                         ErrorService.addApiError(err);
                     });
                     $scope.trForm.$setPristine();
-                })
-                .error(function(error) {   // error function
+                },
+                function(error) {   // error function
                     ErrorService.addApiError(error);
                     console.log("error loading " + toDocument);
                 });
@@ -76,17 +76,16 @@ translationsModule.controller(
         $scope.saveDocument = function() {
             var isNew = !TextService.resource;
             TranslationsService.save()
-            .success(function() {
+            .then(function() {
                 if (isNew) {
                     AccessService.setResource(TextService._resourceApi, TextService._resource)
                     .save()
-                    .error(function(error) {
+                    .then(null, function(error) {
                         ErrorService.addApiError(error);
                     });
                 }
                 $scope.trForm.$setPristine();
-            })
-            .error(function(error) {
+            }, function(error) {
                 ErrorService.addApiError(error);
             });
         };

@@ -11,8 +11,8 @@
 osDialogMetadataLicenseModule.directive(
         'osMetadataLicenseDialog',
         [
-        'AccessService', 'TextService',
-        function( AccessService, TextService ) {
+        'AccessService', 'LicensesService', 'TextService',
+        function( AccessService, LicensesService, TextService ) {
             return {
                 restrict : 'AE',
                 scope : {
@@ -24,7 +24,7 @@ osDialogMetadataLicenseModule.directive(
                 controller: ['$scope', function ($scope) {
                     console.log("In license metadata controller");
                     $scope.AccessService = AccessService;
-                    $scope.supportedLicenses = supportedLicenses;
+                    $scope.supportedLicenses = LicensesService.supportedLicenses;
                     $scope.OKButton = function () {
                         if (!$scope.onOk() || $scope.onOk()($scope.licenseModel)) {
                             TextService.license($scope.licenseModel);

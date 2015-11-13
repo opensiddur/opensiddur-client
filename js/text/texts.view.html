@@ -13,7 +13,7 @@
                     <div class="btn-group">
                       <button class="btn btn-primary" type="submit"
                           data-ng-disabled="!editor.loggedIn" 
-                          data-ng-click="DialogService.open('newDialog')"  
+                          data-ng-click="DialogService.open('newDialogSimple')"  
                           >New</button>
                       <button data-ng-show="resourceType.current.api == '/api/data/original'" 
                           data-ng-disabled="!editor.loggedIn" 
@@ -32,7 +32,7 @@
                     </div>
                     <div class="btn-group">
                       <button class="btn btn-primary" type="submit"
-                          data-ng-click="DialogService.open('openDialog')"  
+                          data-ng-click="DialogService.open('openDialogSimple')"  
                           >Open</button>
                       <button data-ng-show="resourceType.current.api == '/api/data/original'" 
                           class="btn btn-primary dropdown-toggle" 
@@ -78,6 +78,12 @@
                         <li><a href="#" data-ng-click="helper.xml.segment()">Auto-segment text stream</a></li>
                         <li><a href="#" data-ng-click="helper.xml.wordify()">Tag words and punctuation</a></li>
                         <li><a href="#" data-ng-click="helper.xml.addIds()">Add required xml:id attributes</a></li>
+                    </ul>
+                </div>
+                <div class="btn-group navbar-btn">
+                    <button data-ng-disabled="!editor.isLoaded" class="btn dropdown-toggle" data-toggle="dropdown">Settings<b class="caret"></b></button>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a href="#" data-ng-click="DialogService.open('settingsAnnotationsDialog')">Annotations</a></li>
                     </ul>
                 </div>
                 <div class="btn-group navbar-btn" data-ng-show="resourceType.current.supportsTranscriptionView">
@@ -189,6 +195,10 @@
             name="metadataCommitLogDialog"
             title="Commit Log"
             on-ok="editor.makeDirty"></os-metadata-commit-log-dialog>
+    <os-edit-annotation-dialog-simple on-ok="editor.makeDirty"
+        on-close="editor.dialogCanceled"
+        name="editAnnotationDialogSimple"
+        ></os-edit-annotation-dialog-simple>
     <os-edit-link-dialog-simple on-ok="editor.makeDirty"
         on-close="editor.dialogCanceled"
         name="editLinkDialogSimple"
@@ -197,4 +207,8 @@
         on-close="editor.dialogCanceled"
         name="editSegmentDialogSimple"
         ></os-edit-segment-dialog-simple>
+    <os-annotation-settings-dialog on-ok="editor.makeDirty"
+        on-close="editor.dialogCanceled"
+        name="settingsAnnotationsDialog"
+        ></os-annotation-settings-dialog>
 </div>

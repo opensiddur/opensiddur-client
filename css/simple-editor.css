@@ -13,3 +13,36 @@
     text-direction:rtl;
 }
 
+/* icons internal to the editor */
+img.editor-icon {
+    height: 1em;
+    padding: 2px;
+}
+
+.jf-annotation.start{
+    margin-top: 2px;
+    border-top: 1px solid black;
+    border-left: 1px solid black;
+    border-right: 1px solid black;
+    border-bottom: 1px dashed black;
+}
+.jf-annotation.end{
+    margin-bottom: 2px;
+    border-bottom: 1px solid black;
+    border-left: 1px solid black;
+    border-right: 1px solid black;
+    border-top: 1px dashed black;
+}
+
+.jf-annotation .editor-internal.type {
+    font-weight:bold;
+}
+
+.jf-annotation .editor-internal.type::before{
+    content: "("
+}
+
+.jf-annotation .editor-internal.type::after{
+    content: ")"
+}
+

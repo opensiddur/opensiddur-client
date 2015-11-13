@@ -1,5 +1,5 @@
 /*
- * Hamster.js v1.0.5
+ * Hamster.js v1.1.0
  * (c) 2013 Monospaced http://monospaced.com
  * License: MIT
  */
@@ -306,14 +306,17 @@ Hamster.normalise = {
   }
 };
 
-// Expose Hamster to the global object
-window.Hamster = Hamster;
-
-// requireJS module definition
 if (typeof window.define === 'function' && window.define.amd) {
+  // AMD
   window.define('hamster', [], function(){
     return Hamster;
   });
+} else if (typeof exports === 'object') {
+  // CommonJS
+  module.exports = Hamster;
+} else {
+  // Browser global
+  window.Hamster = Hamster;
 }
 
 })(window, window.document);

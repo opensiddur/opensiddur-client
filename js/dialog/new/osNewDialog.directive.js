@@ -20,8 +20,8 @@
  */
 osDialogNewModule.directive(
         'osNewDialog',
-        ["LanguageService",
-        function(LanguageService) {
+        ["LanguageService", "LicensesService",
+        function(LanguageService, LicensesService) {
             return {
                 restrict : 'AE',
                 scope : {
@@ -44,7 +44,7 @@ osDialogNewModule.directive(
                     if (!$scope.resourceType) {
                         $scope.resourceType = "texts";
                     }
-                    $scope.supportedLicenses = supportedLicenses;
+                    $scope.supportedLicenses = LicensesService.supportedLicenses;
 
                     $scope.model = $scope.model || {
                         template : {
@@ -52,8 +52,7 @@ osDialogNewModule.directive(
                             title: {
                                 main : "",
                                 alt : "",
-                                altLang : "en",
-                                idno : ""
+                                altLang : "en"
                             },
                             license : "http://www.creativecommons.org/publicdomain/zero/1.0",
                             source : "/exist/restxq/api/data/sources/Born%20Digital",

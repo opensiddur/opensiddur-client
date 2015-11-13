@@ -23,24 +23,22 @@ osAuthenticationModule.controller(
         console.log("login")
 
         AuthenticationService.authenticate($scope.signin.userName, $scope.signin.password)
-        .success(function() {
+        .then(function() {
             AuthenticationService.login($scope.signin.userName, $scope.signin.password, $scope.signin.rememberMe);
             $location.path("/about");
-        })
-        .error(function(data) {
-            ErrorService.addApiError(data);
+        }, function(error) {
+            ErrorService.addApiError(error);
         });
     };
     $scope.register = function() {
         console.log("register");
         AuthenticationService.register($scope.register.userName, $scope.register.password, $scope.register.rememberMe)
-        .success(
+        .then(
             function() {
                 $location.path("/profile/" + $scope.register.userName)
-            })
-        .error(function(data) {
-            ErrorService.addApiError(data);
-        });
+            }, function(error) {
+                ErrorService.addApiError(error);
+            });
     };
     $scope.signout = function() {
         console.log("sign out");

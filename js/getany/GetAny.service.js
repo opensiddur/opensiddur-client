@@ -7,10 +7,20 @@
     Licensed under the GNU Lesser General Public License, version 3 or later
 
 */
-osGetAnyModule.factory("GetAnyService", ["$http", function($http) {
+osGetAnyModule.factory("GetAnyService", [
+    "$http", "$q", 
+    function($http, $q) {
     return {
         get : function (api, resource) {
             return $http.get(api + "/" + encodeURIComponent(resource))
+                .then(
+                    function(response) {
+                        return response.data
+                    },
+                    function (error) {
+                        return $q.reject(error.data);
+                    }
+                );
         }
     };
 }]);

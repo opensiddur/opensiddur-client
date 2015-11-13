@@ -1,0 +1,85 @@
+<div class="osSourceChooser">
+    <div class="row scrollable-300px">
+        <table class="table table-hover table-condensed table-striped table-scrollable">
+            <thead>
+                <tr>
+                    <th>
+                       <form class="form-inline">
+                            <div class="form-group">
+                                <label class="control-label">Sources</label>
+                                <button class="btn btn-default btn-sm" 
+                                    data-ng-disabled="!AccessService.access.write"
+                                    data-ng-click="addSource()">Add</button>
+                                <button class="btn btn-default btn-sm" 
+                                    data-ng-disabled="!AccessService.access.write || !sourcesModel[selectedSource]"
+                                    data-ng-click="removeSource()">Remove</button>
+                            </div>
+                        </form>
+                    </th>
+                    <th>From page</th>
+                    <th>To</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr data-ng-repeat="source in sourcesModel track by $index" 
+                    data-ng-click="select($index)"
+                    data-ng-class="{info : $index == selectedSource}">
+                    <td>{{source.title}}</td>
+                    <td><input data-ng-hide="source.source == 'Born%20Digital'"
+                        data-ng-change="fromPageChange()" 
+                        data-ng-model-options='{ debounce: 500 }'
+                        type="number" data-ng-model="source.scope.fromPage"/></td>
+                    <td><input 
+                        data-ng-hide="source.source == 'Born%20Digital'"
+                        data-ng-change="toPageChange()"
+                        data-ng-model-options='{ debounce: 500 }'
+                        type="number" data-ng-model="source.scope.toPage"/></td>   
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div data-ng-show="sourcesModel[selectedSource].source == ''">
+        <!-- list of sources, add/remove buttons -->
+        <os-search-list api="'/api/data/sources'" selection="newSource.source" selection-description="newSource.title">
+        </os-search-list>
+    </div>
+    <div class="row" data-ng-hide="sourcesModel[selectedSource].source == ''">
+        <div class="col-md-6"
+             data-ng-show="sourcesModel[selectedSource].source != 'Born%20Digital'">
+            <os-transcription-viewer 
+                source="sourcesModel[selectedSource].source" 
+                page="viewer.page"
+                name="source-chooser"
+                height="300px"></os-transcription-viewer>
+        </div>
+        <div class="col-md-6" ng-show="listIds != 0">
+            <fieldset>
+                <p>What parts of the document are derived from this source?</p>
+                <div class="form-horizontal col-md-offset-1">
+                    <div class="form-group">
+                        <div class="checkbox-inline">
+                            <label>
+                                <input type="checkbox" 
+                                    data-ng-model="sourcesModel[selectedSource].contents.stream.streamChecked"
+                                    data-ng-change="streamContentChanged()"/>Entire document
+                            </label>
+                        </div>
+                        <button class="btn btn-default btn-sm" data-ng-click="selectAll()">Select All</button>
+                        <button class="btn btn-default btn-sm" data-ng-click="clearAll()">Clear All</button>
+                        <button class="btn btn-default btn-sm" data-ng-click="invertAll()">Invert</button>
+                    </div>
+                </div>
+                <div class="col-md-offset-2">
+                    <div class="checkbox" data-ng-repeat="id in sourcesModel[selectedSource].contents.stream.id_asArray">
+                        <input type="checkbox"
+                            data-ng-model="id.checked"
+                            data-ng-disabled="sourcesModel[selectedSource].contents.stream.streamChecked"/>
+                        <span data-ng-show="!id.context.context">({{id.context.element}}:{{id.context.name}})</span>
+                        {{id.context.context}}
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+    </div>
+</div>
+

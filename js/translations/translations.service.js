@@ -72,7 +72,8 @@ translationsModule.factory("TranslationsService", [
         load : function(resource) {
             var thiz = this;
             return TextService.load("/api/data/linkage", resource)
-                .success(function(data) {
+                .then(function(response) {
+                    var data = response.data;
                     var $docXml = $(data);
                     var linkGrp = $docXml.find("j\\:parallelText tei\\:linkGrp");
                     var domains = linkGrp.attr("domains").split(/\s+/);
@@ -87,7 +88,7 @@ translationsModule.factory("TranslationsService", [
                             console.log("Error loading right domain: ", err);
                         });
                     thiz.blocks = [];
-                    $q.all([l, r]).then(
+                    return $q.all([l, r]).then(
                         function() {
                             // thiz.left has the left stream
                             // thiz.right has the right stream
@@ -140,23 +141,33 @@ translationsModule.factory("TranslationsService", [
                                     
                                 }
                             );
+                            return thiz;
                         }
                     )
                     
+                },
+                function(error) {
+                    $q.reject(error.data);
                 }); 
         },
         loadNew : function() {
             var thiz = this;
             return $http.get("/js/translations/translations.template.xml")
-                .success(function(data) {
-                    TextService.setResource("/api/data/linkage", "", false);
-                    TextService.content(data);
-                    thiz.clearLeft();
-                    thiz.clearRight();
-                    thiz.blocks = [];
-                    // default the idno to the user's username
-                    thiz.translationId(AuthenticationService.userName);
-                });
+                .then(
+                    function(response) {
+                        var data = response.data;
+                        TextService.setResource("/api/data/linkage", "", false);
+                        TextService.content(data);
+                        thiz.clearLeft();
+                        thiz.clearRight();
+                        thiz.blocks = [];
+                        // default the idno to the user's username
+                        thiz.translationId(AuthenticationService.userName);
+                        return thiz;
+                    },
+                    function(error) {
+                        return $q.reject(error.data);
+                    } );
         },
         syncContent : function() {
             // one way sync the content in TextService.content with the content of represented in this service's

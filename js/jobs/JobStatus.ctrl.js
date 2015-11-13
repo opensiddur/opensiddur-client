@@ -14,16 +14,15 @@ osJobsModule.controller(
 
     getStatus = function() {
         return JobsService.getJSON($scope.jobid) 
-        .success(function (stat) { 
+        .then(function (stat) { 
             $scope.status = stat;
             $scope.resource = decodeURIComponent(stat.resource.split("/").pop());
             if (stat.state != "complete") {
                 // check status again in another second...
                 $timeout(getStatus, 1000);
             }
-        })
-        .error(function (data) { 
-            ErrorService.addApiError(data); 
+        }, function (error) { 
+            ErrorService.addApiError(error); 
         });
     };
 

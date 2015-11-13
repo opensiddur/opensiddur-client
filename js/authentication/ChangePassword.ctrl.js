@@ -1,7 +1,7 @@
 /* 
  * Change password control
  * Open Siddur Project
- * Copyright 2013-2014 Efraim Feinstein <efraim@opensiddur.org>
+ * Copyright 2013-2015 Efraim Feinstein <efraim@opensiddur.org>
  * Licensed under the GNU Lesser General Public License, version 3 or later
  */
 /* controller for signin and registration page */
@@ -15,11 +15,11 @@ osAuthenticationModule.controller(
     
       $scope.changePassword = function() {
             AuthenticationService.changePassword($scope.currentPassword, $scope.newPassword)
-            .success(function() {
+            .then(function() {
                 ErrorService.addAlert("Password changed", "success");
-            })
-            .error(function(data) {
-                ErrorService.addApiError(data);
+            },
+            function(error) {
+                ErrorService.addApiError(error);
             });    
         };
   }]

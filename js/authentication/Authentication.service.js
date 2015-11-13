@@ -5,8 +5,8 @@
  */
 osAuthenticationModule.factory( 
   'AuthenticationService', 
-  ['$rootScope', '$http', 'localStorageService',
-  function( $rootScope, $http, localStorageSevice ) {
+  ['$rootScope', '$http', '$q', 'localStorageService',
+  function( $rootScope, $http, $q, localStorageSevice ) {
       savedUser = localStorageSevice.get('userName');
       savedPass = localStorageSevice.get('password');
       svc = {
@@ -15,7 +15,7 @@ osAuthenticationModule.factory(
            password: savedPass,
            rememberMe: Boolean(savedUser),
            // authenticate, but do not log in 
-           // return a promise from $http
+           // return a promise to the response
            authenticate : function ( userName, password ) {
                return $http.post(
                    "/api/login",
@@ -26,7 +26,14 @@ osAuthenticationModule.factory(
                        params : {
                            "auth-only" : "true"
                        }
-                   });
+                   })
+                .then(
+                    function(response) { 
+                        return response.data;
+                    },
+                    function(error) {
+                        return $q.reject(error.data); 
+                    });
            },
            login: function( userName, password, rememberMe ) {
                var toUtf8 = function(s) {
@@ -46,6 +53,7 @@ osAuthenticationModule.factory(
                    localStorageSevice.set('userName', userName);
                    localStorageSevice.set('password', password);
                }
+                return this;
            },
            logout: function () {
                this.loggedIn = false;
@@ -66,20 +74,23 @@ osAuthenticationModule.factory(
                // set future HTTP requests to remove credentials
                $http.defaults.withCredentials = false;
                delete $http.defaults.headers.common.Authorization;
+                return this;
            },
            changePassword : function(oldPassword, newPassword) {
                 var thiz = this;
                 var userName = this.userName;
                 return this.authenticate(userName, oldPassword)
-                .success(function() {
+                .then(function() {
                     return $http.post(
                         "/api/user",  
                         "<change-password><user>"+ userName + 
                         "</user><password>"+newPassword+
                         "</password></change-password>")
-                        .success(function() {
-                            thiz.login(userName, newPassword, thiz.rememberMe);
-                        });
+                        .then(function() {
+                            return thiz.login(userName, newPassword, thiz.rememberMe);
+                        }, function(error) { 
+                            return $q.reject(error.data); 
+                        } );
                     });
             },
             register : function(userName, password, rememberMe) {
@@ -89,9 +100,11 @@ osAuthenticationModule.factory(
                     "<register><user>"+userName + 
                     "</user><password>"+password+
                     "</password></register>")
-                    .success(function() {
-                        thiz.login(userName, password, rememberMe);
-                    });
+                    .then(function() {
+                        return thiz.login(userName, password, rememberMe);
+                    }, function(error) { 
+                        return $q.reject(error.data); 
+                    } );
 
             },
            whoami: function() {

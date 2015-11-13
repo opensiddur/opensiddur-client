@@ -22,11 +22,12 @@ osJobsModule.controller(
     JobsService.listJSON($scope.params.user, $scope.params.state, 
                         $scope.params.from, $scope.params.to, 
                         $scope.params.start, $scope.params["max-results"])
-    .success(function (data) {
-        $scope.jobs = data;
-    })
-    .error(function (error) {
-        ErrorService.addApiError(error);
-    });
+    .then(
+        function (data) {
+            $scope.jobs = data;
+        },
+        function (error) {
+            ErrorService.addApiError(error);
+        });
   }]
 );

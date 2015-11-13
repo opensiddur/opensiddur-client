@@ -21,8 +21,14 @@
         <xsl:sequence select="replace(., '^\s+|\s+$', '')"/>
     </xsl:template>
 
+    <xsl:template match="@xml:*|@*">
+        <!-- this is to fix a bug in Firefox where the xml namespace attributes don't get copied -->
+        <xsl:copy-of select="."/>
+    </xsl:template>
+
     <xsl:template match="*|comment()">
         <xsl:copy copy-namespaces="no">
+            <!--xsl:apply-templates select="@*"/-->
             <xsl:sequence select="@*"/>
             <xsl:apply-templates/>
         </xsl:copy>

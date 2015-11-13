@@ -60,7 +60,7 @@ osDialogExternalLinkModule.directive(
                             if ($scope.typesWithAllowedFragments.indexOf(this.selectedType) >= 0) {
                                 GetAnyService.get(this.selectedType, 
                                     decodeURI(this.selection.replace("\/exist\/restxq" + this.selectedType + "/", ""))                                      )
-                                    .success(
+                                    .then(
                                     function(content) {
                                         $scope.links.content = content;
                                     } );

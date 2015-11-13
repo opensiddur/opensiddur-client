@@ -40,13 +40,13 @@ dialogSimpleEditLinkModule.directive(
                         console.log("Selected: " + fileSelection);
                         $scope.link.dataTargetBase = fileSelection.replace("/exist/restxq/api/data/original/", "");
                         TextService.get("/api/data/original", decodeURIComponent($scope.link.dataTargetBase))
-                        .success(function(data) {
+                        .then(function(data) {
                             $scope.external.content = data;
                             if (clearIds) {
                                 $scope.link.dataTargetFragment = "";
                             }
-                        })
-                        .error(function (err) {
+                        },
+                        function (err) {
                             ErrorService.addApiError(err);
                         });
                     };

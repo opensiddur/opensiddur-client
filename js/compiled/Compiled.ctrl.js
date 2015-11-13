@@ -12,14 +12,15 @@ osCompiledModule.controller(
     console.log("Compiled controller.");
 
     CompiledService.get($routeParams.resource)
-    .success(function(html) {
-        var doc = $('#frame')[0].contentDocument || $('#frame')[0].contentWindow.document
-        doc.write(html);
-        doc.close()
-        $("#frame").height($(document.body).height() - 100);
-    })
-    .error(function(err) { 
-        ErrorService.getApiError(err); 
-    });
+    .then(
+        function(html) {
+            var doc = $('#frame')[0].contentDocument || $('#frame')[0].contentWindow.document
+            doc.write(html);
+            doc.close()
+            $("#frame").height($(document.body).height() - 100);
+        },
+        function(err) { 
+            ErrorService.getApiError(err); 
+        });
   }]
 );

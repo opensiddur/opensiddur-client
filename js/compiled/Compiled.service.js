@@ -7,7 +7,8 @@
  */
 osCompiledModule.factory(
     "CompiledService",
-    ["$http", function($http) {
+    ["$http", "$q",
+    function($http, $q) {
     return {
         get : function(resource) {
             return $http.get("/api/data/original/" + encodeURIComponent(resource) + "/combined",
@@ -18,7 +19,15 @@ osCompiledModule.factory(
                     headers : {
                         "Accept" : "application/xhtml+xml"
                     }
-                });
+                })
+                .then(
+                    function(response) {
+                        return response.data;
+                    },
+                    function(error) {
+                        return $q.reject(error.data);
+                    }
+                );
         }
     } 
 }]);
