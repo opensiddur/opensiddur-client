@@ -68,7 +68,8 @@ CKEDITOR.plugins.add( 'tei-ptr', {
 				return element.name == 'p' && element.hasClass( 'tei-ptr' );
 			},
 			init: function() {
-                var injector = angular.element('*[data-ng-app]').injector();
+                            var injector = angular.element('*[data-ng-app]').injector();
+                            this.element.setAttribute("id", "ptr-" + Math.floor(Math.random()*1000000)).toString();
 			},
 
 			data: function() {
