@@ -104,7 +104,7 @@ osSourcesModule.factory("SourceService", [
             return httpOperation(resource, indata, {
                 transformRequest : function(data) {
                     var xmlData = x2js.json2xml(data);
-                    var cleanedXmlData = XsltService.transform('/js/profile/CleanupForm.xsl', xmlData);
+                    var cleanedXmlData = XsltService.serializeToStringTEINSClean(XsltService.transform('/js/profile/CleanupForm.xsl', xmlData));
                     return cleanedXmlData;
                 }
             })

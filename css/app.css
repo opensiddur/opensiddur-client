@@ -125,6 +125,19 @@ textarea.ng-invalid {
     cursor:pointer;
 }
 
+.osResultsBox .search-results {
+    overflow-y:scroll;
+    height:150px !important;/* no scroll bar shown under 150px? */
+}
+
+.osResultsBox ul.search-contexts {
+    list-style-type:none;
+}
+
+.osResultsBox span.match {
+    font-weight:bold;
+}
+
 /* translations */
 .translation-linkage {
     border:2px solid black;

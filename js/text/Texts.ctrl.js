@@ -81,12 +81,14 @@ osTextModule.controller(
         // this should be in $scope.editor, but ng-ckeditor will not allow it to be (see line 73)
         $scope.ckeditorOptions = {
             autoParagraph : false,
+            basicEntities : false,
             contentsCss : "/css/simple-editor.css",
             customConfig : "/js/ckeditor/config.js",    // points to the plugin directories
             enterMode : CKEDITOR.ENTER_P,
             entities : false,   // need XML entities, but not HTML entities...
             extraPlugins : "language,jf-annotation,tei-p,tei-ptr,tei-seg",
             fillEmptyBlocks : false,
+            forcePasteAsPlainText : true,
             language : "en",
             language_list : LanguageService.getCkeditorList(),
             readOnly : !AccessService.access.write,
@@ -112,7 +114,7 @@ osTextModule.controller(
             ],
             removeButtons : 'Paste,PasteFromWord',  
             allowedContent :
-                "a[href,data-target-base,data-target-fragment,target](tei-ptr);"+
+                "p[!id,data-target-base,data-target-fragment](tei-ptr);"+
                 "p[!id](tei-seg,tei-p,layer-p,layer,start,end);" +
                 "div[!id](jf-annotation,layer-phony-annotation,layer,start,end);" +
                 "div[id](tei-note);" +
@@ -127,12 +129,13 @@ osTextModule.controller(
                 var lang = TextService.language().language;
                 var dir = LanguageService.getDirection(lang);
                 try {
-                    var htmlElement = CKEDITOR.instances.editor1.document.getDocumentElement().$;
+                    var htmlElement = CKEDITOR.instances.editor1.document.getDocumentElement().findOne("body");
                     htmlElement.setAttribute("lang", lang);
                     htmlElement.setAttribute("dir", dir);
                     if (!dirty) {
                         $scope.textsForm.$setPristine();
                     }
+                    $scope.apply();
                 }
                 catch (err) {
                     console.log("CKEDITOR instance does not exist. Could be an issue.");
@@ -230,6 +233,7 @@ osTextModule.controller(
                                 if (cursorLocation) {
                                     $scope.editor.codemirror.doc.setCursor(cursorLocation);
                                 }
+                                $scope.editor.ckeditorChanged();
                                 $scope.textsForm.$setPristine();
                             }, 250
                         );
@@ -246,7 +250,7 @@ osTextModule.controller(
                 console.log("Save:", this);
                 AnnotationsService.saveAll()
                 .then(function() {
-                    TextService.save()
+                    return TextService.save()
                     .then(
                         function(ts) {   // success
                             if ($scope.editor.isNew) {
@@ -274,7 +278,9 @@ osTextModule.controller(
                     }
                 )
                 .then(function() {
-                    $timeout(function() { $scope.textsForm.$setPristine(); }, 750);
+                    return $timeout(function() { 
+                        $scope.textsForm.$setPristine(); 
+                    }, 750);
                 });
             },
             newButton : function () {

@@ -38,8 +38,25 @@ osIdListModule.directive(
                         from : null,        /* beginning of range */
                         to : null,          /* end of range */
                         composed : "",      /* string representation of the current constructed #fragment or #range */
-                        setComposed : function() {
-                            if (this.from && (this.from == this.to)) {
+                        setComposed : function(fromSelection) {
+                            if (fromSelection) {
+                                var spl = fromSelection.split("#");
+                                if (spl.length <= 1) {
+                                    this.fragment = "";
+                                    this.from = null;
+                                    this.to = null;
+                                    this.composed = "";
+                                }
+                                else {
+                                    var wholeFragment = "#" + spl[1];
+                                    var fragMatch = wholeFragment.match(/#(range\(([^,]+),([^\)]+)\))|(.+)/);
+                                    this.from = fragMatch[2] || null;
+                                    this.to = fragMatch[3] || null;
+                                    this.fragment = fragMatch[4] || "";
+                                    this.composed = wholeFragment;
+                                }
+                            }
+                            else if (this.from && (this.from == this.to)) {
                                 this.fragment = this.from;
                                 this.from = null;
                                 this.to = null;
@@ -129,6 +146,9 @@ osIdListModule.directive(
                     };
 
                     scope.$watch("update", function(newVal, oldVal) {
+                        if (!oldVal && scope.selection) {
+                            scope.links.setComposed(scope.selection);
+                        }
                         loadXmlIds(newVal, oldVal);
                     });
                  },

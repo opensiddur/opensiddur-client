@@ -22,10 +22,13 @@ osXsltModule.factory(
                 });
                 return transformed.getResultDocument();
             },
-            clearEntities : function(str) {
+            clearEntities : function(str, clearNbsp) {
                 // clear all [known] entities that show up in this._content and replace them with numerics.
                 // use it before save
-                return str.replace(/&nbsp;/g, "&#160;");
+                // if clearSpaces is true, nbsp -> " "
+                if (clearNbsp)
+                    str = str.replace(/\xA0/g, " ")
+                return str.replace(/&nbsp;/g, clearNbsp ? " " : "&#160;");
             },
             parseFromString : function(xmlString) {
                 return new DOMParser().parseFromString(xmlString, "text/xml");

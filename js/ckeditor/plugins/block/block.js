@@ -5,9 +5,11 @@
  *
  */
 
-var BlockObject = function(editor, allowOverlap) {
+var BlockObject = function(editor, allowOverlap, allowAllNodeTypes) {
     this.editor = editor;
     this.allowOverlap = allowOverlap || false;
+    this.allowAllNodeTypes = allowAllNodeTypes || false;
+
     var injector = angular.element('*[data-ng-app]').injector();
     this.TextService = injector.get("TextService");
     var getRandomId = function(blockType, elementType) {
@@ -114,6 +116,14 @@ var BlockObject = function(editor, allowOverlap) {
         });
         
     };
+    var isAllowedNodeType = function(node) {
+        // return if the given node is allowed to be in the block
+        var allowedNodeTypes = this.allowAllNodeTypes ? ["tei-seg","tei-ptr"] : ["tei-seg"];
+        if (node.hasClass("cke_widget_block")) {
+            node = node.getChildren().getItem(0);
+        }
+        return allowedNodeTypes.some(function(c) { return node.hasClass(c); });
+    };
     var removeEmptyBlocks = function(segmentNode, blockType, elementType) {
         // remove blocks of the given type that contain no segments
         var body = segmentNode.getParent();
@@ -129,7 +139,7 @@ var BlockObject = function(editor, allowOverlap) {
             var nsegs = 0; 
             var maybe = null;
             while (maybe = iter.getNextParagraph(elementType)) { 
-                if (maybe.hasClass("tei-seg") || (maybe.getName() == elementType && maybe.getAttribute("class") == null)) nsegs++; 
+                if (isAllowedNodeType(maybe) || (maybe.getName() == elementType && maybe.getAttribute("class") == null)) nsegs++; 
             }; 
             if (nsegs == 0) {
                 start.remove();
@@ -146,7 +156,7 @@ var BlockObject = function(editor, allowOverlap) {
             return getAscendantSegment(node.getParent(), originalNode);
         }
         else { // element node
-            if (node.hasClass("tei-seg") || (node.getName() == elementType && node.getAttribute("class") == null)) { // it's a segment, return it
+            if (isAllowedNodeType(node) || (node.getName() == elementType && node.getAttribute("class") == null)) { // it's a segment, return it
                 return node;
             }
             else {
@@ -176,12 +186,37 @@ var BlockObject = function(editor, allowOverlap) {
             8. if any blocks have been split in both directions (unterminated and unstarted) rename the ids for the unstarted portion of the block.
         */
         var editor = this.editor;
-        this.TextService.addLayer(layerType);
         var thisId = getRandomId(layerType, elementType);
         var selection = editor.getSelection();
         var ranges = selection.getRanges();
-        var startElement = getAscendantSegment(ranges[0].startContainer, null, elementType);
-        var endElement = getAscendantSegment(ranges[ranges.length - 1].endContainer, null, elementType);
+        var startOfRange = function(range) {
+            var sor = range[0].startContainer;
+            return (sor.type == 1 && sor.getName() == "body") ?
+                // a widget is at the start, find out what widget
+                editor.widgets.selected[0].wrapper
+                : (sor.type == 3) ?
+                // it's a text node, get the parent
+                sor.getParent()
+                : sor;
+        };
+        var endOfRange = function(range) {
+            var eor = range[range.length - 1].endContainer;
+            return (eor.type == 1 && eor.getName() == "body") ?
+                // a widget is at the end, find out what widget
+                editor.widgets.selected[editor.widgets.selected.length - 1].wrapper
+                : (eor.type == 3) ?
+                // text node, get parent
+                eor.getParent()
+                : eor;
+        };
+        var startElement = getAscendantSegment(startOfRange(ranges), null, elementType);
+        var endElement = getAscendantSegment(endOfRange(ranges), null, elementType);
+        // there is a pathological case where no start or end element exists.
+        // in that case, abort now
+        if (!startElement || !endElement) {
+            return;
+        }
+        this.TextService.addLayer(layerType);
         var begInsert = new CKEDITOR.dom.element.createFromHtml(beginTemplate(thisId));
         var endInsert = new CKEDITOR.dom.element.createFromHtml(endTemplate(thisId));
         if (!this.allowOverlap) {
@@ -207,6 +242,7 @@ var BlockObject = function(editor, allowOverlap) {
         editor.widgets.initOn( begInsert, classType )
         editor.widgets.initOn( endInsert, classType )
         removeEmptyBlocks(startElement, classType, elementType); 
+        editor.fire("change");
     };
     this.doubleclick = function(evt) {
         // doubleclick event handler: use with this.on('doubleclick')
@@ -226,6 +262,7 @@ var BlockObject = function(editor, allowOverlap) {
     this.destroy = function(evt) {
         // destroy event handler. use in parallel with init()
         if (!this.element.getParent().hasAttribute("data-disable-destroy")) {
+            console.log("destroying ", this.element);
             var idtokens = this.element.getId().match(/^(start|end)_(.+)/);
             var bound = idtokens[1];
             var thisId = idtokens[2];

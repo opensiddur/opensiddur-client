@@ -26,7 +26,7 @@ CKEDITOR.plugins.add( 'jf-annotation', {
         // block plugins require check widgets every short interval
         
         var thiz = this;
-        var blockObject = new BlockObject(editor, true);
+        var blockObject = new BlockObject(editor, true, true);
         var interval = $interval(function (evt) {
             editor.widgets.checkWidgets();
         }, 1000);
@@ -134,7 +134,7 @@ CKEDITOR.plugins.add( 'jf-annotation', {
                     var spl = jfAnnotation.split("#");
                     var resource = spl[0].split("/").pop();
                     var id = spl[1];
-                    AnnotationsService.getNote(resource, id)
+                    AnnotationsService.getNote(decodeURIComponent(resource), id)
                     .then(function(annotation) {
                         var newAnnotation = new CKEDITOR.dom.element.createFromHtml(annotation);
                         var annotationType = newAnnotation.getAttribute("data-type");

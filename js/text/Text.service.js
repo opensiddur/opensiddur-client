@@ -107,8 +107,9 @@ osTextModule.service("TextService", [
                 this.syncFlat();
                 // convert content back to XML
                 var backupContent = this._content;      // this needs to be saved so if the save fails, we can go back easily
+                console.log("SENT TO EditingHtmlToXml.xsl:", this._content);
                 this._content = XsltService.indentToString(
-                        XsltService.transformString("/js/text/EditingHtmlToXml.xsl", this._content)
+                        XsltService.transformString("/js/text/EditingHtmlToXml.xsl", XsltService.clearEntities(this._content, true))
                     );
             }
             var thiz = this;

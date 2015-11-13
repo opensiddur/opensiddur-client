@@ -79,18 +79,26 @@
     <!-- p -> tei:seg 
     when p lacks a class, it is considered a segment because magicline inserts p[not(@class)]
     -->
-    <xsl:template match="html:p[local:has-class(@class, 'tei-seg') or not(@class)][normalize-space(.)]" mode="streamText">
-        <tei:seg>
-            <xsl:apply-templates select="@*" />
-            <xsl:call-template name="add-xmlid">
-                <xsl:with-param name="element-name" select="'tei:seg'"/>
-            </xsl:call-template>
-            <xsl:apply-templates mode="streamText"/>
-        </tei:seg>
+    <xsl:template match="html:p[local:has-class(@class, 'tei-seg') or not(@class)]" mode="streamText">
+        <xsl:if test="normalize-space(.)">
+            <tei:seg>
+                <xsl:apply-templates select="@*" />
+                <xsl:call-template name="add-xmlid">
+                    <xsl:with-param name="element-name" select="'tei:seg'"/>
+                </xsl:call-template>
+                <xsl:apply-templates mode="streamText"/>
+            </tei:seg>
+        </xsl:if>
     </xsl:template>
 
-    <!-- html:a[@href] -> tei:ptr -->
-    <xsl:template match="html:a[@href][local:has-class(@class, 'tei-ptr')]" mode="streamText">
+    <!-- text under tei:seg: spacing should be normalized, but sometimes we
+        should retain spaces -->
+    <xsl:template match="text()[ancestor::html:p[not(@class) or local:has-class(@class, 'tei-seg')]]" mode="streamText">
+        <xsl:sequence select="normalize-space(.)"/>
+    </xsl:template>
+
+    <!-- html:p[@class~tei-ptr] -> tei:ptr -->
+    <xsl:template match="html:p[local:has-class(@class, 'tei-ptr')]" mode="streamText">
         <tei:ptr>
             <xsl:apply-templates select="@*[not(name(.)=('data-target-base', 'data-target-fragment'))]"/>
             <!-- @href contains /texts/[name], @data-target-base/@data-target-fragment contain the pointer -->
