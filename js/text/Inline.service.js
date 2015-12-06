@@ -5,10 +5,11 @@
  * Licensed under the GNU Lesser General Public License, version 3 or later
  */
 osTextModule.service("InlineService", [
-    "$q", "CompiledService", "TextService", "XsltService", function(
-    $q, CompiledService, TextService, XsltService
+    "$q", "$timeout", "CompiledService", "JobsService", "TextService", "XsltService", function(
+    $q, $timeout, CompiledService, JobsService, TextService, XsltService
     ) {
     var resources = {}; // cache store resources as key : value pairs
+    var resourceJobs = {}; // cache store of key : value pairs for jobs compiling each resource
     var parseFragment = function(fragment) {
         // return start and end points of a fragment
         if (fragment.startsWith("range(")) {
@@ -46,18 +47,47 @@ osTextModule.service("InlineService", [
                 def.resolve(extracted);
                 return def.promise; 
             }
+            else if (resource in resourceJobs) {
+                return resourceJobs[resource];
+            }
             else {
                 /* TODO: set off a compilation job and when it's ready, come back to compiledservice result */
-                return CompiledService.get(resource)
+                var waitForComplete = function(jobId) {
+                    return JobsService.getJSON(jobId)
+                        .then(function(stat) {
+                            if (stat.state == "complete") {
+                                return CompiledService.get(resource)
+                                    .then(
+                                        function(data) {
+                                            resources[resource] = data;
+                                            return extractFragment(data, parsedFragment);
+                                        },
+                                        function(error) {
+                                            return $q.reject(error);
+                                        }
+                                    )
+                            }
+                            else if (stat.state == "failed") {
+                                return $q.reject(stat.state);
+                            }
+                            else {
+                                return $timeout(waitForComplete, 1000);
+                            } 
+                        }, function(error) {
+                            return $q.reject(error);
+                        });
+                };
+
+                resourceJobs[resource] = JobsService.start(resource)
                 .then(
                     function(data) {
-                        resources[resource] = data;
-                        return extractFragment(data, parsedFragment);
+                        return waitForComplete(data.job);
                     },
                     function(error) {
-                        $q.reject(error.data);
+                        return $q.reject(error.data);
                     }
-                )
+                );
+                return resourceJobs[resource];
             } 
         }
     }
