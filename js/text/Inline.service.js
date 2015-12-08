@@ -37,21 +37,27 @@ osTextModule.service("InlineService", [
             pfragment)));
     };
     return {
-        load : function(docuri, fragment) {  
+        load : function(docuri, fragment, reload) {
+            var reload = reload || false;       // forced reload?  
             var resource = decodeURIComponent(docuri.split("/").pop());
             var parsedFragment = parseFragment(fragment);
-            if (resource in resources) {
+            if (resource == TextService._resource) {
+                var def = $q.defer();
+                var extracted = extractFragment(TextService.syncFlatCopyAsXml(), parsedFragment);
+                def.resolve(extracted);
+                return def.promise;   
+            }
+            else if (resource in resources && !reload) {
                 var def = $q.defer();
                 var res = resources[resource];
                 var extracted = extractFragment(res, parsedFragment);
                 def.resolve(extracted);
                 return def.promise; 
             }
-            else if (resource in resourceJobs) {
+            else if (resource in resourceJobs && !reload) {
                 return resourceJobs[resource];
             }
             else {
-                /* TODO: set off a compilation job and when it's ready, come back to compiledservice result */
                 var waitForComplete = function(jobId) {
                     return JobsService.getJSON(jobId)
                         .then(function(stat) {
@@ -71,7 +77,7 @@ osTextModule.service("InlineService", [
                                 return $q.reject(stat.state);
                             }
                             else {
-                                return $timeout(waitForComplete, 1000);
+                                return $timeout(function() {return waitForComplete(jobId);}, 1000);
                             } 
                         }, function(error) {
                             return $q.reject(error);

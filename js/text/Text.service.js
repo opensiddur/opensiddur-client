@@ -100,17 +100,24 @@ osTextModule.service("TextService", [
             this.flatContent(this._flatContent); 
             return this._content;
         },
+        syncFlatCopy : function() {
+            // return a copy of the synced flat content without altering this._content
+            return this.partialContentCopy("jf:merged", this._flatContent); 
+        },
+        syncFlatCopyAsXml : function() {
+            // return a copy of synced flat content as XML, no changes to this._content
+            var flat = this.syncFlatCopy();
+            return XsltService.indentToString(
+                XsltService.transformString("/js/text/EditingHtmlToXml.xsl", XsltService.clearEntities(flat, true))
+                );
+        },
         save : function() {
             var httpOperation = this._resource ? $http.put : $http.post;
             var deferred = $q.defer();  // for errors
             if (this._isFlat) {
-                this.syncFlat();
                 // convert content back to XML
                 var backupContent = this._content;      // this needs to be saved so if the save fails, we can go back easily
-                console.log("SENT TO EditingHtmlToXml.xsl:", this._content);
-                this._content = XsltService.indentToString(
-                        XsltService.transformString("/js/text/EditingHtmlToXml.xsl", XsltService.clearEntities(this._content, true))
-                    );
+                this._content = this.syncFlatCopyAsXml();
             }
             var thiz = this;
             var content = this._content;
@@ -164,13 +171,19 @@ osTextModule.service("TextService", [
             }
             return this._content;
         },
+        partialContentCopy : function(contentElement, setContent) {
+            // perform the replace operation of partial content on a copy of this._content
+            // return the replaced copy without changing this._content 
+            var regex = new RegExp("(<"+contentElement+"[^>]*>\\s*)[\\S\\s]*(\\s*</"+contentElement+">)", "gm");
+            replaced = this._content.replace(regex, "$1" + setContent + "$2");
+            return replaced;
+        }, 
         partialContent : function(contentElement, setContent) {
             /* replace a single-instance element's content.
                 There must be exactly one of the contentElement in _content to use this function
              */
             if (setContent) {
-                var regex = new RegExp("(<"+contentElement+"[^>]*>\\s*)[\\S\\s]*(\\s*</"+contentElement+">)", "gm");
-                this._content = this._content.replace(regex, "$1" + setContent + "$2");
+                this._content = this.partialContentCopy(contentElement, setContent);
                 return this;
             }
             return (this._content) ? $(contentElement.replace(":", "\\:"), this._content).html() : "";
