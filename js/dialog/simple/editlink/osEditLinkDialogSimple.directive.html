@@ -50,10 +50,18 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <span data-ng-show="link.dataTargetFragment || link.dataTargetBase">Link: <b>{{link.dataTargetBase}}{{link.dataTargetFragment}}</b></span>
+                <p>
+                    <span data-ng-show="link.dataTargetFragment || link.dataTargetBase">Link: <b>{{link.dataTargetBase}}{{link.dataTargetFragment}}</b></span>
+                    <a class="btn"
+                        data-ng-href="/stexts/{{link.dataTargetBase}}"
+                        target="_blank"
+                        data-ng-show="link.dataTargetBase">Edit Linked file (Opens new window)</a>
+                </p>
+                <button type="button" class="btn" data-dismiss="modal"
+                    data-ng-click="RefreshButton()">Refresh Display</button>
                 <button type="button" class="btn" data-ng-click="CloseButton()" data-dismiss="modal">Close</button>
                 <button type="button" class="btn btn-primary" data-dismiss="modal"
-                    data-ng-click="OKButton()">Edit</button>
+                    data-ng-click="OKButton()">Edit Link</button>
             </div>
         </div>
     </div>

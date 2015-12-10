@@ -51,13 +51,18 @@ dialogSimpleEditLinkModule.directive(
                         });
                     };
                     $scope.OKButton = function () {
-                        $scope.link.callback(true);
+                        $scope.link.callback("ok");
                         $scope.onOk()();
                         $scope.resetExternal();
                         $("#"+$scope.name).modal('hide');
                     };
                     $scope.CloseButton = function () {
-                        $scope.link.callback(false);
+                        $scope.link.callback("close");
+                        $scope.onClose()();
+                        $("#"+$scope.name).modal('hide');
+                    };
+                    $scope.RefreshButton = function() {
+                        $scope.link.callback("refresh");
                         $scope.onClose()();
                         $("#"+$scope.name).modal('hide');
                     };

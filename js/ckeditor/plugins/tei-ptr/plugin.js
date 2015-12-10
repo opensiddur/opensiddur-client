@@ -9,6 +9,12 @@
  * http://docs.ckeditor.com/#!/guide/widget_sdk_tutorial_2
  */
 
+/* TODO:
+    add context menu with the following options:
+        edit link (open dialog)
+        edit external file (if it's an external link)
+        refresh
+*/
 CKEDITOR.plugins.add( 'tei-ptr', {
 	requires: 'widget',
 
@@ -20,7 +26,8 @@ CKEDITOR.plugins.add( 'tei-ptr', {
             var injector = rootElement.injector();
             var InlineService = injector.get("InlineService");
             var TextService = injector.get("TextService");
-            var loadRemoteContent = function(element) {
+            var loadRemoteContent = function(element, refresh) {
+                var refresh = refresh || false;
                 // load remote content from the target
                 element.setHtml("Loading...");
                 var targetBase = element.getAttribute("data-target-base") || "" ;
@@ -29,7 +36,7 @@ CKEDITOR.plugins.add( 'tei-ptr', {
                     element.setHtml("<p>Double click here to set what should be transcluded.</p>");   
                 }
                 else {
-                    return InlineService.load(targetBase || encodeURIComponent(TextService.resource), targetFragment)
+                    return InlineService.load(targetBase || encodeURIComponent(TextService.resource), targetFragment, refresh)
                     .then(
                         function(data) {
                             element.setHtml(data);
@@ -63,13 +70,17 @@ CKEDITOR.plugins.add( 'tei-ptr', {
                         dataTargetFragment : el.getAttribute("data-target-fragment") || "",
                         id : el.getAttribute("id") || "" ,
                         linkType : (el.getAttribute("data-target-base") || "") == "" ? "internal" : "external",
-                        callback : function(ok) {
-                            if (ok) {
+                        callback : function(button) {
+                            if (button=="ok") {
                                 el.setAttribute("id", this.id);
                                 el.setAttribute("data-target-base",  this.dataTargetBase );
                                 el.setAttribute("data-target-fragment",  this.dataTargetFragment );
                                 el.removeAttribute("data-new");
                                 loadRemoteContent(el);
+                            }
+                            else if (button=="refresh") {
+                                // no changes other than refresh
+                                loadRemoteContent(el, true)
                             }
                             else {
                                 // cancel
@@ -94,9 +105,11 @@ CKEDITOR.plugins.add( 'tei-ptr', {
                         this.element.setAttribute("id", "ptr-" + Math.floor(Math.random()*1000000)).toString();
                     }
                     loadRemoteContent(this.element);
+
                 },
                 data: function() {
                 }
             } );
+            
     }
 } );
