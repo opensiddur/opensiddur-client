@@ -54,7 +54,7 @@ CKEDITOR.plugins.add( 'tei-ptr', {
                     'p[id,data-target-base,data-target-fragment](tei-ptr);*',
                 requiredContent: 'p(tei-ptr)',
                 template:
-                    '<p class="tei-ptr" id="" data-new="1" data-target-base="" data-target-fragment="">Loading...</p>',
+                    '<p class="tei-ptr" id="" data-os-new="1" data-target-base="" data-target-fragment="">Loading...</p>',
 
                 button: 'Create or edit a transclusion link',
 
@@ -63,7 +63,7 @@ CKEDITOR.plugins.add( 'tei-ptr', {
                     var DialogService = injector.get("DialogService");
                     var EditorDataService = injector.get("EditorDataService");
                     var el = this.element;
-                    var isNew = el.getAttribute("data-new");
+                    var isNew = el.getAttribute("data-os-new");
                     
                     EditorDataService.set("editLinkDialog", {
                         dataTargetBase : el.getAttribute("data-target-base") || "",
@@ -75,7 +75,7 @@ CKEDITOR.plugins.add( 'tei-ptr', {
                                 el.setAttribute("id", this.id);
                                 el.setAttribute("data-target-base",  this.dataTargetBase );
                                 el.setAttribute("data-target-fragment",  this.dataTargetFragment );
-                                el.removeAttribute("data-new");
+                                el.removeAttribute("data-os-new");
                                 loadRemoteContent(el);
                             }
                             else if (button=="refresh") {
