@@ -126,7 +126,8 @@
 
     <!-- html:p -> leave an anchor -->
     <!-- html:div(jf:annotation) -->
-    <xsl:template match="html:p[local:has-class(@class,'tei-p')]|html:div[local:has-class(@class, 'jf-annotation')]" 
+    <!-- html:div(jf:set) -->
+    <xsl:template match="html:p[local:has-class(@class,'tei-p')]|html:div[local:has-class(@class, 'jf-annotation')]|html:div[local:has-class(@class, 'jf-set')]" 
         mode="streamText">
         <tei:anchor>
             <xsl:variable name="classes" select="tokenize(@class, '\s+')"/>
@@ -208,6 +209,8 @@
                     else 'annotation'"/>
         </tei:link>
     </xsl:template>
+
+    <!-- TODO: links mode for jf-set -->
 
     <xsl:template match="*|text()" mode="links">
         <xsl:apply-templates mode="#current"/>

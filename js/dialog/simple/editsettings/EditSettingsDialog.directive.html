@@ -1,0 +1,68 @@
+<div class="osEditSettingsDialogSimple modal" aria-hidden="true" aria-labelledBy="editSettingsDialogSimpleHeader">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-ng-click="CloseButton()" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="editSettingsDialogSimpleHeader">{{ title }}</h4>
+            </div>
+            <div class="modal-body">
+              <div class="row">
+                <div class="col-md-8">
+                  <h4>New setting</h4>
+                  <form class="form-horizontal" name="NewSettingForm"> 
+                    <div class="form-group">
+                      <label class="control-label col-md-2" for="setting.type">Type</label>
+                      <div class="col-md-6">
+                        <input
+                          name="setting.type" 
+                          class="form-control" 
+                          ng-model="newSetting.type"/>
+                      </div>
+                    </div> 
+                    <div class="form-group">
+                      <label class="control-label col-md-2" for="setting.name">Name</label>
+                      <div class="col-md-6">
+                        <input 
+                          name="setting.name"
+                          class="form-control" 
+                          ng-model="newSetting.name"/>
+                      </div>
+                    </div> 
+                    <div class="form-group">
+                      <label class="control-label col-md-2" for="setting.name">Value</label>
+                      <div class="col-md-6">
+                        <select 
+                          name="setting.state"
+                          class="form-control" 
+                          ng-model="newSetting.state">
+                          <option value="YES">YES</option>
+                          <option value="NO">NO</option>
+                          <option value="MAYBE">MAYBE</option>
+                          <option value="ON">ON</option>
+                          <option value="OFF">OFF</option>
+                        </select>
+                      </div>
+                    </div> 
+                    <div class="form-group">
+                      <button type="button" class="btn" ng-click="setButton()" 
+                        ng-disabled="!(newSetting.type && newSetting.name && newSetting.state)">Set-&gt;</button>
+                    </div>
+                  </form>
+                </div>
+                <div class="col-md-4">
+                  <h4>Active settings</h4>
+                  <ul>
+                    <li ng-repeat="as in settings.active"><button class="btn" ng-click="unsetButton(as)">[&lt;-]</button><span class="active-type">{{as.type}}</span>-&gt;<span><span class="active-feature">{{as.name}}</span>=<span class="active-state">{{as.state}}</span></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn" data-ng-click="CloseButton()" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal"
+                    data-ng-click="OKButton()">Edit</button>
+            </div>
+        </div>
+    </div>
+</div>
+
