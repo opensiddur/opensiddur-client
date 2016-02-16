@@ -54,15 +54,15 @@
         </tei:fs>
     </xsl:template>
 
-    <xsl:template match="tei:f/text()"/>
-    <xsl:template match="j:on|j:yes|j:off|j:no|j:maybe"><xsl:sequence select="upper-case(local-name(.))"/></xsl:template>
-    <xsl:template match="tei:f/text()[upper-case(.)=('NO','OFF','YES','MAYBE','ON')]"><xsl:sequence select="upper-case(.)"/></xsl:template>
-
     <xsl:template match="element()">
         <xsl:apply-templates/>
     </xsl:template>
 
     <xsl:template match="j:settings/tei:fs[(@xml:id,@jf:id)=$ids-to-edit]"/>
+
+    <xsl:template match="j:settings/tei:fs">
+      <xsl:sequence select="."/>
+    </xsl:template>
 
     <xsl:template match="j:settings">
         <xsl:copy>
