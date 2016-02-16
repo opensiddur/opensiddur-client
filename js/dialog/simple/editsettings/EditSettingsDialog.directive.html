@@ -60,7 +60,8 @@
             <div class="modal-footer">
                 <button type="button" class="btn" data-ng-click="CloseButton()" data-dismiss="modal">Close</button>
                 <button type="button" class="btn btn-primary" data-dismiss="modal"
-                    data-ng-click="OKButton()">Edit</button>
+                    ng-disabled="settings.active.size == 0"
+                    ng-click="OKButton()">Edit</button>
             </div>
         </div>
     </div>

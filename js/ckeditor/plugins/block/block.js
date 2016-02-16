@@ -258,6 +258,20 @@ var BlockObject = function(editor, allowOverlap, allowAllNodeTypes) {
         rng.setStart((bound == "start") ? this.wrapper : otherWrapper,0);
         rng.setEnd((bound == "end") ? this.wrapper : otherWrapper, 1);
         editor.getSelection().selectRanges([rng]);
+    };
+    this.startBound = function(el) {
+      // API to find the starting bound of the block (which may be either el or something else)
+        var idtokens = el.getId().match(/^(start|end)_(.+)/);
+        var wrapper = el.getParent();
+        var bound = idtokens[1];
+        if (bound == "start") {
+          return el;
+        }
+        var thisId = idtokens[2];
+        var otherBound = "start";
+        var otherBoundId = otherBound + "_" + thisId;
+        var otherBoundElement = wrapper.getParent().findOne("*[id="+otherBoundId.replace(/[.]/g, "\\.")+"]");
+        return otherBoundElement;
     };  
     this.destroy = function(evt) {
         // destroy event handler. use in parallel with init()
