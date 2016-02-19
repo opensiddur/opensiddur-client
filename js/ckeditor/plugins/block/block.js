@@ -1,6 +1,6 @@
 /**
  * Common block functions  
- * Copyright 2015 Efraim Feinstein, efraim@opensiddur.org
+ * Copyright 2015-2016 Efraim Feinstein, efraim@opensiddur.org
  * Licensed under the GNU Lesser General Public License, version 3 or later
  *
  */
@@ -13,7 +13,7 @@ var BlockObject = function(editor, allowOverlap, allowAllNodeTypes) {
     var injector = angular.element('*[data-ng-app]').injector();
     this.TextService = injector.get("TextService");
     var getRandomId = function(blockType, elementType) {
-        return blockType + "_" + elementType + "_" + Math.floor(Math.random()*100000000).toString();
+        return blockType.replace("phony-", "") + "_" + Math.floor(Math.random()*100000000).toString();
     };
     var isBlockBoundary = function(node, blockType, id, boundary) {
         // returns true if the given node is a node/widget representing the given id's boundary
