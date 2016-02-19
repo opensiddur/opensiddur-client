@@ -28,9 +28,10 @@ CKEDITOR.plugins.add( 'jf-set', {
         
         var thiz = this;
         var blockObject = new BlockObject(editor, true, true);
+        /*
         var interval = $interval(function (evt) {
             editor.widgets.checkWidgets();
-        }, 1000);
+        }, 1000);*/
         var updateElementContent = function(el, jfSet) {
             var idtokens = el.getId().match(/^(start|end)_(.+)/);
             var thisBound = idtokens[1];

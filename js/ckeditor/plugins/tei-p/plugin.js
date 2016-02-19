@@ -19,7 +19,7 @@ CKEDITOR.plugins.add( 'tei-p', {
         var TextService = injector.get("TextService");
         var $interval = injector.get("$interval");
         // block plugins require check widgets every short interval
-        
+        // only 1 block plugin needs to do this, and this will be it 
         var thiz = this;
         var blockObject = new BlockObject(editor);
         var interval = $interval(function (evt) {

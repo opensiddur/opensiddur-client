@@ -27,10 +27,11 @@ CKEDITOR.plugins.add( 'jf-annotation', {
         
         var thiz = this;
         var blockObject = new BlockObject(editor, true, true);
+        /*
         var interval = $interval(function (evt) {
             editor.widgets.checkWidgets();
         }, 1000);
-
+        */
 
 		editor.widgets.add( 'jf-annotation', {
             draggable : false,
