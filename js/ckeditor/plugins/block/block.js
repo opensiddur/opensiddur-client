@@ -135,12 +135,14 @@ var BlockObject = function(editor, allowOverlap, allowAllNodeTypes) {
             var rng = new CKEDITOR.dom.range(editor.document);
             rng.setStart(start,0);
             rng.setEnd(end,0);
-            var iter = rng.createIterator(); 
+            var walker = new CKEDITOR.dom.walker(rng);  // iterator removes ids from nodes
+            walker.evaluator = function() { return true; }
             var nsegs = 0; 
             var maybe = null;
-            while (maybe = iter.getNextParagraph(elementType)) { 
-                if (isAllowedNodeType(maybe) || (maybe.getName() == elementType && maybe.getAttribute("class") == null)) nsegs++; 
-            }; 
+            while (maybe = walker.next()) { 
+                if (maybe.type == 1 && (isAllowedNodeType(maybe) || (maybe.getName() == elementType && maybe.getAttribute("class") == null))) nsegs++; 
+            };
+            delete walker; 
             if (nsegs == 0) {
                 start.remove();
                 end.remove();
