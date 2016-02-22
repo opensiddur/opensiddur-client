@@ -47,7 +47,7 @@
     </xsl:template>
 
     <xsl:template match="setting">
-        <tei:fs type="{type}" xml:id="{local:setting-id(.)}">
+        <tei:fs type="{type}" jf:id="{local:setting-id(.)}">
             <tei:f name="{name}">
               <xsl:element name="j:{lower-case(state)}"/>
             </tei:f>
@@ -58,7 +58,8 @@
         <xsl:apply-templates/>
     </xsl:template>
 
-    <xsl:template match="j:settings/tei:fs[(@xml:id,@jf:id)=$ids-to-edit]"/>
+    <xsl:template match="j:settings/tei:fs[(@xml:id,@jf:id)=$ids-to-edit]" priority="100">
+    </xsl:template>
 
     <xsl:template match="j:settings/tei:fs">
       <xsl:sequence select="."/>
