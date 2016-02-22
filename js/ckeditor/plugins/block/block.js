@@ -1,6 +1,6 @@
 /**
  * Common block functions  
- * Copyright 2015 Efraim Feinstein, efraim@opensiddur.org
+ * Copyright 2015-2016 Efraim Feinstein, efraim@opensiddur.org
  * Licensed under the GNU Lesser General Public License, version 3 or later
  *
  */
@@ -13,7 +13,7 @@ var BlockObject = function(editor, allowOverlap, allowAllNodeTypes) {
     var injector = angular.element('*[data-ng-app]').injector();
     this.TextService = injector.get("TextService");
     var getRandomId = function(blockType, elementType) {
-        return blockType + "_" + elementType + "_" + Math.floor(Math.random()*100000000).toString();
+        return blockType.replace("phony-", "") + "_" + Math.floor(Math.random()*100000000).toString();
     };
     var isBlockBoundary = function(node, blockType, id, boundary) {
         // returns true if the given node is a node/widget representing the given id's boundary
@@ -135,12 +135,14 @@ var BlockObject = function(editor, allowOverlap, allowAllNodeTypes) {
             var rng = new CKEDITOR.dom.range(editor.document);
             rng.setStart(start,0);
             rng.setEnd(end,0);
-            var iter = rng.createIterator(); 
+            var walker = new CKEDITOR.dom.walker(rng);  // iterator removes ids from nodes
+            walker.evaluator = function() { return true; }
             var nsegs = 0; 
             var maybe = null;
-            while (maybe = iter.getNextParagraph(elementType)) { 
-                if (isAllowedNodeType(maybe) || (maybe.getName() == elementType && maybe.getAttribute("class") == null)) nsegs++; 
-            }; 
+            while (maybe = walker.next()) { 
+                if (maybe.type == 1 && (isAllowedNodeType(maybe) || (maybe.getName() == elementType && maybe.getAttribute("class") == null))) nsegs++; 
+            };
+            delete walker; 
             if (nsegs == 0) {
                 start.remove();
                 end.remove();
@@ -258,6 +260,20 @@ var BlockObject = function(editor, allowOverlap, allowAllNodeTypes) {
         rng.setStart((bound == "start") ? this.wrapper : otherWrapper,0);
         rng.setEnd((bound == "end") ? this.wrapper : otherWrapper, 1);
         editor.getSelection().selectRanges([rng]);
+    };
+    this.startBound = function(el) {
+      // API to find the starting bound of the block (which may be either el or something else)
+        var idtokens = el.getId().match(/^(start|end)_(.+)/);
+        var wrapper = el.getParent();
+        var bound = idtokens[1];
+        if (bound == "start") {
+          return el;
+        }
+        var thisId = idtokens[2];
+        var otherBound = "start";
+        var otherBoundId = otherBound + "_" + thisId;
+        var otherBoundElement = wrapper.getParent().findOne("*[id="+otherBoundId.replace(/[.]/g, "\\.")+"]");
+        return otherBoundElement;
     };  
     this.destroy = function(evt) {
         // destroy event handler. use in parallel with init()

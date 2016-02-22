@@ -46,3 +46,29 @@ img.editor-icon {
     content: ")"
 }
 
+.jf-set.start{
+    margin-top: 2px;
+    border-top: 1px solid red;
+    border-left: 1px solid red;
+    border-right: 1px solid red;
+    border-bottom: 1px dashed red;
+}
+.jf-set.end{
+    margin-bottom: 2px;
+    border-bottom: 1px solid red;
+    border-left: 1px solid red;
+    border-right: 1px solid red;
+    border-top: 1px dashed red;
+}
+.jf-set ul {
+    font-size: 50%;
+    font-family: monospace;
+    list-style-type: none;
+}
+.jf-set ul li {
+    display: inline;
+    color: #ff0;
+    background-color:#990000;
+    padding: 0.1em 0.5em;
+    margin: 0.1em 0.5em;   
+}

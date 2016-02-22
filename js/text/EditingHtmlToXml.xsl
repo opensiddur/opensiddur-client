@@ -126,7 +126,8 @@
 
     <!-- html:p -> leave an anchor -->
     <!-- html:div(jf:annotation) -->
-    <xsl:template match="html:p[local:has-class(@class,'tei-p')]|html:div[local:has-class(@class, 'jf-annotation')]" 
+    <!-- html:div(jf:set) -->
+    <xsl:template match="html:p[local:has-class(@class,'tei-p')]|html:div[local:has-class(@class, 'jf-annotation')]|html:p[local:has-class(@class, 'jf-set')]" 
         mode="streamText">
         <tei:anchor>
             <xsl:variable name="classes" select="tokenize(@class, '\s+')"/>
@@ -180,7 +181,6 @@
     <xsl:template match="j:links">
         <xsl:variable name="link-content" as="element(tei:link)*">
             <xsl:apply-templates select="//jf:merged" mode="links"/>
-            <xsl:apply-templates select="tei:link[@type='set']"/>
         </xsl:variable>
         <xsl:if test="exists($link-content)">
             <xsl:copy copy-namespaces="no">
@@ -207,6 +207,13 @@
                     then 'note' 
                     else 'annotation'"/>
         </tei:link>
+    </xsl:template>
+
+    <xsl:template match="html:p[local:has-class(@class, 'jf-set')][starts-with(@id, 'start_')]" mode="links">
+      <xsl:variable name="target" select="concat('#range(',@id,',', replace(@id, '^start_', 'end_') ,')')"/>
+      <xsl:for-each select="tokenize(@data-jf-set, '\s+')">
+        <tei:link type="set" target="{$target} {.}"/>
+      </xsl:for-each>
     </xsl:template>
 
     <xsl:template match="*|text()" mode="links">

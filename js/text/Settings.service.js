@@ -43,7 +43,41 @@ osTextModule.factory("SettingsService", [
                         true
                     )
                 );
-            }
+            },
+            getSettingsByPointer : function(ptr) {
+              // get settings by pointer
+              var setXml = ptr ? XsltService.transformString("/js/text/ActiveSettings.get.xsl", TextService.content(), { id : ptr }) : undefined;
+              var setJs = ptr ? xj.xml2json(setXml) : {settings : ""}; 
+              if (typeof(setJs.settings)=="string" || !("setting" in setJs.settings)) {
+                // no current settings
+                setJs.settings = {};
+                setJs.settings.setting = [];
+                setJs.settings.setting_asArray = [];
+              }
+              return setJs;
+            },
+            setSettings : function(settings) {
+              // put the settings in a settings structure (like from getSettingsByPointer()) 
+              // into a document. Return shorthand pointers to the settings xmls.
+              var cleanup = function(x) {
+                return x.replace(/[^\w-]+/g, "_")
+              };
+              var settingsXml = xj.json2xml(angular.fromJson(angular.toJson(settings)));
+              var ptrs = settings.settings.setting.map(
+                function(s) {
+                  return '#'+cleanup(s.type)+"_"+cleanup(s.name)+"_"+cleanup(s.state);
+                }
+              );
+              TextService.content(
+                XsltService.serializeToStringTEINSClean(
+                  XsltService.transformString("/js/text/ActiveSettings.set.xsl",
+                    TextService.content(), {
+                      "settings" : settingsXml
+                    }), true
+                )
+              );
+              return ptrs;
+            } 
         };
     }
 ]);
