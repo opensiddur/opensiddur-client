@@ -72,3 +72,12 @@ img.editor-icon {
     padding: 0.1em 0.5em;
     margin: 0.1em 0.5em;   
 }
+
+.tei-ptr {
+    margin-top: 2px;
+    border: 2px solid blue;
+}
+
+.tei-ptr[data-type=inline] {
+    border: 2px dashed blue;
+}
