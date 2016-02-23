@@ -2,7 +2,7 @@
     Get the properties and text of the segments in a given resource. 
 
     Open Siddur Project
-    Copyright 2015 Efraim Feinstein, efraim@opensiddur.org
+    Copyright 2015-2016 Efraim Feinstein, efraim@opensiddur.org
     Licensed under the GNU Lesser General Public License, version 3 or later
 -->
 <xsl:stylesheet 
@@ -26,7 +26,7 @@
             <element><xsl:value-of select="name()"/></element>
             <text><xsl:value-of select="normalize-space(.)"/></text>
             <target><xsl:value-of select="self::tei:ptr/@target"/></target>
-            <external><xsl:sequence select="if (self::tei:ptr and substring-before(@target,'#')) then 1 else 0"/></external>
+            <external><xsl:sequence select="if (self::tei:ptr[not(@type='inline')] and substring-before(@target,'#')) then 1 else 0"/></external>
             <inblock>0</inblock>
         </segment>
     </xsl:template>

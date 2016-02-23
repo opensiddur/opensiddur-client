@@ -2,7 +2,7 @@
  * tei:ptr widget, based on simplebox widget:
  * Copyright (c) 2014, CKSource - Frederico Knabben. All rights reserved.
  * Licensed under the terms of the MIT License (see LICENSE.md).
- * Modifications copyright 2015 Efraim Feinstein, efraim@opensiddur.org
+ * Modifications copyright 2015-2016 Efraim Feinstein, efraim@opensiddur.org
  * Licensed under the GNU Lesser General Public License, version 3 or later
  *
  * Created out of the CKEditor Widget SDK:
@@ -68,6 +68,7 @@ CKEDITOR.plugins.add( 'tei-ptr', {
                     EditorDataService.set("editLinkDialog", {
                         dataTargetBase : el.getAttribute("data-target-base") || "",
                         dataTargetFragment : el.getAttribute("data-target-fragment") || "",
+                        dataType : el.getAttribute("data-type") || "",
                         id : el.getAttribute("id") || "" ,
                         linkType : (el.getAttribute("data-target-base") || "") == "" ? "internal" : "external",
                         callback : function(button) {
@@ -75,6 +76,12 @@ CKEDITOR.plugins.add( 'tei-ptr', {
                                 el.setAttribute("id", this.id);
                                 el.setAttribute("data-target-base",  this.dataTargetBase );
                                 el.setAttribute("data-target-fragment",  this.dataTargetFragment );
+                                if (this.dataType == "inline") {
+                                  el.setAttribute("data-type", this.dataType);
+                                }
+                                else {
+                                  el.removeAttribute("data-type");
+                                }
                                 el.removeAttribute("data-os-new");
                                 loadRemoteContent(el);
                             }
