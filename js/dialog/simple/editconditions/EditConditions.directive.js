@@ -1,0 +1,97 @@
+/* edit conditions properties dialog for simple editor
+ *
+ * Usage:
+ * <os-edit-conditions-simple-dialog on-ok="" on-close="" title="" name=""  />
+ * on-ok runs when the OK button is pressed, on-close runs when the dialog is canceled
+ * name is an id, title is the header text
+ * Data is transfered via "editConditionsDialog" in EditorDataService
+ *
+ * Copyright 2016 Efraim Feinstein, efraim@opensiddur.org
+ * Licensed under the GNU Lesser General Public License, version 3 or later
+ */
+dialogSimpleEditConditionsModule.directive(
+        'osEditConditionsDialogSimple',
+        [
+        'EditorDataService', 'ConditionalsService', 'TextService', 
+        function( EditorDataService, ConditionalsService, TextService ) {
+            return {
+                restrict : 'AE',
+                scope : {
+                    onOk : "&",
+                    onClose : "&",
+                    name : "@",
+                    title : "@"
+                },
+                controller: ['$scope', function ($scope) {
+                    console.log("In edit conditions dialog (simple) controller");
+                    $scope.exampleButtonText = {
+                      false : "Examples >",
+                      true : "< Examples"
+                    };
+                    $scope.exampleButtonState = false;
+                    /* TODO: edit this code:
+                    $scope.query = {
+                      q : "",
+                      start : 1,
+                      "max-results" : 100
+                    };
+                    $scope.newSetting = {
+                      type : "",
+                      name : "",
+                      state : ""
+                    };
+                    $scope.setButton = function() {
+                      $scope.settings.active.push(angular.copy($scope.newSetting));
+                    };
+                    $scope.unsetButton = function(toUnset) {
+                      $scope.settings.active.splice($scope.settings.active.indexOf(toUnset),1);
+                    };
+                    */ 
+                    $scope.toggleExamples = function() {
+                      $scope.exampleButtonState = !$scope.exampleButtonState;
+                    };
+                    $scope.parseError = undefined;
+                    $scope.parseSuccess = function() {
+                      try {
+                        $scope.parseError = "";
+                        return ConditionalsService.parse($scope.conditions.active[0].__text);
+                      }
+                      catch (e) {
+                        $scope.parseError = e.message;
+                      }
+                    };
+                    $scope.OKButton = function () {
+                        $scope.conditions.callback(true);
+                        $scope.onOk()();
+                        $("#"+$scope.name).modal('hide');
+                    };
+                    $scope.CloseButton = function () {
+                        $scope.conditions.callback(false);
+                        $scope.onClose()();
+                        $("#"+$scope.name).modal('hide');
+                    };
+                    if (!$scope.title) {
+                        $scope.title = "Edit Conditions";
+                    }
+                 }],
+                 link: function(scope, elem, attrs, ctrl) {
+                    elem.find(".modal-header h4").attr("id", scope.name + "_label");
+                    elem.find(".osEditConditionsDialogSimple").attr("aria-labelledBy", scope.name + "_label");
+                    elem.find(".osEditConditionsDialogSimple").attr("id", scope.name);
+
+                    elem.on("shown.bs.modal", function () {
+                        scope.parseError = undefined;
+                        scope.conditions = EditorDataService.editConditionsDialog;
+                        if (!("active" in scope.conditions)) {
+                          scope.conditions.active = [];
+                        } 
+                        scope.$apply();
+                    });
+                 },
+                 transclude : false,
+                 templateUrl : "/js/dialog/simple/editconditions/EditConditions.directive.html"
+             };
+        }
+        ]
+);
+
