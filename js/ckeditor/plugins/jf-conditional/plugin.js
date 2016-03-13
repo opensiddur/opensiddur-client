@@ -49,7 +49,6 @@ CKEDITOR.plugins.add( 'jf-conditional', {
             );
             editor.fire("change");
         };
-
 		editor.widgets.add( 'jf-conditional', {
             draggable : false,
             inline : false, 
@@ -69,6 +68,7 @@ CKEDITOR.plugins.add( 'jf-conditional', {
                 var randomId =  "conditional_" + parseInt(Math.random()*10000000) ;
                 var myId = el.getAttribute("id") || randomId;
                 var initialConditionPointers = el.getAttribute("data-jf-conditional");
+                var wid = this;
                 if (initialConditionPointers) {
                   activeConditions = ConditionalsService.getByPointer(initialConditionPointers);
                 }
@@ -78,7 +78,7 @@ CKEDITOR.plugins.add( 'jf-conditional', {
                 EditorDataService.set("editConditionsDialog", {
                     active : activeConditions,
                     callback : function(ok) {
-                        if (ok) {
+                        if (ok == "ok") {
                             // set the jf-conditional to the current values of activeConditions
                             activeConditions = activeConditions.map(function(c) {
                               if (!c._id) {
@@ -92,10 +92,19 @@ CKEDITOR.plugins.add( 'jf-conditional', {
                             }).join(" ");
                             el.setAttribute("data-jf-conditional", jfConditionals);
                             el.setAttribute("id", myId);
-                            // artificially send a change event to ng-ckeditor so it will update the scope
+                            el.removeAttribute("data-os-new");
                             updateElementContent(el, jfConditionals);
-                            editor.fire("change");
                         }
+                        else if (ok == "cancel") {
+                          if (el.hasAttribute("data-os-new")) {
+                            wid.destroy();
+                          }
+                        }
+                        else if (ok == "remove") {
+                            wid.destroy();
+                        }
+                        // artificially send a change event to ng-ckeditor so it will update the scope
+                        editor.fire("change");
                     }
                 });
                 DialogService.open("editConditionsDialogSimple");
@@ -105,7 +114,7 @@ CKEDITOR.plugins.add( 'jf-conditional', {
                 blockObject.insert(
                     "phony-conditional", "p", "jf-conditional",
                     function(id) {  // beginTemplate 
-                        return '<p id="start_'+id+'" data-jf-conditional="" class="jf-conditional layer layer-phony-conditional start">'+  
+                        return '<p id="start_'+id+'" data-jf-conditional="" class="jf-conditional layer layer-phony-conditional start" data-os-new="1">'+  
                                '</p>'; 
                     },
                     function(id) {  // endTemplate
@@ -124,6 +133,12 @@ CKEDITOR.plugins.add( 'jf-conditional', {
                 var jfConditional = this.element.getAttribute("data-jf-conditional");
                 var el = this.element;
                 updateElementContent(el, jfConditional);
+                /* show a dialog when ready */
+                this.on("ready", function(evt) {
+                  if (this.element.hasAttribute("data-os-new")) {
+                    this.edit();
+                  }
+                });
 			},
             destroy : blockObject.destroy,
 			data: function() {

@@ -29,24 +29,6 @@ dialogSimpleEditConditionsModule.directive(
                       true : "< Examples"
                     };
                     $scope.exampleButtonState = false;
-                    /* TODO: edit this code:
-                    $scope.query = {
-                      q : "",
-                      start : 1,
-                      "max-results" : 100
-                    };
-                    $scope.newSetting = {
-                      type : "",
-                      name : "",
-                      state : ""
-                    };
-                    $scope.setButton = function() {
-                      $scope.settings.active.push(angular.copy($scope.newSetting));
-                    };
-                    $scope.unsetButton = function(toUnset) {
-                      $scope.settings.active.splice($scope.settings.active.indexOf(toUnset),1);
-                    };
-                    */ 
                     $scope.toggleExamples = function() {
                       $scope.exampleButtonState = !$scope.exampleButtonState;
                     };
@@ -60,13 +42,18 @@ dialogSimpleEditConditionsModule.directive(
                         $scope.parseError = e.message;
                       }
                     };
+                    $scope.RemoveButton = function() {
+                        $scope.conditions.callback("remove");
+                        $scope.onClose()();
+                        $("#"+$scope.name).modal('hide');
+                    };
                     $scope.OKButton = function () {
-                        $scope.conditions.callback(true);
+                        $scope.conditions.callback("ok");
                         $scope.onOk()();
                         $("#"+$scope.name).modal('hide');
                     };
                     $scope.CloseButton = function () {
-                        $scope.conditions.callback(false);
+                        $scope.conditions.callback("cancel");
                         $scope.onClose()();
                         $("#"+$scope.name).modal('hide');
                     };

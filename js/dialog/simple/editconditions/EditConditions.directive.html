@@ -37,7 +37,8 @@
               </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn" data-ng-click="CloseButton()" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-danger" ng-click="RemoveButton()" data-dismiss="modal">Remove conditions</button>
+                <button type="button" class="btn" ng-click="CloseButton()" data-dismiss="modal">Close</button>
                 <button type="button" class="btn btn-primary" data-dismiss="modal"
                     ng-disabled="settings.conditions.active.size == 0"
                     ng-click="OKButton()">Edit</button>
