@@ -73,6 +73,34 @@ img.editor-icon {
     margin: 0.1em 0.5em;   
 }
 
+.jf-conditional.start{
+    margin-top: 2px;
+    border-top: 1px solid green;
+    border-left: 1px solid green;
+    border-right: 1px solid green;
+    border-bottom: 1px dashed green;
+}
+.jf-conditional.end{
+    margin-bottom: 2px;
+    border-bottom: 1px solid green;
+    border-left: 1px solid green;
+    border-right: 1px solid green;
+    border-top: 1px dashed green;
+}
+.jf-conditional ul {
+    font-size: 50%;
+    font-family: monospace;
+    list-style-type: none;
+}
+.jf-conditional ul li {
+    display: inline;
+    color: #ff0;
+    background-color:#990000;
+    padding: 0.1em 0.5em;
+    margin: 0.1em 0.5em;   
+}
+
+
 .tei-ptr {
     margin-top: 2px;
     border: 2px solid blue;
