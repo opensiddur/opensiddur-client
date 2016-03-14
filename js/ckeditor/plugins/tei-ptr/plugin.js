@@ -64,6 +64,7 @@ CKEDITOR.plugins.add( 'tei-ptr', {
                     var EditorDataService = injector.get("EditorDataService");
                     var el = this.element;
                     var isNew = el.getAttribute("data-os-new");
+                    var wid = this;
                     
                     EditorDataService.set("editLinkDialog", {
                         dataTargetBase : el.getAttribute("data-target-base") || "",
@@ -93,7 +94,7 @@ CKEDITOR.plugins.add( 'tei-ptr', {
                                 // cancel
                                 if (isNew) {
                                     // remove the element
-                                    el.remove(false);
+                                    wid.wrapper.remove();
                                 }   
                             }
                             editor.fire("change");
