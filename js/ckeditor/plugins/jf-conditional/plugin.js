@@ -134,7 +134,7 @@ CKEDITOR.plugins.add( 'jf-conditional', {
                 var el = this.element;
                 updateElementContent(el, jfConditional);
                 /* show a dialog when ready */
-                this.on("ready", function(evt) {
+                this.once("ready", function(evt) {
                   if (this.element.hasAttribute("data-os-new")) {
                     this.edit();
                   }
