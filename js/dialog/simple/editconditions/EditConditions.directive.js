@@ -12,8 +12,8 @@
 dialogSimpleEditConditionsModule.directive(
         'osEditConditionsDialogSimple',
         [
-        'EditorDataService', 'ConditionalsService', 'TextService', 
-        function( EditorDataService, ConditionalsService, TextService ) {
+        'EditorDataService', 'ConditionalsService', 'LanguageService', 'TextService', 
+        function( EditorDataService, ConditionalsService, LanguageService, TextService ) {
             return {
                 restrict : 'AE',
                 scope : {
@@ -65,6 +65,8 @@ dialogSimpleEditConditionsModule.directive(
                     elem.find(".modal-header h4").attr("id", scope.name + "_label");
                     elem.find(".osEditConditionsDialogSimple").attr("aria-labelledBy", scope.name + "_label");
                     elem.find(".osEditConditionsDialogSimple").attr("id", scope.name);
+
+                    scope.LanguageService = LanguageService;
 
                     elem.on("shown.bs.modal", function () {
                         scope.parseError = undefined;

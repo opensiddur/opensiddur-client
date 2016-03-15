@@ -19,6 +19,7 @@ CKEDITOR.plugins.add( 'jf-conditional', {
         var formElement = angular.element('form[name=textsForm]'); 
         var injector = rootElement.injector();
         var TextService = injector.get("TextService");
+        var AnnotationsService = injector.get("AnnotationsService");
         var ConditionalsService = injector.get("ConditionalsService");
         var $interval = injector.get("$interval");
         var $timeout = injector.get("$timeout");
@@ -35,6 +36,7 @@ CKEDITOR.plugins.add( 'jf-conditional', {
             var idtokens = el.getId().match(/^(start|end)_(.+)/);
             var thisBound = idtokens[1];
             var cnds = "";
+            var instruction = "";
             if (thisBound == "start" && jfConditional) {
               var activeConditionalsList = ConditionalsService.getByPointer(jfConditional).map(function(c) {
                 return ('<li class="editor-internal editor-conditional">'+
@@ -42,10 +44,30 @@ CKEDITOR.plugins.add( 'jf-conditional', {
                         '</li>')
               }).join("");
               cnds = '<ul class="editor-internal editor-conditionals">' + activeConditionalsList + '</ul>';
+              // load conditional-instruction
+              instruction = '<div class="tei-note" data-type="instruction" id=""></div>';
+              conditionalInstruction = el.getAttribute("data-jf-conditional-instruction");
+              if (conditionalInstruction && !el.hasAttribute("data-os-instruction-loaded")) {
+                if (el.hasAttribute("data-os-changed")) {
+                  instruction =  el.findOne("div.tei-note").getOuterHtml();
+                }
+                else {
+                  var spl = conditionalInstruction.split("#");
+                  var resource = spl[0].split("/").pop();
+                  var fragment = spl[1];
+                  AnnotationsService.getNote(decodeURIComponent(resource), fragment)
+                  .then(function(instruction) {
+                    var instructionAnnotation = new CKEDITOR.dom.element.createFromHtml(instruction);
+                    instructionAnnotation.replace(el.getElementsByTag("div").getItem(0));
+                    el.setAttribute("data-os-instruction-loaded", "1");
+                  });
+                }
+              }
             }
             el.setHtml(
               '<img class="editor-internal editor-icon" src="/img/icons_32x32/icon_if-conditional.png"></img>' + (thisBound == "start" ? "&#x21d3;" : "&#x21d1;") +
-              cnds
+              cnds +
+              instruction
             );
             editor.fire("change");
         };
@@ -53,8 +75,9 @@ CKEDITOR.plugins.add( 'jf-conditional', {
             draggable : false,
             inline : false, 
 			allowedContent:
-				'p[id](jf-conditional,layer,layer-phony-set,start,end);' + 
-                'img[src,alt,title]' +
+				'p[id](jf-conditional,layer,layer-phony-set,start,end);' +
+                'div[id](tei-note);' + 
+                'img[src,alt,title];' +
                 '*(editor-*)',
 			requiredContent: 'p(jf-conditional)',
 
@@ -69,6 +92,10 @@ CKEDITOR.plugins.add( 'jf-conditional', {
                 var myId = el.getAttribute("id") || randomId;
                 var initialConditionPointers = el.getAttribute("data-jf-conditional");
                 var wid = this;
+
+                var instructionElement = el.findOne("div.tei-note");
+                var randomInstructionId =  "note_" + parseInt(Math.random()*10000000) ;
+
                 if (initialConditionPointers) {
                   activeConditions = ConditionalsService.getByPointer(initialConditionPointers);
                 }
@@ -77,6 +104,15 @@ CKEDITOR.plugins.add( 'jf-conditional', {
                 }
                 EditorDataService.set("editConditionsDialog", {
                     active : activeConditions,
+                    instruction : (instructionElement ? {
+                      id : instructionElement.getAttribute("id") || randomInstructionId,
+                      lang : instructionElement.getAttribute("lang") || "en",
+                      content : instructionElement.getHtml()
+                    } : {
+                      id : randomInstructionId,
+                      lang : "en",
+                      content : ""
+                    }),
                     callback : function(ok) {
                         if (ok == "ok") {
                             // set the jf-conditional to the current values of activeConditions
@@ -93,6 +129,21 @@ CKEDITOR.plugins.add( 'jf-conditional', {
                             el.setAttribute("data-jf-conditional", jfConditionals);
                             el.setAttribute("id", myId);
                             el.removeAttribute("data-os-new");
+                            // set jf-conditional-instruction
+                            instructionElement.setHtml(this.instruction.content);
+                          
+                            instructionElement.setAttribute("lang", this.instruction.lang);
+                            instructionElement.setAttribute("data-type", "instruction");
+                            instructionElement.setAttribute("id", this.instruction.id);
+                            if (this.instruction.content.replace(/\s+/, "")) {
+                              // all instructions should be local
+                              el.setAttribute("data-jf-conditional-instruction", "/data/notes/#" + this.instruction.id);
+                            }
+                            else {
+                              // there is no instruction text
+                              el.removeAttribute("data-jf-conditional-instruction");
+                            }
+                            el.setAttribute("data-os-changed", "1");
                             updateElementContent(el, jfConditionals);
                         }
                         else if (ok == "cancel") {
