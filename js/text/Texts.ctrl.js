@@ -115,8 +115,8 @@ osTextModule.controller(
             removeButtons : 'Paste,PasteFromWord',  
             allowedContent :
                 "p[!id,data-target-base,data-target-fragment,data-type](tei-ptr);"+
-                "p[!id](tei-seg,tei-p,jf-conditional,jf-set,layer-phony-conditional,layer-phony-set,layer-p,layer,start,end);" +
-                "div[!id](jf-annotation,layer-phony-annotation,layer,start,end);" +
+                "p[!id](tei-seg,tei-p,jf-set,layer-phony-set,layer-p,layer,start,end);" +
+                "div[!id](jf-annotation,jf-conditional,layer-phony-annotation,layer-phony-conditional,layer,start,end);" +
                 "div[id](tei-note);" +
                 "*[id,lang,dir,data-*];" +
                 "img[src,alt,title];" +

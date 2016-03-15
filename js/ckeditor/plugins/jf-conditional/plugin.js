@@ -75,11 +75,11 @@ CKEDITOR.plugins.add( 'jf-conditional', {
             draggable : false,
             inline : false, 
 			allowedContent:
-				'p[id](jf-conditional,layer,layer-phony-set,start,end);' +
+				'div[id](jf-conditional,layer,layer-phony-conditional,start,end);' +
                 'div[id](tei-note);' + 
                 'img[src,alt,title];' +
                 '*(editor-*)',
-			requiredContent: 'p(jf-conditional)',
+			requiredContent: 'div(jf-conditional)',
 
 			button: 'Set conditional inclusion expression',
             edit : function ( evt) {
@@ -163,19 +163,19 @@ CKEDITOR.plugins.add( 'jf-conditional', {
             },
             insert: function() {
                 blockObject.insert(
-                    "phony-conditional", "p", "jf-conditional",
+                    "phony-conditional", "div", "jf-conditional",
                     function(id) {  // beginTemplate 
-                        return '<p id="start_'+id+'" data-jf-conditional="" class="jf-conditional layer layer-phony-conditional start" data-os-new="1">'+  
-                               '</p>'; 
+                        return '<div id="start_'+id+'" data-jf-conditional="" class="jf-conditional layer layer-phony-conditional start" data-os-new="1">'+  
+                               '</div>'; 
                     },
                     function(id) {  // endTemplate
-                        return '<p id="end_'+id+'" class="jf-conditional layer layer-phony-conditional end">&#x21d1;'+'</p>';
+                        return '<div id="end_'+id+'" class="jf-conditional layer layer-phony-conditional end">&#x21d1;'+'</div>';
                     }
 
                 );
             },
 			upcast: function( element ) {
-				return element.name == 'p' && element.hasClass( 'jf-conditional' );
+				return element.name == 'div' && element.hasClass( 'jf-conditional' );
 			},
 			init: function(ev) {
                 //this.on( 'doubleclick', blockObject.doubleclick);

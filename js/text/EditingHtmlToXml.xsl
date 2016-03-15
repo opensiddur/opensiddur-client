@@ -127,8 +127,8 @@
     <!-- html:p -> leave an anchor -->
     <!-- html:div(jf:annotation) -->
     <!-- html:p(jf:set) -->
-    <!-- html:p(jf:conditional) -->
-    <xsl:template match="html:p[local:has-class(@class,'tei-p')]|html:div[local:has-class(@class, 'jf-annotation')]|html:p[local:has-class(@class, 'jf-set')]|html:p[local:has-class(@class, 'jf-conditional')]" 
+    <!-- html:div(jf:conditional) -->
+    <xsl:template match="html:p[local:has-class(@class,'tei-p')]|html:div[local:has-class(@class, 'jf-annotation')]|html:p[local:has-class(@class, 'jf-set')]|html:div[local:has-class(@class, 'jf-conditional')]" 
         mode="streamText">
         <tei:anchor>
             <xsl:variable name="classes" select="tokenize(@class, '\s+')"/>
@@ -217,7 +217,7 @@
       </xsl:for-each>
     </xsl:template>
     
-    <xsl:template match="html:p[local:has-class(@class, 'jf-conditional')][starts-with(@id, 'start_')]" mode="links">
+    <xsl:template match="html:div[local:has-class(@class, 'jf-conditional')][starts-with(@id, 'start_')]" mode="links">
       <xsl:variable name="target" select="concat('#range(',@id,',', replace(@id, '^start_', 'end_') ,')')"/>
       <!-- partial preparation for conditional-instruction support -->
       <xsl:variable name="instruction" as="xs:string?">
@@ -240,7 +240,7 @@
     </xsl:template>
 
     <!-- condition-ids mode: find which condition jf:ids are required to be preserved -->
-    <xsl:template match="html:p[local:has-class(@class, 'jf-conditional')]" mode="condition-ids" as="xs:string*">
+    <xsl:template match="html:div[local:has-class(@class, 'jf-conditional')]" mode="condition-ids" as="xs:string*">
       <xsl:sequence select="for $token in tokenize(@data-jf-conditional, '\s+')
           return substring-after($token, '#')"/>
     </xsl:template>
