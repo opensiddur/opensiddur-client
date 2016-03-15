@@ -40,7 +40,7 @@ CKEDITOR.plugins.add( 'jf-annotation', {
 				'div[id](jf-annotation,tei-note,layer,layer-phony-annotation,start,end);' + 
                 'div[id](tei-note);' +
                 'span(type,resource,annotation-id);' +
-                'img[src,alt,title]' +
+                'img[src,alt,title];' +
                 '*(editor-*)',
 			requiredContent: 'div(jf-annotation)',
 
