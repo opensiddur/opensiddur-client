@@ -39,7 +39,7 @@ CKEDITOR.plugins.add( 'jf-set', {
             if (thisBound == "start" && jfSet) {
               var activeSettingsList = SettingsService.getSettingsByPointer(jfSet).settings.setting_asArray.map(function(s) {
                 return ('<li class="editor-internal editor-setting">'+
-                        '<span class="editor-internal editor-setting-type">'+s.type+'</span>-&gt;<span class="editor-internal editor-setting-name">'+s.name+'</span>=<span class="editor-internal editor-setting-state">'+s.state+'</span>'+
+                        '<span class="editor-internal editor-setting-type">'+s.type+'</span>$<span class="editor-internal editor-setting-name">'+s.name+'</span>=<span class="editor-internal editor-setting-state">'+s.state+'</span>'+
                         '</li>')
               }).join("");
               sets = '<ul class="editor-internal editor-settings">' + activeSettingsList + '</ul>';

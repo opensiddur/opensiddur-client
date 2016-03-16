@@ -51,7 +51,7 @@
 
     <!-- elements -->
     <xsl:template match="*[@jf:start]">
-        <xsl:element name="{if (self::jf:annotation) then 'div' else 'p'}">
+        <xsl:element name="{if (self::jf:annotation or self::jf:conditional) then 'div' else 'p'}">
             <xsl:attribute name="id" select="concat('start_',@jf:start)"/>  <!-- id has to conform to the client expectations -->
             <xsl:apply-templates select="@* except @jf:start"/>
             <xsl:call-template name="class-attribute"/>
@@ -62,7 +62,7 @@
     </xsl:template>
 
     <xsl:template match="*[@jf:end]">
-        <xsl:element name="{if (self::jf:annotation) then 'div' else 'p'}">
+        <xsl:element name="{if (self::jf:annotation or self::jf:conditional) then 'div' else 'p'}">
             <xsl:attribute name="id" select="concat('end_',@jf:end)"/>  <!-- id has to conform to the client expectations -->
             <xsl:apply-templates select="@* except @jf:end"/>
             <xsl:call-template name="class-attribute"/>

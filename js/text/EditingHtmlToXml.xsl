@@ -4,7 +4,7 @@
     Note: only streamText mode is currently supported.
 
     Open Siddur Project
-    Copyright 2015 Efraim Feinstein, efraim@opensiddur.org
+    Copyright 2015-2016 Efraim Feinstein, efraim@opensiddur.org
     Licensed under the GNU Lesser General Public License, version 3 or later
 -->
 <xsl:stylesheet 
@@ -126,8 +126,9 @@
 
     <!-- html:p -> leave an anchor -->
     <!-- html:div(jf:annotation) -->
-    <!-- html:div(jf:set) -->
-    <xsl:template match="html:p[local:has-class(@class,'tei-p')]|html:div[local:has-class(@class, 'jf-annotation')]|html:p[local:has-class(@class, 'jf-set')]" 
+    <!-- html:p(jf:set) -->
+    <!-- html:div(jf:conditional) -->
+    <xsl:template match="html:p[local:has-class(@class,'tei-p')]|html:div[local:has-class(@class, 'jf-annotation')]|html:p[local:has-class(@class, 'jf-set')]|html:div[local:has-class(@class, 'jf-conditional')]" 
         mode="streamText">
         <tei:anchor>
             <xsl:variable name="classes" select="tokenize(@class, '\s+')"/>
@@ -215,10 +216,35 @@
         <tei:link type="set" target="{$target} {.}"/>
       </xsl:for-each>
     </xsl:template>
+    
+    <xsl:template match="html:div[local:has-class(@class, 'jf-conditional')][starts-with(@id, 'start_')]" mode="links">
+      <xsl:variable name="target" select="concat('#range(',@id,',', replace(@id, '^start_', 'end_') ,')')"/>
+      <!-- partial preparation for conditional-instruction support -->
+      <xsl:variable name="instruction" as="xs:string?">
+        <!-- copied code from annotation to find where the annotation resource is -->
+        <xsl:if test="@data-jf-conditional-instruction">
+          <xsl:variable name="local-annotation-resource" as="xs:string" 
+              select="concat('/data/notes/', normalize-space(//j:settings/tei:fs[@type='opensiddur:local']/tei:f[@name='local-annotation-resource']))"/>
+          <xsl:variable name="resource" select="tokenize(@data-jf-conditional-instruction, '#')[1]"/>
+          <xsl:variable name="id" select="html:div[local:has-class(@class, 'tei-note')]/@id/string()"/>
+          <xsl:sequence select="string-join((if ($resource='/data/notes/') then $local-annotation-resource else $resource, '#', $id), '')"/>
+        </xsl:if>
+      </xsl:variable>
+      <xsl:for-each select="tokenize(@data-jf-conditional, '\s+')">
+        <tei:link type="condition" target="{string-join(($target, . , $instruction), ' ')}"/>
+      </xsl:for-each>
+    </xsl:template>
 
     <xsl:template match="*|text()" mode="links">
         <xsl:apply-templates mode="#current"/>
     </xsl:template>
+
+    <!-- condition-ids mode: find which condition jf:ids are required to be preserved -->
+    <xsl:template match="html:div[local:has-class(@class, 'jf-conditional')]" mode="condition-ids" as="xs:string*">
+      <xsl:sequence select="for $token in tokenize(@data-jf-conditional, '\s+')
+          return substring-after($token, '#')"/>
+    </xsl:template>
+    <xsl:template match="text()|comment()" mode="condition-ids"/>
 
     <xsl:template match="tei:TEI">
         <xsl:copy copy-namespaces="no">
@@ -235,7 +261,19 @@
                     </j:links>
                 </xsl:if>
             </xsl:if>
-            <xsl:apply-templates select="* except tei:teiHeader"/>
+            <!-- conditions are rewritten each time
+              (1) extract which conditions are required by jf:id
+              (2) copy only conditions whose ids match the required ones
+             -->
+            <xsl:variable name="condition-ids" as="xs:string*">
+              <xsl:apply-templates select="//jf:merged" mode="condition-ids"/>
+            </xsl:variable>
+            <xsl:if test="exists($condition-ids)">
+              <j:conditions>
+                <xsl:apply-templates select="//j:conditions/j:condition[@jf:id=$condition-ids]"/>
+              </j:conditions>
+            </xsl:if>
+            <xsl:apply-templates select="* except (tei:teiHeader,j:conditions)"/>
         </xsl:copy>
     </xsl:template>
 

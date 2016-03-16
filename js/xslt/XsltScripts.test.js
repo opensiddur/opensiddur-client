@@ -112,6 +112,150 @@ describe("/js/text/AnnotationsMerge.xsl", function() {
     });
 }); // AnnotationsMerge.xsl
 
+describe("/js/text/Conditionals.get.xsl", function() {
+    var XsltService;
+    var xsl = "/js/text/Conditionals.get.xsl";
+
+    var wrapInTei = function(condition) {
+        return (
+            "<tei:TEI xmlns:tei=\"http://www.tei-c.org/ns/1.0\" xmlns:j=\"http://jewishliturgy.org/ns/jlptei/1.0\" xml:lang=\"en\">" +
+            "<tei:teiHeader>" +
+            "<tei:fileStmt><tei:titleStmt xml:id=\"has_id\"><tei:title type=\"main\" xml:lang=\"en\">Test</tei:title></tei:titleStmt></tei:fileStmt>" +
+            "</tei:teiHeader>" +
+            "<j:conditions>" +
+            condition +
+            "</j:conditions>" +
+            "<j:streamText xml:id=\"stream\">" + 
+            "<tei:seg xml:id=\"seg1\">seg1</tei:seg>" +
+            "</j:streamText>" + 
+            "</tei:TEI>");
+    };
+
+    beforeEach(function() {
+        module("osClient.xslt");
+        inject(function(_XsltService_) {
+            XsltService = _XsltService_;
+        });
+    });
+
+    it("should transform a simple conditional expression into an equation string", function() {
+      var tei = wrapInTei("<j:condition xml:id=\"cnd1\">" + 
+          "<tei:fs type=\"a\">" +
+            "<tei:f name=\"b\">" +
+              "<j:yes/>" +
+            "</tei:f>" +
+          "</tei:fs>" +
+        "</j:condition>");
+      var transformed = XsltService.serializeToString(XsltService.transformString(xsl, tei, { ptrs : "#cnd1"} ));
+      expect(transformed == "<conditional>a$b=YES</conditional>").toBeTruthy();
+    });
+    it("should transform a negation into a string with NOT operator", function() {
+      var tei = wrapInTei("<j:condition xml:id=\"cnd1\">" +
+          "<j:not>" + 
+            "<tei:fs type=\"a\">" +
+              "<tei:f name=\"b\">" +
+                "<j:yes/>" +
+              "</tei:f>" +
+            "</tei:fs>" +
+          "</j:not>" +
+        "</j:condition>");
+      var transformed = XsltService.serializeToString(XsltService.transformString(xsl, tei, { ptrs : "#cnd1"} ));
+      expect(transformed == "<conditional>NOT(a$b=YES)</conditional>").toBeTruthy();
+
+    });
+    it("should transform all into a string with ALL operator", function() {
+      var tei = wrapInTei("<j:condition xml:id=\"cnd1\">" +
+          "<j:all>" + 
+            "<tei:fs type=\"a\">" +
+              "<tei:f name=\"b\">" +
+                "<j:yes/>" +
+              "</tei:f>" +
+            "</tei:fs>" +
+            "<tei:fs type=\"c\">" +
+              "<tei:f name=\"d\">" +
+                "<j:no/>" +
+              "</tei:f>" +
+            "</tei:fs>" +
+          "</j:all>" +
+        "</j:condition>");
+      var transformed = XsltService.serializeToString(XsltService.transformString(xsl, tei, { ptrs : "#cnd1"} ));
+      expect(transformed == "<conditional>ALL(a$b=YES, c$d=NO)</conditional>").toBeTruthy();
+
+    });
+    it("should transform any into a string with ANY operator", function() {
+      var tei = wrapInTei("<j:condition xml:id=\"cnd1\">" +
+          "<j:any>" + 
+            "<tei:fs type=\"a\">" +
+              "<tei:f name=\"b\">" +
+                "<j:yes/>" +
+              "</tei:f>" +
+            "</tei:fs>" +
+            "<tei:fs type=\"c\">" +
+              "<tei:f name=\"d\">" +
+                "<j:no/>" +
+              "</tei:f>" +
+            "</tei:fs>" +
+          "</j:any>" +
+        "</j:condition>");
+      var transformed = XsltService.serializeToString(XsltService.transformString(xsl, tei, { ptrs : "#cnd1"} ));
+      expect(transformed == "<conditional>ANY(a$b=YES, c$d=NO)</conditional>").toBeTruthy();
+
+    });
+    it("should transform oneOf into a string with ONEOF operator", function() {
+      var tei = wrapInTei("<j:condition xml:id=\"cnd1\">" +
+          "<j:oneOf>" + 
+            "<tei:fs type=\"a\">" +
+              "<tei:f name=\"b\">" +
+                "<j:yes/>" +
+              "</tei:f>" +
+            "</tei:fs>" +
+            "<tei:fs type=\"c\">" +
+              "<tei:f name=\"d\">" +
+                "<j:no/>" +
+              "</tei:f>" +
+            "</tei:fs>" +
+          "</j:oneOf>" +
+        "</j:condition>");
+      var transformed = XsltService.serializeToString(XsltService.transformString(xsl, tei, { ptrs : "#cnd1"} ));
+      expect(transformed == "<conditional>ONEOF(a$b=YES, c$d=NO)</conditional>").toBeTruthy();
+
+    });
+    it("should transform a combined expression into a string with multiple operators", function() {
+      var tei = wrapInTei("<j:condition xml:id=\"cnd1\">" +
+          "<j:any>" +
+            "<j:all>" + 
+              "<tei:fs type=\"a\">" +
+                "<tei:f name=\"b\">" +
+                  "<j:yes/>" +
+                "</tei:f>" +
+              "</tei:fs>" +
+              "<tei:fs type=\"c\">" +
+                "<tei:f name=\"d\">" +
+                  "<j:no/>" +
+                "</tei:f>" +
+              "</tei:fs>" +
+            "</j:all>" +
+            "<tei:fs type=\"e\">" +
+              "<tei:f name=\"f\">" +
+                "<j:on/>" +
+              "</tei:f>" +
+            "</tei:fs>" +
+            "<j:not>" +
+              "<tei:fs type=\"g\">" +
+                "<tei:f name=\"h\">" +
+                  "<j:off/>" +
+                "</tei:f>" +
+              "</tei:fs>" +
+            "</j:not>" +
+          "</j:any>" +
+        "</j:condition>");
+      var transformed = XsltService.serializeToString(XsltService.transformString(xsl, tei, { ptrs : "#cnd1"} ));
+      expect(transformed == "<conditional>ANY(ALL(a$b=YES, c$d=NO), e$f=ON, NOT(g$h=OFF))</conditional>").toBeTruthy();
+
+    });
+
+}); // Conditionals.get.xsl
+
 describe("/js/text/Save.template.xsl", function() {
     var XsltService;
     var xsl = "/js/text/Save.template.xsl";
@@ -249,5 +393,4 @@ describe("/js/text/EditingHtmlToXml.xsl", function() {
         
     }); 
 }); // EditingHtmlToXml.xsl
-
 

@@ -1,8 +1,8 @@
 <!--
-    Isolate changed annotations that need to be saved
+    Isolate changed annotations and conditional instructions that need to be saved
 
     Open Siddur Project
-    Copyright 2015 Efraim Feinstein, efraim@opensiddur.org
+    Copyright 2015-2016 Efraim Feinstein, efraim@opensiddur.org
     Licensed under the GNU Lesser General Public License, version 3 or later
 -->
 <xsl:stylesheet 
@@ -17,18 +17,19 @@
     >
     <xsl:import href="EditingHtmlToXml.xsl"/>
 
-    <xsl:template match="html:div[@data-os-changed][contains(@class, 'jf-annotation')][contains(@class, 'start')]">
+    <xsl:template match="html:div[@data-os-changed][contains(@class, 'jf-annotation') or (contains(@class, 'jf-conditional') and @data-jf-conditional-instruction)][contains(@class, 'start')]">
+        <xsl:variable name="annotation-ptr" as="xs:string" select="(@data-jf-annotation, @data-jf-conditional-instruction)[1]"/>
         <jf:annotation 
-            resource="{substring-before(@data-jf-annotation, '#')}" 
-            id="{substring-after(@data-jf-annotation, '#')}">
+            resource="{substring-before($annotation-ptr, '#')}" 
+            id="{substring-after($annotation-ptr, '#')}">
             <xsl:apply-templates mode="streamText" select="html:div[contains(@class, 'tei-note')]"/>
         </jf:annotation>
     </xsl:template>
 
     <xsl:template match="/">
         <jf:allAnnotations>
-            <xsl:variable name="isolated-annotations" as="element(jf:annotation)*">
-                <xsl:apply-templates select="//html:div[@data-os-changed][contains(@class, 'jf-annotation')][contains(@class, 'start')]"/>
+            <xsl:variable name="isolated-annotations" as="element()*">
+                <xsl:apply-templates select="//html:div[@data-os-changed][contains(@class, 'jf-annotation') or (contains(@class, 'jf-conditional') and @data-jf-conditional-instruction)][contains(@class, 'start')]"/>
             </xsl:variable>
             <xsl:message><xsl:sequence select="$isolated-annotations"/></xsl:message>
             <xsl:for-each-group 

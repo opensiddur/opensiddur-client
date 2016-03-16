@@ -40,7 +40,7 @@ CKEDITOR.plugins.add( 'jf-annotation', {
 				'div[id](jf-annotation,tei-note,layer,layer-phony-annotation,start,end);' + 
                 'div[id](tei-note);' +
                 'span(type,resource,annotation-id);' +
-                'img[src,alt,title]' +
+                'img[src,alt,title];' +
                 '*(editor-*)',
 			requiredContent: 'div(jf-annotation)',
 
@@ -59,6 +59,7 @@ CKEDITOR.plugins.add( 'jf-annotation', {
                 var DialogService = injector.get("DialogService");
                 var EditorDataService = injector.get("EditorDataService");
                 var el = this.element;
+                var wid = this;
                 var noteElement = el.findOne("div.tei-note");
                 var typeElement = el.findOne(".editor-internal.type");
                 var randomId =  "note_" + parseInt(Math.random()*10000000) ;
@@ -73,6 +74,7 @@ CKEDITOR.plugins.add( 'jf-annotation', {
                     sources : null,   // blank unless set by the dialog
                     callback : function(ok) {
                         if (ok) {
+                            el.removeAttribute("data-os-new");
                             // set the content of all annotations that have the same data-jf-annotation as this one
                             var stream = el.getParents()[1];
                             var sameAnnotations = stream.find("*[data-jf-annotation=\"" + thisAnnotation + "\"]");
@@ -97,6 +99,11 @@ CKEDITOR.plugins.add( 'jf-annotation', {
                             // artificially send a change event to ng-ckeditor so it will update the scope
                             editor.fire("change");
                         }
+                        else { // cancel
+                          if (el.hasAttribute("data-os-new")) {
+                            wid.wrapper.remove();
+                          }
+                        }
                     }
                 });
                 DialogService.open("editAnnotationDialogSimple");
@@ -106,7 +113,7 @@ CKEDITOR.plugins.add( 'jf-annotation', {
                 blockObject.insert(
                     "phony-annotation", "div", "jf-annotation",
                     function(id) {  // beginTemplate 
-                        return '<div id="start_'+id+'" data-jf-annotation="" class="jf-annotation layer layer-phony-annotation start">' + 
+                        return '<div id="start_'+id+'" data-jf-annotation="" class="jf-annotation layer layer-phony-annotation start" data-os-new="1">' + 
                                 // put an annotation icon here
                                '<img class="editor-internal editor-icon" src="/img/icons_32x32/icon_annotation.png"></img>'+
                                '&#x21d3;'+
@@ -166,6 +173,13 @@ CKEDITOR.plugins.add( 'jf-annotation', {
                     editor.fire("change");
                     $timeout(function() { $scope.textsForm.$setPristine(); }, 0, false);
                 }
+                /* show a dialog when ready */
+                this.once("ready", function(evt) {
+                  if (this.element.hasAttribute("data-os-new")) {
+                    this.edit();
+                  }
+                });
+
 			},
             destroy : blockObject.destroy,
 			data: function() {
