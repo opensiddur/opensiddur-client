@@ -227,7 +227,7 @@
               select="concat('/data/notes/', normalize-space(//j:settings/tei:fs[@type='opensiddur:local']/tei:f[@name='local-annotation-resource']))"/>
           <xsl:variable name="resource" select="tokenize(@data-jf-conditional-instruction, '#')[1]"/>
           <xsl:variable name="id" select="html:div[local:has-class(@class, 'tei-note')]/@id/string()"/>
-          <xsl:sequence select="string-join((if ($resource='/data/notes/') then $local-annotation-resource else $resource, $id), '')"/>
+          <xsl:sequence select="string-join((if ($resource='/data/notes/') then $local-annotation-resource else $resource, '#', $id), '')"/>
         </xsl:if>
       </xsl:variable>
       <xsl:for-each select="tokenize(@data-jf-conditional, '\s+')">
