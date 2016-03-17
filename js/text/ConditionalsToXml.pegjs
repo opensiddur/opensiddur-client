@@ -26,10 +26,10 @@ negation
 	= "NOT(" e:expression ")" { return "<j:not>" + e + "</j:not>" } 
 
 equality 
-  = type:[^$,]+ "$" name:[^=,]+ "=" val:value { 
+  = type:[^$,()]+ "$" name:[^=,()]+ "=" val:value { 
       return (
-        "<tei:fs type=\"" + type + "\">" + 
-          "<tei:f name=\"" + name + "\">" +
+        "<tei:fs type=\"" + type.join("") + "\">" + 
+          "<tei:f name=\"" + name.join("") + "\">" +
             val +
           "</tei:f>" +
         "</tei:fs>"

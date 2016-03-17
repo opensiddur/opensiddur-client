@@ -61,18 +61,18 @@ conditionalsToXmlParser = (function() {
         peg$c14 = "NOT(",
         peg$c15 = { type: "literal", value: "NOT(", description: "\"NOT(\"" },
         peg$c16 = function(e) { return "<j:not>" + e + "</j:not>" },
-        peg$c17 = /^[^$,]/,
-        peg$c18 = { type: "class", value: "[^$,]", description: "[^$,]" },
+        peg$c17 = /^[^$,()]/,
+        peg$c18 = { type: "class", value: "[^$,()]", description: "[^$,()]" },
         peg$c19 = "$",
         peg$c20 = { type: "literal", value: "$", description: "\"$\"" },
-        peg$c21 = /^[^=,]/,
-        peg$c22 = { type: "class", value: "[^=,]", description: "[^=,]" },
+        peg$c21 = /^[^=,()]/,
+        peg$c22 = { type: "class", value: "[^=,()]", description: "[^=,()]" },
         peg$c23 = "=",
         peg$c24 = { type: "literal", value: "=", description: "\"=\"" },
         peg$c25 = function(type, name, val) { 
               return (
-                "<tei:fs type=\"" + type + "\">" + 
-                  "<tei:f name=\"" + name + "\">" +
+                "<tei:fs type=\"" + type.join("") + "\">" + 
+                  "<tei:f name=\"" + name.join("") + "\">" +
                     val +
                   "</tei:f>" +
                 "</tei:fs>"
