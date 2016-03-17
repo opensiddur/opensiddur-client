@@ -138,6 +138,7 @@ CKEDITOR.plugins.add( 'jf-conditional', {
                             if (this.instruction.content.replace(/\s+/, "")) {
                               // all instructions should be local
                               el.setAttribute("data-jf-conditional-instruction", "/data/notes/#" + this.instruction.id);
+                              el.removeAttribute("data-os-instruction-loaded");
                             }
                             else {
                               // there is no instruction text
