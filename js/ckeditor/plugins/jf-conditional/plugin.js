@@ -37,13 +37,15 @@ CKEDITOR.plugins.add( 'jf-conditional', {
             var thisBound = idtokens[1];
             var cnds = "";
             var instruction = "";
-            if (thisBound == "start" && jfConditional) {
-              var activeConditionalsList = ConditionalsService.getByPointer(jfConditional).map(function(c) {
-                return ('<li class="editor-internal editor-conditional">'+
-                        c.__text+
-                        '</li>')
-              }).join("");
-              cnds = '<ul class="editor-internal editor-conditionals">' + activeConditionalsList + '</ul>';
+            if (thisBound == "start") {
+              if (jfConditional) {
+                var activeConditionalsList = ConditionalsService.getByPointer(jfConditional).map(function(c) {
+                  return ('<li class="editor-internal editor-conditional">'+
+                          c.__text+
+                          '</li>')
+                }).join("");
+                cnds = '<ul class="editor-internal editor-conditionals">' + activeConditionalsList + '</ul>';
+              }
               // load conditional-instruction
               instruction = '<div class="tei-note" data-type="instruction" id=""></div>';
               conditionalInstruction = el.getAttribute("data-jf-conditional-instruction");
