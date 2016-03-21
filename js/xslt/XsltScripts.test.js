@@ -147,7 +147,7 @@ describe("/js/text/Conditionals.get.xsl", function() {
           "</tei:fs>" +
         "</j:condition>");
       var transformed = XsltService.serializeToString(XsltService.transformString(xsl, tei, { ptrs : "#cnd1"} ));
-      expect(transformed == "<conditional>a$b=YES</conditional>").toBeTruthy();
+      expect(transformed == "<conditionals><conditional id=\"cnd1\">a$b=YES</conditional></conditionals>").toBeTruthy();
     });
     it("should transform a negation into a string with NOT operator", function() {
       var tei = wrapInTei("<j:condition xml:id=\"cnd1\">" +
@@ -160,7 +160,7 @@ describe("/js/text/Conditionals.get.xsl", function() {
           "</j:not>" +
         "</j:condition>");
       var transformed = XsltService.serializeToString(XsltService.transformString(xsl, tei, { ptrs : "#cnd1"} ));
-      expect(transformed == "<conditional>NOT(a$b=YES)</conditional>").toBeTruthy();
+      expect(transformed == "<conditionals><conditional id=\"cnd1\">NOT(a$b=YES)</conditional></conditionals>").toBeTruthy();
 
     });
     it("should transform all into a string with ALL operator", function() {
@@ -179,7 +179,7 @@ describe("/js/text/Conditionals.get.xsl", function() {
           "</j:all>" +
         "</j:condition>");
       var transformed = XsltService.serializeToString(XsltService.transformString(xsl, tei, { ptrs : "#cnd1"} ));
-      expect(transformed == "<conditional>ALL(a$b=YES, c$d=NO)</conditional>").toBeTruthy();
+      expect(transformed == "<conditionals><conditional id=\"cnd1\">ALL(a$b=YES, c$d=NO)</conditional></conditionals>").toBeTruthy();
 
     });
     it("should transform any into a string with ANY operator", function() {
@@ -198,7 +198,7 @@ describe("/js/text/Conditionals.get.xsl", function() {
           "</j:any>" +
         "</j:condition>");
       var transformed = XsltService.serializeToString(XsltService.transformString(xsl, tei, { ptrs : "#cnd1"} ));
-      expect(transformed == "<conditional>ANY(a$b=YES, c$d=NO)</conditional>").toBeTruthy();
+      expect(transformed == "<conditionals><conditional id=\"cnd1\">ANY(a$b=YES, c$d=NO)</conditional></conditionals>").toBeTruthy();
 
     });
     it("should transform oneOf into a string with ONEOF operator", function() {
@@ -217,7 +217,7 @@ describe("/js/text/Conditionals.get.xsl", function() {
           "</j:oneOf>" +
         "</j:condition>");
       var transformed = XsltService.serializeToString(XsltService.transformString(xsl, tei, { ptrs : "#cnd1"} ));
-      expect(transformed == "<conditional>ONEOF(a$b=YES, c$d=NO)</conditional>").toBeTruthy();
+      expect(transformed == "<conditionals><conditional id=\"cnd1\">ONEOF(a$b=YES, c$d=NO)</conditional></conditionals>").toBeTruthy();
 
     });
     it("should transform a combined expression into a string with multiple operators", function() {
@@ -250,7 +250,7 @@ describe("/js/text/Conditionals.get.xsl", function() {
           "</j:any>" +
         "</j:condition>");
       var transformed = XsltService.serializeToString(XsltService.transformString(xsl, tei, { ptrs : "#cnd1"} ));
-      expect(transformed == "<conditional>ANY(ALL(a$b=YES, c$d=NO), e$f=ON, NOT(g$h=OFF))</conditional>").toBeTruthy();
+      expect(transformed == "<conditionals><conditional id=\"cnd1\">ANY(ALL(a$b=YES, c$d=NO), e$f=ON, NOT(g$h=OFF))</conditional></conditionals>").toBeTruthy();
 
     });
 
