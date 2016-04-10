@@ -6,7 +6,7 @@
  * name is an id, title is the header text
  * Data is transfered via "editLinkDialog" in EditorDataService
  *
- * Copyright 2015 Efraim Feinstein, efraim@opensiddur.org
+ * Copyright 2015-2016 Efraim Feinstein, efraim@opensiddur.org
  * Licensed under the GNU Lesser General Public License, version 3 or later
  */
 dialogSimpleEditLinkModule.directive(

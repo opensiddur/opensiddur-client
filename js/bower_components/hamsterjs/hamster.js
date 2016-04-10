@@ -1,5 +1,5 @@
 /*
- * Hamster.js v1.1.0
+ * Hamster.js v1.1.1
  * (c) 2013 Monospaced http://monospaced.com
  * License: MIT
  */
@@ -284,6 +284,11 @@ Hamster.normalise = {
     // 'DomMouseScroll' event
     if (originalEvent.detail) {
       delta = originalEvent.detail * -1;
+    }
+
+    // Don't return NaN
+    if (delta === 0) {
+      return [0, 0, 0];
     }
 
     // look for lowest delta to normalize the delta values

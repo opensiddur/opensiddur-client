@@ -32,3 +32,8 @@ private-scripts/
 
 # nginx conf file
 conf/*.conf
+
+# autoinstall
+node_modules/
+karma_html/
+
