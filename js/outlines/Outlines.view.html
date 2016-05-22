@@ -1,0 +1,33 @@
+<div>
+    <div class="toolbar navbar navbar-inverse nav-collapse">
+        <div class="container-fluid">
+          <p class="navbar-text">{{ title | truncate:30 }}</p>
+          <div class="btn-toolbar navbar-btn">
+              <div class="btn-group navbar-btn">
+                  <button class="btn btn-primary" 
+                      data-ng-disabled="!AuthenticationService.loggedIn"
+                      data-ng-click="editor.newButton()"
+                      >New</button>
+                  <button class="btn btn-primary" 
+                      data-ng-click="DialogService.open('openDialog')"
+                      >Open</button>
+                  <button
+                      class="btn btn-primary"
+                      data-ng-class="{'btn-success' : outlineForm.$pristine}" type="submit" 
+                      data-ng-click="editor.saveDocument()"  
+                      data-ng-disabled="outlineForm.$invalid || outlineForm.$pristine">{{saveButtonText()}}</button>
+              </div>
+          </div>
+        </div>
+    </div>
+    
+    <div class="page-container container-fluid sources-editor" data-ng-show="title || editor.loggedIn">
+        <div class="row">OUTLINES EDITOR HERE
+          <form name="outlineForm">
+          </form>
+        </div>
+    </div>
+    <os-open-dialog api="'/api/data/outlines'"
+        title="Open Outline" name="openDialog"
+        on-ok="editor.openDocument" on-close="editor.dialogCancel"></os-open-dialog>
+</div>
