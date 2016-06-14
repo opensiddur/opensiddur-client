@@ -15,7 +15,7 @@
  * on-ok runs after OK is pressed
  * on-close is a function to run when the close button is pressed
  *
- * Copyright 2014-2015 Efraim Feinstein, efraim@opensiddur.org
+ * Copyright 2014-2016 Efraim Feinstein, efraim@opensiddur.org
  * Licensed under the GNU Lesser General Public License, version 3 or later
  */
 osDialogNewModule.directive(
@@ -37,6 +37,7 @@ osDialogNewModule.directive(
                     $scope.LanguageService = LanguageService;
                     $scope.resourceTypes = {
                         "original" : "Original text document",
+                        "outline" : "Outline document",
                         "conditionals" : "Conditional definition document",
                         "annotations" : "Annotations document",
                         "styles" : "CSS-based styling document"
