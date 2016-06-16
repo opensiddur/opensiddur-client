@@ -21,7 +21,9 @@ osOutlinesModule.service("OutlinesService", [
       load : function(resource) {
         // load the given resource
           var thiz = this;
-          return $http.get("/api/data/outlines/" + encodeURIComponent(resource))
+          return $http.get("/api/data/outlines/" + encodeURIComponent(resource), {
+              params: { check : "1" }
+          })
               .then(function(response) {
                   thiz.resource = resource;
                   thiz.content = xj.xml2json(

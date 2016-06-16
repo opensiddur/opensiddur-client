@@ -120,17 +120,26 @@
                     <!-- sameAs and acknowledgements -->
                     <div class="row" ng-repeat="sameAs in item.sameAs_asArray">
                       <!-- TODO: different alerts for no acknowledgement, ack yes, and ack no -->
-                      <div ng-class="col-md-6 alert">Same title as another document: {{ sameAs.uri.__text }}</div>
-                      <button class="btn btn-sm" ng-click="outline.viewSameAs(sameAs)">View it</button>
-                      <!-- TODO: we need to set the value of the radio button to begin with -->
-                      <div class="col-md-2">
-                        <label class="radio-inline">
-                          <input type="radio" name="sameAs_yes" ng-click="outline.setSameAs(sameAs, 'yes')"/>Yes
-                        </label>
-                        <label class="radio-inline">
-                          <input type="radio" name="sameAs_no" ng-click="outline.setSameAs(sameAs, 'no')"/>No
-                        </label>
+                        <div class="col-md-2">&nbsp;</div>
+                      <div ng-class="[col-md-6, alert,
+                        {'alert-warning' : !sameAs._ackSame,
+                        'alert-info' : sameAs._ackSame}]">Same title as another document:
+                          <a target="_blank"
+                           class="btn btn-sm"
+                           ng-href="{{outline.viewSameAsUrl(sameAs)}}">{{ outline.viewSameAsUrl(sameAs) }}</a>
+                          <!-- TODO: we need to set the value of the radio button to begin with -->
+                          <div class="col-md-2">
+                              <span>Is this it?</span>
+                              <label class="radio-inline" ng-init="outline.initSameAs(sameAs)">
+                                  <input type="radio" ng-model="sameAs._ackSame" name="sameAs_yes" ng-click="outline.setSameAs(sameAs, 'yes')" value="yes"/>Yes
+                              </label>
+                              <label class="radio-inline">
+                                  <input type="radio" ng-model="sameAs._ackSame" name="sameAs_no" ng-click="outline.setSameAs(sameAs, 'no')" value="no"/>No
+                              </label>
+                          </div>
                       </div>
+
+
                     </div>
                     <!-- errors and warnings -->
                     <div class="row" ng-repeat="err in item.error_asArray">

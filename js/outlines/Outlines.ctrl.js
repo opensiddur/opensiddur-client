@@ -134,6 +134,13 @@ osOutlinesModule.controller(
         delete sameAs['no_asArray'];
         delete sameAs['yes_asArray'];
         sameAs[value] = xj.xml_str2json('<olx:'+value+' xmlns:olx="http://jewishliturgy.org/ns/outline/responses/1.0"/>')[value]
+        sameAs["_ackSame"] = value;
+      },
+      initSameAs : function(sameAs) {
+        sameAs["_ackSame"] = ("yes" in sameAs) ? "yes" : ("no" in sameAs) ? "no" : undefined;
+      },
+      viewSameAsUrl : function(sameAs) {
+        return sameAs.uri.__text.replace("/data/original", "/texts")
       },
       edit : function(item) {
         var uri = item.sameAs_asArray.filter(function (s) { return 'yes' in s; })[0].uri.__text.split("/").pop();
@@ -141,9 +148,9 @@ osOutlinesModule.controller(
       },
       canEdit : function(item) {
         return "sameAs_asArray" in item && (
-          item.sameAs_asArray.map(function(s) {
-            return 'yes' in s
-          }).some()
+          item.sameAs_asArray.some(function(s) {
+            return 'yes' in s;
+          })
         );
       }
     };
