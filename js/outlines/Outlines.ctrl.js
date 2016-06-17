@@ -33,6 +33,8 @@ osOutlinesModule.controller(
         $scope.editor.viewer.source = OutlinesService.content.outline.source.__text.split("/").pop();
         $location.path("/outlines");
         $scope.outlineForm.$setPristine();
+          $scope.editor.saved = false;
+          $scope.editor.executed = false;
       },
       openDocument : function(selection) {
           var resourceName = decodeURIComponent(selection.split("/").pop());  // try to prevent double-encoding
@@ -44,6 +46,7 @@ osOutlinesModule.controller(
             if (toDocument) {
                 OutlinesService.load(toDocument)
                     .then(function(os) {
+                            $scope.editor.executed = false;
                             $scope.editor.saved = true;
                             $scope.outlineForm.$setPristine();
                             $scope.editor.viewer.source = os.content.outline.source.__text.split("/").pop();
@@ -63,13 +66,23 @@ osOutlinesModule.controller(
             .then(function() {
                 $scope.outlineForm.$setPristine();
                 thiz.saved = true;
+                thiz.executed = false;
                 $location.path( "/outlines/" + OutlinesService.resource, false);
             },
             function(err) {
               ErrorService.addApiError(err);
             });
       },
-      execute : function() { console.log("execute"); },
+        executed : false,
+      execute : function() {
+          OutlinesService.execute()
+              .then(function() {
+                      $scope.editor.executed = true;
+                  },
+                  function(err) {
+                      ErrorService.addApiError(err);
+                  });
+      },
       dialogCancel : function() { }
     };
 
@@ -128,23 +141,35 @@ osOutlinesModule.controller(
         var items = OutlinesService.content.outline.item_asArray;
         return items.length > 1; 
       },
-      setSameAs : function(sameAs, value) {
+      setSameAs : function(sameAs, value, item) {
         delete sameAs['no'];
         delete sameAs['yes'];
         delete sameAs['no_asArray'];
         delete sameAs['yes_asArray'];
-        sameAs[value] = xj.xml_str2json('<olx:'+value+' xmlns:olx="http://jewishliturgy.org/ns/outline/responses/1.0"/>')[value]
+        sameAs[value] = xj.xml_str2json('<olx:'+value+' xmlns:olx="http://jewishliturgy.org/ns/outline/responses/1.0"/>')[value];
         sameAs["_ackSame"] = value;
+        if (value == "yes" && !(item === undefined)) {
+          for (var i = 0; i < item["sameAs_asArray"].length; i++) {
+              var it = item["sameAs_asArray"][i];
+              if (!(it === sameAs)) {
+                  this.setSameAs(it, "no");
+              }
+          }
+        }
       },
       initSameAs : function(sameAs) {
         sameAs["_ackSame"] = ("yes" in sameAs) ? "yes" : ("no" in sameAs) ? "no" : undefined;
       },
       viewSameAsUrl : function(sameAs) {
-        return sameAs.uri.__text.replace("/data/original", "/texts")
+        return "/texts/" + decodeURIComponent(sameAs.uri.__text.replace("/data/original/", ""))
       },
       edit : function(item) {
-        var uri = item.sameAs_asArray.filter(function (s) { return 'yes' in s; })[0].uri.__text.split("/").pop();
-        return "/texts/" + uri;
+          if ("sameAs_asArray" in item) {
+              var uri = item.sameAs_asArray.filter(function (s) {
+                  return 'yes' in s;
+              })[0].uri.__text.split("/").pop();
+              return "/texts/" + uri;
+          }
       },
       canEdit : function(item) {
         return "sameAs_asArray" in item && (
@@ -156,8 +181,11 @@ osOutlinesModule.controller(
     };
 
     $scope.saveButtonText = function() {
-      return "Save";
+      return ($scope.outlineForm.$pristine && OutlinesService.resource != "") ? "Saved" : "Save";
     };
+      $scope.executeButtonText = function() {
+        return ($scope.editor.executed == true && $scope.outlineForm.$pristine) ? "Executed" : "Execute";
+      };
 
     $scope.editor.setDocument($scope.resource);
   }]

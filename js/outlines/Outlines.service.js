@@ -153,7 +153,21 @@ osOutlinesModule.service("OutlinesService", [
                       return $q.reject(err.data);
                   })
 
-      }
+      },
+        execute : function() {
+            if (this.resource) {
+                var thiz = this;
+                return $http.post("/api/data/outlines/" + this.resource + "/execute", "<execute/>")
+                    .then(function(response) {
+                        return thiz.load(thiz.resource);
+                    }, function(err) {
+                        return $q.reject(err.data);
+                    });
+            }
+            else {
+                return $q.reject("A resource must be saved before it can be executed.")
+            }
+        }
     };
 }]);
 
