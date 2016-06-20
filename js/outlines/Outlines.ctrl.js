@@ -163,12 +163,15 @@ osOutlinesModule.controller(
       viewSameAsUrl : function(sameAs) {
         return "/texts/" + decodeURIComponent(sameAs.uri.__text.replace("/data/original/", ""))
       },
+        showSameAsWarning : function(sameAs) {
+          return ("warning" in sameAs) && ("__text" in sameAs["warning"]) && (sameAs.warning.__text) && !("no" in sameAs);
+        },
       edit : function(item) {
           if ("sameAs_asArray" in item) {
-              var uri = item.sameAs_asArray.filter(function (s) {
+              var yes = item.sameAs_asArray.filter(function (s) {
                   return 'yes' in s;
-              })[0].uri.__text.split("/").pop();
-              return "/texts/" + uri;
+              });
+              return (yes.length > 0) ? ("/texts/" + yes[0].uri.__text.split("/").pop()) : undefined;
           }
       },
       canEdit : function(item) {
