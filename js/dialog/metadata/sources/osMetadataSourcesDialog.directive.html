@@ -25,6 +25,7 @@
                                 </th>
                                 <th>From page</th>
                                 <th>To</th>
+                                <th>Status</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -32,15 +33,31 @@
                                 data-ng-click="select($index)"
                                 data-ng-class="{info : $index == selectedSource}">
                                 <td>{{source.title}}</td>
-                                <td><input data-ng-hide="source.source == 'Born%20Digital'"
+                                <td><input class="form-control"
+                                        data-ng-hide="source.source == 'Born%20Digital'"
                                     data-ng-change="fromPageChange()" 
                                     data-ng-model-options='{ debounce: 500 }'
                                     type="number" data-ng-model="source.scope.fromPage"/></td>
-                                <td><input 
+                                <td><input class="form-control"
                                     data-ng-hide="source.source == 'Born%20Digital'"
                                     data-ng-change="toPageChange()"
                                     data-ng-model-options='{ debounce: 500 }'
-                                    type="number" data-ng-model="source.scope.toPage"/></td>   
+                                    type="number" data-ng-model="source.scope.toPage"/></td>
+                                <td><select class="form-control"
+                                            
+                                        ng-model="source.status"
+                                        ng-hide="source.source == 'Born%20Digital'">
+                                    <option>outlined</option>
+                                    <option>draft</option>
+                                    <option>transcribed</option>
+                                    <option>segmented</option>
+                                    <option>annotated</option>
+                                    <option value="annotated-with-conditionals">annotated with conditionals</option>
+                                    <option value="linked-to-translation">linked to translation</option>
+                                    <option value="hierarchies-complete">hierarchies complete</option>
+                                    <option value="proofread-once">proofread once</option>
+                                    <option value="proofread-twice">proofread twice</option>
+                                </select></td>
                             </tr>
                         </tbody>
                     </table>
