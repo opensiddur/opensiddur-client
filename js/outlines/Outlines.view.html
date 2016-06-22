@@ -40,7 +40,7 @@
     <div class="page-container container-fluid sources-editor" data-ng-show="OutlinesService.content.outline.title.__text">
         <div class="row">
           <div ng-class="{true: 'col-md-6', false: 'col-md-12'}[editor.viewer.active]">
-            <form name="outlineForm" class="form-horizontal">
+            <form name="outlineForm" class="form-horizontal" novalidate="1">
                 <h2>About the book</h2>
                 <div class="form-group">
                     <label class="col-md-2" for="_title">Book title:</label>
@@ -77,38 +77,48 @@
                 </div>
                 <!-- TODO: warnings and errors about the book go here -->
                 <h2>Included items</h2>
+                <div class="outline-item heading">
+                    <div class="row">
+                        <h4 class="col-md-5 col-md-offset-2">Document title</h4>
+                        <h4 class="col-md-2" title="The page number as shown in the transcription window, not the page number as written in the physical book">Page image numbers</h4>
+                    </div>
+                </div>
                 <div ng-repeat="item in OutlinesService.content.outline.item_asArray">
                   <div class="outline-item">
                     <div class="row">
-                      <div class="col-md-1">
-                        <span ng-repeat="l in outline.levelOf(item) track by $index">|</span>
-                      </div>
                       <div class="col-md-2">
+                          <button class="btn btn-xs btn-danger"
+                                  ng-click="outline.remove(item)"
+                                  ng-disabled="!outline.canRemove(item)" title="Delete this resource and its descendants from the outline">X</button>
                         <button class="btn btn-xs" 
                           ng-click="outline.levelDown(item)"
-                          ng-disabled="!outline.canLevelDown(item)">&lt;</button>
-                        <button class="btn btn-xs btn-danger" 
-                          ng-click="outline.remove(item)" 
-                          ng-disabled="!outline.canRemove(item)">X</button>
+                          ng-disabled="!outline.canLevelDown(item)" title="Move up one level">&lt;</button>
                         <button class="btn btn-xs" 
                           ng-click="outline.addAfter(item, -1)" 
-                          ng-disabled="!outline.canLevelDown(item)">|+</button>
+                          ng-disabled="!outline.canLevelDown(item)" title="Add a new resource one level up from this one">+&lt;</button>
                         <button class="btn btn-xs"
-                          ng-click="!outline.addAfter(item, 0)">+</button>
+                          ng-click="!outline.addAfter(item, 0)" title="Add a new resource after this one at the same level">+</button>
                         <button class="btn btn-xs"
-                          ng-click="!outline.addAfter(item, 1)">+|</button>
+                          ng-click="!outline.addAfter(item, 1)" title="Add a new resource one level down from this one">&gt;+</button>
                         <button class="btn btn-xs" 
                           ng-click="outline.levelUp(item)"
-                          ng-disabled="!outline.canLevelUp(item)">&gt;</button>
+                          ng-disabled="!outline.canLevelUp(item)" title="Move down one level">&gt;</button>
+                          <span ng-repeat="l in outline.levelOf(item) track by $index">&gt;</span>
                       </div>
-                      <div class="col-md-4">
-                        <input class="form-control" ng-model="item.title.__text"/>
-                      </div>
-                      <div class="col-md-1">
-                        <input class="form-control" ng-model="item.from.__text"/>
+                      <div class="col-md-5">
+                        <input class="form-control" ng-model="item.title.__text" placeholder="Title"/>
                       </div>
                       <div class="col-md-1">
-                        <input class="form-control" ng-model="item.to.__text"/>
+                        <input class="form-control"
+                               ng-required="item.to.__text"
+                               ng-model="item.from.__text"
+                               placeholder="From page"/>
+                      </div>
+                      <div class="col-md-1">
+                        <input class="form-control"
+                               ng-required="item.from.__text"
+                               ng-model="item.to.__text"
+                               placeholder="To page"/>
                       </div>
                       <div class="col-md-1">
                         <a class="btn btn-xs"
