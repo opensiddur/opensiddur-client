@@ -19,8 +19,8 @@ osTextModule.controller(
 
         // state associated with the resource type
         $scope.resourceType = {
-            "texts" : {
-                path : "texts",
+            "xtexts" : {
+                path : "xtexts",
                 type : "original",
                 api : "/api/data/original",
                 supportsAccess : true,
@@ -29,8 +29,8 @@ osTextModule.controller(
                 defaultTitle : "New text",
                 editorMode : "xml"
             },
-            "stexts" : {
-                path : "stexts",
+            "texts" : {
+                path : "texts",
                 type : "original",
                 api : "/api/data/original",
                 supportsAccess : true,
@@ -372,7 +372,7 @@ osTextModule.controller(
             $scope.helper.link.insertable = newSelection.replace(/^\/exist\/restxq\/api/, "")
         });
 
-        $scope.editor.setDocument($routeParams.resource, false, $location.path().split("/")[1] == "stexts");
+        $scope.editor.setDocument($routeParams.resource, false, $location.path().split("/")[1] == "texts");
 
     }]
 );
