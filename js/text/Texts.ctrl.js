@@ -8,13 +8,14 @@ osTextModule.controller(
     'TextsCtrl',
     ['$scope', '$location', '$q', '$route', '$routeParams', '$timeout', '$window', 'XsltService', 
     'AccessService', 'AnnotationsService', 'AuthenticationService', 'DialogService', 'ErrorService', 
-    'LanguageService', 'TextService',
+    'LanguageService', 'TextService', 'TranscriptionViewerService',
     function ($scope, $location, $q, $route, $routeParams, $timeout, $window, XsltService, 
         AccessService, AnnotationsService, AuthenticationService, DialogService, ErrorService,
-        LanguageService, TextService) {
+        LanguageService, TextService, TranscriptionViewerService) {
         console.log("Texts controller.");
         $scope.DialogService = DialogService;
         $scope.LanguageService = LanguageService;
+        $scope.TranscriptionViewerService = TranscriptionViewerService;
 
         // state associated with the resource type
         $scope.resourceType = {
@@ -299,8 +300,7 @@ osTextModule.controller(
                     doc : _editor.getDoc()
                 };
                 $scope.editor.codemirror.doc.markClean();
-            },
-            transcriptionViewer : false
+            }
         };
         $scope.saveButtonText = function() {
             return this.textsForm.$pristine ? (($scope.editor.isNew) ? "Unsaved, No changes" : "Saved" ) : "Save";

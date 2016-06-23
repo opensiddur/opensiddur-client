@@ -11,8 +11,8 @@
 osTranscriptionWindowModule.directive(
         'osTranscriptionViewer',
         [
-        'PageImageUrlService', 'SourceService', 'ErrorService',
-        function( PageImageUrlService, SourceService, ErrorService ) {
+        'PageImageUrlService', 'SourceService', 'TranscriptionViewerService', 'ErrorService',
+        function( PageImageUrlService, SourceService, TranscriptionViewerService, ErrorService ) {
             return {
                 restrict : 'AE',
                 scope : {
@@ -23,33 +23,17 @@ osTranscriptionWindowModule.directive(
                 },
                 controller: ['$scope', function ($scope) {
                     console.log("In transcription viewer controller");
+                    $scope.TranscriptionViewerService = TranscriptionViewerService;
                     $scope.panzoom = {
                         config : {},
                         model : {}
                     };
-                    $scope.imageUrl = "";
-                    $scope.pageUp = function() {
-                        $scope.page += 1;
-                        $scope.loadPageImage();
-                    };
-                    $scope.pageDown = function() {
-                        $scope.page = ($scope.page > 1) ? $scope.page - 1 : 1;
-                        $scope.loadPageImage();
-                    };
-                    $scope.loadPageImage = function() {
-                        $scope.imageUrl = PageImageUrlService.getUrl($scope.sourceArchive, $scope.archiveId, $scope.page);
-                    };
+
                  }],
                  link: function(scope, elem, attrs, ctrl) {
                     scope.$watch("source", function(newSource) {
                         if (newSource) {
-                            SourceService.load(newSource).then(function() {
-                                console.log("Source loaded");
-                                scope.sourceArchive = SourceService.content.biblStruct.idno._type;
-                                scope.archiveId = SourceService.content.biblStruct.idno.__text;
-                                scope.page = scope.page;
-                                scope.loadPageImage();
-                            });
+                            TranscriptionViewerService.setSource(newSource);
                         }
                     });
                  },

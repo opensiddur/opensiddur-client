@@ -10,21 +10,14 @@
 osTranscriptionWindowModule.directive(
         'osTranscriptionWindow',
         [
-        'TextService', 'SourceService', 'ErrorService',
-        function( TextService, SourceService, ErrorService ) {
+        'TextService', 'SourceService', 'TranscriptionViewerService', 'ErrorService',
+        function( TextService, SourceService, TranscriptionViewerService, ErrorService ) {
             return {
                 restrict : 'AE',
-                scope : {
-                    active : "="
-                },
                 controller: ['$scope', function ($scope) {
                     console.log("In transcription window controller");
-
+                    $scope.TranscriptionViewerService = TranscriptionViewerService;
                     $scope.sources = [];
-                    $scope.viewer = {
-                        source : "",
-                        page : 1
-                    };
                     $scope.refresh = function() {
                         $scope.sources = TextService.sources();
                         if ($scope.sources.length > 0) {
@@ -33,14 +26,16 @@ osTranscriptionWindowModule.directive(
                         }
                     };
                     $scope.setSource = function() {
-                        $scope.viewer.source = $scope.currentSource.source;
-                        $scope.viewer.page = parseInt($scope.currentSource.scope.fromPage);
+                        TranscriptionViewerService.setSource($scope.currentSource.source).
+                            then(function() {
+                            TranscriptionViewerService.setPage(parseInt($scope.currentSource.scope.fromPage));
+                        });
                     };
                     $scope.currentSource = null;
 
                  }],
                  link: function(scope, elem, attrs, ctrl) {
-                    scope.$watch("active", function(active) {
+                    scope.$watch("TranscriptionViewerService.shown", function(active) {
                         if (active) {
                             // just activated
                             scope.refresh();

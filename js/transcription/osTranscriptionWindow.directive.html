@@ -1,4 +1,4 @@
-<div class="osTranscriptionWindow" data-ng-hide="!active">
+<div class="osTranscriptionWindow" data-ng-hide="!TranscriptionViewerService.shown">
     <div class="container-fluid">
         <div class="row">
             <form class="form-horizontal">
@@ -19,7 +19,7 @@
             </form>
         </div>
         <div class="row">
-            <os-transcription-viewer source="viewer.source" page="viewer.page" name="transcription-window"
+            <os-transcription-viewer source="TranscriptionViewerService.source" page="TranscriptionViewerService.page" name="transcription-window"
                 height="480px"></os-transcription-viewer>
         </div>
         <!--

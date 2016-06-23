@@ -89,12 +89,12 @@
                 <div class="btn-group navbar-btn" data-ng-show="resourceType.current.supportsTranscriptionView">
                     <button class="btn btn-primary" 
                         data-ng-disabled="!editor.isLoaded" 
-                        data-ng-show="!editor.transcriptionViewer"
-                        data-ng-click="editor.transcriptionViewer = !editor.transcriptionViewer">&#x25c0;Transcription</button>
+                        data-ng-show="!TranscriptionViewerService.shown"
+                        data-ng-click="TranscriptionViewerService.show()">&#x25c0;Transcription</button>
                     <button class="btn btn-primary" 
                         data-ng-disabled="!editor.isLoaded" 
-                        data-ng-show="editor.transcriptionViewer"
-                        data-ng-click="editor.transcriptionViewer = !editor.transcriptionViewer">Transcription&#x25b6;</button>
+                        data-ng-show="TranscriptionViewerService.shown"
+                        data-ng-click="TranscriptionViewerService.hide()">Transcription&#x25b6;</button>
                 </div>
                 <div class="navbar-right navbar-btn">
                     <os-sharing-status data-ng-hide="!resourceType.current.supportsAccess || !editor.isLoaded" sharing-dialog="sharingDialog"></os-sharing-status>
@@ -113,7 +113,7 @@
         <div data-ng-show="editor.isLoaded && (editor.loggedIn || TextService._resource)">
             <div class="texts-editor row">
                 <form name="textsForm" data-unsaved-warning-form="1">
-                    <div data-ng-class="{true:'col-md-6', false:'col-md-12'}[editor.transcriptionViewer]">
+                    <div data-ng-class="{true:'col-md-6', false:'col-md-12'}[TranscriptionViewerService.shown]">
                         <div data-ng-show="!TextService._isFlat">
                             <textarea  
                                 data-ui-codemirror="{ onLoad : editor.loaded }"
@@ -130,9 +130,8 @@
                                 ></textarea>
                         </div>
                     </div>
-                    <div data-ng-class="{true:'col-md-6', false:'off'}[editor.transcriptionViewer]">
-                        <os-transcription-window model="TextService._content" active="editor.transcriptionViewer">
-                        </os-transcription-window>
+                    <div data-ng-class="{true:'col-md-6', false:'off'}[TranscriptionViewerService.shown]">
+                        <os-transcription-window></os-transcription-window>
                     </div>
                 </form>
             </div>

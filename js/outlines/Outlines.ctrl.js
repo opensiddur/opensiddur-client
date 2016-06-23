@@ -9,8 +9,10 @@ osOutlinesModule.controller(
   'OutlinesCtrl',
   ['$scope', '$location', '$routeParams', 
   'AuthenticationService', 'DialogService', 'ErrorService', 'LanguageService', 'LicensesService', 'OutlinesService',
+      'TranscriptionViewerService',
   function ($scope, $location, $routeParams, 
-    AuthenticationService, DialogService, ErrorService, LanguageService, LicensesService, OutlinesService) {
+    AuthenticationService, DialogService, ErrorService, LanguageService, LicensesService, OutlinesService,
+    TranscriptionViewerService) {
     console.log("Outlines controller.");
 
     $scope.AuthenticationService = AuthenticationService;
@@ -18,16 +20,13 @@ osOutlinesModule.controller(
     $scope.LanguageService = LanguageService;
     $scope.LicensesService = LicensesService;
     $scope.OutlinesService = OutlinesService;
+      $scope.TranscriptionViewerService = TranscriptionViewerService;
     $scope.resource = $routeParams.resource;
+
 
     $scope.editor = {
       newTemplate : null,
       saved : false,
-      viewer : {
-        active: false,
-        page : 1,
-        source : ""
-      },
       newDocument : function() { 
         OutlinesService.newDocument($scope.editor.newTemplate);
         $scope.editor.viewer.source = OutlinesService.content.outline.source.__text.split("/").pop();
@@ -49,7 +48,7 @@ osOutlinesModule.controller(
                             $scope.editor.executed = false;
                             $scope.editor.saved = true;
                             $scope.outlineForm.$setPristine();
-                            $scope.editor.viewer.source = os.content.outline.source.__text.split("/").pop();
+                            TranscriptionViewerService.setSource(os.content.outline.source.__text.split("/").pop());
                             $location.path( "/outlines/" + os.resource, false);
                         },
                         function(error) {    // error function
@@ -180,7 +179,12 @@ osOutlinesModule.controller(
             return 'yes' in s;
           })
         );
-      }
+      },
+        setViewerPage : function(page) {
+            if (page && "__text" in page && page.__text) {
+                TranscriptionViewerService.setPage(parseInt(page.__text));
+            }
+        }
     };
 
     $scope.saveButtonText = function() {
