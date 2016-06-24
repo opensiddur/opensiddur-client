@@ -16,14 +16,13 @@ osTranscriptionWindowModule.directive(
             return {
                 restrict : 'AE',
                 scope : {
-                    source : "=",
-                    page : "=",
                     name : "@",
                     height : "@"
                 },
                 controller: ['$scope', function ($scope) {
                     console.log("In transcription viewer controller");
                     $scope.TranscriptionViewerService = TranscriptionViewerService;
+
                     $scope.panzoom = {
                         config : {},
                         model : {}
@@ -31,9 +30,10 @@ osTranscriptionWindowModule.directive(
 
                  }],
                  link: function(scope, elem, attrs, ctrl) {
+                     TranscriptionViewerService.register(scope.name);
                     scope.$watch("source", function(newSource) {
                         if (newSource) {
-                            TranscriptionViewerService.setSource(newSource);
+                            TranscriptionViewerService.setSource(scope.name, newSource);
                         }
                     });
                  },

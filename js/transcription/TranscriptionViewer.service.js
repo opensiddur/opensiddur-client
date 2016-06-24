@@ -6,63 +6,85 @@
  * Licensed under the GNU Lesser General Public License, version 3 or later
  */
 osTranscriptionWindowModule.service("TranscriptionViewerService",
-    ["PageImageUrlService", "SourceService",
-    function (PageImageUrlService, SourceService) {
+    ["$q", "PageImageUrlService", "SourceService",
+    function ($q, PageImageUrlService, SourceService) {
 
         return {
-            source : "",
-            page : 1,
-            shown : false,
-            activeSource : {
-                imageUrl : "",
-                sourceArchive : "",
-                archiveId : ""
+            viewer : {
+                
             },
-            loadPageImage : function() {
-                this.imageUrl = PageImageUrlService.getUrl(
-                    this.activeSource.sourceArchive, this.activeSource.archiveId, this.page);
+            viewerTemplate : {
+                source: "",
+                page: 1,
+                shown: false,
+                activeSource: {
+                    imageUrl: "",
+                    sourceArchive: "",
+                    archiveId: ""
+                }
             },
-            pageUp : function() {
-                this.page += 1;
-                this.loadPageImage();
+            loadPageImage : function(name) {
+                if (this.viewer[name].source != "") {
+                    this.viewer[name].activeSource.imageUrl = PageImageUrlService.getUrl(
+                        this.viewer[name].activeSource.sourceArchive, this.viewer[name].activeSource.archiveId, this.viewer[name].page);
+                }
             },
-            pageDown : function() {
-                this.page -= 1;
-                this.loadPageImage();
+            pageUp : function(name) {
+                this.viewer[name].page += 1;
+                this.loadPageImage(name);
             },
-            setPage : function(pageNum) {
-                this.page = pageNum;
-                this.loadPageImage();
+            pageDown : function(name) {
+                this.viewer[name].page -= 1;
+                this.loadPageImage(name);
             },
-            setSource : function(newSource) {
+            setPage : function(name, pageNum) {
+                this.viewer[name].page = pageNum || 1;
+                this.loadPageImage(name);
+            },
+            setSource : function(name, newSource) {
                 var thiz = this;
-                return SourceService.load(newSource).then(function() {
-                    console.log("Source loaded");
-                    thiz.source = newSource;
-                    thiz.activeSource.sourceArchive = SourceService.content.biblStruct.idno._type;
-                    thiz.activeSource.archiveId = SourceService.content.biblStruct.idno.__text;
-                    thiz.page = 1;
-                    thiz.loadPageImage();
-                    return thiz;
-                });
+                if (!(newSource === undefined) && newSource != "") {
+                    return SourceService.load(newSource).then(function () {
+                        console.log("Source loaded");
+                        var thiv = thiz.viewer[name];
+                        thiv.source = newSource;
+                        thiv.activeSource.sourceArchive = SourceService.content.biblStruct.idno._type;
+                        thiv.activeSource.archiveId = SourceService.content.biblStruct.idno.__text;
+                        thiv.page = 1;
+                        thiz.loadPageImage(name);
+                        return thiz;
+                    });
+                }
+                else return $q.reject(this);
             },
-            show : function() {
-                this.shown = true;
+            show : function(name) {
+                this.viewer[name].shown = true;
             },
-            hide : function() {
-                this.shown = false;
+            hide : function(name) {
+                this.viewer[name].shown = false;
             },
-            toggle : function() {
-                this.shown = !this.shown;
+            toggle : function(name) {
+                this.viewer[name].shown = !this.shown;
             },
-            reset : function() {
-                this.hide();
-                this.activeSource.imageUrl = "";
-                this.activeSource.sourceArchive = "";
-                this.activeSource.archiveId = "";
-                this.page = 1;
-                this.source = "";
+            isShown : function(name) {
+                return (name in this.viewer) ? this.viewer[name].shown : false;
+            },
+            reset : function(name) {
+                var thiv = this.viewer[name];
+                this.hide(name);
+                thiv.activeSource = {
+                    imageUrl : "",
+                    sourceArchive : "",
+                    archiveId : ""
+                };
+                thiv.page = 1;
+                thiv.shown = false;
+                thiv.source = "";
                 return this;
+            },
+            register : function(name) {
+                this.viewer[name] = {};
+                this.reset(name);
             }
         };
     }]

@@ -26,16 +26,16 @@ osTranscriptionWindowModule.directive(
                         }
                     };
                     $scope.setSource = function() {
-                        TranscriptionViewerService.setSource($scope.currentSource.source).
+                        TranscriptionViewerService.setSource("transcription-window", $scope.currentSource.source).
                             then(function() {
-                            TranscriptionViewerService.setPage(parseInt($scope.currentSource.scope.fromPage));
+                            TranscriptionViewerService.setPage("transcription-window", parseInt($scope.currentSource.scope.fromPage));
                         });
                     };
                     $scope.currentSource = null;
 
                  }],
                  link: function(scope, elem, attrs, ctrl) {
-                    scope.$watch("TranscriptionViewerService.shown", function(active) {
+                    scope.$watch("TranscriptionViewerService.viewer['transcription-window'].shown", function(active) {
                         if (active) {
                             // just activated
                             scope.refresh();

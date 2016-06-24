@@ -89,12 +89,12 @@
                 <div class="btn-group navbar-btn" data-ng-show="resourceType.current.supportsTranscriptionView">
                     <button  type="button" class="btn btn-primary"
                         data-ng-disabled="!editor.isLoaded" 
-                        data-ng-show="!TranscriptionViewerService.shown"
-                        data-ng-click="TranscriptionViewerService.show()">&#x25c0;Transcription</button>
+                        data-ng-show="!TranscriptionViewerService.isShown('transcription-window')"
+                        data-ng-click="TranscriptionViewerService.show('transcription-window')">&#x25c0;Transcription</button>
                     <button  type="button" class="btn btn-primary"
                         data-ng-disabled="!editor.isLoaded" 
-                        data-ng-show="TranscriptionViewerService.shown"
-                        data-ng-click="TranscriptionViewerService.hide()">Transcription&#x25b6;</button>
+                        data-ng-show="TranscriptionViewerService.isShown('transcription-window')"
+                        data-ng-click="TranscriptionViewerService.hide('transcription-window')">Transcription&#x25b6;</button>
                 </div>
                 <div class="navbar-right navbar-btn">
                     <os-sharing-status data-ng-hide="!resourceType.current.supportsAccess || !editor.isLoaded" sharing-dialog="sharingDialog"></os-sharing-status>
@@ -113,7 +113,7 @@
         <div data-ng-show="editor.isLoaded && (editor.loggedIn || TextService._resource)">
             <div class="texts-editor row">
                 <form name="textsForm" data-unsaved-warning-form="1">
-                    <div data-ng-class="{true:'col-md-6', false:'col-md-12'}[TranscriptionViewerService.shown]">
+                    <div data-ng-class="{true:'col-md-6', false:'col-md-12'}[TranscriptionViewerService.isShown('transcription-window')]">
                         <div data-ng-show="!TextService._isFlat">
                             <textarea  
                                 data-ui-codemirror="{ onLoad : editor.loaded }"
@@ -131,7 +131,7 @@
                         </div>
                     </div>
                 </form>
-                <div data-ng-class="{true:'col-md-6', false:'off'}[TranscriptionViewerService.shown]">
+                <div data-ng-class="{true:'col-md-6', false:'off'}[TranscriptionViewerService.isShown('transcription-window')]">
                     <os-transcription-window></os-transcription-window>
                 </div>
             </div>

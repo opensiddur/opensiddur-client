@@ -36,7 +36,15 @@ osSourceChooserModule.directive(
                     $scope.TranscriptionViewerService = TranscriptionViewerService;
                     $scope.select = function(idx) {
                         $scope.selectedSource = idx;
-                        TranscriptionViewerService.setPage((idx >= 0) ? $scope.sourcesModel[idx].scope.fromPage : 1);
+                        if (idx >= 0) {
+                            TranscriptionViewerService.setSource("source-chooser", $scope.sourcesModel[$scope.selectedSource].source).then(
+                                function () {
+                                    TranscriptionViewerService.setPage("source-chooser", (idx >= 0) ? $scope.sourcesModel[idx].scope.fromPage : 1);
+                                });
+                        }
+                        else {
+                            TranscriptionViewerService.reset("source-chooser");
+                        }
                     };
                     $scope.addSource = function() {
                         $scope.sourcesModel.push(angular.copy(template));
@@ -78,8 +86,8 @@ osSourceChooserModule.directive(
                         }
                     };
                     $scope.focusPageChange = function (source, pageNum) {
-                        TranscriptionViewerService.setSource(source.source).then(function() {
-                            TranscriptionViewerService.setPage(pageNum);
+                        TranscriptionViewerService.setSource("source-chooser", source.source).then(function() {
+                            TranscriptionViewerService.setPage("source-chooser", pageNum);
                         });
                     };
                     var setSelections = function(selectionValue) {
@@ -118,6 +126,7 @@ osSourceChooserModule.directive(
                             // remove /exist/restxq/api/...
                             $scope.sourcesModel[$scope.selectedSource].source = $scope.newSource.source.split("/").pop();
                             $scope.sourcesModel[$scope.selectedSource].title = $scope.newSource.title;
+                            TranscriptionViewerService.setSource("source-chooser", $scope.sourcesModel[$scope.selectedSource].source);
                         }
                     });
                     

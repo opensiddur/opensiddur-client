@@ -48,7 +48,7 @@ osOutlinesModule.controller(
                             $scope.editor.executed = false;
                             $scope.editor.saved = true;
                             $scope.outlineForm.$setPristine();
-                            TranscriptionViewerService.setSource(os.content.outline.source.__text.split("/").pop());
+                            TranscriptionViewerService.setSource("outlines-transcription-window", os.content.outline.source.__text.split("/").pop());
                             $location.path( "/outlines/" + os.resource, false);
                         },
                         function(error) {    // error function
@@ -182,7 +182,7 @@ osOutlinesModule.controller(
       },
         setViewerPage : function(page) {
             if (page && "__text" in page && page.__text) {
-                TranscriptionViewerService.setPage(parseInt(page.__text));
+                TranscriptionViewerService.setPage("outlines-transcription-window", parseInt(page.__text));
             }
         }
     };

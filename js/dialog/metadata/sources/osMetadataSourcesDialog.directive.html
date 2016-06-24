@@ -35,12 +35,14 @@
                                 <td>{{source.title}}</td>
                                 <td><input class="form-control"
                                         data-ng-hide="source.source == 'Born%20Digital'"
-                                    data-ng-change="fromPageChange()" 
+                                    data-ng-change="fromPageChange()"
+                                           ng-focus="focusPage(source.source, source.scope.fromPage)"
                                     data-ng-model-options='{ debounce: 500 }'
                                     type="number" data-ng-model="source.scope.fromPage"/></td>
                                 <td><input class="form-control"
                                     data-ng-hide="source.source == 'Born%20Digital'"
                                     data-ng-change="toPageChange()"
+                                           ng-focus="focusPage(source.source, source.scope.toPage)"
                                     data-ng-model-options='{ debounce: 500 }'
                                     type="number" data-ng-model="source.scope.toPage"/></td>
                                 <td><select class="form-control"
@@ -71,8 +73,6 @@
                 <div class="col-md-6"
                      data-ng-show="sourcesModel[selectedSource].source != 'Born%20Digital'">
                     <os-transcription-viewer 
-                        source="sourcesModel[selectedSource].source" 
-                        page="viewer.page"
                         name="sources-dialog"
                         height="300px"></os-transcription-viewer>
                 </div>

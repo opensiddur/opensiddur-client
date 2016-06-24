@@ -24,13 +24,13 @@
               </div>
               <div class="btn-group navbar-btn">
                   <button class="btn btn-primary" 
-                      data-ng-disabled="!TranscriptionViewerService.source"
-                      data-ng-show="!TranscriptionViewerService.shown"
-                      data-ng-click="TranscriptionViewerService.show()">&#x25c0;Transcription</button>
+                      data-ng-disabled="!TranscriptionViewerService.viewer['outlines-transcription-window'].source"
+                      data-ng-show="!TranscriptionViewerService.isShown('outlines-transcription-window')"
+                      data-ng-click="TranscriptionViewerService.show('outlines-transcription-window')">&#x25c0;Transcription</button>
                   <button class="btn btn-primary" 
-                      data-ng-disabled="!TranscriptionViewerService.source"
-                      data-ng-show="TranscriptionViewerService.shown"
-                      data-ng-click="TranscriptionViewerService.hide()">Transcription&#x25b6;</button>
+                      data-ng-disabled="!TranscriptionViewerService.viewer['outlines-transcription-window'].source"
+                      data-ng-show="TranscriptionViewerService.isShown('outlines-transcription-window')"
+                      data-ng-click="TranscriptionViewerService.hide('outlines-transcription-window')">Transcription&#x25b6;</button>
               </div>
 
           </div>
@@ -39,7 +39,7 @@
     
     <div class="page-container container-fluid sources-editor" data-ng-show="OutlinesService.content.outline.title.__text">
         <div class="row">
-          <div ng-class="{true: 'col-md-6', false: 'col-md-12'}[TranscriptionViewerService.shown]">
+          <div ng-class="{true: 'col-md-6', false: 'col-md-12'}[TranscriptionViewerService.isShown('outlines-transcription-window')]">
             <form name="outlineForm" class="form-horizontal" novalidate="1">
                 <h2>About the book</h2>
                 <div class="form-group">
@@ -167,9 +167,10 @@
                 </div>
             </form>
           </div>
-          <div ng-show="TranscriptionViewerService.shown" style="position:fixed; float:right; right:0px;" ng-class="{true:'col-md-6', false:'off'}[TranscriptionViewerService.shown]">
+          <div ng-show="TranscriptionViewerService.isShown('outlines-transcription-window')" style="position:fixed; float:right; right:0px;"
+               ng-class="{true:'col-md-6', false:'off'}[TranscriptionViewerService.isShown('outlines-transcription-window')]">
             <div class="row">
-              <os-transcription-viewer source="TranscriptionViewerService.source" page="TranscriptionViewerService.page"
+              <os-transcription-viewer
                 name="outlines-transcription-window" height="512px">
               </os-transcription-viewer>
             </div>
