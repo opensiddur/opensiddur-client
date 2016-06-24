@@ -10,35 +10,20 @@
 osTranscriptionWindowModule.directive(
         'osTranscriptionWindow',
         [
-        'TextService', 'SourceService', 'TranscriptionViewerService', 'ErrorService',
-        function( TextService, SourceService, TranscriptionViewerService, ErrorService ) {
+        'TextService', 'SourceService', 'TranscriptionViewerService', 'TranscriptionWindowService', 'ErrorService',
+        function( TextService, SourceService, TranscriptionViewerService, TranscriptionWindowService, ErrorService ) {
             return {
                 restrict : 'AE',
                 controller: ['$scope', function ($scope) {
                     console.log("In transcription window controller");
                     $scope.TranscriptionViewerService = TranscriptionViewerService;
-                    $scope.sources = [];
-                    $scope.refresh = function() {
-                        $scope.sources = TextService.sources();
-                        if ($scope.sources.length > 0) {
-                            $scope.currentSource = $scope.sources[0];
-                            $scope.setSource();
-                        }
-                    };
-                    $scope.setSource = function() {
-                        TranscriptionViewerService.setSource("transcription-window", $scope.currentSource.source).
-                            then(function() {
-                            TranscriptionViewerService.setPage("transcription-window", parseInt($scope.currentSource.scope.fromPage));
-                        });
-                    };
-                    $scope.currentSource = null;
-
+                    $scope.TranscriptionWindowService = TranscriptionWindowService;
                  }],
                  link: function(scope, elem, attrs, ctrl) {
                     scope.$watch("TranscriptionViewerService.viewer['transcription-window'].shown", function(active) {
                         if (active) {
                             // just activated
-                            scope.refresh();
+                            TranscriptionWindowService.refresh();
                         }
                     });
                  },

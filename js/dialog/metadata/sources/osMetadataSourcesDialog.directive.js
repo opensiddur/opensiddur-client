@@ -11,8 +11,8 @@
 osDialogMetadataSourcesModule.directive(
         'osMetadataSourcesDialog',
         [
-        'AccessService', 'SourceService', 'TextService', 'TranscriptionViewerService',
-        function( AccessService, SourceService, TextService, TranscriptionViewerService ) {
+        'AccessService', 'SourceService', 'TextService', 'TranscriptionViewerService', 'TranscriptionWindowService',
+        function( AccessService, SourceService, TextService, TranscriptionViewerService, TranscriptionWindowService ) {
             var template = {
                 title : "New source",
                 source : "",
@@ -139,6 +139,7 @@ osDialogMetadataSourcesModule.directive(
                             });
 
                             TextService.sources($scope.sourcesModel);
+                            TranscriptionWindowService.refresh();
                         
                             $("#"+$scope.name).modal('hide');
                         }

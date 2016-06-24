@@ -8,12 +8,12 @@
                         <select
                             class="form-control input-sm"
                             name="source.name" 
-                            data-ng-model="currentSource"
-                            data-ng-options="source as source.title for source in sources"
-                            data-ng-change="setSource()"/>
+                            data-ng-model="TranscriptionWindowService.currentSource"
+                            data-ng-options="source as source.title for source in TranscriptionWindowService.sources"
+                            data-ng-change="TranscriptionWindowService.setSource()"/>
                     </div>
                     <div class="col-md-1">
-                        <button class="btn btn-primary btn-sm" data-ng-click="refresh()">Refresh</button>
+                        <button class="btn btn-primary btn-sm" data-ng-click="TranscriptionWindowService.refresh()">Refresh</button>
                     </div>
                 </div>
             </form>

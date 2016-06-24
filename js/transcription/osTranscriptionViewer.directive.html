@@ -23,16 +23,16 @@
             </form>
         </div>
         <div class="row">
-            <div style="border:2px solid black; position:relative;">
-                <panzoomwidget panzoom-id="panzoom{{name}}" style="position:absolute;top:10px;left:10px;z-index:1"
-                    data-ng-hide="!TranscriptionViewerService.viewer[name].activeSource.imageUrl">
+            <div style="border:2px solid black; position:relative;" ng-hide="TranscriptionViewerService.viewer[name].activeSource.imageUrl == ''">
+                <panzoomwidget panzoom-id="panzoom{{name}}" style="position:absolute;top:10px;left:10px;z-index:1">
                 </panzoomwidget>
                 <panzoom
                     id="panzoom{{name}}" 
                     config="panzoom.config" model="panzoom.model"
-                    style="width:100%; height:{{height}};"><img width="100%" alt="No source loaded or the source does not have associated page images"
+                    style="width:100%; height:{{height}};"><img width="100%" alt="Cannot load page image"
                                                                 data-ng-src="{{TranscriptionViewerService.viewer[name].activeSource.imageUrl}}"/></panzoom>
             </div>
+            <div ng-show="TranscriptionViewerService.viewer[name].activeSource.imageUrl == ''">No source loaded or the source does not have associated page images</div>
         </div>
     </div>
 </div>

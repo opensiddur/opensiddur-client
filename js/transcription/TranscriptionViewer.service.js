@@ -24,9 +24,12 @@ osTranscriptionWindowModule.service("TranscriptionViewerService",
                 }
             },
             loadPageImage : function(name) {
-                if (this.viewer[name].source != "") {
+                if (this.viewer[name].source != "" && this.viewer[name].activeSource.sourceArchive != "") {
                     this.viewer[name].activeSource.imageUrl = PageImageUrlService.getUrl(
                         this.viewer[name].activeSource.sourceArchive, this.viewer[name].activeSource.archiveId, this.viewer[name].page);
+                }
+                else {
+                    this.viewer[name].activeSource.imageUrl = "";
                 }
             },
             pageUp : function(name) {
