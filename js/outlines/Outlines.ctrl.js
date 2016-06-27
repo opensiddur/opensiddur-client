@@ -29,7 +29,7 @@ osOutlinesModule.controller(
       saved : false,
       newDocument : function() { 
         OutlinesService.newDocument($scope.editor.newTemplate);
-        $scope.editor.viewer.source = OutlinesService.content.outline.source.__text.split("/").pop();
+        TranscriptionViewerService.setSource("outlines-transcription-window", OutlinesService.content.outline.source.__text.split("/").pop());
         $location.path("/outlines");
         $scope.outlineForm.$setPristine();
           $scope.editor.saved = false;
