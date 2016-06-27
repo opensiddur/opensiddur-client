@@ -140,7 +140,11 @@ osOutlinesModule.service("OutlinesService", [
           var httpOperation = (this.resource == "") ? $http.post : $http.put;
           var thiz = this;
           return httpOperation("/api/data/outlines" + ((this.resource == "") ? "" : ("/" + this.resource)),
-            transformed)
+            transformed, {
+                  headers : {
+                      "Content-Type" : "application/xml"
+                  }
+              })
               .then(function(response) {
                   var statusCode = response.status;
                   var headers = response.headers;
