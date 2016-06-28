@@ -11,12 +11,13 @@
   >
   <xsl:template match="ol:item">
     <xsl:variable name="this" select="."/>
+    <xsl:variable name="parent" select="preceding-sibling::ol:item[@level=$this/@level - 1][1]"/>
     <xsl:copy copy-namespaces="no">
       <xsl:sequence select="@* except @level"/>
       <xsl:apply-templates select="*"/>
       <xsl:apply-templates select="following-sibling::ol:item[@level=$this/@level + 1][preceding-sibling::*[@level=$this/@level][1] is $this][1]"/>
     </xsl:copy>
-    <xsl:apply-templates select="following-sibling::ol:item[@level=$this/@level][1]"/>
+    <xsl:apply-templates select="following-sibling::ol:item[@level=$this/@level][1][empty($parent) or preceding-sibling::ol:item[@level=$this/@level - 1][1] is $parent]"/>
   </xsl:template>
   
   <xsl:template match="ol:outline">
