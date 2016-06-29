@@ -32,7 +32,7 @@ osOutlinesModule.service("OutlinesService", [
                   return thiz;
               },
               function(err) {
-                  $q.reject(err);
+                  return $q.reject(err);
               });
       },
       save : function() {
