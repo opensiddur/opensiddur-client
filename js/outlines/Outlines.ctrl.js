@@ -29,7 +29,7 @@ osOutlinesModule.controller(
       saved : false,
       newDocument : function() { 
         OutlinesService.newDocument($scope.editor.newTemplate);
-        $scope.editor.viewer.source = OutlinesService.content.outline.source.__text.split("/").pop();
+        TranscriptionViewerService.setSource("outlines-transcription-window", OutlinesService.content.outline.source.__text.split("/").pop());
         $location.path("/outlines");
         $scope.outlineForm.$setPristine();
           $scope.editor.saved = false;
@@ -115,7 +115,7 @@ osOutlinesModule.controller(
         var items = OutlinesService.content.outline.item_asArray;
         var itemIndex = items.indexOf(item);
         var itemLevel = parseInt(item._level) + deltaLevel;
-        var fromDefault = (parseInt(item.to.__text) + 1).toString();
+        var fromDefault = (parseInt(("to" in item && "__text" in item.to) ? item.to.__text : "")).toString();
         var newItem = xj.xml_str2json('<ol:item xmlns:ol="http://jewishliturgy.org/ns/outline/1.0" level="' + itemLevel +'"><ol:title>Title</ol:title><ol:from>' +
             (fromDefault == 'NaN' ? "" : fromDefault) + '</ol:from><ol:to>'+
             (fromDefault == 'NaN' ? "" : fromDefault) +'</ol:to></ol:item>')

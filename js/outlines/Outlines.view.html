@@ -114,6 +114,8 @@
                                ng-model="item.from.__text"
                                placeholder="From page"
                                ng-focus="outline.setViewerPage(item.from)"
+                               ng-change="outline.setViewerPage(item.from)"
+                               ng-model-options="{ debounce: 250 }"
                                 ng-pattern="'\\d*'"/>
                       </div>
                       <div class="col-md-1">
@@ -122,6 +124,8 @@
                                ng-model="item.to.__text"
                                placeholder="To page"
                                ng-focus="outline.setViewerPage(item.to)"
+                               ng-change="outline.setViewerPage(item.to)"
+                               ng-model-options="{ debounce: 250 }"
                                ng-pattern="'\\d*'"/>
                       </div>
                       <div class="col-md-1">
