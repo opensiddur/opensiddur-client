@@ -8,18 +8,19 @@ osTextModule.controller(
     'TextsCtrl',
     ['$scope', '$location', '$q', '$route', '$routeParams', '$timeout', '$window', 'XsltService', 
     'AccessService', 'AnnotationsService', 'AuthenticationService', 'DialogService', 'ErrorService', 
-    'LanguageService', 'TextService',
+    'LanguageService', 'TextService', 'TranscriptionViewerService', 'TranscriptionWindowService',
     function ($scope, $location, $q, $route, $routeParams, $timeout, $window, XsltService, 
         AccessService, AnnotationsService, AuthenticationService, DialogService, ErrorService,
-        LanguageService, TextService) {
+        LanguageService, TextService, TranscriptionViewerService, TranscriptionWindowService) {
         console.log("Texts controller.");
         $scope.DialogService = DialogService;
         $scope.LanguageService = LanguageService;
+        $scope.TranscriptionViewerService = TranscriptionViewerService;
 
         // state associated with the resource type
         $scope.resourceType = {
-            "texts" : {
-                path : "texts",
+            "xtexts" : {
+                path : "xtexts",
                 type : "original",
                 api : "/api/data/original",
                 supportsAccess : true,
@@ -28,8 +29,8 @@ osTextModule.controller(
                 defaultTitle : "New text",
                 editorMode : "xml"
             },
-            "stexts" : {
-                path : "stexts",
+            "texts" : {
+                path : "texts",
                 type : "original",
                 api : "/api/data/original",
                 supportsAccess : true,
@@ -186,10 +187,12 @@ osTextModule.controller(
                     $scope.editor.newTemplate.template.source = "/exist/restxq/api/data/sources/Born%20Digital";
                     $scope.editor.newTemplate.template.sourceTitle = "An Original Work of the Open Siddur Project";
                 }
-                TextService.newDocument($scope.resourceType.current.api, $scope.editor.newTemplate, flat || false); 
+                TextService.newDocument($scope.resourceType.current.api, $scope.editor.newTemplate, flat || false);
+                TranscriptionWindowService.refresh();
                 $scope.editor.title = TextService.title()[0].text;
                 $scope.editor.isLoaded = 1;
                 $location.path("/texts/" + $scope.editor.title, false);
+
                 setTimeout(
                     function() { 
                         // work around a bug where sometimes the editor does not display text unless resized
@@ -227,6 +230,7 @@ osTextModule.controller(
                         $scope.editor.title = TextService.title()[0].text;
                         $scope.editor.isNew = 0;
                         $scope.editor.isLoaded = 1;
+                        TranscriptionWindowService.refresh();
                         setTimeout(
                             function() { 
                                 $scope.editor.codemirror.editor.refresh();
@@ -299,8 +303,7 @@ osTextModule.controller(
                     doc : _editor.getDoc()
                 };
                 $scope.editor.codemirror.doc.markClean();
-            },
-            transcriptionViewer : false
+            }
         };
         $scope.saveButtonText = function() {
             return this.textsForm.$pristine ? (($scope.editor.isNew) ? "Unsaved, No changes" : "Saved" ) : "Save";
@@ -372,7 +375,7 @@ osTextModule.controller(
             $scope.helper.link.insertable = newSelection.replace(/^\/exist\/restxq\/api/, "")
         });
 
-        $scope.editor.setDocument($routeParams.resource, false, $location.path().split("/")[1] == "stexts");
+        $scope.editor.setDocument($routeParams.resource, false, $location.path().split("/")[1] == "texts");
 
     }]
 );

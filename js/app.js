@@ -69,6 +69,7 @@ var osClientModule =
        'osClient.dialog.simple.editlink', // ditto
        'osClient.dialog.simple.editsegment', // ditto
        'osClient.dialog.simple.editsettings', // ditto
+       'osClient.outlines',
        'osClient.sharing',
        'osClient.sourceChooser',
        'osClient.sources',
@@ -118,10 +119,12 @@ osClientModule.config(
 osClientModule.config(
   ['$routeProvider', '$locationProvider', 
     'osAuthenticationConst', 'osJobsConst', 'osCompiledConst', 
-    'osCompilerConst', 'osProfileConst', 'osRecentChangesConst', 
+    'osCompilerConst', 'osProfileConst', 'osRecentChangesConst', 'osOutlinesConst', 
     'osSourcesConst', 'scaffoldConst', 'textConst', 'translationsConst',
   function($routeProvider, $locationProvider, 
-    osAuthenticationConst, osJobsConst, osCompiledConst, osCompilerConst, osProfileConst, osRecentChangesConst, osSourcesConst, scaffoldConst, textConst, translationsConst) {
+    osAuthenticationConst, osJobsConst, osCompiledConst, 
+    osCompilerConst, osProfileConst, osRecentChangesConst, osOutlinesConst, 
+    osSourcesConst, scaffoldConst, textConst, translationsConst) {
     $locationProvider.html5Mode(true).hashPrefix("!");
     $routeProvider
       .when('/changes/:userName?', {templateUrl: osRecentChangesConst.partial, controller: "RecentChangesCtrl"})
@@ -130,11 +133,12 @@ osClientModule.config(
       .when('/contributors/:userName?', {templateUrl: osProfileConst.partial, controller: "ProfileCtrl"})
       .when('/jobs/:userName', {templateUrl: osJobsConst.partial.jobs, controller: "JobsCtrl"})
       .when('/jobstatus/:jobid', {templateUrl: osJobsConst.partial.jobstatus, controller: "JobStatusCtrl"})
+      .when('/outlines/:resource?', {templateUrl: osOutlinesConst.partial, controller: "OutlinesCtrl"})
       .when('/signin', {templateUrl: osAuthenticationConst.partial.signin, controller: "AuthenticationCtrl"})
       .when('/sources/:resource?', {templateUrl: osSourcesConst.partial, controller: "SourcesCtrl"})
       .when('/styles/:resource?', {templateUrl: textConst.partial, controller: "TextsCtrl"})
-      .when('/stexts/:resource?', {templateUrl: textConst.partial, controller: "TextsCtrl"})
       .when('/texts/:resource?', {templateUrl: textConst.partial, controller: "TextsCtrl"})
+      .when('/xtexts/:resource?', {templateUrl: textConst.partial, controller: "TextsCtrl"})
       .when('/annotations/:resource?', {templateUrl: textConst.partial, controller: "TextsCtrl"})
       .when('/translations/:resource?', {templateUrl: translationsConst.partial, controller: "TranslationsCtrl"})
       .when('/conditionals/:resource?', {templateUrl: textConst.partial, controller: "TextsCtrl"})

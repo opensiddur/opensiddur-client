@@ -26,6 +26,7 @@
             <!-- warning: the title may end up URI encoded -->
             <title><xsl:value-of select="(tei:title, $source-uri)[1]"/></title>
             <source><xsl:value-of select="$source-uri"/></source>
+            <status><xsl:value-of select="@j:docStatus"/></status>
             <scope>
                 <fromPage><xsl:value-of select="tei:biblScope/@from"/></fromPage>
                 <toPage><xsl:value-of select="tei:biblScope/@to"/></toPage>

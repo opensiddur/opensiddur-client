@@ -34,19 +34,19 @@
                         </div>
                     </div>
                     <!-- main title -->
-                    <div class="form-group">
+                    <div class="form-group" data-ng-show="resourceType != 'outline'">
                         <label for="titleMain" class="control-label col-md-3">Document title</label>
                         <div class="col-md-4">
                             <input
                                 class="form-control"
-                                required="true"
+                                ng-required="resourceType != 'outline'"
                                 name="titleMain"
                                 placeholder="Main title"
                                 data-ng-model="model.template.title.main"/>
                         </div>
                     </div>
                     <!-- alt title -->
-                    <div class="form-group">
+                    <div class="form-group" data-ng-show="resourceType != 'outline'">
                         <label for="titleAlt" class="control-label col-md-3">Alternate title</label>
                         <div class="col-md-2">
                             <select
@@ -95,7 +95,7 @@
                     data-ng-click="CloseButton()">Close</button>
                 <button class="btn btn-primary"
                     data-dismiss="modal"
-                    data-ng-disabled="newDialogForm.$invalid"
+                    data-ng-disabled="newDialogForm.$invalid || (resourceType == 'outline' && !model.template.sourceTitle)"
                     data-ng-click="OKButton()">New</button>
             </div>
         </div>

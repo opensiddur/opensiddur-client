@@ -11,8 +11,8 @@
 osDialogMetadataSourcesModule.directive(
         'osMetadataSourcesDialog',
         [
-        'AccessService', 'SourceService', 'TextService',
-        function( AccessService, SourceService, TextService ) {
+        'AccessService', 'SourceService', 'TextService', 'TranscriptionViewerService', 'TranscriptionWindowService',
+        function( AccessService, SourceService, TextService, TranscriptionViewerService, TranscriptionWindowService ) {
             var template = {
                 title : "New source",
                 source : "",
@@ -35,12 +35,15 @@ osDialogMetadataSourcesModule.directive(
                 controller: ['$scope', function ($scope) {
                     console.log("In source metadata dialog controller");
                     $scope.AccessService = AccessService;
-                    $scope.viewer = {
-                        page : 1
-                    };
+                    $scope.TranscriptionViewerService = TranscriptionViewerService;
                     $scope.select = function(idx) {
                         $scope.selectedSource = idx;
-                        $scope.viewer.page = (idx >= 0) ? $scope.sourcesModel[idx].scope.fromPage : 1;
+                        TranscriptionViewerService.setSource("sources-dialog", $scope.sourcesModel[idx].source).then(
+                            function() {
+                                TranscriptionViewerService.setPage("sources-dialog",
+                                    (idx >= 0) ? $scope.sourcesModel[idx].scope.fromPage : 1);
+                            }
+                        );
                     };
                     $scope.addSource = function() {
                         $scope.sourcesModel.push(angular.copy(template));
@@ -59,7 +62,8 @@ osDialogMetadataSourcesModule.directive(
                         }
                         if (selectedScope.fromPage > selectedScope.toPage) {
                             selectedScope.toPage = selectedScope.fromPage;
-                        } 
+                        }
+                        TranscriptionViewerService.setPage("sources-dialog", selectedScope.fromPage);
                     };
                     $scope.toPageChange = function() {
                         var selectedScope = $scope.sourcesModel[$scope.selectedSource].scope;
@@ -68,8 +72,16 @@ osDialogMetadataSourcesModule.directive(
                         }
                         if (selectedScope.toPage < selectedScope.fromPage) {
                             selectedScope.fromPage = selectedScope.toPage;
-                        } 
+                        }
+                        TranscriptionViewerService.setPage("sources-dialog", selectedScope.toPage);
 
+                    };
+                    $scope.focusPage = function(source, pageRef) {
+                        TranscriptionViewerService.setSource("sources-dialog", source).then(
+                            function() {
+                                TranscriptionViewerService.setPage("sources-dialog", pageRef);
+                            }
+                        );
                     };
                     $scope.streamContentChanged = function() {
                         // whole stream is checked or unchecked
@@ -127,6 +139,7 @@ osDialogMetadataSourcesModule.directive(
                             });
 
                             TextService.sources($scope.sourcesModel);
+                            TranscriptionWindowService.refresh();
                         
                             $("#"+$scope.name).modal('hide');
                         }

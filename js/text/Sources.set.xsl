@@ -7,6 +7,7 @@
 <xsl:stylesheet
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:tei="http://www.tei-c.org/ns/1.0"
+    xmlns:j="http://jewishliturgy.org/ns/jlptei/1.0"
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
     version="2.0"
     >
@@ -15,6 +16,9 @@
     <xsl:template match="bibl">
         <xsl:if test="string(source)">
             <tei:bibl>
+                <xsl:if test="normalize-space(status)">
+                    <xsl:attribute name="j:docStatus" select="status/string()"/>
+                </xsl:if>
                 <tei:title><xsl:value-of select="normalize-space(title)"/></tei:title>
                 <tei:ptr type="bibl" target="/data/sources/{source}"/>
                 <tei:ptr type="bibl-content">

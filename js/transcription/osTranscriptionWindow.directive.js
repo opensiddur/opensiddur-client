@@ -10,40 +10,20 @@
 osTranscriptionWindowModule.directive(
         'osTranscriptionWindow',
         [
-        'TextService', 'SourceService', 'ErrorService',
-        function( TextService, SourceService, ErrorService ) {
+        'TextService', 'SourceService', 'TranscriptionViewerService', 'TranscriptionWindowService', 'ErrorService',
+        function( TextService, SourceService, TranscriptionViewerService, TranscriptionWindowService, ErrorService ) {
             return {
                 restrict : 'AE',
-                scope : {
-                    active : "="
-                },
                 controller: ['$scope', function ($scope) {
                     console.log("In transcription window controller");
-
-                    $scope.sources = [];
-                    $scope.viewer = {
-                        source : "",
-                        page : 1
-                    };
-                    $scope.refresh = function() {
-                        $scope.sources = TextService.sources();
-                        if ($scope.sources.length > 0) {
-                            $scope.currentSource = $scope.sources[0];
-                            $scope.setSource();
-                        }
-                    };
-                    $scope.setSource = function() {
-                        $scope.viewer.source = $scope.currentSource.source;
-                        $scope.viewer.page = parseInt($scope.currentSource.scope.fromPage);
-                    };
-                    $scope.currentSource = null;
-
+                    $scope.TranscriptionViewerService = TranscriptionViewerService;
+                    $scope.TranscriptionWindowService = TranscriptionWindowService;
                  }],
                  link: function(scope, elem, attrs, ctrl) {
-                    scope.$watch("active", function(active) {
+                    scope.$watch("TranscriptionViewerService.viewer['transcription-window'].shown", function(active) {
                         if (active) {
                             // just activated
-                            scope.refresh();
+                            TranscriptionWindowService.refresh();
                         }
                     });
                  },

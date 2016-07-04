@@ -10,8 +10,8 @@
 osSourceChooserModule.directive(
         'osSourceChooser',
         [
-        'AccessService', 'SourceService', 'TextService',
-        function( AccessService, SourceService, TextService ) {
+        'AccessService', 'SourceService', 'TextService', 'TranscriptionViewerService',
+        function( AccessService, SourceService, TextService, TranscriptionViewerService ) {
             var template = {
                 title : "New source",
                 source : "",
@@ -33,12 +33,18 @@ osSourceChooserModule.directive(
                 controller: ['$scope', function ($scope) {
                     console.log("In source chooser controller");
                     $scope.AccessService = AccessService;
-                    $scope.viewer = {
-                        page : 1
-                    };
+                    $scope.TranscriptionViewerService = TranscriptionViewerService;
                     $scope.select = function(idx) {
                         $scope.selectedSource = idx;
-                        $scope.viewer.page = (idx >= 0) ? $scope.sourcesModel[idx].scope.fromPage : 1;
+                        if (idx >= 0) {
+                            TranscriptionViewerService.setSource("source-chooser", $scope.sourcesModel[$scope.selectedSource].source).then(
+                                function () {
+                                    TranscriptionViewerService.setPage("source-chooser", (idx >= 0) ? $scope.sourcesModel[idx].scope.fromPage : 1);
+                                });
+                        }
+                        else {
+                            TranscriptionViewerService.reset("source-chooser");
+                        }
                     };
                     $scope.addSource = function() {
                         $scope.sourcesModel.push(angular.copy(template));
@@ -57,7 +63,8 @@ osSourceChooserModule.directive(
                         }
                         if (selectedScope.fromPage > selectedScope.toPage) {
                             selectedScope.toPage = selectedScope.fromPage;
-                        } 
+                        }
+                        $scope.focusPageChange($scope.sourcesModel[$scope.selectedSource], selectedScope.fromPage);
                     };
                     $scope.toPageChange = function() {
                         var selectedScope = $scope.sourcesModel[$scope.selectedSource].scope;
@@ -67,7 +74,7 @@ osSourceChooserModule.directive(
                         if (selectedScope.toPage < selectedScope.fromPage) {
                             selectedScope.fromPage = selectedScope.toPage;
                         } 
-
+                        $scope.focusPageChange($scope.sourcesModel[$scope.selectedSource], selectedScope.toPage);
                     };
                     $scope.streamContentChanged = function() {
                         // whole stream is checked or unchecked
@@ -77,6 +84,11 @@ osSourceChooserModule.directive(
                                 s.id_asArray[i].checked = true;
                             }
                         }
+                    };
+                    $scope.focusPageChange = function (source, pageNum) {
+                        TranscriptionViewerService.setSource("source-chooser", source.source).then(function() {
+                            TranscriptionViewerService.setPage("source-chooser", pageNum);
+                        });
                     };
                     var setSelections = function(selectionValue) {
                         var s = $scope.sourcesModel[$scope.selectedSource].contents.stream;
@@ -114,6 +126,7 @@ osSourceChooserModule.directive(
                             // remove /exist/restxq/api/...
                             $scope.sourcesModel[$scope.selectedSource].source = $scope.newSource.source.split("/").pop();
                             $scope.sourcesModel[$scope.selectedSource].title = $scope.newSource.title;
+                            TranscriptionViewerService.setSource("source-chooser", $scope.sourcesModel[$scope.selectedSource].source);
                         }
                     });
                     
