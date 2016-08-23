@@ -97,6 +97,7 @@
         <xsl:sequence select="normalize-space(.)"/>
     </xsl:template>
 
+
     <!-- html:p[@class~tei-ptr] -> tei:ptr -->
     <xsl:template match="html:p[local:has-class(@class, 'tei-ptr')]" mode="streamText">
         <tei:ptr>
@@ -124,11 +125,12 @@
         </tei:ref>
     </xsl:template>
 
+    <!-- html:p(tei-item) -->
     <!-- html:p -> leave an anchor -->
     <!-- html:div(jf:annotation) -->
     <!-- html:p(jf:set) -->
     <!-- html:div(jf:conditional) -->
-    <xsl:template match="html:p[local:has-class(@class,'tei-p')]|html:div[local:has-class(@class, 'jf-annotation')]|html:p[local:has-class(@class, 'jf-set')]|html:div[local:has-class(@class, 'jf-conditional')]" 
+    <xsl:template match="html:p[local:has-class(@class,'tei-item')]|html:p[local:has-class(@class,'tei-p')]|html:div[local:has-class(@class, 'jf-annotation')]|html:p[local:has-class(@class, 'jf-set')]|html:div[local:has-class(@class, 'jf-conditional')]"
         mode="streamText">
         <tei:anchor>
             <xsl:variable name="classes" select="tokenize(@class, '\s+')"/>
@@ -138,16 +140,35 @@
 
     <xsl:template match="jf:merged" mode="layer">
         <xsl:param name="layer-type" as="xs:string"/>
-        <xsl:for-each-group 
-            select="*"
-            group-starting-with="*[local:has-class(@class, $layer-type)][local:has-class(@class, 'start')]"
-            >
-            <xsl:variable name="starting-element" select="current-group()[1]"/>
-            <xsl:element name="{if ($layer-type='layer-p') then 'tei:p' else 'j:unknown'}">
-                <tei:ptr target="#range({$starting-element/@id},{replace($starting-element/@id, '^start_', 'end_')})">
-                </tei:ptr>
-            </xsl:element>
-        </xsl:for-each-group>
+        <xsl:param name="layer-id" as="xs:string"/>
+        <xsl:variable name="layer-content" as ="element()*">
+            <xsl:for-each-group
+                select="*"
+                group-starting-with="*[local:has-class(@class, $layer-type)][local:has-class(@class, 'start')][@data-jf-layer-id=$layer-id]"
+                >
+                <xsl:variable name="starting-element" select="current-group()[1]"/>
+                <xsl:if test="local:has-class($starting-element/@class, $layer-type) and @data-jf-layer-id=$layer-id">
+                    <xsl:element name="{
+                        if ($layer-type='layer-p') then 'tei:p'
+                        else if ($layer-type='layer-list') then 'tei:item'
+                        else 'j:unknown'}">
+                        <tei:ptr target="#range({$starting-element/@id},{replace($starting-element/@id, '^start_', 'end_')})">
+                        </tei:ptr>
+                    </xsl:element>
+                </xsl:if>
+            </xsl:for-each-group>
+        </xsl:variable>
+        <xsl:choose>
+            <!-- some layers need an extra hierarchical layer inserted -->
+            <xsl:when test="$layer-type='layer-list'">
+                <tei:list>
+                    <xsl:sequence select="$layer-content"/>
+                </tei:list>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:sequence select="$layer-content"/>
+            </xsl:otherwise>
+        </xsl:choose>
     </xsl:template>
  
     <xsl:template match="jf:concurrent">
@@ -166,11 +187,12 @@
         <xsl:variable name="layer-content" as="element()*">
           <xsl:apply-templates select="//jf:merged" mode="layer">
               <xsl:with-param name="layer-type" as="xs:string" select="concat('layer-',@type)"/>
+              <xsl:with-param name="layer-id" as="xs:string" select="substring-after(@jf:layer-id, '#')"/>
           </xsl:apply-templates>
         </xsl:variable>
         <xsl:if test="exists($layer-content)">
           <j:layer>
-              <xsl:apply-templates select="@*"/>
+              <xsl:apply-templates select="@* except @type"/>
               <xsl:sequence select="@type"/>
               <xsl:sequence select="$layer-content"/>
           </j:layer>
