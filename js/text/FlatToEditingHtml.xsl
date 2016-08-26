@@ -43,6 +43,12 @@
         <xsl:sequence select="root($context)//jf:concurrent/jf:layer[@jf:layer-id=$context/@jf:layer-id]/@type/string()"/>
     </xsl:function>
 
+    <xsl:function name="local:layer-id-lookup" as="xs:string">
+        <xsl:param name="context" as="element()"/>
+
+        <xsl:sequence select="root($context)//jf:concurrent/jf:layer[@jf:layer-id=$context/@jf:layer-id]/@jf:id/string()"/>
+    </xsl:function>
+
     <xsl:template name="class-attribute" as="attribute()*">
         <xsl:attribute name="class" select="string-join(('layer', concat('layer-',local:layer-lookup(.)), 
             if (@jf:start) then 'start' else if (@jf:end) then 'end' else (), 
@@ -101,6 +107,9 @@
         </xsl:element>
     </xsl:template>
 
+    <!-- lists can be removed, since only items are used -->
+    <xsl:template match="tei:list[@jf:start|@jf:end]"/>
+
     <xsl:template match="tei:ptr" mode="#default in-a-process">
         <p class="tei-ptr">
             <xsl:apply-templates select="@*"/>
@@ -128,6 +137,9 @@
         <xsl:text>&#x21d1;[A]</xsl:text>
     </xsl:template>
 
+    <xsl:template match="*[@jf:start]" mode="filler"><xsl:text>&#x21d3;</xsl:text></xsl:template>
+    <xsl:template match="*[@jf:end]" mode="filler"><xsl:text>&#x21d1;</xsl:text></xsl:template>
+
     <!-- attributes -->
     <xsl:template match="@target">
         <xsl:variable name="target-base" select="
@@ -153,7 +165,11 @@
         <xsl:attribute name="lang" select="."/>
     </xsl:template>
 
-    <xsl:template match="@*:stream|@*:layer-id"/>
+    <xsl:template match="@*:layer-id">
+        <xsl:attribute name="data-jf-layer-id" select="substring-after(., '#')"/>
+    </xsl:template>
+
+    <xsl:template match="@*:stream"/>
 
     <xsl:template match="@*">
         <xsl:attribute name="data-{replace(name(), ':', '-')}" select="."/>
