@@ -87,7 +87,7 @@ osTextModule.controller(
             customConfig : "/js/ckeditor/config.js",    // points to the plugin directories
             enterMode : CKEDITOR.ENTER_P,
             entities : false,   // need XML entities, but not HTML entities...
-            extraPlugins : "language,jf-annotation,jf-conditional,jf-set,tei-list,tei-p,tei-ptr,tei-seg",
+            extraPlugins : "language,jf-annotation,jf-conditional,jf-set,tei-item,tei-p,tei-ptr,tei-seg",
             fillEmptyBlocks : false,
             forcePasteAsPlainText : true,
             language : "en",

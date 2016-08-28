@@ -11,10 +11,10 @@
  *
  */
 
-CKEDITOR.plugins.add( 'tei-list', {
+CKEDITOR.plugins.add( 'tei-item', {
 	requires: 'widget',
 
-	icons: 'tei-list',
+	icons: 'tei-item',
 
 	init: function( editor ) {
 		var rootElement = angular.element('*[data-ng-app]');
@@ -24,6 +24,7 @@ CKEDITOR.plugins.add( 'tei-list', {
 		var EditorDataService = injector.get("EditorDataService");
 		var TextService = injector.get("TextService");
         var XsltService = injector.get("XsltService");
+        var ListService = injector.get("ListService")
 		var $interval = injector.get("$interval");
 		var $timeout = injector.get("$timeout");
 		var $scope = formElement.scope();
@@ -31,7 +32,7 @@ CKEDITOR.plugins.add( 'tei-list', {
 
 		var thiz = this;
 		var blockObject = new BlockObject(editor, true, true);
-        var img = '<img class="editor-internal editor-icon" src="/js/ckeditor/plugins/tei-list/icons/tei-list.png"></img>';
+        var img = '<img class="editor-internal editor-icon" src="/js/ckeditor/plugins/tei-item/icons/tei-item.png"></img>';
 
 		var updateElementContent = function(el, newLayerId, justThisOne) {
 		    newLayerId = newLayerId || el.getAttribute("data-jf-layer-id");
@@ -50,7 +51,7 @@ CKEDITOR.plugins.add( 'tei-list', {
 			return elContent;
 		};
 
-		editor.widgets.add( 'tei-list', {
+		editor.widgets.add( 'tei-item', {
 			draggable : false,
 			inline : false,
 			allowedContent:
@@ -98,17 +99,20 @@ CKEDITOR.plugins.add( 'tei-list', {
 				DialogService.open("editListDialogSimple");
 			},
 			insert: function() {
-
+                var listLayers = ListService.getListLayers();
+                var defaultLayer =  (listLayers.length == 0) ? "layer-list" : listLayers[0];
+                var layerIdSpan = '<span class="editor-internal editor-layer-id">['+defaultLayer+"]</span>";
 				blockObject.insert(
 					"list", "p", "tei-item",
 					function(id) {  // beginTemplate
-						return '<p id="start_'+id+'" class="tei-item layer layer-list start">'+
+						return '<p id="start_'+id+'" class="tei-item layer layer-list start" data-jf-layer-id="' + defaultLayer +'">'+
 							img +
 								'&#x21d3;' +
+                                layerIdSpan +
 							'</p>';
 					},
 					function(id) {  // endTemplate
-						return '<p id="end_'+id+'" class="tei-item layer layer-list end">&#x21d1;'+img+'</p>';
+						return '<p id="end_'+id+'" class="tei-item layer layer-list end" data-jf-layer-id="' + defaultLayer + '">&#x21d1;' + img+ layerIdSpan+'</p>';
 					}
 
 				);
