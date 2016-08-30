@@ -49,6 +49,12 @@ osXsltModule.factory(
                     .replace(/\<jf:merged/, "<jf:merged xmlns=\"http://www.w3.org/1999/xhtml\"");
 
             },
+            NSClean : function(strdoc, namespaceDeclarations) {
+                // remove all namespace declarations, include namespaceDeclarations as part of the first element
+                return strdoc.replace(/\s+xmlns(:[a-zA-Z0-9]+)?=["][^"]+["]/g, "")
+                // replace first instance of an element
+                    .replace(/\<([a-zA-Z:]+)/, "<$1 " + namespaceDeclarations);
+            },
             serializeToStringTEINSClean : function (doc, includeFlat) {
                 // serialize to string, then clean up namespaces
                 return this.TEINSClean(this.serializeToString(doc), includeFlat);
