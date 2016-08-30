@@ -241,8 +241,8 @@ var BlockObject = function(editor, allowOverlap, allowAllNodeTypes) {
         }    
         begInsert.insertBefore(startElement);
         endInsert.insertAfter(endElement);
-        editor.widgets.initOn( begInsert, classType )
-        editor.widgets.initOn( endInsert, classType )
+        editor.widgets.initOn( begInsert, classType );
+        editor.widgets.initOn( endInsert, classType );
         removeEmptyBlocks(startElement, classType, elementType); 
         editor.fire("change");
     };

@@ -136,7 +136,12 @@ osOutlinesModule.service("OutlinesService", [
                   statusBlock(outline) +
                   itemsBlock(outline) +
               '</ol:outline>';
-          var transformed = XsltService.serializeToString(XsltService.transformString("/js/outlines/SaveOutline.xsl", document));
+          var transformed = XsltService.NSClean(
+              XsltService.serializeToString(
+                  XsltService.transformString("/js/outlines/SaveOutline.xsl", document)),
+              'xmlns:ol="http://jewishliturgy.org/ns/outline/1.0" ' +
+              'xmlns:olx="http://jewishliturgy.org/ns/outline/responses/1.0"'
+          );
           var httpOperation = (this.resource == "") ? $http.post : $http.put;
           var thiz = this;
           return httpOperation("/api/data/outlines" + ((this.resource == "") ? "" : ("/" + this.resource)),
