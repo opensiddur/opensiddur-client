@@ -32,7 +32,6 @@
         <xsl:attribute name="xml:lang" select="."/>
     </xsl:template>
 
-
     <!-- do not save attributes that are added by the client -->
     <xsl:template match="@*[starts-with(name(.), 'data-')][not(starts-with(name(.), 'data-os-'))]" as="attribute()">
         <xsl:attribute 
@@ -76,7 +75,7 @@
         </xsl:if>
     </xsl:template>
 
-    <!-- p -> tei:seg 
+    <!-- p -> tei:seg
     when p lacks a class, it is considered a segment because magicline inserts p[not(@class)]
     -->
     <xsl:template match="html:p[local:has-class(@class, 'tei-seg') or not(@class)]" mode="streamText">
@@ -130,7 +129,12 @@
     <!-- html:div(jf:annotation) -->
     <!-- html:p(jf:set) -->
     <!-- html:div(jf:conditional) -->
-    <xsl:template match="html:p[local:has-class(@class,'tei-item')]|html:p[local:has-class(@class,'tei-p')]|html:div[local:has-class(@class, 'jf-annotation')]|html:p[local:has-class(@class, 'jf-set')]|html:div[local:has-class(@class, 'jf-conditional')]"
+    <xsl:template match="html:p[local:has-class(@class,'tei-item')]|
+            html:div[local:has-class(@class, 'tei-div')]|
+            html:p[local:has-class(@class,'tei-p')]|
+            html:div[local:has-class(@class, 'jf-annotation')]|
+            html:p[local:has-class(@class, 'jf-set')]|
+            html:div[local:has-class(@class, 'jf-conditional')]"
         mode="streamText">
         <tei:anchor>
             <xsl:variable name="classes" select="tokenize(@class, '\s+')"/>
@@ -148,9 +152,14 @@
                 >
                 <xsl:variable name="starting-element" select="current-group()[1]"/>
                 <xsl:if test="local:has-class($starting-element/@class, $layer-type) and @data-jf-layer-id=$layer-id">
+                    <xsl:if test="$layer-type='layer-div'">
+                        <!-- header -->
+                        <xsl:apply-templates select="$starting-element/*" mode="layer"/>
+                    </xsl:if>
                     <xsl:element name="{
                         if ($layer-type='layer-p') then 'tei:p'
                         else if ($layer-type='layer-list') then 'tei:item'
+                        else if ($layer-type='layer-div') then 'tei:ab'
                         else 'j:unknown'}">
                         <tei:ptr target="#range({$starting-element/@id},{replace($starting-element/@id, '^start_', 'end_')})">
                         </tei:ptr>
@@ -158,19 +167,33 @@
                 </xsl:if>
             </xsl:for-each-group>
         </xsl:variable>
-        <xsl:choose>
-            <!-- some layers need an extra hierarchical layer inserted -->
-            <xsl:when test="$layer-type='layer-list'">
-                <tei:list>
+        <xsl:if test="exists($layer-content)">
+            <xsl:choose>
+                <!-- some layers need special processing -->
+                <xsl:when test="$layer-type='layer-div'">
+                    <tei:div>
+                        <xsl:sequence select="$layer-content"/>
+                    </tei:div>
+                </xsl:when>
+                <xsl:when test="$layer-type='layer-list'">
+                    <tei:list>
+                        <xsl:sequence select="$layer-content"/>
+                    </tei:list>
+                </xsl:when>
+                <xsl:otherwise>
                     <xsl:sequence select="$layer-content"/>
-                </tei:list>
-            </xsl:when>
-            <xsl:otherwise>
-                <xsl:sequence select="$layer-content"/>
-            </xsl:otherwise>
-        </xsl:choose>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:if>
     </xsl:template>
- 
+
+    <xsl:template match="html:h1[local:has-class(@class, 'tei-head')]" mode="layer">
+        <tei:head>
+            <xsl:apply-templates select="@id|@lang"/>
+            <xsl:apply-templates/>
+        </tei:head>
+    </xsl:template>
+
     <xsl:template match="jf:concurrent">
         <xsl:variable name="layers" as="element(j:layer)*">
             <xsl:apply-templates select="jf:layer"/>

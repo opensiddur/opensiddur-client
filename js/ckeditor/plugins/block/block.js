@@ -172,7 +172,8 @@ var BlockObject = function(editor, allowOverlap, allowAllNodeTypes) {
         elementType,        // eg, "p"
         classType,          // eg, "tei-p"
         beginTemplate,
-        endTemplate
+        endTemplate,
+        declaredLayerId
         ) {
         // beginTemplate and endTemplate should be function(id) and return a string
         /* block insertion algorithm:
@@ -188,6 +189,9 @@ var BlockObject = function(editor, allowOverlap, allowAllNodeTypes) {
             8. if any blocks have been split in both directions (unterminated and unstarted) rename the ids for the unstarted portion of the block.
         */
         var editor = this.editor;
+
+        var layerId = declaredLayerId || ("layer-" + layerType);
+
         var thisId = getRandomId(layerType, elementType);
         var selection = editor.getSelection();
         var ranges = selection.getRanges();
@@ -220,7 +224,9 @@ var BlockObject = function(editor, allowOverlap, allowAllNodeTypes) {
         }
         this.TextService.addLayer(layerType);
         var begInsert = new CKEDITOR.dom.element.createFromHtml(beginTemplate(thisId));
+        begInsert.setAttribute("data-jf-layer-id", layerId);
         var endInsert = new CKEDITOR.dom.element.createFromHtml(endTemplate(thisId));
+        endInsert.setAttribute("data-jf-layer-id", layerId);
         if (!this.allowOverlap) {
             removeInternalBlocks(startElement, endElement, classType, thisId);
             var unterminatedStarts = getAllPrecedingUnterminatedBlockStarts(startElement, classType);
@@ -229,12 +235,14 @@ var BlockObject = function(editor, allowOverlap, allowAllNodeTypes) {
             for (var i = 0; i < unterminatedStarts.length; i++) {
                 // insert end tags
                 var endTag = new CKEDITOR.dom.element.createFromHtml(endTemplate(unterminatedStarts[i].getId().replace(/^start_/, "")));
+                endTag.setAttribute("data-jf-layer-id", layerId);
                 endTag.insertBefore(startElement);
                 editor.widgets.initOn( endTag, classType );
             }
             for (var i = 0; i < unstartedEnds.length; i++) {
                 // insert start tags
                 var startTag = new CKEDITOR.dom.element.createFromHtml(beginTemplate(unstartedEnds[i].getId().replace(/^end_/, "")));
+                startTag.setAttribute("data-jf-layer-id", layerId);
                 startTag.insertAfter(endElement);
                 editor.widgets.initOn( startTag, classType );
             }

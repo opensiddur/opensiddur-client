@@ -105,16 +105,16 @@ CKEDITOR.plugins.add( 'tei-item', {
 				blockObject.insert(
 					"list", "p", "tei-item",
 					function(id) {  // beginTemplate
-						return '<p id="start_'+id+'" class="tei-item layer layer-list start" data-jf-layer-id="' + defaultLayer +'">'+
+						return '<p id="start_'+id+'" class="tei-item layer layer-list start">'+
 							img +
 								'&#x21d3;' +
                                 layerIdSpan +
 							'</p>';
 					},
 					function(id) {  // endTemplate
-						return '<p id="end_'+id+'" class="tei-item layer layer-list end" data-jf-layer-id="' + defaultLayer + '">&#x21d1;' + img+ layerIdSpan+'</p>';
-					}
-
+						return '<p id="end_'+id+'" class="tei-item layer layer-list end" data-jf-layer-id=">&#x21d1;' + img+ layerIdSpan+'</p>';
+					},
+                    defaultLayer
 				);
 			},
 			upcast: function( element ) {
