@@ -74,6 +74,13 @@ CKEDITOR.plugins.add( 'tei-p', {
 				return element.name == 'p' && element.hasClass( 'tei-p' );
 			},
 			init: function() {
+			    var el = this.element;
+			    if (el.hasClass("start")) {
+			        el.setHtml("&#182;&#x21d3;");
+                }
+                else {
+                    el.setHtml("&#x21d1;&#182;");
+                }
                 this.on( 'doubleclick', blockObject.doubleclick);
 			},
             destroy : blockObject.destroy,

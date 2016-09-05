@@ -121,14 +121,6 @@
         </p>
     </xsl:template>
 
-    <!-- filler text so widgets will show up -->
-    <xsl:template match="tei:p[@jf:start]" mode="filler">
-        <xsl:text>&#182;&#x21d3;</xsl:text>
-    </xsl:template>
-    <xsl:template match="tei:p[@jf:end]" mode="filler">
-        <xsl:text>&#x21d1;&#182;</xsl:text>
-    </xsl:template>
-
     <xsl:template match="jf:annotation[@jf:start]" mode="filler">
         <img class="editor-internal editor-icon" src="/img/icons_32x32/icon_annotation.png"/>
         <xsl:text>&#x21d3;</xsl:text>
