@@ -121,25 +121,6 @@
         </p>
     </xsl:template>
 
-    <!-- filler text so widgets will show up -->
-    <xsl:template match="tei:p[@jf:start]" mode="filler">
-        <xsl:text>&#182;&#x21d3;</xsl:text>
-    </xsl:template>
-    <xsl:template match="tei:p[@jf:end]" mode="filler">
-        <xsl:text>&#x21d1;&#182;</xsl:text>
-    </xsl:template>
-
-    <xsl:template match="jf:annotation[@jf:start]" mode="filler">
-        <img class="editor-internal editor-icon" src="/img/icons_32x32/icon_annotation.png"/>
-        <xsl:text>&#x21d3;</xsl:text>
-        <span class="editor-internal type"><xsl:value-of select="@type"/></span>
-        <!-- the temporary id here cannot contain some characters because of a bug in ckeditor -->
-        <div class="tei-note" id="{substring-after(@jf:annotation, '#')}" data-os-loaded="0"><xsl:value-of select="concat('Loading ', @jf:annotation, '...')"/></div>
-    </xsl:template>
-    <xsl:template match="jf:annotation[@jf:end]" mode="filler">
-        <xsl:text>&#x21d1;[A]</xsl:text>
-    </xsl:template>
-
     <xsl:template match="*[@jf:start]" mode="filler" priority="-1"><xsl:text>&#x21d3;</xsl:text></xsl:template>
     <xsl:template match="*[@jf:end]" mode="filler" priority="-1"><xsl:text>&#x21d1;</xsl:text></xsl:template>
 
