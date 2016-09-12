@@ -195,6 +195,14 @@ var BlockObject = function(editor, allowOverlap, allowAllNodeTypes) {
         var thisId = getRandomId(layerType, elementType);
         var selection = editor.getSelection();
         var ranges = selection.getRanges();
+        var nearestElement = function(node) {
+            // find the nearest element to the given node that can be used as a start or end of range
+            var thisParent = node;
+            while (thisParent.getParent().getName() != "body") {
+                thisParent = thisParent.getParent();
+            }
+            return thisParent;
+        };
         var startOfRange = function(range) {
             var sor = range[0].startContainer;
             return (sor.type == 1 && sor.getName() == "body") ?
@@ -202,7 +210,7 @@ var BlockObject = function(editor, allowOverlap, allowAllNodeTypes) {
                 editor.widgets.selected[0].wrapper
                 : (sor.type == 3) ?
                 // it's a text node, get the parent
-                sor.getParent()
+                nearestElement(sor)
                 : sor;
         };
         var endOfRange = function(range) {
@@ -212,7 +220,7 @@ var BlockObject = function(editor, allowOverlap, allowAllNodeTypes) {
                 editor.widgets.selected[editor.widgets.selected.length - 1].wrapper
                 : (eor.type == 3) ?
                 // text node, get parent
-                eor.getParent()
+                nearestElement(eor)
                 : eor;
         };
         var startElement = getAscendantSegment(startOfRange(ranges), null, elementType);
