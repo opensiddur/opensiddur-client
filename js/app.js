@@ -66,6 +66,7 @@ var osClientModule =
        'osClient.dialog.settings.annotations',
        'osClient.dialog.simple.editannotation', // ditto
        'osClient.dialog.simple.editconditions', // ditto
+       'osClient.dialog.simple.editdiv',
        'osClient.dialog.simple.editlist',
        'osClient.dialog.simple.editlink', // ditto
        'osClient.dialog.simple.editsegment', // ditto

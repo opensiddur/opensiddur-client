@@ -56,8 +56,8 @@
     </xsl:template>
 
     <!-- elements -->
-    <xsl:template match="*[@jf:start]">
-        <xsl:element name="{if (self::jf:annotation or self::jf:conditional) then 'div' else 'p'}">
+    <xsl:template match="*[@jf:start]" priority="0">
+        <xsl:element name="{if (self::jf:annotation or self::jf:conditional or self::tei:div) then 'div' else 'p'}">
             <xsl:attribute name="id" select="concat('start_',@jf:start)"/>  <!-- id has to conform to the client expectations -->
             <xsl:apply-templates select="@* except @jf:start"/>
             <xsl:call-template name="class-attribute"/>
@@ -67,8 +67,8 @@
         </xsl:element>
     </xsl:template>
 
-    <xsl:template match="*[@jf:end]">
-        <xsl:element name="{if (self::jf:annotation or self::jf:conditional) then 'div' else 'p'}">
+    <xsl:template match="*[@jf:end]" priority="0">
+        <xsl:element name="{if (self::jf:annotation or self::jf:conditional or self::tei:div) then 'div' else 'p'}">
             <xsl:attribute name="id" select="concat('end_',@jf:end)"/>  <!-- id has to conform to the client expectations -->
             <xsl:apply-templates select="@* except @jf:end"/>
             <xsl:call-template name="class-attribute"/>
@@ -76,7 +76,10 @@
         </xsl:element>
     </xsl:template>
 
-    <xsl:template match="*[@jf:layer-id][not(@jf:start|@jf:end)]"/>
+    <xsl:template match="tei:ab[@jf:layer-id][@jf:start|@jf:end]"/>
+
+    <xsl:template match="*[parent::jf:merged][@jf:layer-id][not(@jf:start|@jf:end)]"/>
+
     <xsl:template match="*[@jf:layer-id][not(@jf:start|@jf:end)]" mode="in-a">
         <xsl:message>mode in-a: <xsl:value-of select="name()"/></xsl:message>
         <xsl:apply-templates select="." mode="in-a-process"/>
@@ -99,7 +102,7 @@
     <!-- special anchors from layers formed by the client. These are not needed -->
     <xsl:template match="tei:anchor[starts-with(@jf:id,'start_') or starts-with(@jf:id,'end_')]"/>
 
-    <xsl:template match="*" mode="#default in-a-process">
+    <xsl:template match="*" mode="#default in-a-process" priority="-2">
         <xsl:element name="{local:element-name(.)}">
             <xsl:apply-templates select="@*"/>
             <xsl:attribute name="class" select="replace(name(), ':', '-')"/>
@@ -118,27 +121,8 @@
         </p>
     </xsl:template>
 
-    <!-- filler text so widgets will show up -->
-    <xsl:template match="tei:p[@jf:start]" mode="filler">
-        <xsl:text>&#182;&#x21d3;</xsl:text>
-    </xsl:template>
-    <xsl:template match="tei:p[@jf:end]" mode="filler">
-        <xsl:text>&#x21d1;&#182;</xsl:text>
-    </xsl:template>
-
-    <xsl:template match="jf:annotation[@jf:start]" mode="filler">
-        <img class="editor-internal editor-icon" src="/img/icons_32x32/icon_annotation.png"/>
-        <xsl:text>&#x21d3;</xsl:text>
-        <span class="editor-internal type"><xsl:value-of select="@type"/></span>
-        <!-- the temporary id here cannot contain some characters because of a bug in ckeditor -->
-        <div class="tei-note" id="{substring-after(@jf:annotation, '#')}" data-os-loaded="0"><xsl:value-of select="concat('Loading ', @jf:annotation, '...')"/></div>
-    </xsl:template>
-    <xsl:template match="jf:annotation[@jf:end]" mode="filler">
-        <xsl:text>&#x21d1;[A]</xsl:text>
-    </xsl:template>
-
-    <xsl:template match="*[@jf:start]" mode="filler"><xsl:text>&#x21d3;</xsl:text></xsl:template>
-    <xsl:template match="*[@jf:end]" mode="filler"><xsl:text>&#x21d1;</xsl:text></xsl:template>
+    <xsl:template match="*[@jf:start]" mode="filler" priority="-1"><xsl:text>&#x21d3;</xsl:text></xsl:template>
+    <xsl:template match="*[@jf:end]" mode="filler" priority="-1"><xsl:text>&#x21d1;</xsl:text></xsl:template>
 
     <!-- attributes -->
     <xsl:template match="@target">

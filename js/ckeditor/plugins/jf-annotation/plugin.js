@@ -137,7 +137,19 @@ CKEDITOR.plugins.add( 'jf-annotation', {
 
                 /* when initialized, call AnnotationsService to load the annotation content */
                 var jfAnnotation = this.element.getAttribute("data-jf-annotation");
+                var img = "<img class='editor-internal editor-icon' src='/js/ckeditor/plugins/jf-annotation/icons/jf-annotation.png'/>";
                 var el = this.element;
+                // first set the HTML to the basic filler
+                if (el.hasClass("start")) {
+                    el.setHtml(img + "&#x21d3;" +
+                        '<div class="tei-note" id="'+
+                            jfAnnotation.split("#")[1]+
+                            '" data-os-loaded="0">Loading ' + jfAnnotation.split("/").map( function(s) { return decodeURIComponent(s); }).join("/") +'</div>');
+                }
+                else {
+                    el.setHtml("&#x21d1;" + img);
+                }
+
                 if (jfAnnotation) {
                     var spl = jfAnnotation.split("#");
                     var resource = spl[0].split("/").pop();
