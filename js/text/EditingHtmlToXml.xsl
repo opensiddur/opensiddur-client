@@ -34,8 +34,10 @@
 
     <!-- do not save attributes that are added by the client -->
     <xsl:template match="@*[starts-with(name(.), 'data-')][not(starts-with(name(.), 'data-os-'))]" as="attribute()">
+        <xsl:variable name="tokens" as="xs:string*" select="tokenize(substring-after(name(.), 'data-'), '-')"/>
         <xsl:attribute 
-            name="{replace(substring-after(name(.), 'data-'), '-', ':')}"
+            name="{if (count($tokens)=1) then $tokens
+                   else concat($tokens[1], ':', string-join(subsequence($tokens, 2), '-'))}"
             select="."/>
     </xsl:template>
 
@@ -131,6 +133,7 @@
     <!-- html:div(jf:conditional) -->
     <xsl:template match="html:p[local:has-class(@class,'tei-item')]|
             html:div[local:has-class(@class, 'tei-div')]|
+            html:div[local:has-class(@class, 'tei-l')]|
             html:p[local:has-class(@class,'tei-p')]|
             html:div[local:has-class(@class, 'jf-annotation')]|
             html:p[local:has-class(@class, 'jf-set')]|
@@ -157,10 +160,14 @@
                         <xsl:apply-templates select="$starting-element/*" mode="layer"/>
                     </xsl:if>
                     <xsl:element name="{
-                        if ($layer-type='layer-p') then 'tei:p'
+                        if ($layer-type='layer-lg') then 'tei:l'
+                        else if ($layer-type='layer-p') then 'tei:p'
                         else if ($layer-type='layer-list') then 'tei:item'
                         else if ($layer-type='layer-div') then 'tei:ab'
                         else 'j:unknown'}">
+                        <xsl:if test="$layer-type='layer-lg' and $starting-element/@data-tei-lg-start">
+                            <xsl:attribute name="jf:lg-start" select="'1'"/>
+                        </xsl:if>
                         <tei:ptr target="#range({$starting-element/@id},{replace($starting-element/@id, '^start_', 'end_')})">
                         </tei:ptr>
                     </xsl:element>
@@ -179,6 +186,18 @@
                     <tei:list>
                         <xsl:sequence select="$layer-content"/>
                     </tei:list>
+                </xsl:when>
+                <xsl:when test="$layer-type='layer-lg'">
+                    <xsl:for-each-group select="$layer-content" group-starting-with="*[@jf:lg-start]">
+                        <tei:lg>
+                            <xsl:for-each select="current-group()">
+                                <xsl:copy copy-namespaces="no">
+                                    <xsl:sequence select="@* except @jf:lg-start"/>
+                                    <xsl:sequence select="node()"/>
+                                </xsl:copy>
+                            </xsl:for-each>
+                        </tei:lg>
+                    </xsl:for-each-group>
                 </xsl:when>
                 <xsl:otherwise>
                     <xsl:sequence select="$layer-content"/>

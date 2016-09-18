@@ -3,7 +3,7 @@
     the most convenient form of HTML for editing
 
     Open Siddur Project
-    Copyright 2015 Efraim Feinstein, efraim@opensiddur.org
+    Copyright 2015-2016 Efraim Feinstein, efraim@opensiddur.org
     Licensed under the GNU Lesser General Public License, version 3 or later
 -->
 <xsl:stylesheet 
@@ -57,7 +57,7 @@
 
     <!-- elements -->
     <xsl:template match="*[@jf:start]" priority="0">
-        <xsl:element name="{if (self::jf:annotation or self::jf:conditional or self::tei:div) then 'div' else 'p'}">
+        <xsl:element name="{if (self::jf:annotation or self::jf:conditional or self::tei:div or self::tei:l) then 'div' else 'p'}">
             <xsl:attribute name="id" select="concat('start_',@jf:start)"/>  <!-- id has to conform to the client expectations -->
             <xsl:apply-templates select="@* except @jf:start"/>
             <xsl:call-template name="class-attribute"/>
@@ -68,7 +68,7 @@
     </xsl:template>
 
     <xsl:template match="*[@jf:end]" priority="0">
-        <xsl:element name="{if (self::jf:annotation or self::jf:conditional or self::tei:div) then 'div' else 'p'}">
+        <xsl:element name="{if (self::jf:annotation or self::jf:conditional or self::tei:div or self::tei:l) then 'div' else 'p'}">
             <xsl:attribute name="id" select="concat('end_',@jf:end)"/>  <!-- id has to conform to the client expectations -->
             <xsl:apply-templates select="@* except @jf:end"/>
             <xsl:call-template name="class-attribute"/>
@@ -110,8 +110,8 @@
         </xsl:element>
     </xsl:template>
 
-    <!-- lists can be removed, since only items are used -->
-    <xsl:template match="tei:list[@jf:start|@jf:end]"/>
+    <!-- list, lg can be removed, since only items are used -->
+    <xsl:template match="tei:list[@jf:start|@jf:end]|tei:lg[@jf:start|@jf:end]"/>
 
     <xsl:template match="tei:ptr" mode="#default in-a-process">
         <p class="tei-ptr">
