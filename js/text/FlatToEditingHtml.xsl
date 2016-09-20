@@ -61,10 +61,23 @@
             <xsl:attribute name="id" select="concat('start_',@jf:start)"/>  <!-- id has to conform to the client expectations -->
             <xsl:apply-templates select="@* except @jf:start"/>
             <xsl:call-template name="class-attribute"/>
+            <xsl:apply-templates mode="additional-start-attributes" select="."/>
             <xsl:apply-templates select="following-sibling::*[1][not(@jf:start|@jf:end)][@jf:layer-id=current()/@jf:layer-id]"
                 mode="in-a"/>
             <xsl:apply-templates select="." mode="filler"/>
         </xsl:element>
+    </xsl:template>
+
+    <!-- additional attributes that should be added: for tei:l, the additional attributes are start for tei:lg -->
+    <xsl:template match="tei:l[@jf:start]" mode="additional-start-attributes">
+        <xsl:variable name="prior-l" as="element(tei:l)?"
+                      select="preceding-sibling::tei:l[@jf:end][@jf:layer-id=current()/@jf:layer-id][1]"/>
+        <xsl:variable name="prior-lg-start" as="element(tei:lg)?"
+                      select="preceding-sibling::tei:lg[@jf:layer-id=current()/@jf:layer-id][@jf:start][1]"/>
+        <!-- if the previous lg starts after the previous l ends, the lg is for this -->
+        <xsl:if test="empty($prior-l) or $prior-lg-start >> $prior-l">
+            <xsl:attribute name="data-jf-lg-start" select="1"/>
+        </xsl:if>
     </xsl:template>
 
     <xsl:template match="*[@jf:end]" priority="0">

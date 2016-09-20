@@ -1,0 +1,29 @@
+<div class="osEditLineDialogSimple modal" aria-hidden="true" aria-labelledBy="editLineDialogSimpleHeader">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-ng-click="CloseButton()" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="editLineDialogSimpleHeader">{{ title }}</h4>
+            </div>
+            <div class="modal-body">
+                <form name="editLineDialogForm" class="form-horizontal">
+                    <div class="form-group">
+                        <div class="checkbox">
+                            <label>
+                                <input ng-model="line.lgStart" type="checkbox"/> This line begins a stanza (line group)
+                            </label>
+                        </div>
+                        <!-- Layer id... -->
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn" data-ng-click="CloseButton()" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal"
+                        ng-disabled="!AccessService.access.write || !editLineDialogForm.$valid"
+                    data-ng-click="OKButton()">Edit</button>
+            </div>
+        </div>
+    </div>
+</div>
+

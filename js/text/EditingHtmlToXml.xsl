@@ -165,7 +165,7 @@
                         else if ($layer-type='layer-list') then 'tei:item'
                         else if ($layer-type='layer-div') then 'tei:ab'
                         else 'j:unknown'}">
-                        <xsl:if test="$layer-type='layer-lg' and $starting-element/@data-tei-lg-start">
+                        <xsl:if test="$layer-type='layer-lg' and $starting-element/@data-jf-lg-start">
                             <xsl:attribute name="jf:lg-start" select="'1'"/>
                         </xsl:if>
                         <tei:ptr target="#range({$starting-element/@id},{replace($starting-element/@id, '^start_', 'end_')})">

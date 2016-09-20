@@ -24,14 +24,15 @@ CKEDITOR.plugins.add( 'tei-l', {
         var img = '<img class="editor-internal editor-icon" src="/js/ckeditor/plugins/tei-l/icons/tei-l.png"/>';
 
         var updateElementContent = function(el) {
-            var layerId = "[" + el.getAttribute("data-jf-layer-id") + "]";
+            var layerId = ""; // not used yet "[" + el.getAttribute("data-jf-layer-id") + "]";
             if (el.hasClass("start")) {
-                var lgStart = (el.hasAttribute("data-tei-lg-start")) ? "[lg&#x21d3;]" : "";
+                var lgStart = (el.hasAttribute("data-jf-lg-start")) ? "[lg&#x21d3;]" : "";
                 el.setHtml(img + "&#x21d3;" + layerId + lgStart);
             }
             else {
                 el.setHtml("&#x21d1;" + img + layerId);
             }
+            editor.fire("change");
         };
 
 		editor.widgets.add( 'tei-l', {
@@ -48,29 +49,32 @@ CKEDITOR.plugins.add( 'tei-l', {
                 var injector = angular.element('*[data-ng-app]').injector();
                 var DialogService = injector.get("DialogService");
                 var EditorDataService = injector.get("EditorDataService");
-                var el = this.element;
+                var body = this.element.getParent();
+                var el = this.element.hasClass("start") ? this.element :
+                    this.wrapper.getParent().findOne("*[id=start"+this.element.getId().replace("end", "")+"]");
                 
                 EditorDataService.set("editLineDialog", {
 				    id : el.getAttribute("id") || "" ,
-                    lgStart : el.hasAttribute("data-tei-lg-start") || false,
+                    lgStart : el.hasAttribute("data-jf-lg-start") || false,
                     callback : function(ok) {
                         if (ok) {
+                            if (this.lgStart) {
+                                el.setAttribute("data-jf-lg-start", "1");
+                            }
+                            else {
+                                el.removeAttribute("data-jf-lg-start");
+                            }
+                            updateElementContent(el);
                         }
-                        else {
-                            // cancel
-                            if (isNew) {
-                                // remove the element
-                                el.remove(false);
-                            }   
-                        }
+
                     }
                 });
-                DialogService.open("editLineSimple");
+                DialogService.open("editLineDialogSimple");
                 
             },
             insert: function() {
                 blockObject.insert(
-                    "lg", "p", "tei-l",
+                    "lg", "div", "tei-l",
                     function(id) {  // beginTemplate 
                         return '<div id="start_'+id+'" class="tei-l layer layer-lg start">' + img + '&#x21d3;</div>';
                     },
