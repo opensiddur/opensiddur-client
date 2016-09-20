@@ -3,7 +3,7 @@
     the most convenient form of HTML for editing
 
     Open Siddur Project
-    Copyright 2015 Efraim Feinstein, efraim@opensiddur.org
+    Copyright 2015-2016 Efraim Feinstein, efraim@opensiddur.org
     Licensed under the GNU Lesser General Public License, version 3 or later
 -->
 <xsl:stylesheet 
@@ -57,18 +57,31 @@
 
     <!-- elements -->
     <xsl:template match="*[@jf:start]" priority="0">
-        <xsl:element name="{if (self::jf:annotation or self::jf:conditional or self::tei:div) then 'div' else 'p'}">
+        <xsl:element name="{if (self::jf:annotation or self::jf:conditional or self::tei:div or self::tei:l) then 'div' else 'p'}">
             <xsl:attribute name="id" select="concat('start_',@jf:start)"/>  <!-- id has to conform to the client expectations -->
             <xsl:apply-templates select="@* except @jf:start"/>
             <xsl:call-template name="class-attribute"/>
+            <xsl:apply-templates mode="additional-start-attributes" select="."/>
             <xsl:apply-templates select="following-sibling::*[1][not(@jf:start|@jf:end)][@jf:layer-id=current()/@jf:layer-id]"
                 mode="in-a"/>
             <xsl:apply-templates select="." mode="filler"/>
         </xsl:element>
     </xsl:template>
 
+    <!-- additional attributes that should be added: for tei:l, the additional attributes are start for tei:lg -->
+    <xsl:template match="tei:l[@jf:start]" mode="additional-start-attributes">
+        <xsl:variable name="prior-l" as="element(tei:l)?"
+                      select="preceding-sibling::tei:l[@jf:end][@jf:layer-id=current()/@jf:layer-id][1]"/>
+        <xsl:variable name="prior-lg-start" as="element(tei:lg)?"
+                      select="preceding-sibling::tei:lg[@jf:layer-id=current()/@jf:layer-id][@jf:start][1]"/>
+        <!-- if the previous lg starts after the previous l ends, the lg is for this -->
+        <xsl:if test="empty($prior-l) or $prior-lg-start >> $prior-l">
+            <xsl:attribute name="data-jf-lg-start" select="1"/>
+        </xsl:if>
+    </xsl:template>
+
     <xsl:template match="*[@jf:end]" priority="0">
-        <xsl:element name="{if (self::jf:annotation or self::jf:conditional or self::tei:div) then 'div' else 'p'}">
+        <xsl:element name="{if (self::jf:annotation or self::jf:conditional or self::tei:div or self::tei:l) then 'div' else 'p'}">
             <xsl:attribute name="id" select="concat('end_',@jf:end)"/>  <!-- id has to conform to the client expectations -->
             <xsl:apply-templates select="@* except @jf:end"/>
             <xsl:call-template name="class-attribute"/>
@@ -110,8 +123,8 @@
         </xsl:element>
     </xsl:template>
 
-    <!-- lists can be removed, since only items are used -->
-    <xsl:template match="tei:list[@jf:start|@jf:end]"/>
+    <!-- list, lg can be removed, since only items are used -->
+    <xsl:template match="tei:list[@jf:start|@jf:end]|tei:lg[@jf:start|@jf:end]"/>
 
     <xsl:template match="tei:ptr" mode="#default in-a-process">
         <p class="tei-ptr">

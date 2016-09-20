@@ -87,7 +87,7 @@ osTextModule.controller(
             customConfig : "/js/ckeditor/config.js",    // points to the plugin directories
             enterMode : CKEDITOR.ENTER_P,
             entities : false,   // need XML entities, but not HTML entities...
-            extraPlugins : "language,jf-annotation,jf-conditional,jf-set,tei-div,tei-item,tei-p,tei-ptr,tei-seg",
+            extraPlugins : "language,jf-annotation,jf-conditional,jf-set,tei-div,tei-item,tei-l,tei-p,tei-ptr,tei-seg",
             fillEmptyBlocks : false,
             forcePasteAsPlainText : true,
             language : "en",
@@ -117,7 +117,7 @@ osTextModule.controller(
             allowedContent :
                 "p[!id,data-target-base,data-target-fragment,data-type](tei-ptr);"+
                 "p[!id](tei-item,tei-seg,tei-p,jf-set,layer-list,layer-phony-set,layer-p,layer,start,end);" +
-                "div[!id](tei-div,jf-annotation,jf-conditional,layer-div,layer-phony-annotation,layer-phony-conditional,layer,start,end);" +
+                "div[!id](tei-div,tei-l,jf-annotation,jf-conditional,layer-div,layer-phony-annotation,layer-phony-conditional,layer-lg,layer,start,end);" +
                 "div[id](tei-note);" +
                 "h1[id](tei-head);" +
                 "*[id,lang,dir,data-*];" +
