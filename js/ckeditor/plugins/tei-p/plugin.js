@@ -26,7 +26,6 @@ CKEDITOR.plugins.add( 'tei-p', {
             editor.widgets.checkWidgets();
         }, 1000);
 
-
 		editor.widgets.add( 'tei-p', {
             draggable : false,
             inline : false, 
