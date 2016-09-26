@@ -114,7 +114,7 @@ CKEDITOR.plugins.add( 'tei-item', {
 							'</div>';
 					},
 					function(id) {  // endTemplate
-						return '<div id="end_'+id+'" class="tei-item layer layer-list end" data-jf-layer-id=">&#x21d1;' + img+ layerIdSpan+'</div>';
+						return '<div id="end_'+id+'" class="tei-item layer layer-list end">&#x21d1;' + img+ layerIdSpan+'</div>';
 					},
                     defaultLayer
 				);
