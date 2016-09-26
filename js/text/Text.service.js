@@ -24,15 +24,16 @@ osTextModule.service("TextService", [
         _resource : "",
         _resourceApi : "",
         newDocument : function(resourceApi, newDocumentTemplate, flat) {
+            var iflat = (resourceApi == "/api/data/original") && flat; // only original docs support flat
             this.content("");
             this._resource = "";
             this._resourceApi = resourceApi;
-            this._isFlat = (resourceApi != "/api/data/original") || flat;   // only original docs support flat
- 
+            this._isFlat =  iflat;
+            
             var templateParameters = x2js.json2xml(newDocumentTemplate);
-            var strdoc = XsltService.indentToString(XsltService.transform((flat ? flatDocumentTemplates : documentTemplates)[resourceApi], templateParameters), flat);
+            var strdoc = XsltService.indentToString(XsltService.transform((iflat ? flatDocumentTemplates : documentTemplates)[resourceApi], templateParameters), iflat);
             this.content(strdoc);
-            this._flatContent = flat ? this.flatContent() : "";
+            this._flatContent = iflat ? this.flatContent() : "";
         }, 
         loadFlat : function(resource) {
             // load the content from the given resource (without path!) as a flat document
