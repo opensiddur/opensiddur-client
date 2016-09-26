@@ -27,7 +27,7 @@ osTextModule.service("TextService", [
             this.content("");
             this._resource = "";
             this._resourceApi = resourceApi;
-            this._isFlat = flat;   
+            this._isFlat = (resourceApi != "/api/data/original") || flat;   // only original docs support flat
  
             var templateParameters = x2js.json2xml(newDocumentTemplate);
             var strdoc = XsltService.indentToString(XsltService.transform((flat ? flatDocumentTemplates : documentTemplates)[resourceApi], templateParameters), flat);
