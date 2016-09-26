@@ -20,6 +20,7 @@ var BlockObject = function(editor, allowOverlap, allowAllNodeTypes) {
         if (node.hasClass("cke_widget_block")) {
             node = node.getChildren().getItem(0);
         }
+        if (node == null) return false;
         var r = RegExp("^"+boundary+"_");
         return node.hasClass(blockType) && node.getId().replace(r, "") == id;
     };
@@ -28,6 +29,7 @@ var BlockObject = function(editor, allowOverlap, allowAllNodeTypes) {
         if (node.hasClass("cke_widget_block")) {
             node = node.getChildren().getItem(0);
         }
+        if (node == null) return false;     // empty widgets
         boundaryTypes = boundaryTypes || ["start", "end"];
         return node.hasClass(blockType) && node.hasClass("layer") && 
             boundaryTypes.some(function(b) {return node.hasClass(b);}) ? node : false; 

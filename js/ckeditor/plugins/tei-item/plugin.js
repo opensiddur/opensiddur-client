@@ -24,11 +24,10 @@ CKEDITOR.plugins.add( 'tei-item', {
 		var EditorDataService = injector.get("EditorDataService");
 		var TextService = injector.get("TextService");
         var XsltService = injector.get("XsltService");
-        var ListService = injector.get("ListService")
+        var ListService = injector.get("ListService");
 		var $interval = injector.get("$interval");
 		var $timeout = injector.get("$timeout");
 		var $scope = formElement.scope();
-		// block plugins require check widgets every short interval
 
 		var thiz = this;
 		var blockObject = new BlockObject(editor, true, true);
@@ -46,8 +45,10 @@ CKEDITOR.plugins.add( 'tei-item', {
 			var elContent = direction + '<span class="editor-internal editor-layer-id">['+newLayerId+"]</span>";
             el.setAttribute("data-jf-layer-id", newLayerId);
 			el.setHtml(elContent);
-
-			editor.fire("change");
+			if (!justThisOne) {
+				// otherwise, we get duplicate fired change events
+				editor.fire("change");
+			}
 			return elContent;
 		};
 
@@ -55,10 +56,10 @@ CKEDITOR.plugins.add( 'tei-item', {
 			draggable : false,
 			inline : false,
 			allowedContent:
-			'p[id](tei-item,layer,layer-list,start,end);' +
+			'div[id](tei-item,layer,layer-list,start,end);' +
 			'img[src,alt,title];' +
 			'*(editor-*)',
-			requiredContent: 'p(tei-item)',
+			requiredContent: 'div(tei-item)',
 
 			button: 'Start a new itemized list',
 			edit : function ( evt) {
@@ -94,6 +95,7 @@ CKEDITOR.plugins.add( 'tei-item', {
                                 item.getParent().remove();  // remove the widget wrapper
                             }
                         }
+                        editor.fire("change");
                     }
 				};
 				DialogService.open("editListDialogSimple");
@@ -103,22 +105,22 @@ CKEDITOR.plugins.add( 'tei-item', {
                 var defaultLayer =  (listLayers.length == 0) ? "layer-list" : listLayers[0];
                 var layerIdSpan = '<span class="editor-internal editor-layer-id">['+defaultLayer+"]</span>";
 				blockObject.insert(
-					"list", "p", "tei-item",
+					"list", "div", "tei-item",
 					function(id) {  // beginTemplate
-						return '<p id="start_'+id+'" class="tei-item layer layer-list start">'+
+						return '<div id="start_'+id+'" class="tei-item layer layer-list start">'+
 							img +
 								'&#x21d3;' +
                                 layerIdSpan +
-							'</p>';
+							'</div>';
 					},
 					function(id) {  // endTemplate
-						return '<p id="end_'+id+'" class="tei-item layer layer-list end" data-jf-layer-id=">&#x21d1;' + img+ layerIdSpan+'</p>';
+						return '<div id="end_'+id+'" class="tei-item layer layer-list end">&#x21d1;' + img+ layerIdSpan+'</div>';
 					},
                     defaultLayer
 				);
 			},
 			upcast: function( element ) {
-				return element.name == 'p' && element.hasClass( 'tei-item' );
+				return element.name == 'div' && element.hasClass( 'tei-item' );
 			},
 			init: function(ev) {
                 var el = this.element;
