@@ -142,7 +142,8 @@ CKEDITOR.plugins.add( 'jf-annotation', {
                 // first set the HTML to the basic filler
                 if (el.hasClass("start")) {
                     el.setHtml(img + "&#x21d3;" +
-                        '<div class="tei-note" id="'+
+                            '<span class="editor-internal type">&nbsp;</span>' +
+                        '<div class="tei-note" data-type="" id="'+
                             jfAnnotation.split("#")[1]+
                             '" data-os-loaded="0">Loading ' + jfAnnotation.split("/").map( function(s) { return decodeURIComponent(s); }).join("/") +'</div>');
                 }
