@@ -26,12 +26,10 @@ CKEDITOR.plugins.add( 'jf-annotation', {
         // block plugins require check widgets every short interval
         
         var thiz = this;
+
+        var img = "<img class='editor-internal editor-icon' src='/js/ckeditor/plugins/jf-annotation/icons/jf-annotation.png'/>";
+
         var blockObject = new BlockObject(editor, true, true);
-        /*
-        var interval = $interval(function (evt) {
-            editor.widgets.checkWidgets();
-        }, 1000);
-        */
 
 		editor.widgets.add( 'jf-annotation', {
             draggable : false,
@@ -95,7 +93,7 @@ CKEDITOR.plugins.add( 'jf-annotation', {
                             }
                             if (this.sources != null) {
                                 AnnotationsService.setNoteSource(resource, id, this.sources);
-                            };  
+                            }
                             // artificially send a change event to ng-ckeditor so it will update the scope
                             editor.fire("change");
                         }
@@ -118,13 +116,11 @@ CKEDITOR.plugins.add( 'jf-annotation', {
                                '<img class="editor-internal editor-icon" src="/img/icons_32x32/icon_annotation.png"></img>'+
                                '&#x21d3;'+
                                '<span class="editor-internal type">comment</span>'+
-                               /*'<span class="editor-internal resource">resource here</span>'+
-                               '(<span class="editor-internal annotation-id">idno</span>)'+*/
                                '<div class="tei-note" id="" data-type="comment">Annotation here...</div>' +
                                '</div>'; 
                     },
                     function(id) {  // endTemplate
-                        return '<div id="end_'+id+'" class="jf-annotation layer layer-phony-annotation end">&#x21d1;[A]</div>';
+                        return '<div id="end_'+id+'" class="jf-annotation layer layer-phony-annotation end">&#x21d1;' + img + '</div>';
                     }
 
                 );
@@ -137,15 +133,19 @@ CKEDITOR.plugins.add( 'jf-annotation', {
 
                 /* when initialized, call AnnotationsService to load the annotation content */
                 var jfAnnotation = this.element.getAttribute("data-jf-annotation");
-                var img = "<img class='editor-internal editor-icon' src='/js/ckeditor/plugins/jf-annotation/icons/jf-annotation.png'/>";
+                var id = jfAnnotation ? jfAnnotation.split("#")[1] : "" ;
+                var loadingText = jfAnnotation ?
+                    ('Loading ' + jfAnnotation.split("/").map( function(s) {
+                        return decodeURIComponent(s); }).join("/"))
+                    : "";
                 var el = this.element;
                 // first set the HTML to the basic filler
                 if (el.hasClass("start")) {
                     el.setHtml(img + "&#x21d3;" +
-                            '<span class="editor-internal type">&nbsp;</span>' +
+                            '<span class="editor-internal type">comment</span>' +
                         '<div class="tei-note" data-type="" id="'+
-                            jfAnnotation.split("#")[1]+
-                            '" data-os-loaded="0">Loading ' + jfAnnotation.split("/").map( function(s) { return decodeURIComponent(s); }).join("/") +'</div>');
+                            id +
+                            '" data-os-loaded="0">' + loadingText +'</div>');
                 }
                 else {
                     el.setHtml("&#x21d1;" + img);
@@ -159,13 +159,13 @@ CKEDITOR.plugins.add( 'jf-annotation', {
                     .then(function(annotation) {
                         var newAnnotation = new CKEDITOR.dom.element.createFromHtml(annotation);
                         var annotationType = newAnnotation.getAttribute("data-type");
-                        var annotationTypeSpan = new CKEDITOR.dom.element.createFromHtml(
-                               '<span class="editor-internal type">' + annotationType + '</span>');
                         var spans = el.getElementsByTag("span");
                         if (spans.count() > 0) {
-                            spans.getItem(0).replace(annotationTypeSpan);
+                            spans.getItem(0).setHtml(annotationType);
                         }
                         else {
+                            var annotationTypeSpan = new CKEDITOR.dom.element.createFromHtml(
+                                '<span class="editor-internal type">' + annotationType + '</span>');
                             el.getElementsByTag("div").getItem(0).insertBeforeMe(annotationTypeSpan);
                         }
                         newAnnotation.replace(el.getElementsByTag("div").getItem(0));
