@@ -23,7 +23,8 @@ CKEDITOR.plugins.add( 'tei-l', {
         var blockObject = new BlockObject(editor);
         var img = '<img class="editor-internal editor-icon" src="/js/ckeditor/plugins/tei-l/icons/tei-l.png"/>';
 
-        var updateElementContent = function(el) {
+        var updateElementContent = function(el, nofire) {
+            // if given nofire, won't fire editor.fire(change)
             var layerId = ""; // not used yet "[" + el.getAttribute("data-jf-layer-id") + "]";
             if (el.hasClass("start")) {
                 var lgStart = (el.hasAttribute("data-jf-lg-start")) ? "[lg&#x21d3;]" : "";
@@ -32,7 +33,9 @@ CKEDITOR.plugins.add( 'tei-l', {
             else {
                 el.setHtml("&#x21d1;" + img + layerId);
             }
-            editor.fire("change");
+            if (!nofire) {
+                editor.fire("change");
+            }
         };
 
 		editor.widgets.add( 'tei-l', {
@@ -89,7 +92,7 @@ CKEDITOR.plugins.add( 'tei-l', {
 			},
 			init: function() {
 			    var el = this.element;
-                updateElementContent(el);
+                updateElementContent(el, true);
 			},
             destroy : blockObject.destroy,
 			data: function() {
