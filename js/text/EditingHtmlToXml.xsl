@@ -131,7 +131,7 @@
     <!-- html:div(jf:annotation) -->
     <!-- html:p(jf:set) -->
     <!-- html:div(jf:conditional) -->
-    <xsl:template match="html:p[local:has-class(@class,'tei-item')]|
+    <xsl:template match="html:div[local:has-class(@class,'tei-item')]|
             html:div[local:has-class(@class, 'tei-div')]|
             html:div[local:has-class(@class, 'tei-l')]|
             html:p[local:has-class(@class,'tei-p')]|
