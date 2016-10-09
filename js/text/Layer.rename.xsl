@@ -31,6 +31,15 @@
         </xsl:copy>
     </xsl:template>
 
+    <xsl:template match="*[@jf:id=$old-layer-id]" priority="10">
+        <xsl:copy copy-namespaces="no">
+            <xsl:sequence select="@* except (@jf:layer-id, @jf:id)"/>
+            <xsl:attribute name="jf:layer-id" select="string-join((substring-before(@jf:layer-id, '#'), $new-layer-id), '#')"/>
+            <xsl:attribute name="jf:id" select="$new-layer-id"/>
+            <xsl:apply-templates/>
+        </xsl:copy>
+    </xsl:template>
+
     <xsl:template match="*|comment()|text()">
         <xsl:copy copy-namespaces="no">
             <xsl:sequence select="@*"/>

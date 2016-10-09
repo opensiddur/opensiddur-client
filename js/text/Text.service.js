@@ -168,6 +168,9 @@ osTextModule.service("TextService", [
         content : function(setContent) {
             if (setContent) {
                 this._content = setContent;
+                if (this._isFlat) { // resynchronize the flat content after the content has been changed
+                    this._flatContent = this.flatContent();
+                }
                 return this;   
             }
             return this._content;

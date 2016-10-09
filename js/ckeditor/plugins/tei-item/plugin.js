@@ -64,10 +64,14 @@ CKEDITOR.plugins.add( 'tei-item', {
 			button: 'Start a new itemized list',
 			edit : function ( evt) {
 				var el = this.element;
+				// The list editor might rewrite TextService.content(). If it does, el will disappear.
+                // We need to keep track of which list element we are edting
+                el.setAttribute("data-os-list-editing", "1");
 				EditorDataService.editListDialog = {
 					id : el.getAttribute("data-jf-layer-id"),
 					callback : function(ok) {
-						if (ok) {
+                        el = editor.document.getDocumentElement().findOne("*[data-os-list-editing]");
+						if (ok && el != null) {
 							var newLayerId = EditorDataService.editListDialog.id;
 							if (newLayerId) {
                                 updateElementContent(el, newLayerId);
@@ -76,6 +80,9 @@ CKEDITOR.plugins.add( 'tei-item', {
 						}
 						else {
 						    editor.fire("change");      // deletions, eg
+                        }
+                        if (el != null) {
+                            el.removeAttribute("data-os-list-editing");
                         }
 					},
                     updateAllCallback : function() {
