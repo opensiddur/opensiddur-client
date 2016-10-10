@@ -84,10 +84,10 @@ osTextModule.service("TextService", [
                 .then(function(data) {  // success
                     thiz._resource = resource;
                     thiz._resourceApi = resourceApi;
-                    thiz._content = data;
+
                     thiz._isFlat = flat || false;
-                    thiz._flatContent = flat ? thiz.flatContent() : "";
-                    
+                    thiz.content(data);
+
                     return thiz;
                 },
                 function(error) {
@@ -292,10 +292,9 @@ osTextModule.service("TextService", [
             if (this._isFlat) {
                 // add ids to anything that doesn't have and needs in the streamtext, then rejoin the flat content
                 // with the new xml:ids
-                this._content = XsltService.indentToString(
+                this.content(XsltService.indentToString(
                     XsltService.transformString("/js/text/AddXmlId.xsl", this.syncFlat()), this._isFlat
-                );
-                this._flatContent = this.flatContent();
+                ));
             }
             var js = xj.xml2json(XsltService.transformString("/js/text/Sources.get.xsl", this._content));
             // the title is URL encoded. Decode it here
