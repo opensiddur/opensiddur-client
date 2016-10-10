@@ -21,7 +21,7 @@
         </xsl:if>
     </xsl:template>
 
-    <xsl:template match="jf:merged/*">
+    <xsl:template match="jf:merged/*[@class]">
         <xsl:copy copy-namespaces="no">
             <xsl:sequence select="@*"/>
 
