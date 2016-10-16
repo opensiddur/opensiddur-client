@@ -14,9 +14,9 @@
 >
 
     <xsl:template name="add-xmlid" as="attribute()?">
-        <xsl:param name="element-name" as="xs:string"/>
+        <xsl:param name="element-name" as="xs:string?"/>
         <!-- add a randomly generated xml:id -->
-        <xsl:if test="not(@id)">
+        <xsl:if test="exists($element-name) and not(@id)">
             <xsl:attribute name="id" select="concat(substring-after($element-name, ':'), '_', generate-id(.))"/>
         </xsl:if>
     </xsl:template>
@@ -27,7 +27,9 @@
 
             <xsl:call-template name="add-xmlid">
                 <xsl:with-param name="element-name"
-                                select="tokenize(@class, '\s+')[starts-with(., 'tei-') or starts-with(., 'j-')]"/>
+                                select="tokenize(@class, '\s+')[starts-with(., 'tei-')
+                                    or starts-with(., 'j-')
+                                    or starts-with(., 'jf-')]"/>
             </xsl:call-template>
             <xsl:apply-templates/>
         </xsl:copy>

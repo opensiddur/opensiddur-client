@@ -136,10 +136,12 @@ osTextModule.controller(
                 CKEDITOR.instances.editor1.destroy();
             }
             parentElement.html("");
-            var ngCkeditor = $compile('<textarea id="editor1" ckeditor="ckeditorOptions" ng-model="TextService._flatContent">'+
+            var ngCkeditor = $compile('<textarea id="editor1" ' +
+                'ckeditor="ckeditorOptions" ng-model="TextService._flatContent" ng-change="editor.makeDirty()">'+
                 '</textarea>')($scope);
             parentElement.append(ngCkeditor);
         };
+
 
         $scope.editor = {
             loggedIn : AuthenticationService.loggedIn,
