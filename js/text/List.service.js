@@ -29,7 +29,7 @@ osTextModule.service("ListService", [
         getListLayers : function() {
             // return all existing list layer ids
             var layers = x2js.xml2json(
-                XsltService.transformString("/js/text/Layer.get.xsl", TextService.syncFlat(), {
+                XsltService.transformString("/js/text/Layer.get.xsl", TextService.content(), {
                     "layer-type" : "list"
                 })
             ).layers;
