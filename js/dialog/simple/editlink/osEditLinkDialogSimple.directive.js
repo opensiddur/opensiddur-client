@@ -27,7 +27,7 @@ dialogSimpleEditLinkModule.directive(
                     $scope.selectLinkType = function(linkType) {
                         if (linkType == "internal") {
                             $scope.link.dataTargetBase = "";
-                            $scope.external.content = TextService.syncFlat();
+                            $scope.external.content = TextService.syncFlat(true);
                         }
                     };
                     $scope.resetExternal = function() {
