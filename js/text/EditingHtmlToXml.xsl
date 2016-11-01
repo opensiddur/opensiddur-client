@@ -104,8 +104,9 @@
         <tei:ptr>
             <xsl:apply-templates select="@*[not(name(.)=('data-target-base', 'data-target-fragment'))]"/>
             <!-- @href contains /texts/[name], @data-target-base/@data-target-fragment contain the pointer -->
-            <xsl:attribute name="target" 
-                select="concat('/data/original/', @data-target-base, @data-target-fragment)"/>
+            <xsl:attribute name="target"
+                select="concat(if (@data-target-base/string()) then '/data/original/' else '',
+                        @data-target-base, @data-target-fragment)"/>
             <xsl:call-template name="add-xmlid"> 
                 <xsl:with-param name="element-name" select="'tei:ptr'"/>
             </xsl:call-template>
@@ -118,7 +119,8 @@
             <xsl:apply-templates select="@*[not(name(.)=('data-target-base', 'data-target-fragment'))]"/>
             <!-- @href contains /texts/[name], @data-target-base/@data-target-fragment contain the pointer -->
             <xsl:attribute name="target" 
-                select="concat('/data/original/', @data-target-base, @data-target-fragment)"/>
+                select="concat(if (@data-target-base/string()) then '/data/original/' else '',
+                    @data-target-base, @data-target-fragment)"/>
             <xsl:call-template name="add-xmlid"> 
                 <xsl:with-param name="element-name" select="'tei:ref'"/>
             </xsl:call-template>
