@@ -87,16 +87,16 @@ osSourcesModule.controller(
                     this.error = "";
                     if (this.url.match("books.google.com")) {
                         var m = this.url.match(/id=([A-Za-z0-9_]+)/);
-                        if (m) { 
-                            $scope.editor.content.biblStruct.idno._type = "books.google.com"; 
-                            $scope.editor.content.biblStruct.idno.__text = m[1]; 
+                        if (m) {
+                            SourceService.content.biblStruct.idno._type = "books.google.com";
+                            SourceService.content.biblStruct.idno.__text = m[1];
                         }
                     }   
                     else if (this.url.match("archive.org")) {
                         var m = this.url.match(/\/(details|stream)\/([A-Za-z0-9_]+)/);
                         if (m) { 
-                            $scope.editor.content.biblStruct.idno._type = "archive.org"; 
-                            $scope.editor.content.biblStruct.idno.__text = m[2]; 
+                            SourceService.content.biblStruct.idno._type = "archive.org";
+                            SourceService.content.biblStruct.idno.__text = m[2];
                         }
                     }
                     else {
