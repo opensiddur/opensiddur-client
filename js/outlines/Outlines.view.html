@@ -21,6 +21,20 @@
                       data-ng-class="{'btn-success' : outlineForm.$pristine && editor.saved}" type="submit" 
                       data-ng-click="editor.execute()"  
                       data-ng-disabled="outlineForm.$invalid || outlineForm.$dirty">{{executeButtonText()}}</button>
+                  <button
+                      class="btn btn-primary"
+                      type="submit"
+                      ng-click="editor.editAsText()"
+                      ng-disabled="!OutlinesService.content.outline.uri.__text"
+                      title="Edit the last executed version of the document in the simple text editor">
+                      Edit as text</button>
+                  <button
+                          class="btn btn-primary"
+                          type="submit"
+                          ng-click="editor.compile()"
+                          ng-disabled="!OutlinesService.content.outline.uri.__text"
+                          title="Compile and view the last executed version of the document">
+                      Compile to HTML</button>
               </div>
               <div class="btn-group navbar-btn">
                   <button class="btn btn-primary" 

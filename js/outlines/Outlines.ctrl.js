@@ -7,10 +7,10 @@
  */
 osOutlinesModule.controller(
   'OutlinesCtrl',
-  ['$scope', '$location', '$routeParams', 
+  ['$scope', '$location', '$routeParams', '$window',
   'AuthenticationService', 'DialogService', 'ErrorService', 'LanguageService', 'LicensesService', 'OutlinesService',
       'TranscriptionViewerService',
-  function ($scope, $location, $routeParams, 
+  function ($scope, $location, $routeParams, $window,
     AuthenticationService, DialogService, ErrorService, LanguageService, LicensesService, OutlinesService,
     TranscriptionViewerService) {
     console.log("Outlines controller.");
@@ -82,6 +82,16 @@ osOutlinesModule.controller(
                       ErrorService.addApiError(err);
                   });
       },
+        editAsText : function() {
+            var uri = OutlinesService.content.outline.uri.__text;
+            var editorUrl = "/texts/" + uri.split("/").pop();
+            $window.open(editorUrl, "_blank");
+        },
+        compile : function() {
+            var uri = OutlinesService.content.outline.uri.__text;
+            var compileUrl = "/compile/" + uri.split("/").pop();
+            $window.open(compileUrl, "_blank");
+        },
       dialogCancel : function() { }
     };
 
