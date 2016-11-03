@@ -58,6 +58,9 @@ osOutlinesModule.controller(
                         });
             }
         },
+        refresh : function() {
+            this.setDocument(OutlinesService.resource);
+        },
       saveDocument : function() { 
         // save the document
           thiz = this;
@@ -202,6 +205,9 @@ osOutlinesModule.controller(
     };
       $scope.executeButtonText = function() {
         return ($scope.editor.executed == true && $scope.outlineForm.$pristine) ? "Executed" : "Execute";
+      };
+      $scope.refreshButtonText = function() {
+          return ($scope.outlineForm.$pristine) ? "Refresh" : "Revert"
       };
 
     $scope.editor.setDocument($scope.resource);

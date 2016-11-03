@@ -11,6 +11,10 @@
                   <button class="btn btn-primary" 
                       data-ng-click="DialogService.open('openDialog')"
                       >Open</button>
+                  <button class="btn btn-primary"
+                          ng-click="editor.refresh()"
+                          ng-disabled="!editor.saved"
+                          title="Refresh the page/revert to the last save">{{refreshButtonText()}}</button>
                   <button
                       class="btn btn-primary"
                       data-ng-class="{'btn-success' : outlineForm.$pristine}" type="submit" 
