@@ -296,7 +296,7 @@ osTextModule.service("TextService", [
                 return this;
             }
             if (this._isFlat) {
-                this.syncFlat(true);
+                this.syncFlat();
             }
             var js = xj.xml2json(XsltService.transformString("/js/text/Sources.get.xsl", this._content));
             // the title is URL encoded. Decode it here
