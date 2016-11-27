@@ -17,7 +17,7 @@
         <xsl:param name="element-name" as="xs:string?"/>
         <!-- add a randomly generated xml:id -->
         <xsl:if test="exists($element-name) and not(@id)">
-            <xsl:attribute name="id" select="concat(substring-after($element-name, ':'), '_', generate-id(.))"/>
+            <xsl:attribute name="id" select="concat(substring-after($element-name, '-'), '_', generate-id(.))"/>
         </xsl:if>
     </xsl:template>
 

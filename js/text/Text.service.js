@@ -94,11 +94,17 @@ osTextModule.service("TextService", [
                     return $q.reject(error);
                 });
         },
-        syncFlat : function () {
+        syncFlat : function (addXmlIds) {
             // one way synchronize the _flat content with the XML content. Return the synchronized content.
+            // if addXmlIds is defined/true, add ids to the stream text to elements that require them but don't have them
 
             // rejoin flatContent to content
-            this.flatContent(this._flatContent); 
+            this.flatContent(this._flatContent);
+            if (addXmlIds) {
+                this.content(XsltService.indentToString(
+                    XsltService.transformString("/js/text/AddXmlId.xsl", this._content), this._isFlat
+                ));
+            }
             return this._content;
         },
         syncFlatCopy : function() {
@@ -290,11 +296,7 @@ osTextModule.service("TextService", [
                 return this;
             }
             if (this._isFlat) {
-                // add ids to anything that doesn't have and needs in the streamtext, then rejoin the flat content
-                // with the new xml:ids
-                this.content(XsltService.indentToString(
-                    XsltService.transformString("/js/text/AddXmlId.xsl", this.syncFlat()), this._isFlat
-                ));
+                this.syncFlat();
             }
             var js = xj.xml2json(XsltService.transformString("/js/text/Sources.get.xsl", this._content));
             // the title is URL encoded. Decode it here

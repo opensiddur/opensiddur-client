@@ -217,7 +217,8 @@ osTextModule.controller(
                 }
             },
             openDocumentSimple : function ( selection ) {
-                $scope.editor.openDocument(selection, true);
+                $scope.editor.openDocument(selection,
+                    $scope.resourceType.current.type == "original");    // only original docs can be edited simply
             },
             setDocument : function( toDocument, cursorLocation, useFlat ) {
                 if (toDocument) {

@@ -161,6 +161,9 @@ osDialogMetadataSourcesModule.directive(
                     elem.find(".osMetadataSourcesDialog").attr("aria-labelledBy", scope.name + "_label");
                     elem.find(".osMetadataSourcesDialog").attr("id", scope.name);
                     elem.on("show.bs.modal", function() {
+                        if (TextService._isFlat) {
+                            TextService.syncFlat(true); // we need the xml:ids to be updated
+                        }
                         scope.sourcesModel = TextService.sources();
                         var idContexts = TextService.listXmlIds(100, true);
                         for (var i = 0; i < scope.sourcesModel.length; i++) {

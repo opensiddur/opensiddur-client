@@ -188,7 +188,7 @@ CKEDITOR.plugins.add( 'jf-annotation', {
                 }
                 /* show a dialog when ready */
                 this.once("ready", function(evt) {
-                  if (this.element.hasAttribute("data-os-new")) {
+                  if (this.element.hasAttribute("data-os-new") && this.element.hasClass("start")) {
                     this.edit();
                   }
                 });
