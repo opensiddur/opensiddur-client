@@ -133,7 +133,9 @@
     <!-- html:div(jf:annotation) -->
     <!-- html:p(jf:set) -->
     <!-- html:div(jf:conditional) -->
-    <xsl:template match="html:div[local:has-class(@class,'tei-item')]|
+    <xsl:template match="
+            html:p[local:has-class(@class, 'tei-anchor')]|
+            html:div[local:has-class(@class,'tei-item')]|
             html:div[local:has-class(@class, 'tei-div')]|
             html:div[local:has-class(@class, 'tei-l')]|
             html:p[local:has-class(@class,'tei-p')]|
@@ -142,7 +144,6 @@
             html:div[local:has-class(@class, 'jf-conditional')]"
         mode="streamText">
         <tei:anchor>
-            <xsl:variable name="classes" select="tokenize(@class, '\s+')"/>
             <xsl:attribute name="xml:id" select="@id"/>
         </tei:anchor>
     </xsl:template>
