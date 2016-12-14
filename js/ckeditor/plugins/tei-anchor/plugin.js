@@ -46,6 +46,7 @@ CKEDITOR.plugins.add( 'tei-anchor', {
                                 el.setAttribute("id", this.id);
                                 loadContent(el);
                                 el.removeAttribute("data-os-new");
+                                editor.fire("change");
                             }
                             else {
                                 // cancel

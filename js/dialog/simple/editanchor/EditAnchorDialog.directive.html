@@ -1,0 +1,35 @@
+<div class="osEditAnchorDialogSimple modal" aria-hidden="true" aria-labelledBy="editAnchorDialogSimpleHeader">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-ng-click="CloseButton()" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="editAnchorDialogSimpleHeader">{{ title }}</h4>
+            </div>
+            <div class="modal-body">
+                <p>An <b>anchor</b> is a fixed point in the text that is identified by an id code.
+                The code is not part of the text. Anchors can be used to "anchor" other elements that reference
+                fixed points, such as inclusions of other text or instructional annotations.</p>
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <label class="control-label col-md-2" for="anchor.id">Anchor identifier</label>
+                        <div class="col-md-5">
+                            <input
+                                    id="anchor.id"
+                                    class="form-control"
+                                    ng-model="anchor.id"
+                                    ng-required="1"
+                                    placeholder="Identifier"
+                                    ng-pattern="^[^0-9][a-zA-Z0-9_]+$"/>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn" data-ng-click="CloseButton()" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal"
+                    data-ng-click="OKButton()">Edit</button>
+            </div>
+        </div>
+    </div>
+</div>
+
