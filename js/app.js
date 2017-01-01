@@ -64,8 +64,12 @@ var osClientModule =
        'osClient.dialog.metadata.sources', // ditto
        'osClient.dialog.metadata.title', // ditto
        'osClient.dialog.settings.annotations',
+       'osClient.dialog.simple.editanchor',
        'osClient.dialog.simple.editannotation', // ditto
        'osClient.dialog.simple.editconditions', // ditto
+       'osClient.dialog.simple.editdiv',
+       'osClient.dialog.simple.editlist',
+       'osClient.dialog.simple.editline', // ditto
        'osClient.dialog.simple.editlink', // ditto
        'osClient.dialog.simple.editsegment', // ditto
        'osClient.dialog.simple.editsettings', // ditto

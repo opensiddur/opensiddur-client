@@ -24,15 +24,16 @@ osTextModule.service("TextService", [
         _resource : "",
         _resourceApi : "",
         newDocument : function(resourceApi, newDocumentTemplate, flat) {
+            var iflat = (resourceApi == "/api/data/original") && flat; // only original docs support flat
             this.content("");
             this._resource = "";
             this._resourceApi = resourceApi;
-            this._isFlat = flat;   
- 
+            this._isFlat =  iflat;
+            
             var templateParameters = x2js.json2xml(newDocumentTemplate);
-            var strdoc = XsltService.indentToString(XsltService.transform((flat ? flatDocumentTemplates : documentTemplates)[resourceApi], templateParameters), flat);
+            var strdoc = XsltService.indentToString(XsltService.transform((iflat ? flatDocumentTemplates : documentTemplates)[resourceApi], templateParameters), iflat);
             this.content(strdoc);
-            this._flatContent = flat ? this.flatContent() : "";
+            this._flatContent = iflat ? this.flatContent() : "";
         }, 
         loadFlat : function(resource) {
             // load the content from the given resource (without path!) as a flat document
@@ -83,21 +84,27 @@ osTextModule.service("TextService", [
                 .then(function(data) {  // success
                     thiz._resource = resource;
                     thiz._resourceApi = resourceApi;
-                    thiz._content = data;
+
                     thiz._isFlat = flat || false;
-                    thiz._flatContent = flat ? thiz.flatContent() : "";
-                    
+                    thiz.content(data);
+
                     return thiz;
                 },
                 function(error) {
                     return $q.reject(error);
                 });
         },
-        syncFlat : function () {
+        syncFlat : function (addXmlIds) {
             // one way synchronize the _flat content with the XML content. Return the synchronized content.
+            // if addXmlIds is defined/true, add ids to the stream text to elements that require them but don't have them
 
             // rejoin flatContent to content
-            this.flatContent(this._flatContent); 
+            this.flatContent(this._flatContent);
+            if (addXmlIds) {
+                this.content(XsltService.indentToString(
+                    XsltService.transformString("/js/text/AddXmlId.xsl", this._content), this._isFlat
+                ));
+            }
             return this._content;
         },
         syncFlatCopy : function() {
@@ -167,6 +174,9 @@ osTextModule.service("TextService", [
         content : function(setContent) {
             if (setContent) {
                 this._content = setContent;
+                if (this._isFlat) { // resynchronize the flat content after the content has been changed
+                    this._flatContent = this.flatContent();
+                }
                 return this;   
             }
             return this._content;
@@ -285,7 +295,10 @@ osTextModule.service("TextService", [
                     this._isFlat);
                 return this;
             }
-            var js = xj.xml2json(XsltService.transformString("/js/text/Sources.get.xsl", this._content))
+            if (this._isFlat) {
+                this.syncFlat();
+            }
+            var js = xj.xml2json(XsltService.transformString("/js/text/Sources.get.xsl", this._content));
             // the title is URL encoded. Decode it here
             if ("bibl_asArray" in js.sources) {
                 var bibl = js.sources.bibl_asArray;

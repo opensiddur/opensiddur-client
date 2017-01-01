@@ -1,7 +1,7 @@
 <!-- add a layer if one of the same type does not already exist
 
     Open Siddur Project
-    Copyright 2015 Efraim Feinstein, efraim@opensiddur.org
+    Copyright 2015-2016 Efraim Feinstein, efraim@opensiddur.org
     Licensed under the GNU Lesser General Public License, version 3 or later
 -->
 <xsl:stylesheet
@@ -14,18 +14,21 @@
     >
     <xsl:param name="layer-type" as="xs:string"/>
     <xsl:param name="resource" as="xs:string"/>
+    <xsl:param name="layer-id" as="xs:string?"/>
 
     <xsl:template name="add-layer">
+        <xsl:variable name="lid" select="($layer-id, concat('layer-', $layer-type))[1]"/>
         <jf:layer type="{$layer-type}" 
-            jf:id="layer-{$layer-type}" 
-            jf:layer-id="{$resource}#layer-{$layer-type}"/>
+            jf:id="{$lid}"
+            jf:layer-id="{$resource}#{$lid}"/>
     </xsl:template>
 
     <xsl:template match="jf:concurrent">
         <xsl:copy copy-namespaces="no">
             <xsl:sequence select="@*"/>
             <xsl:apply-templates/>
-            <xsl:if test="not(jf:layer[@type=$layer-type])">
+            <xsl:if test="not(jf:layer[@type=$layer-type]) or
+                ($layer-id and not(jf:layer[ends-with(@jf:layer-id, concat('#', $layer-id))]))">
                 <xsl:call-template name="add-layer"/>
             </xsl:if>
         </xsl:copy>

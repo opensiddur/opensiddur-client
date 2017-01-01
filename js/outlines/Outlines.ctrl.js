@@ -7,10 +7,10 @@
  */
 osOutlinesModule.controller(
   'OutlinesCtrl',
-  ['$scope', '$location', '$routeParams', 
+  ['$scope', '$location', '$routeParams', '$window',
   'AuthenticationService', 'DialogService', 'ErrorService', 'LanguageService', 'LicensesService', 'OutlinesService',
       'TranscriptionViewerService',
-  function ($scope, $location, $routeParams, 
+  function ($scope, $location, $routeParams, $window,
     AuthenticationService, DialogService, ErrorService, LanguageService, LicensesService, OutlinesService,
     TranscriptionViewerService) {
     console.log("Outlines controller.");
@@ -58,6 +58,9 @@ osOutlinesModule.controller(
                         });
             }
         },
+        refresh : function() {
+            this.setDocument(OutlinesService.resource);
+        },
       saveDocument : function() { 
         // save the document
           thiz = this;
@@ -82,6 +85,16 @@ osOutlinesModule.controller(
                       ErrorService.addApiError(err);
                   });
       },
+        editAsText : function() {
+            var uri = OutlinesService.content.outline.uri.__text;
+            var editorUrl = "/texts/" + uri.split("/").pop();
+            $window.open(editorUrl, "_blank");
+        },
+        compile : function() {
+            var uri = OutlinesService.content.outline.uri.__text;
+            var compileUrl = "/compile/" + uri.split("/").pop();
+            $window.open(compileUrl, "_blank");
+        },
       dialogCancel : function() { }
     };
 
@@ -192,6 +205,9 @@ osOutlinesModule.controller(
     };
       $scope.executeButtonText = function() {
         return ($scope.editor.executed == true && $scope.outlineForm.$pristine) ? "Executed" : "Execute";
+      };
+      $scope.refreshButtonText = function() {
+          return ($scope.outlineForm.$pristine) ? "Refresh" : "Revert"
       };
 
     $scope.editor.setDocument($scope.resource);

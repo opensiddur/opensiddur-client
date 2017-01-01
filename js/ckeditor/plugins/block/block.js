@@ -9,6 +9,7 @@ var BlockObject = function(editor, allowOverlap, allowAllNodeTypes) {
     this.editor = editor;
     this.allowOverlap = allowOverlap || false;
     this.allowAllNodeTypes = allowAllNodeTypes || false;
+    var thiz = this;
 
     var injector = angular.element('*[data-ng-app]').injector();
     this.TextService = injector.get("TextService");
@@ -20,6 +21,7 @@ var BlockObject = function(editor, allowOverlap, allowAllNodeTypes) {
         if (node.hasClass("cke_widget_block")) {
             node = node.getChildren().getItem(0);
         }
+        if (node == null) return false;
         var r = RegExp("^"+boundary+"_");
         return node.hasClass(blockType) && node.getId().replace(r, "") == id;
     };
@@ -28,6 +30,7 @@ var BlockObject = function(editor, allowOverlap, allowAllNodeTypes) {
         if (node.hasClass("cke_widget_block")) {
             node = node.getChildren().getItem(0);
         }
+        if (node == null) return false;     // empty widgets
         boundaryTypes = boundaryTypes || ["start", "end"];
         return node.hasClass(blockType) && node.hasClass("layer") && 
             boundaryTypes.some(function(b) {return node.hasClass(b);}) ? node : false; 
@@ -83,7 +86,7 @@ var BlockObject = function(editor, allowOverlap, allowAllNodeTypes) {
                 var f = isAnyBlockBoundary(fol, blockType, ["end"]);
                 if (f) ends.push(f);
             }
-        };
+        }
         var unstartedEnds = [];
         for (var i = 0; i < ends.length; i++) {
             end = ends[i];
@@ -118,7 +121,7 @@ var BlockObject = function(editor, allowOverlap, allowAllNodeTypes) {
     };
     var isAllowedNodeType = function(node) {
         // return if the given node is allowed to be in the block
-        var allowedNodeTypes = this.allowAllNodeTypes ? ["tei-seg","tei-ptr"] : ["tei-seg"];
+        var allowedNodeTypes = thiz.allowAllNodeTypes ? ["tei-seg","tei-ptr","tei-anchor"] : ["tei-seg"];
         if (node.hasClass("cke_widget_block")) {
             node = node.getChildren().getItem(0);
         }
@@ -136,12 +139,12 @@ var BlockObject = function(editor, allowOverlap, allowAllNodeTypes) {
             rng.setStart(start,0);
             rng.setEnd(end,0);
             var walker = new CKEDITOR.dom.walker(rng);  // iterator removes ids from nodes
-            walker.evaluator = function() { return true; }
+            walker.evaluator = function() { return true; };
             var nsegs = 0; 
             var maybe = null;
             while (maybe = walker.next()) { 
                 if (maybe.type == 1 && (isAllowedNodeType(maybe) || (maybe.getName() == elementType && maybe.getAttribute("class") == null))) nsegs++; 
-            };
+            }
             delete walker; 
             if (nsegs == 0) {
                 start.remove();
@@ -172,7 +175,8 @@ var BlockObject = function(editor, allowOverlap, allowAllNodeTypes) {
         elementType,        // eg, "p"
         classType,          // eg, "tei-p"
         beginTemplate,
-        endTemplate
+        endTemplate,
+        declaredLayerId
         ) {
         // beginTemplate and endTemplate should be function(id) and return a string
         /* block insertion algorithm:
@@ -188,9 +192,20 @@ var BlockObject = function(editor, allowOverlap, allowAllNodeTypes) {
             8. if any blocks have been split in both directions (unterminated and unstarted) rename the ids for the unstarted portion of the block.
         */
         var editor = this.editor;
+
+        var layerId = declaredLayerId || ("layer-" + layerType);
+
         var thisId = getRandomId(layerType, elementType);
         var selection = editor.getSelection();
         var ranges = selection.getRanges();
+        var nearestElement = function(node) {
+            // find the nearest element to the given node that can be used as a start or end of range
+            var thisParent = node;
+            while (thisParent.getParent().getName() != "body") {
+                thisParent = thisParent.getParent();
+            }
+            return thisParent;
+        };
         var startOfRange = function(range) {
             var sor = range[0].startContainer;
             return (sor.type == 1 && sor.getName() == "body") ?
@@ -198,7 +213,7 @@ var BlockObject = function(editor, allowOverlap, allowAllNodeTypes) {
                 editor.widgets.selected[0].wrapper
                 : (sor.type == 3) ?
                 // it's a text node, get the parent
-                sor.getParent()
+                nearestElement(sor)
                 : sor;
         };
         var endOfRange = function(range) {
@@ -208,7 +223,7 @@ var BlockObject = function(editor, allowOverlap, allowAllNodeTypes) {
                 editor.widgets.selected[editor.widgets.selected.length - 1].wrapper
                 : (eor.type == 3) ?
                 // text node, get parent
-                eor.getParent()
+                nearestElement(eor)
                 : eor;
         };
         var startElement = getAscendantSegment(startOfRange(ranges), null, elementType);
@@ -220,7 +235,9 @@ var BlockObject = function(editor, allowOverlap, allowAllNodeTypes) {
         }
         this.TextService.addLayer(layerType);
         var begInsert = new CKEDITOR.dom.element.createFromHtml(beginTemplate(thisId));
+        begInsert.setAttribute("data-jf-layer-id", layerId);
         var endInsert = new CKEDITOR.dom.element.createFromHtml(endTemplate(thisId));
+        endInsert.setAttribute("data-jf-layer-id", layerId);
         if (!this.allowOverlap) {
             removeInternalBlocks(startElement, endElement, classType, thisId);
             var unterminatedStarts = getAllPrecedingUnterminatedBlockStarts(startElement, classType);
@@ -229,20 +246,22 @@ var BlockObject = function(editor, allowOverlap, allowAllNodeTypes) {
             for (var i = 0; i < unterminatedStarts.length; i++) {
                 // insert end tags
                 var endTag = new CKEDITOR.dom.element.createFromHtml(endTemplate(unterminatedStarts[i].getId().replace(/^start_/, "")));
+                endTag.setAttribute("data-jf-layer-id", layerId);
                 endTag.insertBefore(startElement);
                 editor.widgets.initOn( endTag, classType );
             }
             for (var i = 0; i < unstartedEnds.length; i++) {
                 // insert start tags
                 var startTag = new CKEDITOR.dom.element.createFromHtml(beginTemplate(unstartedEnds[i].getId().replace(/^end_/, "")));
+                startTag.setAttribute("data-jf-layer-id", layerId);
                 startTag.insertAfter(endElement);
                 editor.widgets.initOn( startTag, classType );
             }
         }    
         begInsert.insertBefore(startElement);
         endInsert.insertAfter(endElement);
-        editor.widgets.initOn( begInsert, classType )
-        editor.widgets.initOn( endInsert, classType )
+        editor.widgets.initOn( begInsert, classType );
+        editor.widgets.initOn( endInsert, classType );
         removeEmptyBlocks(startElement, classType, elementType); 
         editor.fire("change");
     };

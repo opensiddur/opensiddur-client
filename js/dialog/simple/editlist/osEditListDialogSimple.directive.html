@@ -1,0 +1,48 @@
+<div class="osEditListDialogSimple modal" aria-hidden="true" aria-labelledBy="editListDialogSimpleHeader">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-ng-click="CloseButton()" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="editListDialogSimpleHeader">{{ title }}</h4>
+            </div>
+            <div class="modal-body">
+                <p>This dialog supports maintaining multiple (potentially overlapping) lists in the same document.
+                    Each list must have a unique name. Use the buttons below to add list names, rename lists, and
+                    delete named lists. Note that the list name will not appear in the final compiled document.</p>
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <label class="control-label col-md-1" for="list.id">List name:</label>
+                        <div class="col-md-3">
+                            <select id="list.id"
+                                    ng-model="list.id"
+                                ng-options="id for id in list.allListIds"></select>
+                        </div>
+                        <div class="col-md-4">
+                            <button type="button" class="btn" ng-click="DeleteList(list.id)" ng-disabled="list.id == '' || !writable">Delete selected list</button>
+                            <button type="button" class="btn" ng-click="RenameList(list.id, list.idOther)"
+                                    ng-disabled="ListExists(list.idOther) || list.id == '' || list.idOther == '' || !writable">Rename selected list to</button>
+                            <button type="button" class="btn" ng-click="NewList(list.idOther)"
+                                    ng-disabled="ListExists(list.idOther) || list.idOther == '' || !writable">&lt; Add list</button>
+                        </div>
+                        <div class="col-md-4">
+                            <input class="form-control"
+                                type="text" 
+                                ng-model="list.idOther"
+                                id="list.id.other"
+                                placeholder="Name of new list, renamed list, etc."
+                                ng-pattern="'[_a-zA-Z][0-9a-zA-Z_-]+'"/>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn" ng-click="CloseButton()" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal"
+                    ng-click="OKButton()"
+                    ng-disabled="!list.id || !writable">Set this item's list</button>
+            </div>
+        </div>
+    </div>
+</div>
+

@@ -11,6 +11,10 @@
 CKEDITOR.plugins.addExternal("jf-annotation", "/js/ckeditor/plugins/jf-annotation/");
 CKEDITOR.plugins.addExternal("jf-conditional", "/js/ckeditor/plugins/jf-conditional/");
 CKEDITOR.plugins.addExternal("jf-set", "/js/ckeditor/plugins/jf-set/");
+CKEDITOR.plugins.addExternal("tei-anchor", "/js/ckeditor/plugins/tei-anchor/");
+CKEDITOR.plugins.addExternal("tei-div", "/js/ckeditor/plugins/tei-div/");
+CKEDITOR.plugins.addExternal("tei-item", "/js/ckeditor/plugins/tei-item/");
+CKEDITOR.plugins.addExternal("tei-l", "/js/ckeditor/plugins/tei-l/");
 CKEDITOR.plugins.addExternal("tei-seg", "/js/ckeditor/plugins/tei-seg/");
 CKEDITOR.plugins.addExternal("tei-p", "/js/ckeditor/plugins/tei-p/");
 CKEDITOR.plugins.addExternal("tei-ptr", "/js/ckeditor/plugins/tei-ptr/");

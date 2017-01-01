@@ -2,6 +2,8 @@
     <script>
         CKEDITOR.on('instanceReady', function(event) {
             var editor = event.editor;
+            // work around a bug where sometimes the editor does not display text unless resized
+            editor.resize('100%', '100%');
             console.log(editor.filter.allowedContent);
         });
     </script>
@@ -114,7 +116,7 @@
             <div class="texts-editor row">
                 <form name="textsForm" data-unsaved-warning-form="1">
                     <div data-ng-class="{true:'col-md-6', false:'col-md-12'}[TranscriptionViewerService.isShown('transcription-window')]">
-                        <div data-ng-show="!TextService._isFlat">
+                        <div data-ng-show="!TextService._isFlat" >
                             <textarea  
                                 data-ui-codemirror="{ onLoad : editor.loaded }"
                                 data-ui-codemirror-opts="editor.codemirrorOptions"
@@ -122,12 +124,8 @@
                                 data-ng-model-options="{ getterSetter : true, debounce: 100 }"
                                 ></textarea>
                         </div>
-                        <div data-ng-show="TextService._isFlat">
-                            <textarea
-                                ckeditor="ckeditorOptions"
-                                data-ng-model="TextService._flatContent"
-                                data-ng-change="editor.ckeditorChanged()"
-                                ></textarea>
+                        <div id="ckeditorContainer" data-ng-show="TextService._isFlat">
+
                         </div>
                     </div>
                 </form>
@@ -194,14 +192,30 @@
             name="metadataCommitLogDialog"
             title="Commit Log"
             on-ok="editor.makeDirty"></os-metadata-commit-log-dialog>
+    <os-edit-anchor-dialog-simple on-ok="editor.makeDirty"
+                                on-close="editor.dialogCanceled"
+                                name="editAnchorDialogSimple"
+    ></os-edit-anchor-dialog-simple>
     <os-edit-annotation-dialog-simple on-ok="editor.makeDirty"
         on-close="editor.dialogCanceled"
         name="editAnnotationDialogSimple"
         ></os-edit-annotation-dialog-simple>
+    <os-edit-div-dialog-simple on-ok="editor.makeDirty"
+                                   on-close="editor.dialogCanceled"
+                                   name="editDivDialogSimple"
+    ></os-edit-div-dialog-simple>
+    <os-edit-line-dialog-simple on-ok="editor.makeDirty"
+                               on-close="editor.dialogCanceled"
+                               name="editLineDialogSimple"
+    ></os-edit-line-dialog-simple>
     <os-edit-link-dialog-simple on-ok="editor.makeDirty"
         on-close="editor.dialogCanceled"
         name="editLinkDialogSimple"
         ></os-edit-link-dialog-simple>
+    <os-edit-list-dialog-simple on-ok="editor.makeDirty"
+                                on-close="editor.dialogCanceled"
+                                name="editListDialogSimple"
+    ></os-edit-list-dialog-simple>
     <os-edit-segment-dialog-simple on-ok="editor.makeDirty"
         on-close="editor.dialogCanceled"
         name="editSegmentDialogSimple"

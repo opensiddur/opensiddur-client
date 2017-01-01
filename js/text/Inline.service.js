@@ -43,7 +43,7 @@ osTextModule.service("InlineService", [
             var parsedFragment = parseFragment(fragment);
             if (resource == TextService._resource) {
                 var def = $q.defer();
-                var extracted = extractFragment(TextService.syncFlatCopyAsXml(), parsedFragment);
+                var extracted = extractFragment(TextService.syncFlatCopy(), parsedFragment);
                 def.resolve(extracted);
                 return def.promise;   
             }

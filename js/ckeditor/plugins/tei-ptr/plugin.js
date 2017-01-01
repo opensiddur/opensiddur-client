@@ -26,8 +26,9 @@ CKEDITOR.plugins.add( 'tei-ptr', {
             var injector = rootElement.injector();
             var InlineService = injector.get("InlineService");
             var TextService = injector.get("TextService");
-            var loadRemoteContent = function(element, refresh) {
-                var refresh = refresh || false;
+            var loadRemoteContent = function(element, refresh, fireChange) {
+                refresh = refresh || false;
+                fireChange = fireChange || false;
                 // load remote content from the target
                 element.setHtml("Loading...");
                 var targetBase = element.getAttribute("data-target-base") || "" ;
@@ -36,16 +37,19 @@ CKEDITOR.plugins.add( 'tei-ptr', {
                     element.setHtml("<p>Double click here to set what should be transcluded.</p>");   
                 }
                 else {
-                    return InlineService.load(targetBase || encodeURIComponent(TextService.resource), targetFragment, refresh)
+                    return InlineService.load(targetBase || encodeURIComponent(TextService._resource), targetFragment, refresh)
                     .then(
                         function(data) {
                             element.setHtml(data);
+                            if (fireChange) {
+                                editor.fire("change");
+                            }
                         },
                         function(error) {
                             element.setHtml("<p>Error loading " + targetBase + '#' + targetFragment + "</p>" + error);    
                         }
                     );
-                } 
+                }
             };
             editor.widgets.add( 'tei-ptr', {
                 draggable : false,
@@ -84,20 +88,21 @@ CKEDITOR.plugins.add( 'tei-ptr', {
                                   el.removeAttribute("data-type");
                                 }
                                 el.removeAttribute("data-os-new");
-                                loadRemoteContent(el);
+                                loadRemoteContent(el, false, true);
                             }
                             else if (button=="refresh") {
                                 // no changes other than refresh
-                                loadRemoteContent(el, true)
+                                loadRemoteContent(el, true, true)
                             }
                             else {
                                 // cancel
                                 if (isNew) {
                                     // remove the element
                                     wid.wrapper.remove();
+                                    editor.fire("change");
                                 }   
                             }
-                            editor.fire("change");
+
                         }
                     });
                     DialogService.open("editLinkDialogSimple");

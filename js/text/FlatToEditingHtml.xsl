@@ -3,7 +3,7 @@
     the most convenient form of HTML for editing
 
     Open Siddur Project
-    Copyright 2015 Efraim Feinstein, efraim@opensiddur.org
+    Copyright 2015-2016 Efraim Feinstein, efraim@opensiddur.org
     Licensed under the GNU Lesser General Public License, version 3 or later
 -->
 <xsl:stylesheet 
@@ -43,6 +43,12 @@
         <xsl:sequence select="root($context)//jf:concurrent/jf:layer[@jf:layer-id=$context/@jf:layer-id]/@type/string()"/>
     </xsl:function>
 
+    <xsl:function name="local:layer-id-lookup" as="xs:string">
+        <xsl:param name="context" as="element()"/>
+
+        <xsl:sequence select="root($context)//jf:concurrent/jf:layer[@jf:layer-id=$context/@jf:layer-id]/@jf:id/string()"/>
+    </xsl:function>
+
     <xsl:template name="class-attribute" as="attribute()*">
         <xsl:attribute name="class" select="string-join(('layer', concat('layer-',local:layer-lookup(.)), 
             if (@jf:start) then 'start' else if (@jf:end) then 'end' else (), 
@@ -50,19 +56,32 @@
     </xsl:template>
 
     <!-- elements -->
-    <xsl:template match="*[@jf:start]">
-        <xsl:element name="{if (self::jf:annotation or self::jf:conditional) then 'div' else 'p'}">
+    <xsl:template match="*[@jf:start]" priority="0">
+        <xsl:element name="{if (self::jf:annotation or self::jf:conditional or self::tei:div or self::tei:l or self::tei:item) then 'div' else 'p'}">
             <xsl:attribute name="id" select="concat('start_',@jf:start)"/>  <!-- id has to conform to the client expectations -->
             <xsl:apply-templates select="@* except @jf:start"/>
             <xsl:call-template name="class-attribute"/>
+            <xsl:apply-templates mode="additional-start-attributes" select="."/>
             <xsl:apply-templates select="following-sibling::*[1][not(@jf:start|@jf:end)][@jf:layer-id=current()/@jf:layer-id]"
                 mode="in-a"/>
             <xsl:apply-templates select="." mode="filler"/>
         </xsl:element>
     </xsl:template>
 
-    <xsl:template match="*[@jf:end]">
-        <xsl:element name="{if (self::jf:annotation or self::jf:conditional) then 'div' else 'p'}">
+    <!-- additional attributes that should be added: for tei:l, the additional attributes are start for tei:lg -->
+    <xsl:template match="tei:l[@jf:start]" mode="additional-start-attributes">
+        <xsl:variable name="prior-l" as="element(tei:l)?"
+                      select="preceding-sibling::tei:l[@jf:end][@jf:layer-id=current()/@jf:layer-id][1]"/>
+        <xsl:variable name="prior-lg-start" as="element(tei:lg)?"
+                      select="preceding-sibling::tei:lg[@jf:layer-id=current()/@jf:layer-id][@jf:start][1]"/>
+        <!-- if the previous lg starts after the previous l ends, the lg is for this -->
+        <xsl:if test="empty($prior-l) or $prior-lg-start >> $prior-l">
+            <xsl:attribute name="data-jf-lg-start" select="1"/>
+        </xsl:if>
+    </xsl:template>
+
+    <xsl:template match="*[@jf:end]" priority="0">
+        <xsl:element name="{if (self::jf:annotation or self::jf:conditional or self::tei:div or self::tei:l or self::tei:item) then 'div' else 'p'}">
             <xsl:attribute name="id" select="concat('end_',@jf:end)"/>  <!-- id has to conform to the client expectations -->
             <xsl:apply-templates select="@* except @jf:end"/>
             <xsl:call-template name="class-attribute"/>
@@ -70,36 +89,37 @@
         </xsl:element>
     </xsl:template>
 
-    <xsl:template match="*[@jf:layer-id][not(@jf:start|@jf:end)]"/>
+    <xsl:template match="tei:ab[@jf:layer-id][@jf:start|@jf:end]"/>
+
+    <xsl:template match="*[parent::jf:merged][@jf:layer-id][not(@jf:start|@jf:end)]"/>
+
     <xsl:template match="*[@jf:layer-id][not(@jf:start|@jf:end)]" mode="in-a">
         <xsl:message>mode in-a: <xsl:value-of select="name()"/></xsl:message>
         <xsl:apply-templates select="." mode="in-a-process"/>
         <xsl:apply-templates select="following-sibling::*[1][not(@jf:start|@jf:end)][@jf:layer-id=current()/@jf:layer-id]" mode="#current"/>
     </xsl:template>
     
-    <!-- the presence of internal anchors are causing some issue with the widget system;
-    removing all anchors for now; when they are supported, this bug will have to be fixed    
-     -->
-    <xsl:template match="tei:anchor"/>
-
-<!--
-    <xsl:template match="tei:anchor">
-        <a>
+    <!-- Turn permanent anchors into p -->
+    <xsl:template match="tei:anchor[not(starts-with(@jf:id, 'start_') or starts-with(@jf:id, 'end_'))]">
+        <p class="tei-anchor">
             <xsl:apply-templates select="@*"/>
-            <xsl:attribute name="class" select="replace(name(), ':', '-')"/>
-        </a>
+            <xsl:text>&#160;</xsl:text>
+        </p>
     </xsl:template>
--->
+
     <!-- special anchors from layers formed by the client. These are not needed -->
     <xsl:template match="tei:anchor[starts-with(@jf:id,'start_') or starts-with(@jf:id,'end_')]"/>
 
-    <xsl:template match="*" mode="#default in-a-process">
+    <xsl:template match="*" mode="#default in-a-process" priority="-2">
         <xsl:element name="{local:element-name(.)}">
             <xsl:apply-templates select="@*"/>
             <xsl:attribute name="class" select="replace(name(), ':', '-')"/>
             <xsl:apply-templates/>
         </xsl:element>
     </xsl:template>
+
+    <!-- list, lg can be removed, since only items are used -->
+    <xsl:template match="tei:list[@jf:start|@jf:end]|tei:lg[@jf:start|@jf:end]"/>
 
     <xsl:template match="tei:ptr" mode="#default in-a-process">
         <p class="tei-ptr">
@@ -109,24 +129,8 @@
         </p>
     </xsl:template>
 
-    <!-- filler text so widgets will show up -->
-    <xsl:template match="tei:p[@jf:start]" mode="filler">
-        <xsl:text>&#182;&#x21d3;</xsl:text>
-    </xsl:template>
-    <xsl:template match="tei:p[@jf:end]" mode="filler">
-        <xsl:text>&#x21d1;&#182;</xsl:text>
-    </xsl:template>
-
-    <xsl:template match="jf:annotation[@jf:start]" mode="filler">
-        <img class="editor-internal editor-icon" src="/img/icons_32x32/icon_annotation.png"/>
-        <xsl:text>&#x21d3;</xsl:text>
-        <span class="editor-internal type"><xsl:value-of select="@type"/></span>
-        <!-- the temporary id here cannot contain some characters because of a bug in ckeditor -->
-        <div class="tei-note" id="{substring-after(@jf:annotation, '#')}" data-os-loaded="0"><xsl:value-of select="concat('Loading ', @jf:annotation, '...')"/></div>
-    </xsl:template>
-    <xsl:template match="jf:annotation[@jf:end]" mode="filler">
-        <xsl:text>&#x21d1;[A]</xsl:text>
-    </xsl:template>
+    <xsl:template match="*[@jf:start]" mode="filler" priority="-1"><xsl:text>&#x21d3;</xsl:text></xsl:template>
+    <xsl:template match="*[@jf:end]" mode="filler" priority="-1"><xsl:text>&#x21d1;</xsl:text></xsl:template>
 
     <!-- attributes -->
     <xsl:template match="@target">
@@ -153,7 +157,11 @@
         <xsl:attribute name="lang" select="."/>
     </xsl:template>
 
-    <xsl:template match="@*:stream|@*:layer-id"/>
+    <xsl:template match="@*:layer-id">
+        <xsl:attribute name="data-jf-layer-id" select="substring-after(., '#')"/>
+    </xsl:template>
+
+    <xsl:template match="@*:stream"/>
 
     <xsl:template match="@*">
         <xsl:attribute name="data-{replace(name(), ':', '-')}" select="."/>
