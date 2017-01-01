@@ -69,6 +69,7 @@
                         <li><a href="#" data-ng-click="DialogService.open('metadataRespDialog')">Set responsibility credits...</a></li>
                         <li><a href="#" data-ng-click="DialogService.open('metadataSourcesDialog')">Set sources and status...</a></li>
                         <li><a href="#" data-ng-click="DialogService.open('metadataCommitLogDialog')">View commit log/Set commit message...</a></li>
+                        <li><a href="#" ng-click="DialogService.open('editConditionalDefinitionsDialogSimple')">Conditional definitions...</a></li>
                     </ul>
                 </div>
                 <div class="btn-group navbar-btn" data-ng-show="resourceType.current.editorMode == 'xml'">
@@ -200,6 +201,11 @@
         on-close="editor.dialogCanceled"
         name="editAnnotationDialogSimple"
         ></os-edit-annotation-dialog-simple>
+    <os-edit-conditional-definitions-dialog-simple on-ok="editor.makeDirty"
+                               on-close="editor.dialogCanceled"
+                               name="editConditionalDefinitionsDialogSimple"
+    ></os-edit-conditional-definitions-dialog-simple>
+
     <os-edit-div-dialog-simple on-ok="editor.makeDirty"
                                    on-close="editor.dialogCanceled"
                                    name="editDivDialogSimple"

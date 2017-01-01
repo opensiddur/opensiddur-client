@@ -2,10 +2,10 @@
  * query, store, look up conditional definitions
  *
  * Open Siddur Project
- * Copyright 2016 Efraim Feinstein, efraim@opensiddur.org
+ * Copyright 2016-2017 Efraim Feinstein, efraim@opensiddur.org
  * Licensed under the GNU Lesser General Public License, version 3 or later
  */
-osTextModule.service("ConditionalDefintionsService", [
+osTextModule.service("ConditionalDefinitionsService", [
     "$http", "$q", "ErrorService", "TextService", "XsltService",
     function($http, $q, ErrorService, TextService, XsltService) {
 
