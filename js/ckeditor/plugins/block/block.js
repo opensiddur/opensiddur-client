@@ -9,6 +9,7 @@ var BlockObject = function(editor, allowOverlap, allowAllNodeTypes) {
     this.editor = editor;
     this.allowOverlap = allowOverlap || false;
     this.allowAllNodeTypes = allowAllNodeTypes || false;
+    var thiz = this;
 
     var injector = angular.element('*[data-ng-app]').injector();
     this.TextService = injector.get("TextService");
@@ -85,7 +86,7 @@ var BlockObject = function(editor, allowOverlap, allowAllNodeTypes) {
                 var f = isAnyBlockBoundary(fol, blockType, ["end"]);
                 if (f) ends.push(f);
             }
-        };
+        }
         var unstartedEnds = [];
         for (var i = 0; i < ends.length; i++) {
             end = ends[i];
@@ -120,7 +121,7 @@ var BlockObject = function(editor, allowOverlap, allowAllNodeTypes) {
     };
     var isAllowedNodeType = function(node) {
         // return if the given node is allowed to be in the block
-        var allowedNodeTypes = this.allowAllNodeTypes ? ["tei-seg","tei-ptr"] : ["tei-seg"];
+        var allowedNodeTypes = thiz.allowAllNodeTypes ? ["tei-seg","tei-ptr","tei-anchor"] : ["tei-seg"];
         if (node.hasClass("cke_widget_block")) {
             node = node.getChildren().getItem(0);
         }
@@ -138,12 +139,12 @@ var BlockObject = function(editor, allowOverlap, allowAllNodeTypes) {
             rng.setStart(start,0);
             rng.setEnd(end,0);
             var walker = new CKEDITOR.dom.walker(rng);  // iterator removes ids from nodes
-            walker.evaluator = function() { return true; }
+            walker.evaluator = function() { return true; };
             var nsegs = 0; 
             var maybe = null;
             while (maybe = walker.next()) { 
                 if (maybe.type == 1 && (isAllowedNodeType(maybe) || (maybe.getName() == elementType && maybe.getAttribute("class") == null))) nsegs++; 
-            };
+            }
             delete walker; 
             if (nsegs == 0) {
                 start.remove();
