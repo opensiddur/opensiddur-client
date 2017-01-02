@@ -24,7 +24,13 @@ dialogSimpleEditConditionalDefinitionsModule.directive(
                 },
                 controller: ['$scope', function ($scope) {
                     console.log("In edit conditional definitions dialog (simple) controller");
-                    
+
+                    $scope.queryModel = { q: "" };
+                    $scope.queryButton = function(query) {
+                      // this function is called when a new query is initiated
+                        console.log("query called:", query);
+                    };
+
                     $scope.OKButton = function () {
                         $scope.note.callback(true);
                         $scope.onOk()();
@@ -47,7 +53,7 @@ dialogSimpleEditConditionalDefinitionsModule.directive(
                     elem.on("shown.bs.modal", function () {
                         scope.condDefs = EditorDataService.editConditionalDefinitionsDialog;
 
-                        scope.$apply();
+                        //scope.$apply();
                     });
                  },
                  transclude : false,

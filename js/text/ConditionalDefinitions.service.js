@@ -10,7 +10,7 @@ osTextModule.service("ConditionalDefinitionsService", [
     function($http, $q, ErrorService, TextService, XsltService) {
 
     var xj = new X2JS({ arrayAccessForm : "property" });
-
+    /*
     var definitions = {};           // loaded definitions stored by type, with reference to resource
     var loadedResources = {};       // list of loaded resources and which definitions are defined there
     var resourceMetadata = {};      // metadata by resources (not saved with the resource)
@@ -30,29 +30,32 @@ osTextModule.service("ConditionalDefinitionsService", [
         // convert a resource name to a feature type
         return resource.replace(/\s+/, "_");
     };
-        
+      */
     return {
-        /*
-        query : function(queryString, start, maxResults) {
-          // query conditional defintions, return a promise to JSON results
-          // default start=1, maxResults = 100
-          return $http.get("/api/data/conditionals", {
-            q: queryString,
-            "decls-only" : "true",
-            "start" : start || 1,
-            "max-results" : maxResults || 100
-          })
-          .then(function(result) {     // success
-              var results = xj.xml_str2json(result)["conditional-results"]["conditional-result"].map(function (result) {
-                if (result._type == "type") {
-                  definitions[result...
+        query: function (queryString, start, maxResults) {
+            // query conditional defintions, return a promise to JSON results
+            // default start=1, maxResults = 100
+            // the results will look like:
+            // results/result+/(type, resource, fs+/(desc, f+/(name, desc, switch, default)))
+            return $http.get("/api/data/conditionals", {
+                q: queryString,
+                "decls-only": "true",
+                "start": start || 1,
+                "max-results": maxResults || 100
+            })
+                .then(function (result) {     // success, return type, type description, feature name, and feature description
+                    var transformed = XsltService.transformString("/js/text/ConditionalDefinitionsQuery.get.xsl", result);
+                    var results = xj.xml_str2json(transformed)["results"]["result_asArray"].map(function (result) {
+                        if (result._type == "type") {
+                        }
+                    });
+                },
+                function (err) {             // fail
+                    return $q.reject(err);
                 }
-              });
-            }
-            function(err) {             // fail
-              return $q.reject(err);
-            });
-        },
+            );
+        }
+    };/*,
         lookupType : function(type) {
           // look up a conditional definition by type, return a promise to the JSON definition
           // of the type
@@ -63,6 +66,7 @@ osTextModule.service("ConditionalDefinitionsService", [
 
         },
         */
+        /*
         newDocument : function(resource) {
             // resource is the resource name and type name
             var template =
@@ -147,5 +151,5 @@ osTextModule.service("ConditionalDefinitionsService", [
     save : function(resource) {
       // save the conditional definitions defined in the given (loaded) resource
     }
-  };
+  };*/
 }]);
