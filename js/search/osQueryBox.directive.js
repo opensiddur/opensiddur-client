@@ -20,12 +20,15 @@ osSearchModule.directive(
                  controller: ['$scope', function ($scope) {
                     $scope.intermediate = "";
                     $scope.search = function() {
-                        if ($scope.intermediate != $scope.queryModel.q) {
+                        if (typeof $scope.queryModel !== 'undefined' && $scope.intermediate != $scope.queryModel.q) {
+                            // set the queryModel variable if it hasn't changed and is defined
                             $scope.queryModel.q = $scope.intermediate;
-                            if (typeof $scope.callback !== 'undefined') {
-                                $scope.callback($scope.intermediate);
-                            }
                         }
+                        if (typeof $scope.callback !== 'undefined') {
+                            // call the callback if it is available
+                            $scope.callback($scope.intermediate);
+                        }
+
                     };
                  }],
                  transclude : false,

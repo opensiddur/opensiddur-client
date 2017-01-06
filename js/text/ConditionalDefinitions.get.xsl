@@ -1,7 +1,7 @@
 <!--
     Load a conditional definition (tei:fsDecl) and convert it into a Javascript-ready format.
 
-    Copyright 2016 Efraim Feinstein, efraim@opensiddur.org
+    Copyright 2016-2017 Efraim Feinstein, efraim@opensiddur.org
     Licensed under the GNU Lesser General Public License, version 3 or later
 -->
 <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
@@ -19,7 +19,7 @@
 
     <xsl:template match="tei:fsDescr|tei:fDescr">
         <description>
-            <lang><xsl:sequence select="@xml:lang/string()"/></lang>
+            <lang><xsl:sequence select="ancestor-or-self::*[@xml:lang][1]/@xml:lang/string()"/></lang>
             <desc><xsl:sequence select="string(.)"/></desc>
         </description>
     </xsl:template>
@@ -60,13 +60,13 @@
     <xsl:template match="tei:vDefault/tei:if">
         <default>
             <value><xsl:apply-templates select="tei:then/following-sibling::*[1]"/></value>
-            <expression><xsl:apply-templates select="*[. << current()/tei:then]"/></expression>
+            <expression><xsl:apply-templates select="*[. &lt;&lt; current()/tei:then]"/></expression>
         </default>
     </xsl:template>
 
     <xsl:template match="/">
         <definitions>
-            <xsl:template match="//tei:fsDecl"/>
+            <xsl:apply-templates select="//tei:fsDecl"/>
         </definitions>
     </xsl:template>
 

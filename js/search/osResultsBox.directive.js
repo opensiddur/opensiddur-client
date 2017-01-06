@@ -23,7 +23,7 @@
  *
  * Selection will be a url.
  *
- * Copyright 2013-2014 Efraim Feinstein, efraim@opensiddur.org
+ * Copyright 2013-2014,2017 Efraim Feinstein, efraim@opensiddur.org
  * Licensed under the GNU Lesser General Public License, version 3 or later
  */
 osSearchModule.directive(
@@ -36,7 +36,8 @@ osSearchModule.directive(
                     results : "=",
                     selection : "=",
                     selectionDescription : "=?",
-                    end : "="
+                    end : "=",
+                    callback : "=?"
                 },
                 link: function(scope, elem, attrs) {
                     scope.parentElement = elem;
@@ -59,6 +60,11 @@ osSearchModule.directive(
 
                         $scope.selection = what;
                         $scope.selectionDescription = title;
+
+                        // call the callback function, if given
+                        if (typeof $scope.callback !== "undefined") {
+                            $scope.callback(what, title);
+                        }
                     };
                  }],
                  transclude : false,

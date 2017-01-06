@@ -1,4 +1,16 @@
-<!-- Parse conditional definitions queries
+<!-- Parse conditional definitions query results into the result expected by a results box
+<results>
+    <result>
+        <title/>
+        <url/>
+        <contexts>
+            <previous/>
+            <match/>
+            <following/>
+        </contexts>
+    </result>
+</results>
+
 
     Copyright 2017 Efraim Feinstein, efraim@opensiddur.org
     Licensed under the GNU Lesser General Public License, v3 or later
@@ -7,10 +19,11 @@
                 xmlns:r="http://jewishliturgy.org/ns/results/1.0"
                 xmlns:tei="http://www.tei-c.org/ns/1.0"
                 xmlns:j="http://jewishliturgy.org/ns/jlptei/1.0"
-                xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+                xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+                xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
     <!-- default language -->
-    <xsl:param name="lang" as="xs:string" select="'en'"/>
+    <xsl:param name="lang" as="xs:string?" select="'en'"/>
 
     <xsl:template match="r:conditional-results">
         <results>
@@ -20,34 +33,34 @@
 
     <xsl:template match="r:conditional-result">
         <result>
-            <type><xsl:value-of select="@type"/></type>
-            <resource><xsl:sequence select="replace(@resource, '^/exist/restxq', '')"/></resource>
-            <xsl:apply-templates/>
+            <title><xsl:sequence select="tokenize(@resource, '/')[last()]"/></title>
+            <url><xsl:sequence select="replace(@resource, '^/exist/restxq', '')"/></url>
         </result>
+        <xsl:apply-templates/>
     </xsl:template>
 
     <xsl:template match="tei:fsDecl">
-        <fs>
-            <xsl:apply-templates select="tei:fsDescr[lang($lang)]"/>
-            <xsl:apply-templates select="tei:fDecl"/>
-        </fs>
+        <result>
+            <title><xsl:sequence select="concat('...', @type)"/></title>
+            <url><xsl:sequence select="replace(ancestor::r:conditional-result/@resource, '^/exist/restxq', '')"/></url>
+            <xsl:apply-templates select="tei:fsDescr[1]"/>
+        </result>
+        <xsl:apply-templates select="tei:fDecl"/>
     </xsl:template>
 
     <xsl:template match="tei:fsDescr|tei:fDescr">
-        <desc><xsl:value-of select="."/></desc>
+        <contexts>
+            <match><xsl:sequence select="normalize-space(.)"/></match>
+        </contexts>
     </xsl:template>
 
     <xsl:template match="tei:fDecl">
-        <f>
-            <name><xsl:value-of select="@name"/></name>
-            <xsl:apply-templates select="tei:fDescr[lang($lang)]"/>
-            <switch><xsl:value-of select="j:vSwitch/@type"/></switch>
-            <default><xsl:apply-templates select="tei:vDefault/*"/></default>
-        </f>
+        <result>
+            <title><xsl:sequence select="concat('......', @name)"/></title>
+            <url><xsl:sequence select="replace(ancestor::r:conditional-result/@resource, '^/exist/restxq', '')"/></url>
+            <xsl:apply-templates select="tei:fDescr[1]"/>
+        </result>
     </xsl:template>
 
-    <xsl:template match="j:yes|j:no|j:maybe|j:on|j:off">
-        <xsl:value-of select="local-name(.)"/>
-    </xsl:template>
 
 </xsl:stylesheet>

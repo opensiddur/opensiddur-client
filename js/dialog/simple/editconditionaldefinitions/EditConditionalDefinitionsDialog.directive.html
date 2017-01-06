@@ -6,7 +6,84 @@
                 <h4 class="modal-title" id="editConditionalDefinitionsDialogSimpleHeader">{{ title }}</h4>
             </div>
             <div class="modal-body">
-                <os-query-box queryModel="queryModel" callback="queryButton"></os-query-box>
+                <os-query-box callback="queryButton"></os-query-box>
+                <div class="row">
+                    <div class="col-md-5">
+                        <os-results-box results="queryResults" selection="selectedQueryResult" end="queryEnd"
+                            callback="resultSelected"></os-results-box>
+                    </div>
+                    <div class="col-md-7">
+                        <div ng-repeat="definition in definitions">
+                            <h2>{{definition.name}}</h2>
+                            <form>
+                                <div class="form-group">
+                                    <label class="control-label" for="definition.name">Conditional name</label>
+                                    <input name="definition.name" class="form-control" ng-model="definition.name"/>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label" for="definition.description">Description</label>
+                                    <select
+                                            class="form-control"
+                                            name="definition.description.lang"
+                                            ng-model="definition.description.lang"
+                                            ng-required="definition.description.length > 0"
+                                            ng-options="code as language.toString() for (code, language) in LanguageService.supportedLanguages"></select>
+
+                                    <textarea name="definition.description" class="form-control" ng-model="definition.description.desc"></textarea>
+
+                                </div>
+                                <div ng-repeat="f in definition.feature_asArray" class="row">
+                                    <hr/>
+                                    <form>
+                                        <div class="form-group">
+                                            <label for="f.name">Feature name</label>
+                                            <input name="f.name" class="form-control" ng-model="f.name"/>
+                                        </div>
+                                        <div class="form-group ">
+                                            <label class="control-label" for="f.description">Description</label>
+
+                                            <select
+                                                    class="form-control"
+                                                    name="f.description.lang"
+                                                    ng-model="f.description.lang"
+                                                    ng-required="f.description.length > 0"
+                                                    ng-options="code as language.toString() for (code, language) in LanguageService.supportedLanguages"></select>
+
+                                            <textarea name="f.description" class="form-control" ng-model="f.description.desc"></textarea>
+
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="form-inline">
+                                                <label class="control-label col-md-2" for="f.type">Type</label>
+                                                <select
+                                                        class="form-control col-md-5"
+                                                        name="f.type"
+                                                        ng-model="f.type"
+                                                        ng-required="1">
+                                                    <option>yes-no-maybe</option>
+                                                    <option>on-off</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="form-inline">
+                                                <label class="control-label col-md-2" for="f.default">Default</label>
+                                                <select
+                                                        class="form-control col-md-5"
+                                                        name="f.default.value"
+                                                        ng-model="f.default.value"
+                                                        ng-required="1"
+                                                        ng-options="d for d in defaultsByType(f.type)">
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+
+                            </form>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn" data-ng-click="CloseButton()" data-dismiss="modal">Close</button>

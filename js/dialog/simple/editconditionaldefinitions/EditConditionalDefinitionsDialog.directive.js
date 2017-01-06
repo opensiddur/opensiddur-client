@@ -12,8 +12,8 @@
 dialogSimpleEditConditionalDefinitionsModule.directive(
         'osEditConditionalDefinitionsDialogSimple',
         [
-        'EditorDataService', 'TextService',
-        function( EditorDataService, TextService ) {
+        'ConditionalDefinitionsService', 'EditorDataService', 'LanguageService', 'TextService',
+        function( ConditionalDefinitionsService, EditorDataService, LanguageService, TextService ) {
             return {
                 restrict : 'AE',
                 scope : {
@@ -25,10 +25,35 @@ dialogSimpleEditConditionalDefinitionsModule.directive(
                 controller: ['$scope', function ($scope) {
                     console.log("In edit conditional definitions dialog (simple) controller");
 
-                    $scope.queryModel = { q: "" };
+
+                    $scope.LanguageService = LanguageService;
+
+                    $scope.queryResults = [];
+                    $scope.selectedQueryResult = "";
+                    $scope.queryEnd = false;
                     $scope.queryButton = function(query) {
                       // this function is called when a new query is initiated
-                        console.log("query called:", query);
+                        ConditionalDefinitionsService.query(query).
+                            then(function(results) {
+                                $scope.queryResults = results;
+                        });
+                    };
+
+                    $scope.definitions = [];
+                    $scope.resultSelected = function(conditionalUri, description) {
+                        var resourceSplits = conditionalUri.split("/");
+                        ConditionalDefinitionsService.load(resourceSplits[resourceSplits.length - 1]).then(
+                            function(defs) {
+                                // defs contains the definitions for the current loaded resource
+                                $scope.definitions = defs;
+                            }
+                        )
+                    };
+
+                    $scope.defaultsByType = function(type) {
+                        return (type == "yes-no-maybe") ?
+                            ["YES", "NO", "MAYBE"] : ["ON", "OFF"];
+
                     };
 
                     $scope.OKButton = function () {

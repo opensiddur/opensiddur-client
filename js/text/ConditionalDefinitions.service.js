@@ -9,23 +9,24 @@ osTextModule.service("ConditionalDefinitionsService", [
     "$http", "$q", "ErrorService", "TextService", "XsltService",
     function($http, $q, ErrorService, TextService, XsltService) {
 
-    var xj = new X2JS({ arrayAccessForm : "property" });
-    /*
+    var xj = new X2JS({ arrayAccessForm : "none", emptyNodeForm : "text" });
+    var xja = new X2JS({ arrayAccessForm : "property" });
+
     var definitions = {};           // loaded definitions stored by type, with reference to resource
     var loadedResources = {};       // list of loaded resources and which definitions are defined there
     var resourceMetadata = {};      // metadata by resources (not saved with the resource)
     var resourceXml = {};           // saved XML from loaded resources
-        
+
     var definitionsByResource = function(resource) {
         // get the definitions from a given resource
         var loadedDefinitions = loadedResources[resource];
         var resourceDefinitions = {};
-        for (var definitionName in loadedDefinitions) {
+        loadedDefinitions.map(function(definitionName) {
             resourceDefinitions[definitionName] = definitions[definitionName];
-        }
+        });
         return resourceDefinitions;
     };
-
+/*
     var resourceNameToFeatureType = function(resource) {
         // convert a resource name to a feature type
         return resource.replace(/\s+/, "_");
@@ -38,77 +39,95 @@ osTextModule.service("ConditionalDefinitionsService", [
             // the results will look like:
             // results/result+/(type, resource, fs+/(desc, f+/(name, desc, switch, default)))
             return $http.get("/api/data/conditionals", {
-                q: queryString,
-                "decls-only": "true",
-                "start": start || 1,
-                "max-results": maxResults || 100
+                params: {
+                    q: queryString,
+                    "decls-only": "true",
+                    "start": start || 1,
+                    "max-results": maxResults || 100
+                },
+                headers: {
+                    "Accept": "application/xml"
+                }
             })
                 .then(function (result) {     // success, return type, type description, feature name, and feature description
-                    var transformed = XsltService.transformString("/js/text/ConditionalDefinitionsQuery.get.xsl", result);
-                    var results = xj.xml_str2json(transformed)["results"]["result_asArray"].map(function (result) {
-                        if (result._type == "type") {
+                        var transformed = XsltService.serializeToString(
+                            XsltService.transformString("/js/text/ConditionalDefinitionsQuery.get.xsl",
+                                result.data));
+                        var js = xj.xml_str2json(transformed)
+                        if ("results" in js && "result" in js.results) {
+                            return js["results"]["result"].map(function (r) {
+                                return {
+                                    title: decodeURIComponent(r.title),
+                                    url: r.url,
+                                    contexts: ('contexts' in r) ? [r.contexts] : []    // this has to be an array
+                                }
+                            });
                         }
-                    });
-                },
-                function (err) {             // fail
-                    return $q.reject(err);
-                }
-            );
-        }
-    };/*,
-        lookupType : function(type) {
-          // look up a conditional definition by type, return a promise to the JSON definition
-          // of the type
+                        else return [];
+                    },
+                    function (err) {             // fail
+                        return $q.reject(err);
+                    }
+                );
         },
-        lookupFeature : function(type, feature) {
-          // look up a conditional definition by feature name,
-          // return a promise to the JSON definition of the feature
-
-        },
-        */
         /*
-        newDocument : function(resource) {
-            // resource is the resource name and type name
-            var template =
-                "<template>" +
-                    "<title><main>" + resource + "</main></title>" +
-                    "<lang>en</lang>" +
-                    "<license>http://www.creativecommons.org/publicdomain/zero/1.0</license>" +
-                    "<source>/data/sources/Born%20Digital</source>" +
-                    "<sourceTitle>Born Digital</sourceTitle>" +
-                "</template>";
-            var featureTypeName = resourceNameToFeatureType(resource);
-            resourceMetadata[resource] = { isNew : true };
-            loadedResources[resource] = [ featureTypeName ];
-            definitions[featureTypeName] = {};
-            resourceXml[resource] = XsltService.serializeToString(
-                XsltService.transformString("/js/text/ConditionalDefinitions.template.xsl", template));
-            return definitions[featureTypeName];
-        },
-        load : function(resource) {
-              // load all conditional definitions from a given resource
-              // return a promise to the definitions
-              // the format looks like this:
-              // definition : {
-              //    name : "",
-              //    description : [{"lang" : "description"}...],
-              //    features : [{
-              //        name : "",
-              //        desc : [{ "lang" : "description" }...]
-              //        type : "yes-no" | "yes-no-maybe" | "on-off" | "string",
-              //        default : [{
-              //            value: "YES" | "NO" | "ON" | "OFF" | "MAYBE" | "...",
-              //            expression : "" - conditional expression that leads to the given value (optional)
-              //        },...]
-              //    }...]
-              // }
+         lookupType : function(type) {
+         // look up a conditional definition by type, return a promise to the JSON definition
+         // of the type
+         },
+         lookupFeature : function(type, feature) {
+         // look up a conditional definition by feature name,
+         // return a promise to the JSON definition of the feature
+
+         },
+         */
+        /*
+         newDocument : function(resource) {
+         // resource is the resource name and type name
+         var template =
+         "<template>" +
+         "<title><main>" + resource + "</main></title>" +
+         "<lang>en</lang>" +
+         "<license>http://www.creativecommons.org/publicdomain/zero/1.0</license>" +
+         "<source>/data/sources/Born%20Digital</source>" +
+         "<sourceTitle>Born Digital</sourceTitle>" +
+         "</template>";
+         var featureTypeName = resourceNameToFeatureType(resource);
+         resourceMetadata[resource] = { isNew : true };
+         loadedResources[resource] = [ featureTypeName ];
+         definitions[featureTypeName] = {};
+         resourceXml[resource] = XsltService.serializeToString(
+         XsltService.transformString("/js/text/ConditionalDefinitions.template.xsl", template));
+         return definitions[featureTypeName];
+         },*/
+        load: function (resource) {
+            // load all conditional definitions from a given resource
+            // return a promise to the definitions
+            // the format looks like this:
+            // definition : {
+            //    name : "",
+            //    description : [{"lang" : "description"}...],
+            //    features : [{
+            //        name : "",
+            //        desc : [{ "lang" : "description" }...]
+            //        type : "yes-no" | "yes-no-maybe" | "on-off" | "string",
+            //        default : [{
+            //            value: "YES" | "NO" | "ON" | "OFF" | "MAYBE" | "...",
+            //            expression : "" - conditional expression that leads to the given value (optional)
+            //        },...]
+            //    }...]
+            // }
             if (resource in loadedResources) {
                 return $q.when(definitionsByResource(resource));
             }
             else {
-                return this.reload(resource);
+                return this.reload(resource).then(
+                    function() {
+                        return definitionsByResource(resource);
+                    }
+                );
             }
-        },
+        },/*
         loadLocal : function() {
             // load conditional definitions from the "local" document
             var localResourceName = TextService._resource;
@@ -126,30 +145,31 @@ osTextModule.service("ConditionalDefinitionsService", [
             // save local conditional definitions
             var localResourceName = TextService._resource;
             return this.save(localResourceName);
-        },
+        },*/
         reload : function(resource) {
-            // reload all conditional defintions from a given resource,
+            // reload all conditional definitions from a given resource,
             // return a promise to the definitions
             return $http.get("/api/data/conditionals/" + encodeURIComponent(resource)).
                 then(function(data) {
-                    var transformed = XsltService.transformString("/js/text/ConditionalDefinitions.get.xsl", data);
-                    var defs = xj.xml2json(transformed).definitions.definition_asArray;
-                    resourceXml[resource] = data;
-                    loadedResources[resource] = defs.map(function(def) { return def.name.__text; });
+                    var transformed = XsltService.transformString("/js/text/ConditionalDefinitions.get.xsl", data.data);
+                    var defs = xja.xml2json(transformed).definitions.definition_asArray;
+                    resourceXml[resource] = data.data;
+                    loadedResources[resource] = defs.map(function(def) {
+                        definitions[def.name] = def;
+                        return def.name;
+                    });
                     resourceMetadata[resource] = {
                         isNew : false
                     };
-                    for (var def in defs) {
-                        definitions[def.name.__text] = def;
-                    }
+
                     return definitions;
                 }, 
                 function(err) {
                     return $q.reject(err.data);
                 });
-    },
+    }/*
     save : function(resource) {
       // save the conditional definitions defined in the given (loaded) resource
-    }
-  };*/
+    }*/
+  };
 }]);
