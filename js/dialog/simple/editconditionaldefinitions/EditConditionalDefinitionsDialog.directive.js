@@ -4,7 +4,7 @@
  * <os-edit-conditional-definitions-simple-dialog on-ok="" on-close="" title="" name=""  />
  * on-ok runs when the OK button is pressed, on-close runs when the dialog is canceled
  * name is an id, title is the header text
- * Data is transfered via "editAnnotationDialog" in EditorDataService
+ * Data is transfered via "editConditionalDefinitionsDialog" in EditorDataService
  *
  * Copyright 2017 Efraim Feinstein, efraim@opensiddur.org
  * Licensed under the GNU Lesser General Public License, version 3 or later
@@ -14,6 +14,20 @@ dialogSimpleEditConditionalDefinitionsModule.directive(
         [
         'ConditionalDefinitionsService', 'EditorDataService', 'LanguageService', 'TextService',
         function( ConditionalDefinitionsService, EditorDataService, LanguageService, TextService ) {
+            var initScope = function(scope) {
+                // reinitialize the scope
+                scope.condDefs = EditorDataService.editConditionalDefinitionsDialog;
+                scope.definitions = [];
+                scope.queryModel = {
+                    q: "",
+                    intermediate : ""
+                };
+                scope.queryResults = [];
+                scope.queryEnd = false;
+                scope.selectedQueryResult = "";
+                scope.loadedResource = "";
+            };
+
             return {
                 restrict : 'AE',
                 scope : {
@@ -25,27 +39,32 @@ dialogSimpleEditConditionalDefinitionsModule.directive(
                 controller: ['$scope', function ($scope) {
                     console.log("In edit conditional definitions dialog (simple) controller");
 
+                    initScope($scope);
 
                     $scope.LanguageService = LanguageService;
 
-                    $scope.queryResults = [];
-                    $scope.selectedQueryResult = "";
-                    $scope.queryEnd = false;
+
                     $scope.queryButton = function(query) {
                       // this function is called when a new query is initiated
-                        ConditionalDefinitionsService.query(query).
-                            then(function(results) {
+                        var doContinue = true;
+                        if ($scope.loadedResource != "" && $scope.definitionForm.$dirty) {
+                            doContinue = confirm("Continue without saving?")
+                        }
+                        if (doContinue) {
+                            ConditionalDefinitionsService.query(query).then(function (results) {
                                 $scope.queryResults = results;
-                        });
+                            });
+                        }
                     };
 
-                    $scope.definitions = [];
                     $scope.resultSelected = function(conditionalUri, description) {
                         var resourceSplits = conditionalUri.split("/");
-                        ConditionalDefinitionsService.load(resourceSplits[resourceSplits.length - 1]).then(
+                        var resourceToLoad = resourceSplits[resourceSplits.length - 1];
+                        ConditionalDefinitionsService.load(resourceToLoad).then(
                             function(defs) {
-                                // defs contains the definitions for the current loaded resource
-                                $scope.definitions = defs;
+                                // defs contains a deep copy of the definitions for the current loaded resource
+                                $scope.loadedResource = resourceToLoad;
+                                $scope.definitions = $.extend(true, {}, defs);
                             }
                         )
                     };
@@ -56,16 +75,72 @@ dialogSimpleEditConditionalDefinitionsModule.directive(
 
                     };
 
+                    /* feature editing*/
+                    $scope.addFeature = function(def, position) {
+                        var blankFeature = {
+                            name : "",
+                            description : {
+                                lang : "en",
+                                desc : ""
+                            },
+                            type : "yes-no-maybe",
+                            default : {
+                                value : "MAYBE",
+                                expression : ""
+                            }
+                        };
+                        if (position == 0)
+                            def.feature_asArray.unshift(blankFeature);
+                        else
+                            def.feature_asArray.push(blankFeature);
+                    };
+
+                    $scope.removeFeature = function(def, f) {
+                        var indexToRemove = def.feature_asArray.indexOf(f);
+                        def.feature_asArray.splice(indexToRemove, 1);
+                    };
+
+                    /* buttons */
+
+                    var save = function() {
+                        if ($scope.loadedResource != "") {
+                            ConditionalDefinitionsService.set($scope.loadedResource, $scope.definitions);
+                            ConditionalDefinitionsService.saveAll().then(
+                                function () {
+                                },
+                                function (err) {
+                                    ErrorService.add(err.data);
+                                }
+                            );
+                        }
+                    };
+
+                    $scope.SaveButton = function() {
+                        save();
+                    };
+
                     $scope.OKButton = function () {
-                        $scope.note.callback(true);
+                        save();
                         $scope.onOk()();
                         $("#"+$scope.name).modal('hide');
                     };
                     $scope.CloseButton = function () {
-                        $scope.note.callback(false);
+                        //$scope.condDefs.callback(false);
+
                         $scope.onClose()();
                         $("#"+$scope.name).modal('hide');
                     };
+
+                    $scope.localConditional = function() {
+                        // load the local type
+                        console.log("Local conditional pressed");
+                    };
+
+                    $scope.newConditional = function(conditionalTypeName) {
+                        // make a new conditional with the given name
+                        console.log("New conditional named " + conditionalTypeName + " pressed");
+                    };
+
                     if (!$scope.title) {
                         $scope.title = "Conditional Definitions Properties";
                     }
@@ -76,9 +151,7 @@ dialogSimpleEditConditionalDefinitionsModule.directive(
                     elem.find(".osEditConditionalDefinitionsDialogSimple").attr("id", scope.name);
 
                     elem.on("shown.bs.modal", function () {
-                        scope.condDefs = EditorDataService.editConditionalDefinitionsDialog;
-
-                        //scope.$apply();
+                        initScope(scope);
                     });
                  },
                  transclude : false,

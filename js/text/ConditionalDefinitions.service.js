@@ -15,7 +15,6 @@ osTextModule.service("ConditionalDefinitionsService", [
     var definitions = {};           // loaded definitions stored by type, with reference to resource
     var loadedResources = {};       // list of loaded resources and which definitions are defined there
     var resourceMetadata = {};      // metadata by resources (not saved with the resource)
-    var resourceXml = {};           // saved XML from loaded resources
 
     var definitionsByResource = function(resource) {
         // get the definitions from a given resource
@@ -53,7 +52,7 @@ osTextModule.service("ConditionalDefinitionsService", [
                         var transformed = XsltService.serializeToString(
                             XsltService.transformString("/js/text/ConditionalDefinitionsQuery.get.xsl",
                                 result.data));
-                        var js = xj.xml_str2json(transformed)
+                        var js = xj.xml_str2json(transformed);
                         if ("results" in js && "result" in js.results) {
                             return js["results"]["result"].map(function (r) {
                                 return {
@@ -153,13 +152,14 @@ osTextModule.service("ConditionalDefinitionsService", [
                 then(function(data) {
                     var transformed = XsltService.transformString("/js/text/ConditionalDefinitions.get.xsl", data.data);
                     var defs = xja.xml2json(transformed).definitions.definition_asArray;
-                    resourceXml[resource] = data.data;
                     loadedResources[resource] = defs.map(function(def) {
                         definitions[def.name] = def;
                         return def.name;
                     });
                     resourceMetadata[resource] = {
-                        isNew : false
+                        isNew : false,          // is the resource new?
+                        isDirty : false,        // has the resource content been changed with set(), remove()?
+                        xmlAtLoad : data.data
                     };
 
                     return definitions;
@@ -167,9 +167,97 @@ osTextModule.service("ConditionalDefinitionsService", [
                 function(err) {
                     return $q.reject(err.data);
                 });
-    }/*
-    save : function(resource) {
-      // save the conditional definitions defined in the given (loaded) resource
-    }*/
+        },
+        remove : function(resource, conditionalType) {
+            // remove a conditional type from a resource
+            delete definitions[conditionalType];
+            loadedResources[resource] = loadedResources[resource].filter(function(c) { return c != conditionalType; });
+            resourceMetadata[resource].isDirty = true;
+        },
+        set : function(resource, defs) {
+            // set a specific resource to a particular set of definitions
+            delete loadedResources[resource];
+            $.map(defs, function(d) {   // defs is an object
+                definitions[d.name] = d;
+            });
+            loadedResources[resource] = $.map(defs, function(d) { return d.name; });
+            resourceMetadata[resource].isDirty = true;
+        },
+        saveAll : function() {
+          // save all changed definitions
+            var thiz = this;
+            return $q.all(
+                    $.map(resourceMetadata, function(metadata, resource) {
+                    if (metadata.isDirty) {
+                        return thiz.save(resource);
+                    }
+                })
+            );
+        },
+        save : function(resource) {
+          // save the conditional definitions defined in the given (loaded) resource
+            var thiz = this;
+            var definitionsInResource = loadedResources[resource];
+            var definitionsAsXml = '<tei:fsdDecl xml:id="cond" xmlns:tei="http://www.tei-c.org/ns/1.0" xmlns:j="http://jewishliturgy.org/ns/jlptei/1.0">' +
+                definitionsInResource.map(function(defn) {
+                var def = definitions[defn];
+                return `<tei:fsDecl type="${def.name}">
+                    <tei:fsDescr xml:lang="${def.description.lang}">${def.description.desc}</tei:fsDescr>
+                    ${
+                    def.feature_asArray.map(
+                        function(f) {
+                            return `<tei:fDecl name="${f.name}">
+                                        <tei:fDescr xml:lang="${f.description.lang}">${f.description.desc}</tei:fDescr>
+                                        <j:vSwitch type="${f.type}" />
+                                        <tei:vDefault>
+                                            <j:${ f.default.value.toLowerCase() }/>
+                                        </tei:vDefault>
+                                    </tei:fDecl>`
+                        }    
+                    )
+                    }
+                 </tei:fsDecl>`
+            }).join("\n") + "</tei:fsdDecl>";
+            // combine with the header.
+            var combinedWithHeader =
+                XsltService.serializeToStringTEINSClean(
+                    (resourceMetadata[resource].isNew) ?
+                        XsltService.transformString("/js/text/Conditionals.template.xsl",
+                            `<template>
+                                <lang>en</lang>
+                                <title>
+                                    <main>${resource}</main>
+                                </title>
+                                <license>http://www.creativecommons.org/publicdomain/zero/1.0</license>
+                                <sourceTitle>An Original Work for the Open Siddur Project</sourceTitle>
+                                <source>/data/sources/Born%20Digital</source>
+                                <content>${definitionsAsXml}</content>
+                             </template>`)
+                        :
+                        XsltService.transformString("/js/text/ConditionalDefinitionsXml.save.xsl",
+                            resourceMetadata[resource].xmlAtLoad, {
+                                "new-definitions" : XsltService.parseFromString(definitionsAsXml)
+                            })
+                );
+
+            var params = {
+                headers : {
+                    "Content-type" : "application/xml"
+                }
+            };
+            // Is the resource new? Does it need to be created?
+            var operation =  (resourceMetadata[resource].isNew) ?
+                $http.post("/api/data/conditionals", combinedWithHeader, params) :
+                $http.put("/api/data/conditionals/" + encodeURIComponent(resource), combinedWithHeader, params);
+            return operation.then(
+                function(data) {
+                    return thiz.reload(resource);
+                },
+                function(err) {
+                    ErrorService.addApiError(err.data);
+                    $q.reject(err.data);
+                }
+            )
+        }
   };
 }]);
