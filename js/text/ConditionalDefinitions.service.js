@@ -214,7 +214,7 @@ osTextModule.service("ConditionalDefinitionsService", [
                                         </tei:vDefault>
                                     </tei:fDecl>`
                         }    
-                    )
+                    ).join("\n")
                     }
                  </tei:fsDecl>`
             }).join("\n") + "</tei:fsdDecl>";
