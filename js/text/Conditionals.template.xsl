@@ -49,7 +49,7 @@
             <tei:fsdDecl xml:id="cond">
                 <xsl:choose>
                     <xsl:when test="exists(content)">
-                        <xsl:sequence select="content"/>
+                        <xsl:sequence select="content/*"/>
                     </xsl:when>
                     <xsl:otherwise>
                         <tei:fsDecl type="TYPE_ME">

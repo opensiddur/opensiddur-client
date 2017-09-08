@@ -25,13 +25,23 @@ osTextModule.service("ConditionalDefinitionsService", [
         });
         return resourceDefinitions;
     };
-/*
-    var resourceNameToFeatureType = function(resource) {
-        // convert a resource name to a feature type
+
+
+    var cleanupTypeName = function(resource) {
+        // clean up a feature type name
         return resource.replace(/\s+/, "_");
     };
-      */
+
     return {
+        generateLocalConditionalDocumentName : function() {
+            var proposedName = cleanupTypeName(TextService._resource);    // TODO: characters that shouldn't be in feature types should be here
+            return this.typeExists(proposedName).then(
+                function(doesExist) {
+                    if (doesExist) return proposedName + "_" + Math.floor(Math.random() * 6).toString();
+                    else return proposedName;
+                }
+            )
+        },
         query: function (queryString, start, maxResults) {
             // query conditional defintions, return a promise to JSON results
             // default start=1, maxResults = 100
@@ -69,6 +79,26 @@ osTextModule.service("ConditionalDefinitionsService", [
                     }
                 );
         },
+        typeExists : function(typeName) {
+            // determine whether the given type name exists
+            return $http.get("/api/data/conditionals", {
+                params: {
+                    q: typeName,
+                    "types-only" : "true"
+                },
+                headers : {
+                    "Accept" : "application/xml"
+                }
+            }).then(
+                function(result) {
+                    var xresult = xj.xml_str2json(result.data);
+                    return "conditional-result" in xresult["conditional-results"];
+                },
+                function(err) {
+                    return $q.reject(err);
+                }
+            );
+        },
         /*
          lookupType : function(type) {
          // look up a conditional definition by type, return a promise to the JSON definition
@@ -80,25 +110,42 @@ osTextModule.service("ConditionalDefinitionsService", [
 
          },
          */
-        /*
          newDocument : function(resource) {
-         // resource is the resource name and type name
-         var template =
-         "<template>" +
-         "<title><main>" + resource + "</main></title>" +
-         "<lang>en</lang>" +
-         "<license>http://www.creativecommons.org/publicdomain/zero/1.0</license>" +
-         "<source>/data/sources/Born%20Digital</source>" +
-         "<sourceTitle>Born Digital</sourceTitle>" +
-         "</template>";
-         var featureTypeName = resourceNameToFeatureType(resource);
-         resourceMetadata[resource] = { isNew : true };
-         loadedResources[resource] = [ featureTypeName ];
-         definitions[featureTypeName] = {};
-         resourceXml[resource] = XsltService.serializeToString(
-         XsltService.transformString("/js/text/ConditionalDefinitions.template.xsl", template));
-         return definitions[featureTypeName];
-         },*/
+            // resource is the resource name and type name
+             var featureTypeName = cleanupTypeName(resource);
+
+             return this.typeExists(featureTypeName).then(
+                 function(doesExist) {
+                     if (doesExist) {
+                         ErrorService.addAlert("The conditional type '" + featureTypeName + "' already exists. Use a different name.");
+                         return $q.reject("type exists");
+                     }
+                     else {
+                         var template =
+                             "<template>" +
+                             "<title><main>" + resource + "</main></title>" +
+                             "<lang>en</lang>" +
+                             "<license>http://www.creativecommons.org/publicdomain/zero/1.0</license>" +
+                             "<source>/data/sources/Born%20Digital</source>" +
+                             "<sourceTitle>Born Digital</sourceTitle>" +
+                             "</template>";
+
+                         resourceMetadata[resource] = {
+                             isDirty : false,
+                             isNew: true,
+                             xmlAtLoad: XsltService.serializeToStringTEINSClean(
+                                 XsltService.transformString("/js/text/Conditionals.template.xsl", template))
+                         };
+                         loadedResources[resource] = [featureTypeName];
+                         definitions[featureTypeName] = {};
+                         return definitions[featureTypeName];
+                     }
+                 },
+                 function(error) {
+                     return $q.reject(error.data);
+                 }
+             );
+         },
         load: function (resource) {
             // load all conditional definitions from a given resource
             // return a promise to the definitions
@@ -126,25 +173,24 @@ osTextModule.service("ConditionalDefinitionsService", [
                     }
                 );
             }
-        },/*
+        },
         loadLocal : function() {
             // load conditional definitions from the "local" document
-            var localResourceName = TextService._resource;
-            return this.load(localResourceName)
-                .catch(err) {
-                    if (err.status == 404) {
-                        return newDocument(localResourceName);
-                    }
-                    else {
-                        return $q.reject(err.data);
-                    }
-                };
+
+            // first, determine what the name of the "local" conditional would be
+            var localSettings = TextService.localSettings().settings;
+            var hasLocalConditionalResource = localSettings.hasOwnProperty("local-conditional-document");
+            if( hasLocalConditionalResource ) {
+                var localConditionalDocumentName = decodeURIComponent(localSettings["local-conditional-document"]);
+                return this.load(localConditionalDocumentName);
+            }
+            else {
+                var localName = this.generateLocalConditionalDocumentName();
+                this.newDocument(localName);
+                resourceMetadata[localName]["isLocal"] = true;  // TODO: I don't like this...
+            }
+
         },
-        saveLocal : function() {
-            // save local conditional definitions
-            var localResourceName = TextService._resource;
-            return this.save(localResourceName);
-        },*/
         reload : function(resource) {
             // reload all conditional definitions from a given resource,
             // return a promise to the definitions
@@ -197,8 +243,9 @@ osTextModule.service("ConditionalDefinitionsService", [
         save : function(resource) {
           // save the conditional definitions defined in the given (loaded) resource
             var thiz = this;
+            let xmlns = 'xmlns:tei="http://www.tei-c.org/ns/1.0" xmlns:j="http://jewishliturgy.org/ns/jlptei/1.0"';
             var definitionsInResource = loadedResources[resource];
-            var definitionsAsXml = '<tei:fsdDecl xml:id="cond" xmlns:tei="http://www.tei-c.org/ns/1.0" xmlns:j="http://jewishliturgy.org/ns/jlptei/1.0">' +
+            var definitionsAsXml =
                 definitionsInResource.map(function(defn) {
                 var def = definitions[defn];
                 return `<tei:fsDecl type="${def.name}">
@@ -217,9 +264,9 @@ osTextModule.service("ConditionalDefinitionsService", [
                     ).join("\n")
                     }
                  </tei:fsDecl>`
-            }).join("\n") + "</tei:fsdDecl>";
+            }).join("\n");
             // combine with the header.
-            var combinedWithHeader =
+            let combinedWithHeader =
                 XsltService.serializeToStringTEINSClean(
                     (resourceMetadata[resource].isNew) ?
                         XsltService.transformString("/js/text/Conditionals.template.xsl",
@@ -231,12 +278,12 @@ osTextModule.service("ConditionalDefinitionsService", [
                                 <license>http://www.creativecommons.org/publicdomain/zero/1.0</license>
                                 <sourceTitle>An Original Work for the Open Siddur Project</sourceTitle>
                                 <source>/data/sources/Born%20Digital</source>
-                                <content>${definitionsAsXml}</content>
+                                <content ${xmlns}>${definitionsAsXml}</content>
                              </template>`)
                         :
                         XsltService.transformString("/js/text/ConditionalDefinitionsXml.save.xsl",
                             resourceMetadata[resource].xmlAtLoad, {
-                                "new-definitions" : XsltService.parseFromString(definitionsAsXml)
+                                "new-definitions" : XsltService.parseFromString(`<tei:fsdDecl xml:id="cond" ${xmlns}>${definitionsAsXml}</tei:fsdDecl>`)
                             })
                 );
 
@@ -251,6 +298,11 @@ osTextModule.service("ConditionalDefinitionsService", [
                 $http.put("/api/data/conditionals/" + encodeURIComponent(resource), combinedWithHeader, params);
             return operation.then(
                 function(data) {
+                    if (resourceMetadata[resource].isLocal) {
+                        var ls = TextService.localSettings();
+                        ls.settings["local-conditional-document"] = encodeURIComponent(resource);
+                        TextService.localSettings(ls);
+                    }
                     return thiz.reload(resource);
                 },
                 function(err) {

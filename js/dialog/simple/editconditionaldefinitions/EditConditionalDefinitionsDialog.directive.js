@@ -89,8 +89,12 @@ dialogSimpleEditConditionalDefinitionsModule.directive(
                                 expression : ""
                             }
                         };
-                        if (position == 0)
+                        if (!("feature_asArray" in def)) {
+                            def["feature_asArray"] = [blankFeature];
+                        }
+                        else if (position == 0) {
                             def.feature_asArray.unshift(blankFeature);
+                        }
                         else
                             def.feature_asArray.push(blankFeature);
                     };
@@ -138,7 +142,11 @@ dialogSimpleEditConditionalDefinitionsModule.directive(
 
                     $scope.newConditional = function(conditionalTypeName) {
                         // make a new conditional with the given name
-                        console.log("New conditional named " + conditionalTypeName + " pressed");
+                        ConditionalDefinitionsService.newDocument(conditionalTypeName).then(
+                            function() {
+                                return $scope.resultSelected(conditionalTypeName);
+                            }
+                        );
                     };
 
                     if (!$scope.title) {
