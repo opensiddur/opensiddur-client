@@ -52,7 +52,8 @@
                         <xsl:sequence select="content/*"/>
                     </xsl:when>
                     <xsl:otherwise>
-                        <tei:fsDecl type="TYPE_ME">
+                        <tei:fsDecl>
+                            <xsl:attribute name="type" select="title/main"/>
                             <tei:fsDescr xml:lang="en"><!--Describe the feature type here--></tei:fsDescr>
                             <tei:fDecl name="NAME_ME">
                                 <tei:fDescr><!--Describe the feature here--></tei:fDescr>

@@ -57,7 +57,7 @@ dialogSimpleEditConditionalDefinitionsModule.directive(
                         }
                     };
 
-                    $scope.resultSelected = function(conditionalUri, description) {
+                    $scope.resultSelected = function(conditionalUri) {
                         var resourceSplits = conditionalUri.split("/");
                         var resourceToLoad = resourceSplits[resourceSplits.length - 1];
                         ConditionalDefinitionsService.load(resourceToLoad).then(
@@ -137,7 +137,15 @@ dialogSimpleEditConditionalDefinitionsModule.directive(
 
                     $scope.localConditional = function() {
                         // load the local type
-                        console.log("Local conditional pressed");
+                        ConditionalDefinitionsService.loadLocal().
+                            then(
+                                function(defs) {
+                                    // defs contains a deep copy of the definitions for the current loaded resource
+                                    var localResource = TextService.localSettings()["local-conditional-document"];
+                                    $scope.resultSelected(localResource);
+                                    console.log("definitions:", $scope.definitions);
+                                }
+                        );
                     };
 
                     $scope.newConditional = function(conditionalTypeName) {

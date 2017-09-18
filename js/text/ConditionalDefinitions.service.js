@@ -26,22 +26,62 @@ osTextModule.service("ConditionalDefinitionsService", [
         return resourceDefinitions;
     };
 
-
     var cleanupTypeName = function(resource) {
         // clean up a feature type name
+        // TODO: characters that shouldn't be in feature types should be here
         return resource.replace(/\s+/, "_");
     };
 
+    var generateLocalConditionalDocumentName = function() {
+        // generate a new local conditional name if no local conditional exists
+        var proposedName = cleanupTypeName(TextService._resource);
+        return typeExists(proposedName).then(
+            function(doesExist) {
+                if (doesExist) return proposedName + "_" + Math.floor(Math.random() * 6).toString();
+                else return proposedName;
+            }
+        );
+    };
+
+    var typeExists = function(typeName) {
+        // determine whether the given type name exists
+        return $http.get("/api/data/conditionals", {
+            params: {
+                q: typeName,
+                "types-only" : "true"
+            },
+            headers : {
+                "Accept" : "application/xml"
+            }
+        }).then(
+            function(result) {
+                var xresult = xj.xml_str2json(result.data);
+                return "conditional-result" in xresult["conditional-results"];
+            },
+            function(err) {
+                return $q.reject(err);
+            }
+        );
+    };
+
+    var loadFromXml = function(resource, xml, isNew) {
+        // get definitions array and update resource metadata from XML
+        var transformed = XsltService.transformString("/js/text/ConditionalDefinitions.get.xsl", xml);
+        var defs = xja.xml2json(transformed).definitions.definition_asArray;
+        loadedResources[resource] = defs.map(function(def) {
+            definitions[def.name] = def;
+            return def.name;
+        });
+        resourceMetadata[resource] = {
+            isNew : isNew || false, // is the resource new?
+            isDirty : false,        // has the resource content been changed with set(), remove()?
+            xmlAtLoad : xml
+        };
+
+        return definitions;
+    };
+
     return {
-        generateLocalConditionalDocumentName : function() {
-            var proposedName = cleanupTypeName(TextService._resource);    // TODO: characters that shouldn't be in feature types should be here
-            return this.typeExists(proposedName).then(
-                function(doesExist) {
-                    if (doesExist) return proposedName + "_" + Math.floor(Math.random() * 6).toString();
-                    else return proposedName;
-                }
-            )
-        },
         query: function (queryString, start, maxResults) {
             // query conditional defintions, return a promise to JSON results
             // default start=1, maxResults = 100
@@ -79,26 +119,6 @@ osTextModule.service("ConditionalDefinitionsService", [
                     }
                 );
         },
-        typeExists : function(typeName) {
-            // determine whether the given type name exists
-            return $http.get("/api/data/conditionals", {
-                params: {
-                    q: typeName,
-                    "types-only" : "true"
-                },
-                headers : {
-                    "Accept" : "application/xml"
-                }
-            }).then(
-                function(result) {
-                    var xresult = xj.xml_str2json(result.data);
-                    return "conditional-result" in xresult["conditional-results"];
-                },
-                function(err) {
-                    return $q.reject(err);
-                }
-            );
-        },
         /*
          lookupType : function(type) {
          // look up a conditional definition by type, return a promise to the JSON definition
@@ -114,7 +134,7 @@ osTextModule.service("ConditionalDefinitionsService", [
             // resource is the resource name and type name
              var featureTypeName = cleanupTypeName(resource);
 
-             return this.typeExists(featureTypeName).then(
+             return typeExists(featureTypeName).then(
                  function(doesExist) {
                      if (doesExist) {
                          ErrorService.addAlert("The conditional type '" + featureTypeName + "' already exists. Use a different name.");
@@ -129,16 +149,11 @@ osTextModule.service("ConditionalDefinitionsService", [
                              "<source>/data/sources/Born%20Digital</source>" +
                              "<sourceTitle>Born Digital</sourceTitle>" +
                              "</template>";
+                         var xml = XsltService.serializeToStringTEINSClean(
+                            XsltService.transformString("/js/text/Conditionals.template.xsl", template));
 
-                         resourceMetadata[resource] = {
-                             isDirty : false,
-                             isNew: true,
-                             xmlAtLoad: XsltService.serializeToStringTEINSClean(
-                                 XsltService.transformString("/js/text/Conditionals.template.xsl", template))
-                         };
-                         loadedResources[resource] = [featureTypeName];
-                         definitions[featureTypeName] = {};
-                         return definitions[featureTypeName];
+                         loadFromXml(resource, xml, true);
+                         return definitionsByResource(featureTypeName);
                      }
                  },
                  function(error) {
@@ -176,39 +191,39 @@ osTextModule.service("ConditionalDefinitionsService", [
         },
         loadLocal : function() {
             // load conditional definitions from the "local" document
-
-            // first, determine what the name of the "local" conditional would be
-            var localSettings = TextService.localSettings().settings;
+            var thiz = this;
+            var localSettings = TextService.localSettings();
             var hasLocalConditionalResource = localSettings.hasOwnProperty("local-conditional-document");
             if( hasLocalConditionalResource ) {
                 var localConditionalDocumentName = decodeURIComponent(localSettings["local-conditional-document"]);
                 return this.load(localConditionalDocumentName);
             }
             else {
-                var localName = this.generateLocalConditionalDocumentName();
-                this.newDocument(localName);
-                resourceMetadata[localName]["isLocal"] = true;  // TODO: I don't like this...
+                return generateLocalConditionalDocumentName().then(
+                    function(localName) {
+                        return thiz.newDocument(localName).then(
+                            function (newDoc) {
+                                localSettings["local-conditional-document"] = encodeURIComponent(localName);
+                                TextService.localSettings(localSettings);
+                                return newDoc;
+                            },
+                            function (err) {
+                                $q.reject(err);
+                            }
+                        );
+                    },
+                    function(err) {
+                        return $q.reject(err);
+                    }
+                );
             }
-
         },
         reload : function(resource) {
             // reload all conditional definitions from a given resource,
             // return a promise to the definitions
             return $http.get("/api/data/conditionals/" + encodeURIComponent(resource)).
                 then(function(data) {
-                    var transformed = XsltService.transformString("/js/text/ConditionalDefinitions.get.xsl", data.data);
-                    var defs = xja.xml2json(transformed).definitions.definition_asArray;
-                    loadedResources[resource] = defs.map(function(def) {
-                        definitions[def.name] = def;
-                        return def.name;
-                    });
-                    resourceMetadata[resource] = {
-                        isNew : false,          // is the resource new?
-                        isDirty : false,        // has the resource content been changed with set(), remove()?
-                        xmlAtLoad : data.data
-                    };
-
-                    return definitions;
+                    return loadFromXml(resource, data.data);
                 }, 
                 function(err) {
                     return $q.reject(err.data);
