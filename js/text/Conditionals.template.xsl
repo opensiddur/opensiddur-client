@@ -2,7 +2,7 @@
     Template for conditionals documents
 
     Open Siddur Project
-    Copyright 2014 Efraim Feinstein, efraim@opensiddur.org
+    Copyright 2014, 2017 Efraim Feinstein, efraim@opensiddur.org
     Licensed under the GNU Lesser General Public License, version 3 or later
 -->
 <xsl:stylesheet 
@@ -47,16 +47,24 @@
                 </tei:revisionDesc>
             </tei:teiHeader>
             <tei:fsdDecl xml:id="cond">
-                <tei:fsDecl type="TYPE_ME">
-                    <tei:fsDescr xml:lang="en"><!--Describe the feature type here--></tei:fsDescr>
-                    <tei:fDecl name="NAME_ME">
-                        <tei:fDescr><!--Describe the feature here--></tei:fDescr>
-                        <j:vSwitch type="yes-no-maybe"/>
-                        <tei:vDefault>
-                            <j:yes/>
-                        </tei:vDefault>
-                    </tei:fDecl>
-                </tei:fsDecl>
+                <xsl:choose>
+                    <xsl:when test="exists(content)">
+                        <xsl:sequence select="content/*"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <tei:fsDecl>
+                            <xsl:attribute name="type" select="title/main"/>
+                            <tei:fsDescr xml:lang="en"><!--Describe the feature type here--></tei:fsDescr>
+                            <tei:fDecl name="NAME_ME">
+                                <tei:fDescr><!--Describe the feature here--></tei:fDescr>
+                                <j:vSwitch type="yes-no-maybe"/>
+                                <tei:vDefault>
+                                    <j:yes/>
+                                </tei:vDefault>
+                            </tei:fDecl>
+                        </tei:fsDecl>
+                    </xsl:otherwise>
+                </xsl:choose>
             </tei:fsdDecl>    
         </tei:TEI>
     </xsl:template>
