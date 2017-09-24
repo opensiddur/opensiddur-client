@@ -111,6 +111,14 @@ dialogSimpleEditConditionalDefinitionsModule.directive(
                             ConditionalDefinitionsService.set($scope.loadedResource, $scope.definitions);
                             ConditionalDefinitionsService.saveAll().then(
                                 function () {
+                                    // once the conditionals are successfully saved, the text has to be saved too
+                                    // in order to update any changes to the local conditionals
+                                    TextService.save().then(
+                                        function() {},
+                                        function(err) {
+                                            ErrorService.add("Error while saving the resource:" + err.data);
+                                        }
+                                    )
                                 },
                                 function (err) {
                                     ErrorService.add(err.data);
