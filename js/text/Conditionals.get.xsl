@@ -17,7 +17,7 @@
     xmlns:jf="http://jewishliturgy.org/ns/jlptei/flat/1.0"
     version="2.0"
     exclude-result-prefixes="#all">
-  <xsl:param name="ptrs" as="xs:string"/>
+  <xsl:param name="ptrs" as="xs:string?"/>
 
   <xsl:template match="tei:fs">
     <xsl:apply-templates/>
