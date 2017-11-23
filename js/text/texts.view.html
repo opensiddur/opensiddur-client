@@ -1,12 +1,4 @@
 <div>
-    <script>
-        CKEDITOR.on('instanceReady', function(event) {
-            var editor = event.editor;
-            // work around a bug where sometimes the editor does not display text unless resized
-            editor.resize('100%', '100%');
-            console.log(editor.filter.allowedContent);
-        });
-    </script>
     <div class="toolbar navbar navbar-inverse nav-collapse">
         <div class="container-fluid">
             <p class="navbar-text">{{ editor.title | truncate:30 }}</p>

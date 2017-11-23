@@ -7,10 +7,10 @@
 osTextModule.controller(
     'TextsCtrl',
     ['$compile', '$scope', '$location', '$q', '$route', '$routeParams', '$timeout', '$window', 'XsltService',
-    'AccessService', 'AnnotationsService', 'AuthenticationService', 'DialogService', 'ErrorService', 
+    'AccessService', 'AnnotationsService', 'AuthenticationService', 'DialogService', 'EditorService', 'ErrorService',
     'LanguageService', 'TextService', 'TranscriptionViewerService', 'TranscriptionWindowService',
     function ($compile, $scope, $location, $q, $route, $routeParams, $timeout, $window, XsltService,
-        AccessService, AnnotationsService, AuthenticationService, DialogService, ErrorService,
+        AccessService, AnnotationsService, AuthenticationService, DialogService, EditorService, ErrorService,
         LanguageService, TextService, TranscriptionViewerService, TranscriptionWindowService) {
         console.log("Texts controller.");
         $scope.DialogService = DialogService;
@@ -79,71 +79,7 @@ osTextModule.controller(
         $scope.TextService = TextService;
         $scope.AccessService = AccessService;
 
-        var addCKEditor = function() {
-
-            var language = TextService.language().language;
-            var languageDirection = LanguageService.getDirection(language);
-
-            // this should be in $scope.editor, but ng-ckeditor will not allow it to be (see line 73)
-            $scope.ckeditorOptions = {
-                autoParagraph: false,
-                basicEntities: false,
-                contentsCss: "/css/simple-editor.css",
-                contentsLangDirection: languageDirection,
-                contentsLanguage: language,
-                customConfig: "/js/ckeditor/config.js",    // points to the plugin directories
-                enterMode: CKEDITOR.ENTER_P,
-                entities: false,   // need XML entities, but not HTML entities...
-                extraPlugins: "language,jf-annotation,jf-conditional,jf-set," +
-                    "tei-anchor,tei-div,tei-item,tei-l,tei-p,tei-ptr,tei-seg",
-                fillEmptyBlocks: false,
-                forcePasteAsPlainText: true,
-                language: "en",
-                language_list: LanguageService.getCkeditorList(),
-                readOnly: !AccessService.access.write,
-                removePlugins: "image",
-                toolbar: "basic",
-                toolbar_full: [],
-                toolbarGroups: [
-                    {name: 'clipboard', groups: ['clipboard', 'undo']},
-                    {name: 'document', groups: ['mode', 'document', 'doctools']},
-                    {name: 'opensiddur', groups: ['opensiddur']},
-                    {name: 'editing', groups: ['find', 'selection']},
-                    {name: 'insert'},
-                    //{ name: 'forms' },
-                    //{ name: 'tools' },
-                    {name: 'document', groups: ['mode', 'document', 'doctools']},
-                    //{ name: 'others' },
-                    //'/',
-                    //{ name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
-                    //{ name: 'paragraph',   groups: [ 'list', 'indent', 'blocks', 'align' ] },
-                    //{ name: 'styles' },
-                    //{ name: 'colors' },
-                    //{ name: 'about' }
-                ],
-                removeButtons: 'Paste,PasteFromWord',
-                allowedContent: "p[!id,data-target-base,data-target-fragment,data-type](tei-ptr);" +
-                    "p[!id](tei-anchor);" +
-                "p[!id](tei-seg,tei-p,jf-set,layer-phony-set,layer-p,layer,start,end);" +
-                "div[!id](tei-div,tei-l,tei-item,jf-annotation,jf-conditional,layer-div,layer-phony-annotation,layer-phony-conditional,layer-lg,layer-list,layer,start,end);" +
-                "div[id](tei-note);" +
-                "h1[id](tei-head);" +
-                "*[id,lang,dir,data-*];" +
-                "img[src,alt,title];" +
-                "*(editor-*);"
-            };
-            var parentElement = angular.element("#ckeditorContainer");
-            if (parentElement.children().length > 0) {
-                // destroy the existing instance before creating a new one
-                CKEDITOR.instances.editor1.destroy();
-            }
-            parentElement.html("");
-            var ngCkeditor = $compile('<textarea id="editor1" ' +
-                'ckeditor="ckeditorOptions" ng-model="TextService._flatContent" ng-change="editor.makeDirty()">'+
-                '</textarea>')($scope);
-            parentElement.append(ngCkeditor);
-        };
-
+        EditorService.addCKEditor("#ckeditorContainer", $scope);
 
         $scope.editor = {
             loggedIn : AuthenticationService.loggedIn,
@@ -193,7 +129,7 @@ osTextModule.controller(
                     $scope.editor.newTemplate.template.sourceTitle = "An Original Work of the Open Siddur Project";
                 }
                 TextService.newDocument($scope.resourceType.current.api, $scope.editor.newTemplate, flat || false);
-                addCKEditor();
+                EditorService.addCKEditor("#ckeditorContainer", $scope);
                 TranscriptionWindowService.refresh();
                 $scope.editor.title = TextService.title()[0].text;
                 $scope.editor.isLoaded = 1;
@@ -238,7 +174,7 @@ osTextModule.controller(
                         $scope.editor.title = TextService.title()[0].text;
                         $scope.editor.isNew = 0;
                         $scope.editor.isLoaded = 1;
-                        addCKEditor();
+                        EditorService.addCKEditor("#ckeditorContainer", $scope);
                         TranscriptionWindowService.refresh();
                         setTimeout(
                             function() {
