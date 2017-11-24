@@ -87,6 +87,15 @@ osTextModule.factory("EditorService", ["AccessService", "LanguageService", "Text
 
                 CKEDITOR.replace("editor1", ckeditorOptions);
                 this.syncTextServiceToEditor();
+                CKEDITOR.instances.editor1.resetDirty();
+            },
+            getBodyFromElement : function(el) {
+                // find the top level body element, given a CKEditor element el
+                let currentEl = el;
+                while (currentEl.getName() != "body") {
+                    currentEl = currentEl.getParent();
+                }
+                return currentEl;
             }
         };
     }

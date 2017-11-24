@@ -8,8 +8,8 @@
  * Created by efeins on 8/14/16.
  */
 osTextModule.service("ListService", [
-    "TextService", "XsltService", function(
-        TextService, XsltService
+    "EditorService", "TextService", "XsltService", function(
+        EditorService, TextService, XsltService
     ) {
         var x2js = new X2JS({ arrayAccessForm : "property" });
         return {
@@ -38,6 +38,7 @@ osTextModule.service("ListService", [
         },
         renameListLayer : function(oldId, newId) {
             // rename a list layer from one id to another
+            EditorService.syncEditorToTextService();
             TextService.content(
                 XsltService.indentToString(
                     XsltService.transformString("/js/text/Layer.rename.xsl", TextService.syncFlat(), {
@@ -46,10 +47,12 @@ osTextModule.service("ListService", [
                     }), TextService._isFlat
                 )
             );
+            EditorService.syncTextServiceToEditor();
             return this;
         },
         removeListLayer : function(layerId) {
             // remove an existing list layer and all associated list items
+            EditorService.syncEditorToTextService();
             TextService.content(
                 XsltService.indentToString(
                     XsltService.transformString("/js/text/Layer.remove.xsl", TextService.syncFlat(), {
@@ -57,6 +60,7 @@ osTextModule.service("ListService", [
                     }), TextService._isFlat
                 )
             );
+            EditorService.syncTextServiceToEditor();
             return this;
         }
     }

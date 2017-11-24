@@ -97,6 +97,13 @@ osTextModule.controller(
                 },
                 rtlMoveVisually : false
             },
+            isSaved : function() {
+                return $scope.textsForm.$pristine && !CKEDITOR.instances.editor1.checkDirty();
+            },
+            isSavable : function() {
+                return AccessService.access.write && !$scope.textsForm.$invalid && (!$scope.textsForm.$pristine ||
+                    CKEDITOR.instances.editor1.checkDirty());
+            },
             editableText : function(setContent) {
                 if (TextService._isFlat) return TextService.flatContent(setContent);
                 else if ($scope.resourceType.current.editorMode == "css") return TextService.stylesheet(setContent);
@@ -142,7 +149,7 @@ osTextModule.controller(
                         // work around a bug where the editor does not refresh after load
                         $scope.editor.codemirror.editor.refresh(); 
                         // set the form dirty only after the location change has occurred
-                        $scope.textsForm.$setDirty();
+                        //$scope.textsForm.$setDirty();
                     }, 250
                 );
 
@@ -179,12 +186,13 @@ osTextModule.controller(
                         setTimeout(
                             function() {
                                 // work around for a bug where the text service is getting unsynced
-                                TextService.flatContent(TextService.flatContent());
+                                //TextService.flatContent(TextService.flatContent());
                                 $scope.editor.codemirror.editor.refresh();
                                 if (cursorLocation) {
                                     $scope.editor.codemirror.doc.setCursor(cursorLocation);
                                 }
                                 $scope.textsForm.$setPristine();
+                                CKEDITOR.instances.editor1.resetDirty();
                             }, 250
                         );
 
@@ -198,6 +206,7 @@ osTextModule.controller(
             },
             saveDocument : function () {
                 console.log("Save:", this);
+                EditorService.syncEditorToTextService();
                 AnnotationsService.saveAll()
                 .then(function() {
                     return TextService.save()
@@ -229,7 +238,8 @@ osTextModule.controller(
                 )
                 .then(function() {
                     return $timeout(function() { 
-                        $scope.textsForm.$setPristine(); 
+                        $scope.textsForm.$setPristine();
+                        CKEDITOR.instances.editor1.resetDirty();
                     }, 750);
                 });
             },
@@ -252,7 +262,7 @@ osTextModule.controller(
             }
         };
         $scope.saveButtonText = function() {
-            return this.textsForm.$pristine ? (($scope.editor.isNew) ? "Unsaved, No changes" : "Saved" ) : "Save";
+            return !this.editor.isSavable() ? (($scope.editor.isNew) ? "Unsaved, No changes" : "Saved" ) : "Save";
         };
 
 

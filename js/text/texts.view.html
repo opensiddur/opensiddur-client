@@ -42,9 +42,9 @@
                           >Open using simple interface</a></li>
                       </ul>
                     </div>
-                      <button type="button" data-ng-class="{'btn' : true, 'btn-primary' : true, 'btn-success' : textsForm.$pristine}"
+                      <button type="button" data-ng-class="{'btn' : true, 'btn-primary' : true, 'btn-success' : editor.isSaved()}"
                           data-ng-click="editor.saveDocument()"  
-                          data-ng-disabled="!AccessService.access.write || textsForm.$invalid || textsForm.$pristine">{{saveButtonText()}}</button>
+                          data-ng-disabled="!editor.isSavable()">{{saveButtonText()}}</button>
                 </div>
                 <div class="btn-group navbar-btn" data-ng-hide="!resourceType.current.supportsCompile">
                       <button class="btn btn-primary" type="button"
