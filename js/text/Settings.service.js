@@ -71,7 +71,6 @@ osTextModule.factory("SettingsService", [
                   return '#'+cleanup(s.type)+"_"+cleanup(s.name)+"_"+cleanup(s.state);
                 }
               );
-              EditorService.syncEditorToTextService();
               TextService.content(
                 XsltService.serializeToStringTEINSClean(
                   XsltService.transformString("/js/text/ActiveSettings.set.xsl",
@@ -80,7 +79,6 @@ osTextModule.factory("SettingsService", [
                     }), true
                 )
               );
-              EditorService.syncTextServiceToEditor();
               return ptrs;
             } 
         };
