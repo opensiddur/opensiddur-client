@@ -34,6 +34,7 @@ osTextModule.factory("EditorService", ["AccessService", "LanguageService", "Text
                     "tei-anchor,tei-div,tei-item,tei-l,tei-p,tei-ptr,tei-seg",
                     fillEmptyBlocks: false,
                     forcePasteAsPlainText: true,
+                    height: "65vh",
                     language: "en",
                     language_list: LanguageService.getCkeditorList(),
                     readOnly: !AccessService.access.write,
@@ -73,13 +74,6 @@ osTextModule.factory("EditorService", ["AccessService", "LanguageService", "Text
                     // destroy the existing instance before creating a new one
                     CKEDITOR.instances.editor1.destroy();
                 }
-
-                CKEDITOR.on('instanceReady', function(event) {
-                    const editor = event.editor;
-                    // work around a bug where sometimes the editor does not display text unless resized
-                    editor.resize('100%', '100%');
-                    console.log(editor.filter.allowedContent);
-                });
 
                 parentElement.html("");
                 const ckeditor = $compile('<textarea name="editor1" id="editor1"></textarea>')($scope);
