@@ -1,12 +1,4 @@
 <div>
-    <script>
-        CKEDITOR.on('instanceReady', function(event) {
-            var editor = event.editor;
-            // work around a bug where sometimes the editor does not display text unless resized
-            editor.resize('100%', '100%');
-            console.log(editor.filter.allowedContent);
-        });
-    </script>
     <div class="toolbar navbar navbar-inverse nav-collapse">
         <div class="container-fluid">
             <p class="navbar-text">{{ editor.title | truncate:30 }}</p>
@@ -50,9 +42,9 @@
                           >Open using simple interface</a></li>
                       </ul>
                     </div>
-                      <button type="button" data-ng-class="{'btn' : true, 'btn-primary' : true, 'btn-success' : textsForm.$pristine}"
+                      <button type="button" data-ng-class="{'btn' : true, 'btn-primary' : true, 'btn-success' : editor.isSaved()}"
                           data-ng-click="editor.saveDocument()"  
-                          data-ng-disabled="!AccessService.access.write || textsForm.$invalid || textsForm.$pristine">{{saveButtonText()}}</button>
+                          data-ng-disabled="!editor.isSavable()">{{saveButtonText()}}</button>
                 </div>
                 <div class="btn-group navbar-btn" data-ng-hide="!resourceType.current.supportsCompile">
                       <button class="btn btn-primary" type="button"

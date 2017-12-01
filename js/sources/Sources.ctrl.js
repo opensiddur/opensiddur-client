@@ -6,9 +6,9 @@
  */
 osSourcesModule.controller(
     'SourcesCtrl',
-    ['$rootScope', '$location', '$route', '$routeParams', '$scope', 'SourceService', 'XsltService', 
+    ['$rootScope', '$location', '$route', '$routeParams', '$scope', 'SourceService',
     "AccessService", 'DialogService', "LanguageService", "LicensesService", 'AuthenticationService', 'ErrorService',
-    function ($rootScope, $location, $route, $routeParams, $scope, SourceService, XsltService, 
+    function ($rootScope, $location, $route, $routeParams, $scope, SourceService,
     AccessService, DialogService, LanguageService, LicensesService, AuthenticationService, ErrorService) {
         $scope.DialogService = DialogService;
         $scope.LanguageService = LanguageService;

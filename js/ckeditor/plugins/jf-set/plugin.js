@@ -86,6 +86,7 @@ CKEDITOR.plugins.add( 'jf-set', {
                             var jfSet = newPointers.join(" ");
                             el.setAttribute("data-jf-set", jfSet);
                             el.setAttribute("id", myId);
+
                             // artificially send a change event to ng-ckeditor so it will update the scope
                             updateElementContent(el, jfSet);
                             editor.fire("change");

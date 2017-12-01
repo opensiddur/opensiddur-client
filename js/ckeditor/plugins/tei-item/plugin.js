@@ -25,6 +25,7 @@ CKEDITOR.plugins.add( 'tei-item', {
 		var TextService = injector.get("TextService");
         var XsltService = injector.get("XsltService");
         var ListService = injector.get("ListService");
+        var EditorService = injector.get("EditorService");
 		var $interval = injector.get("$interval");
 		var $timeout = injector.get("$timeout");
 		var $scope = formElement.scope();
@@ -38,7 +39,7 @@ CKEDITOR.plugins.add( 'tei-item', {
 			if (!justThisOne) {
 				var idName = el.getId().match(/^(start|end)_(.+)/)[2];
 				var otherBoundId = (el.hasClass("start") ? "end" : "start") + "_" + idName;
-				var otherBoundElement = el.getParent().getParent().findOne("*[id=" + otherBoundId + "]");
+				var otherBoundElement = EditorService.getBodyFromElement(el).findOne("*[id=" + otherBoundId + "]");
 				updateElementContent(otherBoundElement, newLayerId, true)
 			}
 			var direction = el.hasClass("start") ? (img + "&#x21d3;") : ("&#x21d1;" + img);
@@ -89,7 +90,7 @@ CKEDITOR.plugins.add( 'tei-item', {
                         // this callback is called whenever every list item needs to be updated.
                         // because the editor is not updating with respect to the TextContent,
                         // it redoes some of the XSL changes
-                        var body = el.getParent().getParent();
+                        var body = EditorService.getBodyFromElement(el);
                         var items = body.find(".tei-item");
                         var textContent = XsltService.parseFromString(TextService.content());
                         for (var i = 0; i < items.count(); i++) {
