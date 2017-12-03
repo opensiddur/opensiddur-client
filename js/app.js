@@ -32,7 +32,6 @@ var osClientModule =
   angular.module(
       'osClient',
       [
-       'ngCkeditor',
        'ngDraggable',
        'ngRoute',
        'ngResource',
