@@ -134,64 +134,72 @@ CKEDITOR.plugins.add( 'jf-annotation', {
                 /* when initialized, call AnnotationsService to load the annotation content */
                 var jfAnnotation = this.element.getAttribute("data-jf-annotation");
                 var id = jfAnnotation ? jfAnnotation.split("#")[1] : "" ;
-                var loadingText = jfAnnotation ?
-                    ('Loading ' + jfAnnotation.split("/").map( function(s) {
-                        return decodeURIComponent(s); }).join("/"))
-                    : "";
                 var el = this.element;
                 // first set the HTML to the basic filler
                 if (el.hasClass("start")) {
-                    el.setHtml(img + "&#x21d3;" +
-                            '<span class="editor-internal type">comment</span>' +
-                        '<div class="tei-note" data-type="" id="'+
-                            id +
-                            '" data-os-loaded="0">' + loadingText +'</div>');
-                }
-                else {
-                    el.setHtml("&#x21d1;" + img);
-                }
+                    var noteElement = el.findOne("div.tei-note");
 
-                if (jfAnnotation) {
-                    var spl = jfAnnotation.split("#");
-                    var resource = spl[0].split("/").pop();
-                    var id = spl[1];
-                    AnnotationsService.getNote(decodeURIComponent(resource), id)
-                    .then(function(annotation) {
-                        var newAnnotation = new CKEDITOR.dom.element.createFromHtml(annotation);
-                        var annotationType = newAnnotation.getAttribute("data-type");
-                        var spans = el.getElementsByTag("span");
-                        if (spans.count() > 0) {
-                            spans.getItem(0).setHtml(annotationType);
-                        }
-                        else {
-                            var annotationTypeSpan = new CKEDITOR.dom.element.createFromHtml(
-                                '<span class="editor-internal type">' + annotationType + '</span>');
-                            el.getElementsByTag("div").getItem(0).insertBeforeMe(annotationTypeSpan);
-                        }
-                        newAnnotation.replace(el.getElementsByTag("div").getItem(0));
+                    var noteText = noteElement ? (
+                        noteElement.getHtml()
+                    ) : (
+                        jfAnnotation ?
+                            ('Loading ' + jfAnnotation.split("/").map( function(s) {
+                                return decodeURIComponent(s); }).join("/"))
+                            : "");
+                    var noteType = noteElement ? noteElement.getAttribute("data-type") : "comment";
+                    var loaded = noteElement ? "1" : "0";
+
+                    el.setHtml(img + "&#x21d3;" +
+                        '<span class="editor-internal type">' + noteType + '</span>' +
+                        '<div class="tei-note" data-type="'+ noteType +'" id="' +
+                        id +
+                        '" data-os-loaded="' + loaded + '">' + noteText + '</div>');
+
+                    if (jfAnnotation && loaded == "0") {
+                        var spl = jfAnnotation.split("#");
+                        var resource = spl[0].split("/").pop();
+                        var id = spl[1];
+                        AnnotationsService.getNote(decodeURIComponent(resource), id)
+                            .then(function(annotation) {
+                                var newAnnotation = new CKEDITOR.dom.element.createFromHtml(annotation);
+                                var annotationType = newAnnotation.getAttribute("data-type");
+                                var spans = el.getElementsByTag("span");
+                                if (spans.count() > 0) {
+                                    spans.getItem(0).setHtml(annotationType);
+                                }
+                                else {
+                                    var annotationTypeSpan = new CKEDITOR.dom.element.createFromHtml(
+                                        '<span class="editor-internal type">' + annotationType + '</span>');
+                                    el.getElementsByTag("div").getItem(0).insertBeforeMe(annotationTypeSpan);
+                                }
+                                newAnnotation.replace(el.getElementsByTag("div").getItem(0));
+                                el.setAttribute("data-jf-annotation", "/data/notes/" + resource  + "#" + id);
+                                el.setAttribute("data-os-loaded", "1");
+                                // artificially send a change event to ng-ckeditor so it will update the scope
+                                editor.fire("change");
+                                $timeout(function() { $scope.textsForm.$setPristine(); }, 0, false);
+                            });
+                    }
+                    else { // no data-jf-annotation content, set everything to defaults
+                        var resource = TextService.localSettings()["local-annotation-resource"] || "";   // blank resource indicates local annotation for a file that is not yet saved
+                        var id =  "note_" + parseInt(Math.random()*10000000) ;
+                        var annotationType = "comment";
                         el.setAttribute("data-jf-annotation", "/data/notes/" + resource  + "#" + id);
                         el.setAttribute("data-os-loaded", "1");
                         // artificially send a change event to ng-ckeditor so it will update the scope
                         editor.fire("change");
                         $timeout(function() { $scope.textsForm.$setPristine(); }, 0, false);
+                    }
+                    /* show a dialog when ready */
+                    this.once("ready", function(evt) {
+                        if (this.element.hasAttribute("data-os-new") && this.element.hasClass("start")) {
+                            this.edit();
+                        }
                     });
                 }
-                else { // no data-jf-annotation content, set everything to defaults
-                    var resource = TextService.localSettings()["local-annotation-resource"] || "";   // blank resource indicates local annotation for a file that is not yet saved
-                    var id =  "note_" + parseInt(Math.random()*10000000) ;
-                    var annotationType = "comment";
-                    el.setAttribute("data-jf-annotation", "/data/notes/" + resource  + "#" + id);
-                    el.setAttribute("data-os-loaded", "1");
-                    // artificially send a change event to ng-ckeditor so it will update the scope
-                    editor.fire("change");
-                    $timeout(function() { $scope.textsForm.$setPristine(); }, 0, false);
+                else {
+                    el.setHtml("&#x21d1;" + img);
                 }
-                /* show a dialog when ready */
-                this.once("ready", function(evt) {
-                  if (this.element.hasAttribute("data-os-new") && this.element.hasClass("start")) {
-                    this.edit();
-                  }
-                });
 
 			},
             destroy : blockObject.destroy,
