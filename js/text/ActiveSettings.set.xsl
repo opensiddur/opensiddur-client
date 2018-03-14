@@ -10,7 +10,7 @@
     </settings>
 
     Open Siddur Project
-    Copyright 2016 Efraim Feinstein, efraim@opensiddur.org
+    Copyright 2016,2018 Efraim Feinstein, efraim@opensiddur.org
     Licensed under the GNU Lesser General Public License, version 3 or later
 -->
 <xsl:stylesheet 
@@ -49,7 +49,14 @@
     <xsl:template match="setting">
         <tei:fs type="{type}" jf:id="{local:setting-id(.)}">
             <tei:f name="{name}">
-              <xsl:element name="j:{lower-case(state)}"/>
+                <xsl:choose>
+                    <xsl:when test="lower-case(state)=('yes','no','on','off','maybe')">
+                        <xsl:element name="j:{lower-case(state)}"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <tei:string><xsl:sequence select="string(state)"/></tei:string>
+                    </xsl:otherwise>
+                </xsl:choose>
             </tei:f>
         </tei:fs>
     </xsl:template>

@@ -5,12 +5,12 @@
         <setting>
             <type>[setting type]</type>
             <name>[setting name]</name>
-            <state>YES|NO|MAYBE|ON|OFF</state>
+            <state>YES|NO|MAYBE|ON|OFF|Other value</state>
         </setting>
     </settings>
 
     Open Siddur Project
-    Copyright 2015-2016 Efraim Feinstein, efraim@opensiddur.org
+    Copyright 2015-2016,2018 Efraim Feinstein, efraim@opensiddur.org
     Licensed under the GNU Lesser General Public License, version 3 or later
 -->
 <xsl:stylesheet 
@@ -38,6 +38,7 @@
     <xsl:template match="tei:f/text()"/>
     <xsl:template match="j:on|j:yes|j:off|j:no|j:maybe"><xsl:sequence select="upper-case(local-name(.))"/></xsl:template>
     <xsl:template match="tei:f/text()[upper-case(.)=('NO','OFF','YES','MAYBE','ON')]"><xsl:sequence select="upper-case(.)"/></xsl:template>
+    <xsl:template match="tei:f/tei:string"><xsl:sequence select="normalize-space(.)"/></xsl:template>
 
     <xsl:template match="element()">
         <xsl:apply-templates/>
