@@ -56,7 +56,7 @@ osTextModule.service("ConditionalDefinitionsService", [
         }).then(
             function(result) {
                 var xresult = xj.xml_str2json(result.data);
-                return "conditional-result" in xresult["conditional-results"];
+                return "conditional-results" in xresult && "conditional-result" in xresult["conditional-results"];
             },
             function(err) {
                 return $q.reject(err);
