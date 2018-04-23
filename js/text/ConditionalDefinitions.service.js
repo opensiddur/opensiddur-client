@@ -29,7 +29,7 @@ osTextModule.service("ConditionalDefinitionsService", [
     var cleanupTypeName = function(resource) {
         // clean up a feature type name
         // TODO: characters that shouldn't be in feature types should be here
-        return resource.replace(/\s+/, "_");
+        return resource.replace(/\s+/g, "_");
     };
 
     var generateLocalConditionalDocumentName = function() {
