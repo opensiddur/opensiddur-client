@@ -34,7 +34,7 @@ osTextModule.service("ConditionalDefinitionsService", [
 
     var generateLocalConditionalDocumentName = function() {
         // generate a new local conditional name if no local conditional exists
-        var proposedName = cleanupTypeName(TextService._resource);
+        var proposedName = cleanupTypeName(decodeURIComponent(TextService._resource));
         return typeExists(proposedName).then(
             function(doesExist) {
                 if (doesExist) return proposedName + "_" + Math.floor(Math.random() * 6).toString();
