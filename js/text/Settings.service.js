@@ -2,15 +2,16 @@
     Settings service: get and set settings of various types
     
     Open Siddur Project
-    Copyright 2015 Efraim Feinstein, efraim@opensiddur.org
+    Copyright 2015,2017 Efraim Feinstein, efraim@opensiddur.org
     Licensed under the GNU Lesser General Public License, version 3 or later
 */
 osTextModule.factory("SettingsService", [
     "$http",
     "$q",
+    "EditorService",
     "TextService",
     "XsltService",
-    function($http, $q, TextService, XsltService) {
+    function($http, $q, EditorService, TextService, XsltService) {
         var resources = {};    
         var xj = new X2JS({ arrayAccessForm : "property" });   
         return {
@@ -33,6 +34,7 @@ osTextModule.factory("SettingsService", [
             setActiveAnnotations : function(annotationSettings, startId, endId) {
                 var idRange = (endId && (startId != endId)) ? ("range(" + startId + "," + endId + ")") : startId;
                 var annXml = xj.json2xml(angular.fromJson(angular.toJson(annotationSettings)));
+                EditorService.syncEditorToTextService();
                 TextService.content(
                     XsltService.serializeToStringTEINSClean(
                         XsltService.transformString("/js/text/ActiveAnnotations.set.xsl", 
@@ -43,6 +45,7 @@ osTextModule.factory("SettingsService", [
                         true
                     )
                 );
+                EditorService.syncTextServiceToEditor();
             },
             getSettingsByPointer : function(ptr) {
               // get settings by pointer

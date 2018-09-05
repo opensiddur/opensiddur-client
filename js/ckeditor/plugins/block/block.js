@@ -124,6 +124,9 @@ var BlockObject = function(editor, allowOverlap, allowAllNodeTypes) {
         var allowedNodeTypes = thiz.allowAllNodeTypes ? ["tei-seg","tei-ptr","tei-anchor"] : ["tei-seg"];
         if (node.hasClass("cke_widget_block")) {
             node = node.getChildren().getItem(0);
+            if (!node) { // empty (deleted?) widgets sometimes show up. if they do, allow them
+                return true;
+            }
         }
         return allowedNodeTypes.some(function(c) { return node.hasClass(c); });
     };

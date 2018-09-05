@@ -54,11 +54,6 @@ osDialogSettingsAnnotationsModule.directive(
                         $scope.activeAnnotations.annotations.annotation_asArray.push(newAnn);
                     };
                     $scope.OKButton = function () {
-                        $scope.activeAnnotations.annotations.annotation_asArray = 
-                            $scope.activeAnnotations.annotations.annotation_asArray.map(function(a) {
-                                a.name = encodeURIComponent(a.name);
-                                return a;
-                            });
                         $scope.activeAnnotations.annotations.annotation = $scope.activeAnnotations.annotations.annotation_asArray;
                         SettingsService.setActiveAnnotations($scope.activeAnnotations);
                         $scope.onOk()($scope.activeAnnotations);

@@ -258,6 +258,14 @@
         </xsl:if>
     </xsl:template>
 
+    <xsl:template match="jf:merged[@jf:set]" mode="links">
+        <xsl:variable name="merged-id" as="xs:string" select="(@xml:id, @jf:id)[1]/string()"/>
+        <xsl:for-each select="tokenize(@jf:set, '\s+')">
+            <tei:link type="set" target="#{$merged-id} {.}"/>
+        </xsl:for-each>
+        <xsl:apply-templates mode="#current"/>
+    </xsl:template>
+
     <xsl:template match="html:div[local:has-class(@class, 'jf-annotation')][starts-with(@id, 'start_')]" mode="links">
         <xsl:variable name="local-annotation-resource" as="xs:string" 
             select="concat('/data/notes/', normalize-space(//j:settings/tei:fs[@type='opensiddur:local']/tei:f[@name='local-annotation-resource']))"/>

@@ -10,9 +10,10 @@
 osTextModule.factory("AnnotationsService", [
     "$http",
     "$q",
+    "EditorService",
     "TextService",
     "XsltService",
-    function($http, $q, TextService, XsltService) {
+    function($http, $q, EditorService, TextService, XsltService) {
         /* store all the referenced annotation resources in a cache 
             resourceName : "xml"
         */
@@ -134,12 +135,15 @@ osTextModule.factory("AnnotationsService", [
                 var biblXml = xj.json2xml(angular.fromJson(angular.toJson({sources : { bibl : bibl}})));
                 return this.getSources(resource)
                     .then(function(sourceData) {
+                        EditorService.syncEditorToTextService();
                         resources[resource] = XsltService.serializeToStringTEINSClean(
                             XsltService.transformString("/js/text/AnnotationSources.set.xsl", resources[resource], {
                                 id : id,
                                 "new-sources" : biblXml
                             })
                         );
+                        EditorService.syncTextServiceToEditor();
+                        return resources[resource];
                     });
             },
             saveAll : function() {

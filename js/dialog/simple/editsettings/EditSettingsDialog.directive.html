@@ -29,20 +29,32 @@
                       </div>
                     </div> 
                     <div class="form-group">
-                      <label class="control-label col-md-2" for="setting.name">Value</label>
+                      <label class="control-label col-md-2" for="setting.state">Value</label>
                       <div class="col-md-6">
                         <select 
                           name="setting.state"
                           class="form-control" 
-                          ng-model="newSetting.state">
+                          ng-model="stateValue"
+                          ng-change="newSetting.state = stateValue != 'Other' ? stateValue : newSetting.state">
                           <option value="YES">YES</option>
                           <option value="NO">NO</option>
                           <option value="MAYBE">MAYBE</option>
                           <option value="ON">ON</option>
                           <option value="OFF">OFF</option>
+                          <option value="Other">Other...</option>
                         </select>
                       </div>
-                    </div> 
+                    </div>
+                    <div class="form-group" ng-show="stateValue=='Other'">
+                        <label class="control-lable col-md-2" for="setting.other">Other value:</label>
+                        <div class="col-md-6">
+                            <input name="setting.other"
+                                   class="form-control"
+                                   ng-model="newSetting.state"
+                                   ng-required="stateValue=='Other'"
+                                   ng-pattern="/^[a-zA-Z0-9_]+$/"/>
+                        </div>
+                    </div>
                     <div class="form-group">
                       <button type="button" class="btn" ng-click="setButton()" 
                         ng-disabled="!(newSetting.type && newSetting.name && newSetting.state)">Set-&gt;</button>

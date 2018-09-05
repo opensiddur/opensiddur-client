@@ -29,12 +29,12 @@ osTextModule.service("ConditionalDefinitionsService", [
     var cleanupTypeName = function(resource) {
         // clean up a feature type name
         // TODO: characters that shouldn't be in feature types should be here
-        return resource.replace(/\s+/, "_");
+        return resource.replace(/\s+/g, "_");
     };
 
     var generateLocalConditionalDocumentName = function() {
         // generate a new local conditional name if no local conditional exists
-        var proposedName = cleanupTypeName(TextService._resource);
+        var proposedName = cleanupTypeName(decodeURIComponent(TextService._resource));
         return typeExists(proposedName).then(
             function(doesExist) {
                 if (doesExist) return proposedName + "_" + Math.floor(Math.random() * 6).toString();
@@ -56,7 +56,7 @@ osTextModule.service("ConditionalDefinitionsService", [
         }).then(
             function(result) {
                 var xresult = xj.xml_str2json(result.data);
-                return "conditional-result" in xresult["conditional-results"];
+                return "conditional-results" in xresult && "conditional-result" in xresult["conditional-results"];
             },
             function(err) {
                 return $q.reject(err);
