@@ -149,7 +149,7 @@ dialogSimpleEditConditionalDefinitionsModule.directive(
                             then(
                                 function(defs) {
                                     // defs contains a deep copy of the definitions for the current loaded resource
-                                    var localResource = TextService.localSettings()["local-conditional-document"];
+                                    var localResource = decodeURIComponent(TextService.localSettings()["local-conditional-document"]);
                                     $scope.resultSelected(localResource);
                                     console.log("definitions:", $scope.definitions);
                                 }

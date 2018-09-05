@@ -86,6 +86,7 @@ CKEDITOR.plugins.add( 'jf-set', {
                             var jfSet = newPointers.join(" ");
                             el.setAttribute("data-jf-set", jfSet);
                             el.setAttribute("id", myId);
+                            el.removeAttribute("data-os-new");
 
                             // artificially send a change event to ng-ckeditor so it will update the scope
                             updateElementContent(el, jfSet);
@@ -100,7 +101,7 @@ CKEDITOR.plugins.add( 'jf-set', {
                 blockObject.insert(
                     "phony-set", "p", "jf-set",
                     function(id) {  // beginTemplate 
-                        return '<p id="start_'+id+'" data-jf-set="" class="jf-set layer layer-phony-set start">'+  
+                        return '<p id="start_'+id+'" data-os-new="1" data-jf-set="" class="jf-set layer layer-phony-set start">'+
                                '</p>'; 
                     },
                     function(id) {  // endTemplate
@@ -113,7 +114,12 @@ CKEDITOR.plugins.add( 'jf-set', {
 				return element.name == 'p' && element.hasClass( 'jf-set' );
 			},
 			init: function(ev) {
-                //this.on( 'doubleclick', blockObject.doubleclick);
+                /* show a dialog when ready */
+                this.once("ready", function(evt) {
+                    if (this.element.hasAttribute("data-os-new") && this.element.hasClass("start")) {
+                        this.edit();
+                    }
+                });
 
                 /* when initialized, load the settings content as JSON */
                 var jfSet = this.element.getAttribute("data-jf-set");

@@ -17,7 +17,11 @@
         <xsl:param name="element-name" as="xs:string?"/>
         <!-- add a randomly generated xml:id -->
         <xsl:if test="exists($element-name) and not(@id)">
-            <xsl:attribute name="id" select="concat(substring-after($element-name, '-'), '_', generate-id(.))"/>
+            <!-- WARNING: generate-id() is implemented to assign an id to a document and an id to a node based on
+            its position. If a node's position changes, there could be a duplicate id generated.
+            Therefore, we have to add something dependent on the node's current position -->
+            <xsl:attribute name="id" select="concat(substring-after($element-name, '-'), '_', generate-id(.),
+                count(preceding-sibling::*), count(following-sibling::*))"/>
         </xsl:if>
     </xsl:template>
 

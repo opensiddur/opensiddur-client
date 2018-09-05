@@ -73,7 +73,7 @@ translationsModule.factory("TranslationsService", [
             var thiz = this;
             return TextService.load("/api/data/linkage", resource)
                 .then(function(response) {
-                    var data = response.data;
+                    var data = response.content();
                     var $docXml = $(data);
                     var linkGrp = $docXml.find("j\\:parallelText tei\\:linkGrp");
                     var domains = linkGrp.attr("domains").split(/\s+/);

@@ -6,7 +6,7 @@
  * name is an id, title is the header text
  * Data is transfered via "editSettingsDialog" in EditorDataService
  *
- * Copyright 2016 Efraim Feinstein, efraim@opensiddur.org
+ * Copyright 2016,2018 Efraim Feinstein, efraim@opensiddur.org
  * Licensed under the GNU Lesser General Public License, version 3 or later
  */
 dialogSimpleEditSettingsModule.directive(
@@ -34,6 +34,8 @@ dialogSimpleEditSettingsModule.directive(
                       name : "",
                       state : ""
                     };
+
+                    $scope.stateValue = "";       // this is a temporary store for the state
                     $scope.setButton = function() {
                       $scope.settings.active.push(angular.copy($scope.newSetting));
                     };
