@@ -47,7 +47,7 @@ then
     DNS_NAME="app-dev.jewishliturgy.org"
     DB_DNS_NAME="db-dev.jewishliturgy.org";
 fi
-INSTANCE_BASE=${PROJECT}-app-${BRANCH//\//-}
+INSTANCE_BASE=${PROJECT}-${BRANCH//\//-}-app
 
 echo "Installing dynamic DNS updater to update ${DNS_NAME}..."
 cat << EOF > /etc/ddclient.conf
