@@ -1,12 +1,11 @@
 server {
 	listen 80;
-	server_name app-dev.jewishliturgy.org;
-	return 301 https://app-dev.jewishliturgy.org$request_uri;
+	server_name ${DNS_NAME};
 }
 
 server {
         listen 443 ssl;
-        server_name app-dev.jewishliturgy.org;
+        server_name ${DNS_NAME};
         charset utf-8;
     
         ## use the Google resolver
@@ -18,33 +17,21 @@ server {
         proxy_read_timeout          600;
         send_timeout                600;
 
-
-        ## CHANGE: change this to the root directory of your opensiddur-client sources
-        root /usr/local/opensiddur-client;
+        root ${INSTALL_DIR};
 
         location /api {
-            proxy_pass https://db-dev.jewishliturgy.org:8443/exist/restxq$request_uri;
+            proxy_pass https://${DB_DNS_NAME}:8443/exist/restxq$request_uri;
             proxy_intercept_errors on;
+            proxy_set_header Host $host;
             ## remap 401 to 418 so the browser doesn't get upset and pop up a user/pass dialog
             if ($status = 401) {
                 return 418 'Unauthorized';
             }
         }
 
-        ## proxy pass to the dev server ##
-        location /exist/restxq/api {
-            ## to use a local server, uncomment this line and comment the one above:
-            proxy_pass   https://db-dev.jewishliturgy.org:8443$request_uri;
-            
-            proxy_intercept_errors on;
-            ## remap 401 to 418 so the browser doesn't get upset and pop up a user/pass dialog
-            if ($status = 401) {
-                return 418 'Unauthorized';
-            }
-        }
-        
         location /apps {
-            proxy_pass https://db-dev.jewishliturgy.org:8443/exist$request_uri;
+            proxy_pass https://${DB_DNS_NAME}:8443/exist$request_uri;
+            proxy_set_header Host $host;
             proxy_intercept_errors on;
         }
     
