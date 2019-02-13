@@ -10,7 +10,7 @@ BRANCH=$(get_metadata BRANCH)
 DYN_EMAIL=$(get_metadata DYN_EMAIL)
 DYN_USERNAME=$(get_metadata DYN_USERNAME)
 DYN_PASSWORD=$(get_metadata DYN_PASSWORD)
-INSTALL_DIR=/usr/local/opensiddur-client
+export INSTALL_DIR=/usr/local/opensiddur-client
 
 echo "Setting up the opensiddur-client user..."
 useradd -c "client"  client
@@ -40,12 +40,12 @@ export DB_DNS_NAME="db-dev.jewishliturgy.org"
 # branch-specific environment settings
 if [[ $BRANCH == "master" ]];
 then
-    DNS_NAME="app-prod.jewishliturgy.org"
-    DB_DNS_NAME="db-prod.jewishliturgy.org";
+    export DNS_NAME="app-prod.jewishliturgy.org"
+    export DB_DNS_NAME="db-prod.jewishliturgy.org";
 elif [[ $BRANCH == "develop" ]];
 then
-    DNS_NAME="app-dev.jewishliturgy.org"
-    DB_DNS_NAME="db-dev.jewishliturgy.org";
+    export DNS_NAME="app-dev.jewishliturgy.org"
+    export DB_DNS_NAME="db-dev.jewishliturgy.org";
 fi
 INSTANCE_BASE=${PROJECT}-${BRANCH//\//-}-app
 
