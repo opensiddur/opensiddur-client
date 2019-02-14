@@ -30,10 +30,10 @@ private-scripts/
 # patch rejects
 *.rej
 
-# nginx conf file
-conf/*.conf
-
 # autoinstall
 node_modules/
 karma_html/
 
+# IntelliJ
+.idea/
+*.iml

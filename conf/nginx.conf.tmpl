@@ -1,0 +1,46 @@
+server {
+	listen 80;
+	server_name ${DNS_NAME};
+}
+
+server {
+        listen 443 ssl;
+        server_name ${DNS_NAME};
+        charset utf-8;
+    
+        ## use the Google resolver
+        resolver 8.8.8.8;
+
+        ## timeouts
+        proxy_connect_timeout       600;
+        proxy_send_timeout          600;
+        proxy_read_timeout          600;
+        send_timeout                600;
+
+        root ${INSTALL_DIR};
+
+        location /api {
+            proxy_pass https://${DB_DNS_NAME}/exist/restxq$request_uri;
+            proxy_intercept_errors on;
+            proxy_set_header Host $host;
+            ## remap 401 to 418 so the browser doesn't get upset and pop up a user/pass dialog
+            if ($status = 401) {
+                return 418 'Unauthorized';
+            }
+        }
+
+        location /apps {
+            proxy_pass https://${DB_DNS_NAME}/exist$request_uri;
+            proxy_set_header Host $host;
+            proxy_intercept_errors on;
+        }
+    
+        ## point to the controller for everything else
+        location / {
+            expires -1;
+            add_header Pragma "no-cache";
+            add_header Cache-Control "no-store, no-cache, must-revalidate, post-check=0, pre-check=0";
+            try_files $uri $uri/ /index.html =404;
+        }
+}
+
