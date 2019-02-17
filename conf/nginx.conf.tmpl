@@ -34,7 +34,15 @@ server {
             proxy_set_header Host $host;
             proxy_intercept_errors on;
         }
-    
+
+        ## some APIs use this
+        location /exist {
+            proxy_pass https://${DB_DNS_NAME}$request_uri;
+            proxy_set_header Host $host;
+            proxy_intercept_errors on;
+        }
+
+
         ## point to the controller for everything else
         location / {
             expires -1;
